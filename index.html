@@ -52,7 +52,7 @@
 .summary-card{background:#f6f8fa;border:1px solid #e2e7eb;border-radius:9px;padding:10px;display:flex;flex-direction:column;justify-content:center;gap:5px;min-width:0}.summary-card strong{font-size:14px;color:#2c4252}.summary-card span{font-size:10px;color:#728390}
 .position-row{display:flex;align-items:center;gap:9px;color:#6e7c89;font-size:10px;font-weight:750}.position-row input{width:100%;min-width:0;accent-color:#c32e3c}
 .action-row{display:flex;gap:7px}.action-row button{flex:1;padding:9px 7px;border:1px solid #e1e6ea;background:#f8fafb;border-radius:8px;color:#3a4e5d;font-size:10px;font-weight:760}
-.rail-summary{font-size:11px;font-weight:800;color:#a9303d}
+.rail-summary{font-size:11px;font-weight:800;color:#a9303d}.rail-targets{display:flex;flex-wrap:wrap;gap:6px}.rail-targets button{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:8px 12px;border:1px solid #dce2e6;background:#fff;border-radius:22px;font-size:11px;font-weight:780;color:#374b5b;cursor:pointer}.rail-targets button.selected{border-color:var(--red);background:var(--softred);color:var(--red-dark);box-shadow:0 0 0 1px var(--red) inset}.rail-targets button:focus-visible{outline:2px solid var(--red);outline-offset:2px}.rail-dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(23,33,45,.25);flex:none}.rail-custom{font-size:9px;letter-spacing:.6px;text-transform:uppercase;color:var(--red-dark);background:#fff;border:1px solid #f2c6cb;border-radius:9px;padding:1px 6px}
 .stair-rails{display:flex;gap:6px}.stair-rails button{flex:1;border:1px solid #dfe4e8;background:#f7f9fa;color:#657586;border-radius:8px;padding:8px 4px;font-size:10px;font-weight:800}.stair-rails button.selected{border-color:#cb3442;color:#bc2a3a;background:#fff4f4}
 .shape-overlay{position:absolute;z-index:4;inset:0;display:flex;align-items:center;justify-content:center;padding:10px;background:rgba(21,32,43,.25)}.shape-overlay.hidden,.free-overlay.hidden{display:none}
 .shape-dialog{background:#fff;width:min(410px,100%);border:1px solid #d9e2e7;box-shadow:0 16px 43px #162a3d31;border-radius:13px;padding:12px;display:flex;flex-direction:column;gap:9px;max-height:100%}.shape-dialog-head{display:flex;align-items:center;justify-content:space-between;font-size:13px}.shape-dialog-head button{border:0;background:#eef2f4;border-radius:8px;width:27px;height:27px;color:#586b7b}.shape-dialog .shape-grid button{min-height:76px;font-size:12px}
@@ -651,7 +651,7 @@ root.AOSGeometry={area,triangulate,halfplane,strip,subtractConvex,subtractMany,s
    Geometric sales concepts only. Never engineering, code approval or supplier cut sheet. */
 (function(global){
 'use strict';
-const SCHEMA_VERSION=6;const BW=5.36/12,GAP=3/16/12,PITCH=BW+GAP,FT=1/12;
+const SCHEMA_VERSION=6,RAIL_PRODUCTS=['Westbury Tuscany','No rail product selected'];const BW=5.36/12,GAP=3/16/12,PITCH=BW+GAP,FT=1/12;
 const PALETTES={'Brown Oak':'#86674c','Rustic Elm':'#73533f','Sandy Birch':'#bfab8a','Silver Maple':'#aaa9a0','Stone Ash':'#777977'};
 const RAILS={'Textured Black':'#20272c','Bronze':'#635849','White':'#e6e9e8'};
 const SHAPES=['rectangle','square','L','T','U','free'];
@@ -755,7 +755,18 @@ function sanitize(s){const b=baseIntent(),x=s||{};const q={...b,...x,stairs:{...
  q.dividerPositions=Array.isArray(q.dividerPositions)?q.dividerPositions.filter(Number.isFinite).slice(0,12).map(v=>clamp(v,.01,.99)).sort((a,b)=>a-b):null;
  if(!Object.hasOwn(PALETTES,q.decking))q.decking=b.decking;if(!Object.hasOwn(PALETTES,q.border))q.border=b.border;if(!Object.hasOwn(RAILS,q.railColor))q.railColor=b.railColor;
  q.collection=['TimberTech Terrain','TimberTech Advanced PVC'].includes(q.collection)?q.collection:b.collection;
- q.railStyle=['Westbury Tuscany','No rail product selected'].includes(q.railStyle)?q.railStyle:b.railStyle;
+ q.railStyle=RAIL_PRODUCTS.includes(q.railStyle)?q.railStyle:b.railStyle;
+ // Per-edge railing finish (V5.1). Only railed edges that differ from the whole-deck
+ // product/color are kept; everything else follows railStyle/railColor.
+ const ro={};
+ if(x.railOverrides&&typeof x.railOverrides==='object')for(const [k,v] of Object.entries(x.railOverrides)){
+   const i=Number(k);if(!Number.isInteger(i)||!q.railEdges.includes(i)||!v||typeof v!=='object')continue;
+   const o={};
+   if(Object.hasOwn(RAILS,v.railColor)&&v.railColor!==q.railColor)o.railColor=v.railColor;
+   if(RAIL_PRODUCTS.includes(v.railStyle)&&v.railStyle!==q.railStyle)o.railStyle=v.railStyle;
+   if(Object.keys(o).length)ro[i]=o;
+ }
+ q.railOverrides=ro;
  q.supportMode=['ledger','freestanding'].includes(q.supportMode)?q.supportMode:'ledger';
  q.beamStyle=['dropped','flush'].includes(q.beamStyle)?q.beamStyle:'dropped';
  // Keep the original house-wall direction for decking/joist orientation even
@@ -771,13 +782,15 @@ function sanitize(s){const b=baseIntent(),x=s||{};const q={...b,...x,stairs:{...
 // product/color and staircases. Stable ids (edge-N) let a later release make segments
 // the editable source of truth (per-edge styles, splits, gates, privacy walls)
 // without changing what existing projects look like.
+// Effective railing product/color for one edge: its override, else the whole-deck choice.
+function railFinish(q,i){const o=q.railOverrides?.[i]||{};return {railStyle:o.railStyle||q.railStyle,railColor:o.railColor||q.railColor,custom:Boolean(q.railOverrides?.[i])};}
 function derivePerimeter(q,es){
  const r3=v=>Math.round(v*1000)/1000;
  return {source:'derived',segments:es.map(e=>{
    const house=q.houseEdges.includes(e.i),rail=!house&&q.railEdges.includes(e.i);
    return {id:'edge-'+e.i,edge:e.i,start:0,end:1,lengthFt:r3(e.len),
      kind:house?'house':rail?'rail':'open',
-     product:rail?q.railStyle:null,color:rail?q.railColor:null,
+     product:rail?railFinish(q,e.i).railStyle:null,color:rail?railFinish(q,e.i).railColor:null,custom:rail&&railFinish(q,e.i).custom,
      openings:(q.staircases||[]).filter(s=>s.edge===e.i).map(s=>({type:'stair',id:s.id,offsetFt:r3(s.offset),widthFt:r3(s.width)}))};
  })};
 }
@@ -1309,38 +1322,40 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    pitchRise:stairPitchRise,pitch:Math.atan2(stairPitchRise,run),enabled:true});
  }
  const deckGuardPostCenters=[];
- function railSegment(e,start,end,connection='deck-guard'){
+ function railSegment(e,start,end,connection='deck-guard',col=railCol){
    const len=end-start;if(len<.46)return;
    const nr=Math.max(1,Math.ceil(len/5.5)),yaw=-Math.atan2(e.t[1],e.t[0]);
    const point=t=>[e.a[0]+e.t[0]*t-e.n[0]*.08,e.a[1]+e.t[1]*t-e.n[1]*.08];
    for(let bay=0;bay<nr;bay++){const a=start+len*bay/nr,b=start+len*(bay+1)/nr;
-     for(let k=0;k<2;k++){if(bay>0&&k===0)continue;let p=point(k?b:a);deckGuardPostCenters.push(p);add('railing-post','rail',p[0],H+1.52,p[1],.21,3.05,.21,railCol,{mat:'metal',connect:connection});add('post-cap','rail',p[0],H+3.10,p[1],.30,.11,.30,railCol,{mat:'metal',connect:connection});}
-     let p=point((a+b)/2),L=b-a;add('top-rail','rail',p[0],H+3.02,p[1],L,.14,.15,railCol,{yaw,mat:'metal',connect:connection});add('bottom-rail','rail',p[0],H+.51,p[1],L,.11,.1,railCol,{yaw,mat:'metal',connect:connection});
-     const num=Math.max(0,Math.floor(L/(4.25/12))-1);for(let k=1;k<=num;k++){let sp=point(a+L*k/(num+1));add('baluster','rail',sp[0],H+1.78,sp[1],.054,2.38,.054,railCol,{mat:'metal',connect:connection});}
+     for(let k=0;k<2;k++){if(bay>0&&k===0)continue;let p=point(k?b:a);deckGuardPostCenters.push(p);add('railing-post','rail',p[0],H+1.52,p[1],.21,3.05,.21,col,{mat:'metal',connect:connection});add('post-cap','rail',p[0],H+3.10,p[1],.30,.11,.30,col,{mat:'metal',connect:connection});}
+     let p=point((a+b)/2),L=b-a;add('top-rail','rail',p[0],H+3.02,p[1],L,.14,.15,col,{yaw,mat:'metal',connect:connection});add('bottom-rail','rail',p[0],H+.51,p[1],L,.11,.1,col,{yaw,mat:'metal',connect:connection});
+     const num=Math.max(0,Math.floor(L/(4.25/12))-1);for(let k=1;k<=num;k++){let sp=point(a+L*k/(num+1));add('baluster','rail',sp[0],H+1.78,sp[1],.054,2.38,.054,col,{mat:'metal',connect:connection});}
    }
  }
  for(const e of es){if(q.houseEdges.includes(e.i)||!q.railEdges.includes(e.i))continue;
    const openings=q.staircases.filter(s=>s.edge===e.i).map(s=>({start:(e.len-s.width)/2+s.offset,end:(e.len+s.width)/2+s.offset})).sort((a,b)=>a.start-b.start);
-   let at=0;for(const gap of openings){railSegment(e,at,Math.max(at,gap.start));at=Math.max(at,gap.end);}railSegment(e,at,e.len);
+   const edgeCol=RAILS[railFinish(q,e.i).railColor]||railCol;
+   let at=0;for(const gap of openings){railSegment(e,at,Math.max(at,gap.start),'deck-guard',edgeCol);at=Math.max(at,gap.end);}railSegment(e,at,e.len,'deck-guard',edgeCol);
  }
  for(const stair of q.staircases){
    const g=stairModels.find(x=>x.id===stair.id);if(!g)continue;
    const {tt,nn,base,run,risers,rise,pitchRise:stairPitchRise,width:stairW}=g;
    const toWorld=(u,v)=>[base[0]+u*tt[0]+v*nn[0],base[1]+u*tt[1]+v*nn[1]];
    const noseElevationAt=v=>H-(rise/(11/12))*v;
+   const stairCol=RAILS[railFinish(q,stair.edge).railColor]||railCol;
    for(let side of [-1,1]){const key=side<0?'left':'right';if(!stair.rails[key])continue;
      const u=side*stairW/2,yaw=-Math.atan2(nn[1],nn[0]),slope=-Math.atan2(stairPitchRise,run),pt=toWorld(u,run/2);
      const railMidElevation=noseElevationAt(run/2);
-     add('stair-top-rail','rail',pt[0],railMidElevation+2.78,pt[1],Math.hypot(run,stairPitchRise),.14,.12,railCol,{yaw,rz:slope,mat:'metal',connect:'stair-guard'});
-     add('stair-bottom-rail','rail',pt[0],railMidElevation+.58,pt[1],Math.hypot(run,stairPitchRise),.11,.10,railCol,{yaw,rz:slope,mat:'metal',connect:'stair-guard'});
+     add('stair-top-rail','rail',pt[0],railMidElevation+2.78,pt[1],Math.hypot(run,stairPitchRise),.14,.12,stairCol,{yaw,rz:slope,mat:'metal',connect:'stair-guard'});
+     add('stair-bottom-rail','rail',pt[0],railMidElevation+.58,pt[1],Math.hypot(run,stairPitchRise),.11,.10,stairCol,{yaw,rz:slope,mat:'metal',connect:'stair-guard'});
      const count=Math.max(2,Math.ceil(run/5.4)+1);
      for(let i=0;i<count;i++){
        const v=run*i/(count-1),p=toWorld(u,v),baseY=noseElevationAt(v);
        if(!(i===0&&deckGuardPostCenters.some(x=>Math.hypot(x[0]-p[0],x[1]-p[1])<.30)))
-         add('stair-rail-post','rail',p[0],baseY+1.5,p[1],.21,3.0,.21,railCol,{mat:'metal',connect:'stair-guard'});
+         add('stair-rail-post','rail',p[0],baseY+1.5,p[1],.21,3.0,.21,stairCol,{mat:'metal',connect:'stair-guard'});
        if(i<count-1){const balN=Math.max(1,Math.floor((run/(count-1))/(4/12))-1);
          for(let j=1;j<=balN;j++){const vv=v+(run/(count-1))*j/(balN+1),s=toWorld(u,vv),yy=noseElevationAt(vv);
-           add('stair-baluster','rail',s[0],yy+1.73,s[1],.054,2.3,.054,railCol,{mat:'metal',connect:'stair-guard'});}
+           add('stair-baluster','rail',s[0],yy+1.73,s[1],.054,2.3,.054,stairCol,{mat:'metal',connect:'stair-guard'});}
        }
      }
    }
@@ -1370,7 +1385,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    primaryLedgerEdge:q.primaryLedgerEdge,ledgerEdges:ledgerEdges.map(e=>e.i),ledgerCount:ledgerEdges.length,beamRows:beams.length,joistNominal:`2x${joistNominal}`,beamProfile,joistSpacingIn:joistSpacing,joistMaxSpanFt:FS.JOISTS[joistSpacing][joistNominal].span,unresolvedJoistRuns:beamSupportDiagnostics.length,sharedSupportZones:chosen.groups.length,optimizerCandidates:chosen.candidates,unverifiedBeamLoadCount:unsupportedBeamLoads,pictureFrameFlatBlocks:flatBorderBlocks,dividerFlatBlocks:flatDividerBlocks,pictureFrameFlatLF:borderFlatLF,dividerFlatLF:dividerFlatLF,pictureFrameSupportJoists:qty('picture-support-joist'),dividerSupportJoists:qty('divider-support-joist')};
  return {intent:q,parts,counts,alerts,stats,geometry:{poly,edges:es,inside,beams,joists:joistSegs,boardAxis:d,dividerRows,dividerFractions,dividerSpanFt:umax-umin,dividerStart:umin,joistAxis:joistD,stair:firstStair,stairs:stairModels}};
 }
-global.DeckCore={SCHEMA_VERSION,derivePerimeter,migrate,baseIntent,sanitize,make,stairOverlap,resolveDividerFractions,MAX_DIVIDER_ROWS,MAX_FIELD_SECTION_FT,MIN_DIVIDER_SPACING_FT,PALETTES,RAILS,SHAPES,BW,GAP,PITCH,polygon,edges,validPolygon,lineIntervals,offsetPolygon};
+global.DeckCore={SCHEMA_VERSION,RAIL_PRODUCTS,railFinish,derivePerimeter,migrate,baseIntent,sanitize,make,stairOverlap,resolveDividerFractions,MAX_DIVIDER_ROWS,MAX_FIELD_SECTION_FT,MIN_DIVIDER_SPACING_FT,PALETTES,RAILS,SHAPES,BW,GAP,PITCH,polygon,edges,validPolygon,lineIntervals,offsetPolygon};
 })(window);
 
 </script><script>
@@ -1968,6 +1983,9 @@ function remap(q,oldPoly,newPoly,keepIndex=false){
    if(stairs.some(t=>t.edge===candidate.edge&&Math.abs(t.offset-candidate.offset)<(t.width+candidate.width)/2+.5))continue;
    stairs.push(candidate);
  }
+ if(q.railOverrides&&typeof q.railOverrides==='object'){const next={};
+   for(const [k,v] of Object.entries(q.railOverrides))for(const e of projected(Number(k)))if(!next[e.i])next[e.i]={...v};
+   q.railOverrides=next;}
  q.houseEdges=wall;q.ledgerEdges=ledger.filter(i=>wall.includes(i));q.railEdges=rail.filter(i=>!wall.includes(i));
  q.staircases=stairs;
  if(q.primaryLedgerEdge!==null){const mapped=projected(q.primaryLedgerEdge);q.primaryLedgerEdge=(mapped.find(e=>wall.includes(e.i))||mapped[0])?.i??wall[0]??null;}
@@ -1984,7 +2002,7 @@ root.AOSShape={verify,moveCorner,moveEdge,lengthenEdge,cutCorner,resizeBevel,add
 const $=id=>document.getElementById(id),core=window.DeckCore;
 const titles=['Shape & Size','House & Height','Stairs','Decking Layout','Decking Selection','Railings','Framing & Ledger','Review & Present'];
 const hints=['Choose and shape','Tap house edges','Tap an edge to add','Choose board pattern','Choose finish colors','Tap to add/remove','Review wall ledgers & supports','Finished and framing'];
-const state={dimensionLabels:[],intent:null,model:null,step:0,view:'2d',layoutTab:'direction',finishTab:'field',railTab:'locations',dividerSelected:0,stairSelected:0,selectedCorner:null,previewPoly:null,cornerPreview:null,cornerPreviewError:'',cornerKey:null,cornerSize:1,cornerAngle:45,cornerOrientation:'first',shapeTool:null,featureDraft:{kind:'bump',width:4,depth:2,fraction:.5},featureSelected:null,shapePicker:false,freeDraw:false,freePts:[],freeHover:null,drawSnap:true,drawMode:'orthogonal',selectedEdge:null,framingDetails:false,history:[null],historyAt:0,plan:{scale:18,panX:0,panY:0,targetZ:6,pointers:new Map(),drag:null,tap:null},toastTimeout:0};
+const state={dimensionLabels:[],intent:null,model:null,step:0,view:'2d',layoutTab:'direction',finishTab:'field',railTab:'locations',railTarget:'all',dividerSelected:0,stairSelected:0,selectedCorner:null,previewPoly:null,cornerPreview:null,cornerPreviewError:'',cornerKey:null,cornerSize:1,cornerAngle:45,cornerOrientation:'first',shapeTool:null,featureDraft:{kind:'bump',width:4,depth:2,fraction:.5},featureSelected:null,shapePicker:false,freeDraw:false,freePts:[],freeHover:null,drawSnap:true,drawMode:'orthogonal',selectedEdge:null,framingDetails:false,history:[null],historyAt:0,plan:{scale:18,panX:0,panY:0,targetZ:6,pointers:new Map(),drag:null,tap:null},toastTimeout:0};
 const planCanvas=$('planCanvas'),ctx=planCanvas.getContext('2d'),glCanvas=$('glCanvas'),renderer3d=new window.Deck3D(glCanvas);
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const fmt=v=>{const f=Math.floor(+v+1e-5),i=Math.round((+v-f)*12);return `${f+(i>=12?1:0)}′${i>=12?'':i?` ${i}″`:''}`;};
@@ -2139,6 +2157,8 @@ function resetDividers(){
  state.dividerSelected=0;setProject(q);toast('Default divider layout restored.');
 }
 function undo(re=false){const i=state.historyAt+(re?1:-1);if(i<0||i>=state.history.length)return;state.historyAt=i;setProject(state.history[i],false);fit2d();toast(re?'Restored':'Undone');}
+function railSummary(q){const keys=Object.keys(q.railOverrides||{}).map(Number).sort((a,b)=>a-b),base=`${q.railStyle} · ${q.railColor}`;
+ return keys.length?`${base} (other edges); `+keys.map(k=>{const f=core.railFinish(q,k);return `Edge ${k+1}: ${f.railStyle} · ${f.railColor}`;}).join('; '):base;}
 function toggleEdge(kind,i){const q=structuredClone(state.intent),set=new Set(kind==='house'?q.houseEdges:q.railEdges);
  if(kind==='house'){
    if(set.has(i)){set.delete(i);q.ledgerEdges=q.ledgerEdges.filter(e=>e!==i);}
@@ -2150,7 +2170,7 @@ function toggleEdge(kind,i){const q=structuredClone(state.intent),set=new Set(ki
 function selectShape(shape){state.shapePicker=false;state.freeDraw=false;state.selectedEdge=null;state.selectedCorner=null;state.previewPoly=null;state.cornerPreview=null;state.cornerKey=null;state.featureSelected=null;if(shape==='free'){state.freeDraw=true;state.freePts=[];state.step=0;state.view='2d';state.plan.panX=state.plan.panY=0;state.plan.scale=clamp(Math.min((planCanvas.clientWidth-90)/24,(planCanvas.clientHeight-90)/18),7,23);state.plan.targetZ=6;showOverlay();renderPanel();planDraw();state.drawMode='orthogonal';toast('90° LOCKED: tap corners, then the green starting point or Finish Shape.');return;}
  const q=state.intent?structuredClone(state.intent):core.baseIntent();q.shape=shape;q.startShape=shape;q.points=null;q.flipL=false;q.features=[];q.bevels=[];q.originX=0;q.originZ=0;if(shape==='square'){q.width=12;q.depth=12;}else if(!state.intent){q.width=16;q.depth=12;}
  // Edge identities change when the footprint changes. Do not keep old attachments in invalid positions.
- q.houseEdges=[0];q.ledgerEdges=[0];q.railEdges=Array.from({length:core.polygon(q).length},(_,i)=>i).filter(i=>i!==0);q.staircases=[];q.stairs.enabled=false;q.stairs.edge=Math.min(2,q.railEdges.length-1);
+ q.railOverrides={};state.railTarget='all';q.houseEdges=[0];q.ledgerEdges=[0];q.railEdges=Array.from({length:core.polygon(q).length},(_,i)=>i).filter(i=>i!==0);q.staircases=[];q.stairs.enabled=false;q.stairs.edge=Math.min(2,q.railEdges.length-1);
  state.view='2d';setProject(q);fit2d();toast(`${shape==='L'||shape==='T'||shape==='U'?shape+'-shape':shape} footprint ready`);
 }
 function finishFreeDraw(){if(state.freePts.length<3){toast('Tap at least three corners.');return;}
@@ -2183,7 +2203,7 @@ function updateHeader(){
  }
  $('planCanvas').classList.toggle('visible',state.view==='2d');$('glCanvas').classList.toggle('visible',state.view==='3d');
  const tips=['Tap a measurement to edit exact length · drag edges or corners','Tap deck edges to add or remove house walls','Add & select multiple stairs · drag to reposition','Choose layout; drag dividers to position','Select decking and accent finishes','Tap deck edges or stair sides for railings','Tap house edges to add/remove ledgers · L means ledger','Orbit to inspect; frame stays under the decking'];
- $('viewTip').textContent=state.freeDraw?'90° Locked by default · Finish Shape or green dot':state.view==='3d'?(renderer3d.panMode?'MOVE selected · drag to shift view · pinch to zoom':'ROTATE selected · drag to orbit · two fingers to move/zoom'):state.intent?tips[state.step]:'Select a shape to begin';
+ $('viewTip').textContent=state.freeDraw?'90° Locked by default · Finish Shape or green dot':state.view==='3d'?(renderer3d.panMode?'MOVE selected · drag to shift view · pinch to zoom':'ROTATE selected · drag to orbit · two fingers to move/zoom'):state.intent?(state.step===5&&state.railTab==='finish'?'Tap a railed edge to give it its own finish':tips[state.step]):'Select a shape to begin';
  if(state.view==='3d')renderer3d.draw();else planDraw();
 }
 const seg=(path,opts,cur)=>`<div class="seg">${opts.map(([v,t])=>`<button type="button" data-path="${path}" data-value="${v}" class="${String(v)===String(cur)?'selected':''}">${t}</button>`).join('')}</div>`;
@@ -2449,7 +2469,16 @@ function renderPanel(){const s=state.step,q=state.intent;const inspector=documen
  }
  if(s===5&&q){html=`${seg('railTab',[['locations','Railing locations'],['finish','Railing finish']],state.railTab)}`;
    if(state.railTab==='locations')html+=`<div class="compact-intro">Tap deck edges to add or remove railings. Tap either stair side to toggle its railing.</div><div class="rail-summary">${q.railEdges.length} deck edges selected</div><div class="action-row"><button data-action="rails-all">Rail exposed edges</button><button data-action="rails-none">Remove deck rails</button></div>${q.staircases.length?`<div class="stair-picker"><button data-action="stair-prev" ${state.stairSelected<1?'disabled':''}>‹</button><strong>Stair ${state.stairSelected+1} of ${q.staircases.length}</strong><button data-action="stair-next" ${state.stairSelected>=q.staircases.length-1?'disabled':''}>›</button></div><div class="stair-rails"><button data-action="stair-rail" data-side="left" class="${currentStair()?.rails.left?'selected':''}">Left stair rail ${currentStair()?.rails.left?'✓':'+'}</button><button data-action="stair-rail" data-side="right" class="${currentStair()?.rails.right?'selected':''}">Right stair rail ${currentStair()?.rails.right?'✓':'+'}</button></div>`:''}`;
-   else html+=`<p class="group-title">Railing product</p>${seg('railStyle',[['Westbury Tuscany','Westbury Tuscany'],['No rail product selected','Unspecified']],q.railStyle)}<p class="group-title">Railing color</p>${swatches('railColor',core.RAILS,q.railColor,true)}`;
+   else{
+     // V5.1 per-edge finish: choose "All railed edges" or one edge, then a product/color.
+     const es=core.edges(core.polygon(q)),railed=es.filter(e=>q.railEdges.includes(e.i)),ro=q.railOverrides||{};
+     if(state.railTarget!=='all'&&!q.railEdges.includes(state.railTarget))state.railTarget='all';
+     const t=state.railTarget,f=t==='all'?{railStyle:q.railStyle,railColor:q.railColor}:core.railFinish(q,t),nCustom=Object.keys(ro).length;
+     const chip=(val,label,colorName,custom)=>`<button type="button" data-action="rail-target" data-edge="${val}" class="${String(val)===String(t)?'selected':''}" aria-pressed="${String(val)===String(t)}"><span class="rail-dot" style="background-color:${core.RAILS[colorName]}"></span>${label}${custom?'<span class="rail-custom">Custom</span>':''}</button>`;
+     html+=railed.length?`<p class="group-title">Apply to</p><div class="rail-targets" role="group" aria-label="Railing edges">${chip('all','All railed edges',q.railColor,false)}${railed.map(e=>chip(e.i,`Edge ${e.i+1} · ${fmt(e.len)}`,core.railFinish(q,e.i).railColor,Boolean(ro[e.i]))).join('')}</div><div class="compact-status">${t==='all'?(nCustom?`Your choice applies to every railed edge, including ${nCustom===1?'1 edge':nCustom+' edges'} with a custom finish.`:'Tap an edge here or on the plan to give it its own finish.'):`Only Edge ${t+1} changes${q.staircases.some(s=>s.edge===t)?', including stair railings on this edge':''}.`}</div>`:`<div class="compact-intro">No deck edges have railings yet. Add them under Railing locations.</div>`;
+     html+=`<p class="group-title">Railing product</p>${seg('railStyle',[['Westbury Tuscany','Westbury Tuscany'],['No rail product selected','Unspecified']],f.railStyle)}<p class="group-title">Railing color</p>${swatches('railColor',core.RAILS,f.railColor,true)}`;
+     if(t!=='all'&&ro[t])html+=`<div class="action-row"><button type="button" data-action="rail-match">Match other edges</button><button type="button" data-action="rail-everywhere">Use on all edges</button></div>`;
+   }
  }
  if(s===6&&q){const m=state.model,ledgerCount=m.stats.ledgerCount;
    const warning=m.stats.unresolvedJoistRuns?`⚠ ${m.stats.unresolvedJoistRuns} unverified joist bearings`:'Structural loads and connections require production review';
@@ -2470,7 +2499,7 @@ function exportConcept(){if(!state.intent){toast('Choose a shape first.');return
  const wasFrame=renderer3d.showStructure;if(wasFrame)renderer3d.setStructureVisible(false);renderer3d.draw();planDraw();
  const pic3d=renderer3d.gl?renderer3d.screenshot():null,pic2d=planCanvas.toDataURL('image/png'),q=state.intent,ec=state.model.geometry.edges;
  if(wasFrame)renderer3d.setStructureVisible(true);
- const html=`<!doctype html><html><head><meta charset="utf-8"><title>AOS Deck Concept</title><style>body{font:14px Arial,sans-serif;color:#24313b;margin:0;padding:35px;background:#f4f4f4}.wrap{max-width:960px;margin:auto;background:white;padding:30px;border-top:8px solid #c32e3c}h1{margin:0}.sub{color:#728090;margin:7px 0 23px}.images{display:grid;grid-template-columns:1fr 1fr;gap:12px}.images img{width:100%;border:1px solid #ddd;border-radius:8px}table{width:100%;margin:18px 0;border-collapse:collapse}td{padding:9px;border-bottom:1px solid #e7e7e7}.note{font-size:12px;color:#71808d;line-height:1.6;border-top:1px solid #ddd;padding-top:14px}@media(max-width:650px){.images{grid-template-columns:1fr}}@media print{body{padding:0;background:white}.wrap{padding:16px}}</style></head><body><div class="wrap"><h1><span style="color:#c32e3c">AOS</span> HOME SOLUTIONS</h1><div class="sub">Deck concept · ${esc(q.project)} · V5.0</div><div class="images">${pic3d?`<img alt="Finished 3D deck" src="${pic3d}">`:''}<img alt="Dimensioned 2D deck" src="${pic2d}"></div><table><tr><td>Shape / overall dimensions</td><td>${esc(q.shape.toUpperCase())} · ${fmt(q.width)} × ${fmt(q.depth)}</td></tr><tr><td>Deck / stairs / total SQ FT</td><td>${state.model.stats.deckArea.toFixed(1)} / ${state.model.stats.stairArea.toFixed(1)} / ${state.model.stats.totalArea.toFixed(1)}</td></tr><tr><td>Deck / stair / total railing LF</td><td>${state.model.stats.deckRailLF.toFixed(1)} / ${state.model.stats.stairRailLF.toFixed(1)} / ${state.model.stats.totalRailLF.toFixed(1)}</td></tr><tr><td>House connections</td><td>${q.houseEdges.length} wall side(s); ${state.model.stats.ledgerCount} preliminary ledgers (edges ${state.model.stats.ledgerEdges.map(i=>i+1).join(', ')||'none'})</td></tr><tr><td>Decking</td><td>${esc(q.collection)} · ${esc(q.decking)}</td></tr><tr><td>Board direction</td><td>${esc(q.deckLine)}</td></tr><tr><td>Picture frame</td><td>${q.borderCount===2?'Double':q.borderCount===1?'Single':'None'} · ${esc(q.border)}</td></tr><tr><td>Stairs</td><td>${q.staircases.length?q.staircases.length+' independent staircases ('+q.staircases.map(s=>fmt(s.width)).join(', ')+')':'None'}</td></tr><tr><td>Railing</td><td>${esc(q.railStyle)} · ${esc(q.railColor)}</td></tr></table><p class="note">PRELIMINARY SALES CONCEPT. Visual materials are approximate. Framing, footing layouts, span calculations, hardware, railing anchorage, stair requirements, quantities, code compliance and pricing have not been approved for construction. Structural review and site verification required. No customer pricing is included.</p></div></body></html>`;
+ const html=`<!doctype html><html><head><meta charset="utf-8"><title>AOS Deck Concept</title><style>body{font:14px Arial,sans-serif;color:#24313b;margin:0;padding:35px;background:#f4f4f4}.wrap{max-width:960px;margin:auto;background:white;padding:30px;border-top:8px solid #c32e3c}h1{margin:0}.sub{color:#728090;margin:7px 0 23px}.images{display:grid;grid-template-columns:1fr 1fr;gap:12px}.images img{width:100%;border:1px solid #ddd;border-radius:8px}table{width:100%;margin:18px 0;border-collapse:collapse}td{padding:9px;border-bottom:1px solid #e7e7e7}.note{font-size:12px;color:#71808d;line-height:1.6;border-top:1px solid #ddd;padding-top:14px}@media(max-width:650px){.images{grid-template-columns:1fr}}@media print{body{padding:0;background:white}.wrap{padding:16px}}</style></head><body><div class="wrap"><h1><span style="color:#c32e3c">AOS</span> HOME SOLUTIONS</h1><div class="sub">Deck concept · ${esc(q.project)} · V5.0</div><div class="images">${pic3d?`<img alt="Finished 3D deck" src="${pic3d}">`:''}<img alt="Dimensioned 2D deck" src="${pic2d}"></div><table><tr><td>Shape / overall dimensions</td><td>${esc(q.shape.toUpperCase())} · ${fmt(q.width)} × ${fmt(q.depth)}</td></tr><tr><td>Deck / stairs / total SQ FT</td><td>${state.model.stats.deckArea.toFixed(1)} / ${state.model.stats.stairArea.toFixed(1)} / ${state.model.stats.totalArea.toFixed(1)}</td></tr><tr><td>Deck / stair / total railing LF</td><td>${state.model.stats.deckRailLF.toFixed(1)} / ${state.model.stats.stairRailLF.toFixed(1)} / ${state.model.stats.totalRailLF.toFixed(1)}</td></tr><tr><td>House connections</td><td>${q.houseEdges.length} wall side(s); ${state.model.stats.ledgerCount} preliminary ledgers (edges ${state.model.stats.ledgerEdges.map(i=>i+1).join(', ')||'none'})</td></tr><tr><td>Decking</td><td>${esc(q.collection)} · ${esc(q.decking)}</td></tr><tr><td>Board direction</td><td>${esc(q.deckLine)}</td></tr><tr><td>Picture frame</td><td>${q.borderCount===2?'Double':q.borderCount===1?'Single':'None'} · ${esc(q.border)}</td></tr><tr><td>Stairs</td><td>${q.staircases.length?q.staircases.length+' independent staircases ('+q.staircases.map(s=>fmt(s.width)).join(', ')+')':'None'}</td></tr><tr><td>Railing</td><td>${esc(railSummary(q))}</td></tr></table><p class="note">PRELIMINARY SALES CONCEPT. Visual materials are approximate. Framing, footing layouts, span calculations, hardware, railing anchorage, stair requirements, quantities, code compliance and pricing have not been approved for construction. Structural review and site verification required. No customer pricing is included.</p></div></body></html>`;
  download(`${filename()}_AOS_V5_0_Concept.html`,html,'text/html');toast('Customer concept saved without pricing.');
 }
 $('fileInput').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let dat=JSON.parse(await f.text()),q=dat.design||dat.intent||dat;if(!Number.isFinite(Number(q.width))||!Number.isFinite(Number(q.depth)))throw Error('Invalid deck file');state.freeDraw=false;state.shapePicker=false;setProject(q);fit2d();stepTo(0);toast('Project loaded.');}catch(err){toast('Unable to open design: '+err.message);}e.target.value='';});
@@ -2573,8 +2602,23 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
  }
  if(act==='rails-all'){const q=structuredClone(state.intent);q.railEdges=core.edges(core.polygon(q)).filter(x=>!q.houseEdges.includes(x.i)).map(x=>x.i);setProject(q);return;}
  if(act==='rails-none'){patch('railEdges',[]);return;}
+ if(act==='rail-target'){const v=b.dataset.edge;state.railTarget=v==='all'?'all':Number(v);renderPanel();planDraw();return;}
+ if(act==='rail-match'){const t=state.railTarget;if(typeof t!=='number')return;const q=structuredClone(state.intent);if(q.railOverrides)delete q.railOverrides[t];setProject(q);toast(`Edge ${t+1} now matches the other edges.`);return;}
+ if(act==='rail-everywhere'){const t=state.railTarget;if(typeof t!=='number')return;const q=structuredClone(state.intent),f=core.railFinish(q,t);q.railStyle=f.railStyle;q.railColor=f.railColor;q.railOverrides={};state.railTarget='all';setProject(q);toast(`${f.railColor} railing applied to all edges.`);return;}
  if(act==='download-json'){saveDesign();return;}if(act==='export-concept'){exportConcept();return;}
  const path=b.dataset.path;if(!path)return;
+ if((path==='railColor'||path==='railStyle')&&state.intent){
+   const q=structuredClone(state.intent),v=b.dataset.value,t=state.railTarget;q.railOverrides=q.railOverrides||{};
+   if(typeof t==='number'&&q.railEdges.includes(t)){
+     q.railOverrides[t]={...(q.railOverrides[t]||{}),[path]:v};setProject(q);
+     toast(`Edge ${t+1}: ${path==='railColor'?v+' railing':v==='No rail product selected'?'product unspecified':v}`);
+   }else{
+     // Whole-deck choice: every edge takes it, so clear that property from per-edge finishes.
+     q[path]=v;for(const k of Object.keys(q.railOverrides)){delete q.railOverrides[k][path];if(!Object.keys(q.railOverrides[k]).length)delete q.railOverrides[k];}
+     setProject(q);
+   }
+   return;
+ }
  if(['layoutTab','finishTab','railTab'].includes(path)){state[path]=b.dataset.value;renderPanel();return;}
  if(path==='supportMode'){
    const q=structuredClone(state.intent);q.supportMode=b.dataset.value;
@@ -2796,6 +2840,12 @@ function planDraw(){const {w,h}=canvasSize(),sc=state.plan.scale;ctx.fillStyle='
     let status=state.step===6?(house?(q.supportMode==='ledger'&&q.ledgerEdges.includes(e.i)?'L':'−'):'×'):state.step===1?(house?'✓':'+'):state.step===2?(stair?'S':house?'×':'+'):(house?'×':rail?'✓':'+');
     ctx.beginPath();ctx.arc(center[0],center[1],11,0,Math.PI*2);ctx.fillStyle=(state.step===6?house&&q.supportMode==='ledger'&&q.ledgerEdges.includes(e.i):state.step===1?house:state.step===2?stair:rail)?'#c32e3c':'#fff';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=house&&state.step!==1?'#b8bec5':'#c32e3c';ctx.stroke();ctx.fillStyle=(state.step===6?house&&q.supportMode==='ledger'&&q.ledgerEdges.includes(e.i):state.step===1?house:state.step===2?stair:rail)?'#fff':'#c32e3c';ctx.font='800 13px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(status,center[0],center[1]+.4);
   }
+  if(state.step===5&&state.railTab==='finish')for(const e of es){if(!q.railEdges.includes(e.i))continue;
+    const c=xy(e.mid[0],e.mid[1]),sel=state.railTarget===e.i,col=core.RAILS[core.railFinish(q,e.i).railColor]||'#20272c';
+    if(sel){ctx.beginPath();ctx.moveTo(...xy(e.a[0],e.a[1]));ctx.lineTo(...xy(e.b[0],e.b[1]));ctx.lineWidth=8;ctx.lineCap='round';ctx.strokeStyle='rgba(195,46,60,.5)';ctx.stroke();ctx.lineCap='butt';}
+    ctx.beginPath();ctx.arc(c[0],c[1],sel?14:12,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();ctx.lineWidth=sel?3.5:2;ctx.strokeStyle=sel?'#c32e3c':'#fff';ctx.stroke();
+    ctx.fillStyle=core.railFinish(q,e.i).railColor==='White'?'#17212d':'#fff';ctx.font='800 12px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(e.i+1),c[0],c[1]+.4);
+  }
  }
  if(state.step===2)for(let k=0;k<(model.geometry.stairs||[]).length;k++){
    const g=model.geometry.stairs[k],b=xy(...g.base),out=xy(g.base[0]+g.nn[0]*Math.min(2,g.run),g.base[1]+g.nn[1]*Math.min(2,g.run)),selected=k===state.stairSelected;
@@ -2906,7 +2956,10 @@ function tapPlan(pt){if(state.freeDraw){if(state.freePts.length>=3&&Math.hypot(p
    if(!validStairPlacement(q,state.stairSelected,edge.i,offset,width)){toast('Not enough room here, or another staircase overlaps.');return;}
    setProject(q);fit2d();toast('Staircase positioned.');return;
  }
- if(state.step===5){if(state.railTab!=='locations'){toast('Choose Railing locations first.');return;}
+ if(state.step===5){if(state.railTab!=='locations'){
+     if(edge){if(state.intent.railEdges.includes(edge.i)){state.railTarget=state.railTarget===edge.i?'all':edge.i;renderPanel();planDraw();}
+       else toast(`Edge ${edge.i+1} has no railing. Add it under Railing locations.`);}
+     return;}
    for(let k=0;k<(state.model.geometry.stairs||[]).length;k++){
      const g=state.model.geometry.stairs[k];for(const side of [-1,1]){
        const p=[g.base[0]+g.tt[0]*side*g.width/2+g.nn[0]*g.run/2,g.base[1]+g.tt[1]*side*g.width/2+g.nn[1]*g.run/2];

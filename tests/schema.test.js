@@ -26,8 +26,9 @@ for (const [name, raw] of Object.entries(FIX)) {
     for (const s of segs) {
       const expected = q.houseEdges.includes(s.edge) ? 'house' : q.railEdges.includes(s.edge) ? 'rail' : 'open';
       assert.equal(s.kind, expected, `edge ${s.edge}`);
-      assert.equal(s.product, s.kind === 'rail' ? q.railStyle : null);
-      assert.equal(s.color, s.kind === 'rail' ? q.railColor : null);
+      const fin = plain(core.railFinish(q, s.edge));
+      assert.equal(s.product, s.kind === 'rail' ? fin.railStyle : null);
+      assert.equal(s.color, s.kind === 'rail' ? fin.railColor : null);
       assert.ok(Math.abs(s.lengthFt - es[s.edge].len) < 0.001);
       assert.deepEqual(s.openings.map(o => o.id), q.staircases.filter(st => st.edge === s.edge).map(st => st.id));
     }

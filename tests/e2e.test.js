@@ -153,3 +153,163 @@ test('phone viewport: app loads and every step renders', async () => {
   assert.deepEqual(errors, []);
   await ctx.close();
 });
+
+// ---- V5.1 per-edge railing finish ----
+async function toRailingFinish(page) {
+  await chooseShape(page, 'rectangle'); // edge 1 = house; edges 2, 3, 4 railed
+  for (let i = 0; i < 5; i++) await page.locator('#nextBtn').click();
+  await page.locator('[data-path="railTab"][data-value="finish"]').click();
+}
+const customCount = (page) => page.locator('#stepContent .rail-custom').count();
+async function saveFile(page) {
+  const [d] = await Promise.all([page.waitForEvent('download'), page.locator('#saveBtn').click()]);
+  const f = path.join(os.tmpdir(), `aos-rail-${Date.now()}-${Math.random().toString(36).slice(2)}.json`);
+  await d.saveAs(f);
+  return { file: f, data: JSON.parse(fs.readFileSync(f, 'utf8')) };
+}
+
+test('railing finish: one edge gets its own color, others keep theirs', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toRailingFinish(page);
+  const chips = page.locator('#stepContent [data-action="rail-target"]');
+  assert.equal(await chips.count(), 4, 'All + 3 railed edges');
+  assert.match(await chips.first().innerText(), /All railed edges/);
+
+  await page.locator('[data-action="rail-target"][data-edge="2"]').click();
+  assert.match(await page.locator('#stepContent .compact-status').innerText(), /Only Edge 3 changes/);
+  await page.locator('[data-path="railColor"][data-value="Bronze"]').click();
+  assert.equal(await customCount(page), 1);
+  assert.match(await page.locator('[data-path="railColor"][data-value="Bronze"]').getAttribute('class'), /\bselected\b/);
+
+  const { data } = await saveFile(page);
+  assert.deepEqual(data.design.railOverrides, { 2: { railColor: 'Bronze' } });
+  assert.equal(data.design.railColor, 'Textured Black');
+  const segs = Object.fromEntries(data.design.perimeter.segments.map(s => [s.edge, s]));
+  assert.equal(segs[2].color, 'Bronze');
+  assert.equal(segs[1].color, 'Textured Black');
+
+  await page.locator('#mode3d').click();
+  await page.waitForTimeout(800);
+  await page.screenshot({ path: path.join(SHOTS, 'railing-edge3-bronze-3d.png') });
+  await page.locator('#mode2d').click();
+  await page.waitForTimeout(800);
+  await page.screenshot({ path: path.join(SHOTS, 'railing-edge3-bronze-2d.png') });
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('railing finish: undo and redo cover per-edge changes', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toRailingFinish(page);
+  await page.locator('[data-action="rail-target"][data-edge="1"]').click();
+  await page.locator('[data-path="railColor"][data-value="White"]').click();
+  assert.equal(await customCount(page), 1);
+  await page.locator('#undoBtn').click();
+  assert.equal(await customCount(page), 0);
+  await page.locator('#redoBtn').click();
+  assert.equal(await customCount(page), 1);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('railing finish: whole-deck color clears color overrides but keeps product overrides', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toRailingFinish(page);
+  await page.locator('[data-action="rail-target"][data-edge="2"]').click();
+  await page.locator('[data-path="railColor"][data-value="Bronze"]').click();
+  await page.locator('[data-action="rail-target"][data-edge="3"]').click();
+  await page.locator('[data-path="railStyle"][data-value="No rail product selected"]').click();
+  assert.equal(await customCount(page), 2);
+  assert.match(await page.locator('#stepContent .compact-status').innerText(), /Only Edge 4 changes/);
+
+  await page.locator('[data-action="rail-target"][data-edge="all"]').click();
+  assert.match(await page.locator('#stepContent .compact-status').innerText(), /including 2 edges with a custom finish/);
+  await page.locator('[data-path="railColor"][data-value="White"]').click();
+  const { data } = await saveFile(page);
+  assert.equal(data.design.railColor, 'White');
+  assert.deepEqual(data.design.railOverrides, { 3: { railStyle: 'No rail product selected' } });
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('railing finish: "Use on all edges" and "Match other edges"', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toRailingFinish(page);
+  await page.locator('[data-action="rail-target"][data-edge="2"]').click();
+  await page.locator('[data-path="railColor"][data-value="Bronze"]').click();
+  await page.locator('[data-action="rail-match"]').click();
+  assert.equal(await customCount(page), 0);
+
+  await page.locator('[data-path="railColor"][data-value="Bronze"]').click(); // still Edge 3
+  await page.locator('[data-action="rail-everywhere"]').click();
+  assert.equal(await customCount(page), 0);
+  const { data } = await saveFile(page);
+  assert.equal(data.design.railColor, 'Bronze');
+  assert.deepEqual(data.design.railOverrides, {});
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('railing finish: removing an edge railing drops its finish; save -> open restores the rest', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toRailingFinish(page);
+  await page.locator('[data-action="rail-target"][data-edge="1"]').click();
+  await page.locator('[data-path="railColor"][data-value="White"]').click();
+  await page.locator('[data-action="rail-target"][data-edge="3"]').click();
+  await page.locator('[data-path="railColor"][data-value="Bronze"]').click();
+  const { file } = await saveFile(page);
+
+  const fresh = await openApp();
+  await fresh.page.locator('#fileInput').setInputFiles(file);
+  await fresh.page.waitForFunction(hasArea);
+  for (let i = 0; i < 5; i++) await fresh.page.locator('#nextBtn').click();
+  await fresh.page.locator('[data-path="railTab"][data-value="finish"]').click();
+  assert.equal(await customCount(fresh.page), 2);
+
+  // Turn off the Edge 4 railing via the existing locations controls' data path.
+  await fresh.page.locator('[data-path="railTab"][data-value="locations"]').click();
+  await fresh.page.locator('[data-action="rails-none"]').click();
+  await fresh.page.locator('[data-path="railTab"][data-value="finish"]').click();
+  assert.equal(await fresh.page.locator('#stepContent [data-action="rail-target"]').count(), 0);
+  assert.match(await fresh.page.locator('#stepContent').innerText(), /No deck edges have railings yet/);
+  const { data } = await saveFile(fresh.page);
+  assert.deepEqual(data.design.railOverrides, {});
+  assert.deepEqual([...errors, ...fresh.errors], []);
+  await ctx.close(); await fresh.ctx.close();
+});
+
+test('railing finish: phone width keeps chips tappable and the page unscrolled sideways', async () => {
+  const { ctx, page, errors } = await openApp({ width: 390, height: 844 });
+  await toRailingFinish(page);
+  const sizes = await page.locator('#stepContent [data-action="rail-target"]').evaluateAll(els => els.map(e => { const r = e.getBoundingClientRect(); return [r.width, r.height]; }));
+  for (const [w, h] of sizes) assert.ok(h >= 44 && w >= 44, `chip ${w}x${h}`);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  assert.ok(overflow <= 1, `horizontal overflow ${overflow}px`);
+  await page.screenshot({ path: path.join(SHOTS, 'phone-railing-finish.png') });
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('railing finish: tapping an edge on the 2D plan selects it; tapping again returns to all', async () => {
+  const { ctx, page, errors } = await openApp(); // 1280x900, default 16x12 fitted to the canvas
+  await toRailingFinish(page);
+  assert.equal(await page.locator('#viewTip').innerText(), 'Tap a railed edge to give it its own finish');
+  // Edge 3 is the 16 ft front edge: the bottom of the fitted plan, centered horizontally.
+  const box = await page.locator('#planCanvas').boundingBox();
+  const hit = await page.evaluate(() => {
+    // Find the front edge's on-screen position from the drawn marker: scan the canvas
+    // column through its center for the lowest dark-filled marker pixel.
+    const c = document.getElementById('planCanvas'), g = c.getContext('2d'), x = Math.round(c.width / 2);
+    const d = g.getImageData(x, 0, 1, c.height).data;
+    for (let y = c.height - 1; y >= 0; y--) { const i = y * 4; if (d[i] < 60 && d[i + 1] < 60 && d[i + 2] < 70 && d[i + 3] > 200) return { x, y: y - 6, w: c.width, h: c.height }; }
+    return null;
+  });
+  assert.ok(hit, 'found the front edge marker');
+  const px = box.x + hit.x * box.width / hit.w, py = box.y + hit.y * box.height / hit.h;
+  await page.mouse.click(px, py);
+  assert.match(await page.locator('[data-action="rail-target"][data-edge="2"]').getAttribute('class'), /\bselected\b/);
+  await page.mouse.click(px, py);
+  assert.match(await page.locator('[data-action="rail-target"][data-edge="all"]').getAttribute('class'), /\bselected\b/);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
