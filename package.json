@@ -5,7 +5,7 @@
   "description": "AOS Deck Studio regression harness. The app itself is index.html and has no build step.",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "test:engine": "node --test tests/engine.test.js tests/schema.test.js",
+    "test:engine": "node --test tests/engine.test.js tests/schema.test.js tests/railing.test.js",
     "test:e2e": "node --test tests/e2e.test.js",
     "golden": "node scripts/update-golden.js"
   },

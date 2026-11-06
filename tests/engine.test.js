@@ -15,7 +15,7 @@ const GOLDEN = path.join(__dirname, 'golden');
 
 // Intent keys added after the V5.0 baseline. They are allowed in sanitized output
 // and are checked by schema.test.js instead of the baseline goldens.
-const ADDED_INTENT_KEYS = ['schemaVersion', 'perimeter'];
+const ADDED_INTENT_KEYS = ['schemaVersion', 'perimeter', 'railOverrides'];
 const withoutAdded = (q) => Object.fromEntries(Object.entries(q).filter(([k]) => !ADDED_INTENT_KEYS.includes(k)));
 const plain = (v) => JSON.parse(JSON.stringify(v));
 
