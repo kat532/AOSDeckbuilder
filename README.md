@@ -23,3 +23,18 @@ Design preview only. Framing output is a preliminary concept, not engineered pla
 ## Deployment
 
 No deployment from this repository without explicit owner approval.
+
+## Tests
+
+Requires Node 18+ and Chrome or Chromium (set `CHROME_PATH` if it is not in a standard location).
+
+```
+npm install
+npm test            # engine regression + browser journeys
+npm run test:engine # engine only, no browser
+npm run test:e2e    # browser journeys only
+```
+
+- `tests/golden/` holds snapshots of the physical model (part counts, quantities, framing stats, alerts) for 24 representative designs, taken from the V5.0 baseline. Any change to geometry, framing or quantities fails the engine tests.
+- Run `npm run golden` only when a model change is intended, then review the golden-file diff before committing.
+- Browser screenshots from each run are written to `test-results/screenshots/` (not committed).

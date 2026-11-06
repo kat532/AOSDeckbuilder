@@ -1,0 +1,225 @@
+{
+  "input": {
+    "shape": "rectangle",
+    "width": 36,
+    "depth": 16,
+    "height": 4,
+    "points": null,
+    "houseEdges": [
+      0
+    ],
+    "stairs": {
+      "enabled": false,
+      "edge": 2,
+      "width": 4,
+      "offset": 0,
+      "rails": {
+        "left": true,
+        "right": true
+      }
+    },
+    "staircases": [],
+    "railStyle": "Westbury Tuscany",
+    "decking": "Brown Oak",
+    "border": "Stone Ash",
+    "borderCount": 2,
+    "railColor": "Textured Black",
+    "deckLine": "horizontal",
+    "dividerMode": "double",
+    "dividerOffset": 0.5,
+    "dividerPositions": [
+      0.33,
+      0.66
+    ],
+    "collection": "TimberTech Terrain",
+    "supportMode": "ledger",
+    "primaryLedgerEdge": 0,
+    "beamStyle": "dropped",
+    "project": "New deck design"
+  },
+  "intent": {
+    "shape": "rectangle",
+    "width": 36,
+    "depth": 16,
+    "height": 4,
+    "points": null,
+    "houseEdges": [
+      0
+    ],
+    "ledgerEdges": [
+      0
+    ],
+    "stairs": {
+      "enabled": false,
+      "edge": 2,
+      "width": 4,
+      "offset": 0,
+      "rails": {
+        "left": true,
+        "right": true
+      }
+    },
+    "staircases": [],
+    "railEdges": [
+      1,
+      2,
+      3
+    ],
+    "railStyle": "Westbury Tuscany",
+    "decking": "Brown Oak",
+    "border": "Stone Ash",
+    "borderCount": 2,
+    "railColor": "Textured Black",
+    "deckLine": "horizontal",
+    "dividerMode": "double",
+    "dividerOffset": 0.5,
+    "dividerPositions": [
+      0.33,
+      0.66
+    ],
+    "collection": "TimberTech Terrain",
+    "supportMode": "ledger",
+    "primaryLedgerEdge": 0,
+    "beamStyle": "dropped",
+    "project": "New deck design",
+    "originX": 0,
+    "originZ": 0,
+    "flipL": false,
+    "features": [],
+    "bevels": [],
+    "attached": true
+  },
+  "model": {
+    "partCount": 1459,
+    "partsByKind": {
+      "baluster": 175,
+      "bottom-rail": 13,
+      "corner-trimmer": 1,
+      "divider-blocking-2x6-flat": 4,
+      "divider-board": 20,
+      "divider-support-joist": 6,
+      "dropped-beam": 1,
+      "earth": 1,
+      "fascia": 3,
+      "field-board": 1114,
+      "footing-concept": 7,
+      "house-wall": 1,
+      "joist": 22,
+      "ledger": 1,
+      "picture-blocking-2x6-flat": 4,
+      "picture-frame": 10,
+      "picture-support-joist": 4,
+      "post-6x6": 7,
+      "post-cap": 16,
+      "railing-post": 16,
+      "rim-joist": 3,
+      "siding-course": 17,
+      "top-rail": 13
+    },
+    "counts": {
+      "joistNominal": "2x10",
+      "joistSpacingIn": 16,
+      "pictureFlatBlocks": 4,
+      "dividerFlatBlocks": 4,
+      "fieldBoards": 175,
+      "borderBoards": 10,
+      "dividers": 20,
+      "joists": 32,
+      "pictureSupportJoists": 4,
+      "dividerSupportJoists": 6,
+      "beams": 1,
+      "ledger": 1,
+      "posts": 7,
+      "footings": 7,
+      "stringers": 0,
+      "treads": 0,
+      "risers": 0,
+      "railPosts": 16,
+      "balusters": 175
+    },
+    "stats": {
+      "deckArea": 576,
+      "stairArea": 0,
+      "totalArea": 576,
+      "deckRailLF": 68,
+      "stairRailLF": 0,
+      "totalRailLF": 68,
+      "stairRun": 0,
+      "stairRise": 0,
+      "riserCount": 0,
+      "staircaseCount": 0,
+      "boardWidth": 0.4467,
+      "boardGap": 0.0156,
+      "partCount": 1459,
+      "maxBoardRun": 34.1508,
+      "requiredDividers": 1,
+      "dividerRowCount": 2,
+      "dividerSectionLengthsFt": [
+        11.27,
+        11.27,
+        11.61
+      ],
+      "boardCourses": 35,
+      "estimatedPhysicalFieldBoards": 175,
+      "fieldBoardFragments": 1114,
+      "boardCoverageFt": 16,
+      "maxFrontCantFt": 2,
+      "maxRearCantFt": 0,
+      "maxBeamCantFt": 1,
+      "beamLengthsFt": [
+        36
+      ],
+      "postSpacingFt": [
+        5.667
+      ],
+      "primaryLedgerEdge": 0,
+      "ledgerEdges": [
+        0
+      ],
+      "ledgerCount": 1,
+      "beamRows": 1,
+      "joistNominal": "2x10",
+      "beamProfile": "3-2x12",
+      "joistSpacingIn": 16,
+      "joistMaxSpanFt": 14,
+      "unresolvedJoistRuns": 0,
+      "sharedSupportZones": 1,
+      "unverifiedBeamLoadCount": 1,
+      "pictureFrameFlatBlocks": 4,
+      "dividerFlatBlocks": 4,
+      "pictureFrameFlatLF": 62.8,
+      "dividerFlatLF": 59.1017,
+      "pictureFrameSupportJoists": 4,
+      "dividerSupportJoists": 6,
+      "boardCourseCount": 35,
+      "optimizerCandidates": [
+        {
+          "size": 10,
+          "beams": 1,
+          "unresolved": 0,
+          "groups": 1
+        },
+        {
+          "size": 12,
+          "beams": 1,
+          "unresolved": 0,
+          "groups": 1
+        },
+        {
+          "size": 8,
+          "beams": 2,
+          "unresolved": 0,
+          "groups": 1
+        }
+      ]
+    },
+    "alerts": [
+      "warning: One or more shared beams exceed the one-sided prescriptive beam load range; engineered design or added support required.",
+      "warning: 1 beams have tributary load estimates outside the prescriptive one-sided reference range; engineered beam/extra bearing required.",
+      "review: Double picture-frame corners and doubled support joists require manufacturer-specific blocking/fastener review.",
+      "review: Preliminary ledgers on house edges 1. Verify attachment viability, existing band joists, flashing, hardware, lateral connections and load path for EACH wall.",
+      "info: Breaker boards required: 1 minimum at 34.2 ft longest continuous board run.",
+      "review: Framing layout is an explicit bearing concept, NOT a code-verified design. Joist/beam species, grade, spans, connections, ledger, post heights and footing loads require production review."
+    ]
+  }
+}
