@@ -49,7 +49,7 @@ for (const shape of ['rectangle', 'square', 'L', 'T', 'U']) {
     await chooseShape(page, shape);
     assert.ok((await area(page)) > 0);
     await page.locator('#mode3d').click();
-    await page.waitForTimeout(200);
+    await page.waitForTimeout(800); // let the 2D->3D fade finish before the screenshot
     await page.screenshot({ path: path.join(SHOTS, `shape-${shape}-3d.png`) });
     assert.deepEqual(errors, []);
     await ctx.close();
@@ -110,6 +110,10 @@ test('save -> open round trip restores the same design', async () => {
   await download.saveAs(file);
   const saved = JSON.parse(fs.readFileSync(file, 'utf8'));
   assert.ok(saved.design, 'saved file has a design');
+  assert.equal(saved.schemaVersion, 6);
+  assert.equal(saved.design.schemaVersion, 6);
+  assert.equal(saved.design.perimeter.segments.length, 6, 'L-shape has 6 perimeter segments');
+  assert.deepEqual(saved.design.perimeter.segments.filter(s => s.kind === 'house').map(s => s.edge), saved.design.houseEdges);
   const before = await area(page);
 
   // Load it into a fresh page.

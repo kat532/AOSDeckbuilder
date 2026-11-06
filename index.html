@@ -651,7 +651,7 @@ root.AOSGeometry={area,triangulate,halfplane,strip,subtractConvex,subtractMany,s
    Geometric sales concepts only. Never engineering, code approval or supplier cut sheet. */
 (function(global){
 'use strict';
-const BW=5.36/12,GAP=3/16/12,PITCH=BW+GAP,FT=1/12;
+const SCHEMA_VERSION=6;const BW=5.36/12,GAP=3/16/12,PITCH=BW+GAP,FT=1/12;
 const PALETTES={'Brown Oak':'#86674c','Rustic Elm':'#73533f','Sandy Birch':'#bfab8a','Silver Maple':'#aaa9a0','Stone Ash':'#777977'};
 const RAILS={'Textured Black':'#20272c','Bronze':'#635849','White':'#e6e9e8'};
 const SHAPES=['rectangle','square','L','T','U','free'];
@@ -762,7 +762,31 @@ function sanitize(s){const b=baseIntent(),x=s||{};const q={...b,...x,stairs:{...
  // when the user disables that wall's ledger. It is a REFERENCE, not the only bearing.
  const candidate=q.houseEdges.includes(Number(q.primaryLedgerEdge))?Number(q.primaryLedgerEdge):q.houseEdges.slice().sort((a,b)=>es[b].len-es[a].len)[0];
  q.primaryLedgerEdge=q.houseEdges.length?(candidate??null):null;
- q.project=String(q.project||b.project).slice(0,90);q.attached=q.houseEdges.length>0;return q;
+ q.project=String(q.project||b.project).slice(0,90);q.attached=q.houseEdges.length>0;
+ // Schema v6 (additive): stamp the version and publish a per-edge perimeter view.
+ // railEdges/railStyle/railColor remain the source of truth in this release.
+ q.schemaVersion=SCHEMA_VERSION;q.perimeter=derivePerimeter(q,es);return q;
+}
+// One segment per deck edge, derived from houseEdges, railEdges, the global railing
+// product/color and staircases. Stable ids (edge-N) let a later release make segments
+// the editable source of truth (per-edge styles, splits, gates, privacy walls)
+// without changing what existing projects look like.
+function derivePerimeter(q,es){
+ const r3=v=>Math.round(v*1000)/1000;
+ return {source:'derived',segments:es.map(e=>{
+   const house=q.houseEdges.includes(e.i),rail=!house&&q.railEdges.includes(e.i);
+   return {id:'edge-'+e.i,edge:e.i,start:0,end:1,lengthFt:r3(e.len),
+     kind:house?'house':rail?'rail':'open',
+     product:rail?q.railStyle:null,color:rail?q.railColor:null,
+     openings:(q.staircases||[]).filter(s=>s.edge===e.i).map(s=>({type:'stair',id:s.id,offsetFt:r3(s.offset),widthFt:r3(s.width)}))};
+ })};
+}
+// Accepts a saved file (any version) or a bare intent and returns a current intent.
+// Version history: none/4.x = single 'stairs' object; 5.0 = staircases[]; 6 = schemaVersion + perimeter.
+function migrate(file){
+ const raw=file&&typeof file==='object'?(file.design||file.intent||file):null;
+ const from=Number(raw?.schemaVersion)||(Array.isArray(raw?.staircases)?5:4);
+ return {intent:sanitize(raw||{}),fromVersion:from,toVersion:SCHEMA_VERSION};
 }
 function dot(a,b){return a[0]*b[0]+a[1]*b[1];}
 function lineIntervals(poly,d,v){const n=[-d[1],d[0]],xs=[];for(const e of edges(poly)){
@@ -1346,7 +1370,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    primaryLedgerEdge:q.primaryLedgerEdge,ledgerEdges:ledgerEdges.map(e=>e.i),ledgerCount:ledgerEdges.length,beamRows:beams.length,joistNominal:`2x${joistNominal}`,beamProfile,joistSpacingIn:joistSpacing,joistMaxSpanFt:FS.JOISTS[joistSpacing][joistNominal].span,unresolvedJoistRuns:beamSupportDiagnostics.length,sharedSupportZones:chosen.groups.length,optimizerCandidates:chosen.candidates,unverifiedBeamLoadCount:unsupportedBeamLoads,pictureFrameFlatBlocks:flatBorderBlocks,dividerFlatBlocks:flatDividerBlocks,pictureFrameFlatLF:borderFlatLF,dividerFlatLF:dividerFlatLF,pictureFrameSupportJoists:qty('picture-support-joist'),dividerSupportJoists:qty('divider-support-joist')};
  return {intent:q,parts,counts,alerts,stats,geometry:{poly,edges:es,inside,beams,joists:joistSegs,boardAxis:d,dividerRows,dividerFractions,dividerSpanFt:umax-umin,dividerStart:umin,joistAxis:joistD,stair:firstStair,stairs:stairModels}};
 }
-global.DeckCore={baseIntent,sanitize,make,stairOverlap,resolveDividerFractions,MAX_DIVIDER_ROWS,MAX_FIELD_SECTION_FT,MIN_DIVIDER_SPACING_FT,PALETTES,RAILS,SHAPES,BW,GAP,PITCH,polygon,edges,validPolygon,lineIntervals,offsetPolygon};
+global.DeckCore={SCHEMA_VERSION,derivePerimeter,migrate,baseIntent,sanitize,make,stairOverlap,resolveDividerFractions,MAX_DIVIDER_ROWS,MAX_FIELD_SECTION_FT,MIN_DIVIDER_SPACING_FT,PALETTES,RAILS,SHAPES,BW,GAP,PITCH,polygon,edges,validPolygon,lineIntervals,offsetPolygon};
 })(window);
 
 </script><script>
@@ -2441,7 +2465,7 @@ function renderPanel(){const s=state.step,q=state.intent;const inspector=documen
 }
 function download(name,content,mime){const blob=new Blob([content],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);}
 const filename=()=>String(state.intent?.project||'AOS_Deck_Studio').replace(/[^a-z0-9_-]+/gi,'_').slice(0,55);
-function saveDesign(){if(!state.intent){toast('Choose a shape first.');return;}download(`${filename()}_AOS_V5_0.json`,JSON.stringify({application:'AOS Deck Studio V5.0',version:'5.0',date:new Date().toISOString(),design:state.intent,componentModel:state.model.parts,counts:state.model.counts,alerts:state.model.alerts,structuralStatus:'PRELIMINARY CONCEPT – AOS production review required'},null,2),'application/json');toast('Saved full component design.');}
+function saveDesign(){if(!state.intent){toast('Choose a shape first.');return;}download(`${filename()}_AOS_V5_0.json`,JSON.stringify({application:'AOS Deck Studio V5.0',version:'5.0',schemaVersion:core.SCHEMA_VERSION,date:new Date().toISOString(),design:state.intent,componentModel:state.model.parts,counts:state.model.counts,alerts:state.model.alerts,structuralStatus:'PRELIMINARY CONCEPT – AOS production review required'},null,2),'application/json');toast('Saved full component design.');}
 function exportConcept(){if(!state.intent){toast('Choose a shape first.');return;}
  const wasFrame=renderer3d.showStructure;if(wasFrame)renderer3d.setStructureVisible(false);renderer3d.draw();planDraw();
  const pic3d=renderer3d.gl?renderer3d.screenshot():null,pic2d=planCanvas.toDataURL('image/png'),q=state.intent,ec=state.model.geometry.edges;
