@@ -1,0 +1,263 @@
+{
+  "input": {
+    "shape": "free",
+    "width": 20,
+    "depth": 14,
+    "height": 4,
+    "points": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        0.7142857142857143
+      ],
+      [
+        0.8,
+        1
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    "houseEdges": [
+      0
+    ],
+    "stairs": {
+      "enabled": false,
+      "edge": 2,
+      "width": 4,
+      "offset": 0,
+      "rails": {
+        "left": true,
+        "right": true
+      }
+    },
+    "staircases": [],
+    "railStyle": "Westbury Tuscany",
+    "decking": "Brown Oak",
+    "border": "Stone Ash",
+    "borderCount": 1,
+    "railColor": "Textured Black",
+    "deckLine": "horizontal",
+    "dividerMode": "auto",
+    "dividerOffset": 0.5,
+    "dividerPositions": null,
+    "collection": "TimberTech Terrain",
+    "supportMode": "ledger",
+    "primaryLedgerEdge": 0,
+    "beamStyle": "dropped",
+    "project": "New deck design"
+  },
+  "intent": {
+    "shape": "free",
+    "width": 20,
+    "depth": 14,
+    "height": 4,
+    "points": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        0.7142857142857143
+      ],
+      [
+        0.8,
+        1
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    "houseEdges": [
+      0
+    ],
+    "ledgerEdges": [
+      0
+    ],
+    "stairs": {
+      "enabled": false,
+      "edge": 2,
+      "width": 4,
+      "offset": 0,
+      "rails": {
+        "left": true,
+        "right": true
+      }
+    },
+    "staircases": [],
+    "railEdges": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "railStyle": "Westbury Tuscany",
+    "decking": "Brown Oak",
+    "border": "Stone Ash",
+    "borderCount": 1,
+    "railColor": "Textured Black",
+    "deckLine": "horizontal",
+    "dividerMode": "auto",
+    "dividerOffset": 0.5,
+    "dividerPositions": null,
+    "collection": "TimberTech Terrain",
+    "supportMode": "ledger",
+    "primaryLedgerEdge": 0,
+    "beamStyle": "dropped",
+    "project": "New deck design",
+    "originX": 0,
+    "originZ": 0,
+    "flipL": false,
+    "features": [],
+    "bevels": [],
+    "attached": true
+  },
+  "model": {
+    "partCount": 590,
+    "partsByKind": {
+      "baluster": 116,
+      "bottom-rail": 10,
+      "corner-trimmer": 1,
+      "dropped-beam": 4,
+      "earth": 1,
+      "fascia": 4,
+      "field-board": 349,
+      "footing-concept": 9,
+      "house-wall": 1,
+      "joist": 14,
+      "ledger": 1,
+      "picture-blocking-2x6-flat": 2,
+      "picture-frame": 8,
+      "picture-support-joist": 2,
+      "post-6x6": 9,
+      "post-cap": 14,
+      "railing-post": 14,
+      "rim-joist": 4,
+      "siding-course": 17,
+      "top-rail": 10
+    },
+    "counts": {
+      "joistNominal": "2x10",
+      "joistSpacingIn": 16,
+      "pictureFlatBlocks": 2,
+      "dividerFlatBlocks": 0,
+      "fieldBoards": 31,
+      "borderBoards": 8,
+      "dividers": 0,
+      "joists": 16,
+      "pictureSupportJoists": 2,
+      "dividerSupportJoists": 0,
+      "beams": 4,
+      "ledger": 1,
+      "posts": 9,
+      "footings": 9,
+      "stringers": 0,
+      "treads": 0,
+      "risers": 0,
+      "railPosts": 14,
+      "balusters": 116
+    },
+    "stats": {
+      "deckArea": 272,
+      "stairArea": 0,
+      "totalArea": 272,
+      "deckRailLF": 45.6569,
+      "stairRailLF": 0,
+      "totalRailLF": 45.6569,
+      "stairRun": 0,
+      "stairRise": 0,
+      "riserCount": 0,
+      "staircaseCount": 0,
+      "boardWidth": 0.4467,
+      "boardGap": 0.0156,
+      "partCount": 590,
+      "maxBoardRun": 19.0754,
+      "requiredDividers": 0,
+      "dividerRowCount": 0,
+      "dividerSectionLengthsFt": [
+        19.08
+      ],
+      "boardCourses": 31,
+      "estimatedPhysicalFieldBoards": 31,
+      "fieldBoardFragments": 349,
+      "boardCoverageFt": 14,
+      "maxFrontCantFt": 2,
+      "maxRearCantFt": 0,
+      "maxBeamCantFt": 1,
+      "beamLengthsFt": [
+        1.6,
+        16.71,
+        0.747,
+        1.047
+      ],
+      "postSpacingFt": [
+        1.067,
+        7.355,
+        0.498,
+        0.698
+      ],
+      "primaryLedgerEdge": 0,
+      "ledgerEdges": [
+        0
+      ],
+      "ledgerCount": 1,
+      "beamRows": 4,
+      "joistNominal": "2x10",
+      "beamProfile": "3-2x12",
+      "joistSpacingIn": 16,
+      "joistMaxSpanFt": 14,
+      "unresolvedJoistRuns": 0,
+      "sharedSupportZones": 5,
+      "unverifiedBeamLoadCount": 0,
+      "pictureFrameFlatBlocks": 2,
+      "dividerFlatBlocks": 0,
+      "pictureFrameFlatLF": 23.4,
+      "dividerFlatLF": 0,
+      "pictureFrameSupportJoists": 2,
+      "dividerSupportJoists": 0,
+      "boardCourseCount": 31,
+      "optimizerCandidates": [
+        {
+          "size": 10,
+          "beams": 4,
+          "unresolved": 0,
+          "groups": 5
+        },
+        {
+          "size": 12,
+          "beams": 4,
+          "unresolved": 0,
+          "groups": 5
+        },
+        {
+          "size": 8,
+          "beams": 5,
+          "unresolved": 0,
+          "groups": 5
+        }
+      ]
+    },
+    "alerts": [
+      "info: Grouped 17 individual joist runs into 5 support-length zones. Short/local beams are limited to the zones they bear.",
+      "warning: Some irregular areas need local headers or shared support beams; member reactions and hardware are NOT verified for construction.",
+      "review: Interior/shared beams may carry joists from two sides. Tributary beam and post reactions must be independently calculated.",
+      "review: Angled picture-frame edges require specialized support/blocking. Long 2x6 assemblies are generated only parallel to the joists.",
+      "review: Preliminary ledgers on house edges 1. Verify attachment viability, existing band joists, flashing, hardware, lateral connections and load path for EACH wall.",
+      "review: Framing layout is an explicit bearing concept, NOT a code-verified design. Joist/beam species, grade, spans, connections, ledger, post heights and footing loads require production review."
+    ]
+  }
+}
