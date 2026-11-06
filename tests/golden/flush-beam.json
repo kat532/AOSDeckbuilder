@@ -81,10 +81,65 @@
     "flipL": false,
     "features": [],
     "bevels": [],
-    "attached": true
+    "railOverrides": {},
+    "attached": true,
+    "schemaVersion": 6,
+    "perimeter": {
+      "source": "derived",
+      "segments": [
+        {
+          "id": "edge-0",
+          "edge": 0,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 16,
+          "kind": "house",
+          "product": null,
+          "color": null,
+          "custom": false,
+          "openings": []
+        },
+        {
+          "id": "edge-1",
+          "edge": 1,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 12,
+          "kind": "rail",
+          "product": "Westbury Tuscany",
+          "color": "Textured Black",
+          "custom": false,
+          "openings": []
+        },
+        {
+          "id": "edge-2",
+          "edge": 2,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 16,
+          "kind": "rail",
+          "product": "Westbury Tuscany",
+          "color": "Textured Black",
+          "custom": false,
+          "openings": []
+        },
+        {
+          "id": "edge-3",
+          "edge": 3,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 12,
+          "kind": "rail",
+          "product": "Westbury Tuscany",
+          "color": "Textured Black",
+          "custom": false,
+          "openings": []
+        }
+      ]
+    }
   },
   "model": {
-    "partCount": 427,
+    "partCount": 423,
     "partsByKind": {
       "baluster": 102,
       "bottom-rail": 9,
@@ -101,8 +156,8 @@
       "picture-frame": 5,
       "picture-support-joist": 2,
       "post-6x6": 3,
-      "post-cap": 12,
-      "railing-post": 12,
+      "post-cap": 10,
+      "railing-post": 10,
       "rim-joist": 3,
       "siding-course": 17,
       "top-rail": 9
@@ -125,7 +180,7 @@
       "stringers": 0,
       "treads": 0,
       "risers": 0,
-      "railPosts": 12,
+      "railPosts": 10,
       "balusters": 102
     },
     "stats": {
@@ -141,7 +196,7 @@
       "staircaseCount": 0,
       "boardWidth": 0.4467,
       "boardGap": 0.0156,
-      "partCount": 427,
+      "partCount": 423,
       "maxBoardRun": 15.0754,
       "requiredDividers": 0,
       "dividerRowCount": 0,

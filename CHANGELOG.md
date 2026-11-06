@@ -2,6 +2,14 @@
 
 All changes to `index.html` and the test suite. Staging and production are deployed separately and only with owner approval.
 
+## Unreleased — shared corner post fix (branch `fix/corner-post-count`, stacked on per-edge railing finish)
+
+- **Bug (present in V5.0):** where two railed edges meet, each edge placed its own corner post about 0.1 ft from the other's, so corners were drawn and counted twice. Example: 12×10 deck with three railed edges reported 10 railing posts and 10 caps; the real number is 8.
+- **Fix:** a deck railing post is skipped when one already exists within 0.3 ft. That's the same rule the stair code already used for stair posts. The first edge placed owns the corner, including its color.
+- **Quantity changes:** railing posts and post caps drop by exactly one per shared railed corner (rectangle with house wall: −2; freestanding rectangle: −4; U-shape: −6). Joists, beams, footings, boards, rail LF and alerts are unchanged in all 24 golden fixtures.
+- Golden snapshots regenerated with this fix; the before/after diff touched only `railing-post`, `post-cap`, `counts.railPosts` and part totals.
+- New tests: no overlapping posts, one cap per post, posts = bays + 1 per run minus shared corners. 164/164 tests pass.
+
 ## Unreleased — per-edge railing finish (branch `feat/per-edge-railing-finish`)
 
 Customer-visible:
@@ -26,7 +34,7 @@ Verification:
 
 Known limitations:
 - All railing products still share one geometry (aluminum picket). Cable, glass, composite, vinyl and privacy-wall styles need AOS's product list and new geometry.
-- Where two edges with different colors meet, each edge draws its own corner post, so a corner can show both colors. The V5.0 geometry already placed two posts at shared corners.
+- Where two edges with different colors meet, the corner post takes the color of the lower-numbered edge (after the corner post fix).
 - One edge = one finish; splitting an edge into separately styled sections is planned with privacy walls.
 
 ## Schema v6 + regression harness (PR #1, branch `test/regression-harness-schema-v6`)
