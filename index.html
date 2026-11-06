@@ -1327,7 +1327,9 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    const nr=Math.max(1,Math.ceil(len/5.5)),yaw=-Math.atan2(e.t[1],e.t[0]);
    const point=t=>[e.a[0]+e.t[0]*t-e.n[0]*.08,e.a[1]+e.t[1]*t-e.n[1]*.08];
    for(let bay=0;bay<nr;bay++){const a=start+len*bay/nr,b=start+len*(bay+1)/nr;
-     for(let k=0;k<2;k++){if(bay>0&&k===0)continue;let p=point(k?b:a);deckGuardPostCenters.push(p);add('railing-post','rail',p[0],H+1.52,p[1],.21,3.05,.21,col,{mat:'metal',connect:connection});add('post-cap','rail',p[0],H+3.10,p[1],.30,.11,.30,col,{mat:'metal',connect:connection});}
+     for(let k=0;k<2;k++){if(bay>0&&k===0)continue;let p=point(k?b:a);// V5.1: two railed edges meeting at a corner share ONE post (the first edge placed owns it).
+       // Previously each edge added its own post ~0.1 ft apart, doubling corner posts and caps.
+       if(deckGuardPostCenters.some(x=>Math.hypot(x[0]-p[0],x[1]-p[1])<.30))continue;deckGuardPostCenters.push(p);add('railing-post','rail',p[0],H+1.52,p[1],.21,3.05,.21,col,{mat:'metal',connect:connection});add('post-cap','rail',p[0],H+3.10,p[1],.30,.11,.30,col,{mat:'metal',connect:connection});}
      let p=point((a+b)/2),L=b-a;add('top-rail','rail',p[0],H+3.02,p[1],L,.14,.15,col,{yaw,mat:'metal',connect:connection});add('bottom-rail','rail',p[0],H+.51,p[1],L,.11,.1,col,{yaw,mat:'metal',connect:connection});
      const num=Math.max(0,Math.floor(L/(4.25/12))-1);for(let k=1;k<=num;k++){let sp=point(a+L*k/(num+1));add('baluster','rail',sp[0],H+1.78,sp[1],.054,2.38,.054,col,{mat:'metal',connect:connection});}
    }

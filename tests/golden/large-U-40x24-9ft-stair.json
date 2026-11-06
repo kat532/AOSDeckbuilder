@@ -110,10 +110,120 @@
     "flipL": false,
     "features": [],
     "bevels": [],
-    "attached": true
+    "railOverrides": {},
+    "attached": true,
+    "schemaVersion": 6,
+    "perimeter": {
+      "source": "derived",
+      "segments": [
+        {
+          "id": "edge-0",
+          "edge": 0,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 40,
+          "kind": "house",
+          "product": null,
+          "color": null,
+          "custom": false,
+          "openings": []
+        },
+        {
+          "id": "edge-1",
+          "edge": 1,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 24,
+          "kind": "rail",
+          "product": "Westbury Tuscany",
+          "color": "Textured Black",
+          "custom": false,
+          "openings": []
+        },
+        {
+          "id": "edge-2",
+          "edge": 2,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 10.8,
+          "kind": "rail",
+          "product": "Westbury Tuscany",
+          "color": "Textured Black",
+          "custom": false,
+          "openings": [
+            {
+              "type": "stair",
+              "id": "stair-2-0",
+              "offsetFt": 0,
+              "widthFt": 6
+            }
+          ]
+        },
+        {
+          "id": "edge-3",
+          "edge": 3,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 12.96,
+          "kind": "rail",
+          "product": "Westbury Tuscany",
+          "color": "Textured Black",
+          "custom": false,
+          "openings": []
+        },
+        {
+          "id": "edge-4",
+          "edge": 4,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 18.4,
+          "kind": "rail",
+          "product": "Westbury Tuscany",
+          "color": "Textured Black",
+          "custom": false,
+          "openings": []
+        },
+        {
+          "id": "edge-5",
+          "edge": 5,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 12.96,
+          "kind": "rail",
+          "product": "Westbury Tuscany",
+          "color": "Textured Black",
+          "custom": false,
+          "openings": []
+        },
+        {
+          "id": "edge-6",
+          "edge": 6,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 10.8,
+          "kind": "rail",
+          "product": "Westbury Tuscany",
+          "color": "Textured Black",
+          "custom": false,
+          "openings": []
+        },
+        {
+          "id": "edge-7",
+          "edge": 7,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 24,
+          "kind": "rail",
+          "product": "Westbury Tuscany",
+          "color": "Textured Black",
+          "custom": false,
+          "openings": []
+        }
+      ]
+    }
   },
   "model": {
-    "partCount": 2257,
+    "partCount": 2245,
     "partsByKind": {
       "baluster": 268,
       "bottom-rail": 24,
@@ -133,8 +243,8 @@
       "picture-frame": 17,
       "picture-support-joist": 4,
       "post-6x6": 12,
-      "post-cap": 32,
-      "railing-post": 32,
+      "post-cap": 26,
+      "railing-post": 26,
       "rim-joist": 7,
       "siding-course": 24,
       "stair-baluster": 60,
@@ -165,7 +275,7 @@
       "stringers": 6,
       "treads": 13,
       "risers": 14,
-      "railPosts": 38,
+      "railPosts": 32,
       "balusters": 328
     },
     "stats": {
@@ -181,7 +291,7 @@
       "staircaseCount": 1,
       "boardWidth": 0.4467,
       "boardGap": 0.0156,
-      "partCount": 2257,
+      "partCount": 2245,
       "maxBoardRun": 39.0754,
       "requiredDividers": 1,
       "dividerRowCount": 1,

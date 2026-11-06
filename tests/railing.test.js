@@ -121,3 +121,32 @@ test('save -> open keeps per-edge finishes', () => {
   const loaded = core.migrate(JSON.parse(JSON.stringify({ application: 'AOS Deck Studio', design: q }))).intent;
   assert.deepEqual(plain(loaded), q);
 });
+
+// ---- Shared corner posts (V5.1 fix) ----
+test('no two deck railing posts occupy the same spot, so the post count is physical', () => {
+  for (const [name, raw] of Object.entries(FIX)) {
+    const m = core.make(raw);
+    const posts = m.parts.filter(p => p.kind === 'railing-post');
+    for (let i = 0; i < posts.length; i++) for (let j = i + 1; j < posts.length; j++)
+      assert.ok(Math.hypot(posts[i].x - posts[j].x, posts[i].z - posts[j].z) >= 0.3, `${name}: posts ${i} and ${j} overlap`);
+    assert.equal(m.parts.filter(p => p.kind === 'post-cap').length, posts.length, `${name}: one cap per post`);
+  }
+});
+
+test('posts per railed run: bays + 1, minus one per corner shared by two railed edges', () => {
+  for (const name of ['small-rect-12x10', 'default-rect-16x12', 'freestanding', 'U-32x22', 'cut-corner', 'mixed-rail-edges']) {
+    const q = plain(core.sanitize(FIX[name]));
+    const es = plain(core.edges(core.polygon(q)));
+    const railed = es.filter(e => q.railEdges.includes(e.i));
+    const perEdge = railed.reduce((n, e) => n + Math.max(1, Math.ceil(e.len / 5.5)) + 1, 0);
+    const shared = railed.filter(e => q.railEdges.includes((e.i + 1) % es.length)).length;
+    const posts = core.make(q).parts.filter(p => p.kind === 'railing-post').length;
+    assert.equal(posts, perEdge - shared, name);
+  }
+});
+
+test('mixed-color corner: the post belongs to one edge (no doubled post)', () => {
+  const q = plain(core.sanitize({ ...base(), railOverrides: { 2: { railColor: 'Bronze' } } }));
+  const posts = core.make(q).parts.filter(p => p.kind === 'railing-post');
+  assert.equal(posts.length, 10);
+});

@@ -150,10 +150,85 @@
     "flipL": false,
     "features": [],
     "bevels": [],
-    "attached": true
+    "railOverrides": {},
+    "attached": true,
+    "schemaVersion": 6,
+    "perimeter": {
+      "source": "derived",
+      "segments": [
+        {
+          "id": "edge-0",
+          "edge": 0,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 30,
+          "kind": "house",
+          "product": null,
+          "color": null,
+          "custom": false,
+          "openings": []
+        },
+        {
+          "id": "edge-1",
+          "edge": 1,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 16,
+          "kind": "rail",
+          "product": "Westbury Tuscany",
+          "color": "Textured Black",
+          "custom": false,
+          "openings": [
+            {
+              "type": "stair",
+              "id": "c",
+              "offsetFt": 0,
+              "widthFt": 4
+            }
+          ]
+        },
+        {
+          "id": "edge-2",
+          "edge": 2,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 30,
+          "kind": "rail",
+          "product": "Westbury Tuscany",
+          "color": "Textured Black",
+          "custom": false,
+          "openings": [
+            {
+              "type": "stair",
+              "id": "a",
+              "offsetFt": -6,
+              "widthFt": 4
+            },
+            {
+              "type": "stair",
+              "id": "b",
+              "offsetFt": 6,
+              "widthFt": 4
+            }
+          ]
+        },
+        {
+          "id": "edge-3",
+          "edge": 3,
+          "start": 0,
+          "end": 1,
+          "lengthFt": 16,
+          "kind": "rail",
+          "product": "Westbury Tuscany",
+          "color": "Textured Black",
+          "custom": false,
+          "openings": []
+        }
+      ]
+    }
   },
   "model": {
-    "partCount": 1153,
+    "partCount": 1149,
     "partsByKind": {
       "baluster": 122,
       "bottom-rail": 13,
@@ -173,8 +248,8 @@
       "picture-frame": 5,
       "picture-support-joist": 2,
       "post-6x6": 6,
-      "post-cap": 19,
-      "railing-post": 19,
+      "post-cap": 17,
+      "railing-post": 17,
       "rim-joist": 3,
       "siding-course": 20,
       "stair-baluster": 132,
@@ -205,7 +280,7 @@
       "stringers": 15,
       "treads": 27,
       "risers": 30,
-      "railPosts": 31,
+      "railPosts": 29,
       "balusters": 254
     },
     "stats": {
@@ -221,7 +296,7 @@
       "staircaseCount": 3,
       "boardWidth": 0.4467,
       "boardGap": 0.0156,
-      "partCount": 1153,
+      "partCount": 1149,
       "maxBoardRun": 29.0754,
       "requiredDividers": 1,
       "dividerRowCount": 1,
