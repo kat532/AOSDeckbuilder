@@ -2,6 +2,14 @@
 
 All changes to `index.html` and the test suite. Staging and production are deployed separately and only with owner approval.
 
+## V5.2 baseline verified and audit rechecked (branch `v5.2/baseline`, 7 Nov 2026)
+
+- Baseline: AOS_Deck_Studio_V5_2_Continuous_Middle_Beams.html, 370,800 bytes, SHA-256 80b6afea0adfafb40ed86a02cd1f1fead9e29d72bcd8a5c301241c9d39c061c6 (title "AOS Deck Studio V5.2 · Continuous Middle Beams", APP_VERSION 5.2-framing-workflow). Stored unchanged; tag `protect/v5.2-baseline-80b6afea`; hash in BASELINE.sha256.
+- Difference from the older Stacking Fix build: Framing & Ledger shown as step 3 (display order only); irregular-deck shared-line planner (full beam footprint kept inside the outline); Framing step intro text; version labels. Nothing else.
+- Audit rechecked on V5.2: 87 features, 59 working, 12 partial, 14 missing, 2 deferred. Step order now Working; defects D1–D7 all confirmed on V5.2. Owner irregular deck: 3 beams, 8 posts (older build 15, 33).
+- Suite on V5.2: 181/217. 9 browser tests assume the old step order (all 49 pass with V5.2 navigation in a temporary copy). 27 framing tests reconciled into four cases (trimmer merged with rim; new containment statistics; members now reported outside the outline; angled corners with one main beam and 4 joists without confirmed bearing). No snapshot accepted; awaiting owner decision.
+- No implementation started.
+
 ## Correction: wrong baseline (7 Nov 2026)
 
 - The file audited below, AOS_Deck_Studio_V5_1_Stacking_Fix_Test.html, is an OLDER development build, not the approved V5.2. It has been renamed in the repository to branch `v5.1/stacking-fix-test` (tag `protect/v5.1-stacking-fix-test`); the tag `protect/v5.2-baseline` was removed so nothing is built on it.
