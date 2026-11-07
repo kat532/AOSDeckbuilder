@@ -70,7 +70,7 @@ test('all 8 steps can be walked forward and back', async () => {
     await page.screenshot({ path: path.join(SHOTS, `step-${i + 1}.png`) });
     if (i < 7) await page.locator('#nextBtn').click();
   }
-  assert.deepEqual(titles.map(t => t.trim()), ['Shape & Size', 'House & Height', 'Stairs', 'Decking Layout', 'Decking Selection', 'Railings', 'Framing & Ledger', 'Review & Present']);
+  assert.deepEqual(titles.map(t => t.trim()), ['Shape & Size', 'House & Height', 'Framing & Ledger', 'Stairs', 'Decking Layout', 'Decking Selection', 'Railings', 'Review & Present']);
   for (let i = 0; i < 7; i++) await page.locator('#backBtn').click();
   assert.match(await stepText(page), /Step 1 of 8/);
   assert.deepEqual(errors, []);
@@ -96,10 +96,10 @@ test('exact width edit, undo and redo', async () => {
 test('selections survive moving between steps', async () => {
   const { ctx, page } = await openApp();
   await chooseShape(page, 'rectangle');
-  for (let i = 0; i < 4; i++) await page.locator('#nextBtn').click(); // Decking Selection
+  for (let i = 0; i < 5; i++) await page.locator('#nextBtn').click(); // Decking Selection
   await page.getByRole('button', { name: 'Silver Maple' }).first().click();
-  for (let i = 0; i < 4; i++) await page.locator('#backBtn').click();
-  for (let i = 0; i < 4; i++) await page.locator('#nextBtn').click();
+  for (let i = 0; i < 5; i++) await page.locator('#backBtn').click();
+  for (let i = 0; i < 5; i++) await page.locator('#nextBtn').click();
   const cls = (v) => page.evaluate((val) => document.querySelector(`[data-value="${val}"]`)?.className || '', v);
   assert.match(await cls('Silver Maple'), /\bselected\b/);
   assert.doesNotMatch(await cls('Brown Oak'), /\bselected\b/);
@@ -162,7 +162,7 @@ test('phone viewport: app loads and every step renders', async () => {
 // ---- V5.1 per-edge railing finish ----
 async function toRailingFinish(page) {
   await chooseShape(page, 'rectangle'); // edge 1 = house; edges 2, 3, 4 railed
-  for (let i = 0; i < 5; i++) await page.locator('#nextBtn').click();
+  for (let i = 0; i < 6; i++) await page.locator('#nextBtn').click();
   await page.locator('[data-path="railTab"][data-value="finish"]').click();
 }
 const customCount = (page) => page.locator('#stepContent .rail-custom').count();
@@ -267,7 +267,7 @@ test('railing finish: removing an edge railing drops its finish; save -> open re
   const fresh = await openApp();
   await fresh.page.locator('#fileInput').setInputFiles(file);
   await fresh.page.waitForFunction(hasArea);
-  for (let i = 0; i < 5; i++) await fresh.page.locator('#nextBtn').click();
+  for (let i = 0; i < 6; i++) await fresh.page.locator('#nextBtn').click();
   await fresh.page.locator('[data-path="railTab"][data-value="finish"]').click();
   assert.equal(await customCount(fresh.page), 2);
 

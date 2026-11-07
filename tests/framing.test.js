@@ -25,8 +25,11 @@ const ANGLED = {
 const beamsOf = (m) => m.parts.filter(p => p.kind === 'dropped-beam');
 const postsOf = (m) => m.parts.filter(p => p.kind === 'post-6x6');
 
+// Case 4 (owner decision 7 Nov 2026): kept as known-failing structural targets, assertions unchanged.
+const CASE4 = 'KNOWN STRUCTURAL FAILURE (V5.2 case 4): one main beam leaves 4 short angled-corner joists without confirmed bearing (flagged for production review); every joist bearing remains the requirement';
+const KNOWN_FAILING = new Set(['18x12 two 45° corners, house wall (reported case)', '16x12 one 45° corner']);
 for (const [name, { q, before, max }] of Object.entries(ANGLED)) {
-  test(`angled deck uses practical supports: ${name}`, () => {
+  test(`angled deck uses practical supports: ${name}`, KNOWN_FAILING.has(name) ? { todo: CASE4 } : {}, () => {
     const m = core.make(q);
     const posts = postsOf(m).length, footings = m.parts.filter(p => p.kind === 'footing-concept').length;
     assert.ok(posts <= max, `${posts} posts (was ${before}, allowed ${max})`);
@@ -54,7 +57,7 @@ for (const [name, { q, before, max }] of Object.entries(ANGLED)) {
   });
 }
 
-test('corner beams are labeled and flagged for AOS production review', () => {
+test('corner beams are labeled and flagged for AOS production review', { todo: CASE4 }, () => {
   const m = core.make(ANGLED['18x12 two 45° corners, house wall (reported case)'].q);
   const corner = beamsOf(m).filter(b => b.role === 'corner-beam');
   assert.equal(corner.length, 2);

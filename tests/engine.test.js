@@ -24,7 +24,11 @@ test('every fixture builds', () => {
 });
 
 for (const [name, raw] of Object.entries(FIX)) {
-  test(`model matches V5.0 baseline: ${name}`, () => {
+  // Case 4 (owner decision 7 Nov 2026): V5.2 frames angled corners with one main beam and
+  // leaves short corner joists without confirmed bearing. That is NOT accepted as passing:
+  // the recorded snapshot stays the target and the test runs as a known structural failure.
+  const KNOWN_FAILING = { 'cut-corner': 'KNOWN STRUCTURAL FAILURE (V5.2 case 4): angled-corner joists lack confirmed bearing; the recorded corner-beam layout remains the target' };
+  test(`model matches V5.0 baseline: ${name}`, KNOWN_FAILING[name] ? { todo: KNOWN_FAILING[name] } : {}, () => {
     const golden = JSON.parse(fs.readFileSync(path.join(GOLDEN, `${name}.json`), 'utf8'));
     assert.deepEqual(snapshot(win, raw), golden.model);
   });

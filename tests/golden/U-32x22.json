@@ -191,11 +191,11 @@
     }
   },
   "model": {
-    "partCount": 1916,
+    "partCount": 1914,
     "partsByKind": {
       "baluster": 252,
       "bottom-rail": 21,
-      "corner-trimmer": 3,
+      "corner-trimmer": 1,
       "divider-blocking-2x6-flat": 1,
       "divider-board": 7,
       "divider-support-joist": 2,
@@ -251,7 +251,7 @@
       "staircaseCount": 0,
       "boardWidth": 0.4467,
       "boardGap": 0.0156,
-      "partCount": 1916,
+      "partCount": 1914,
       "maxBoardRun": 31.0754,
       "requiredDividers": 1,
       "dividerRowCount": 1,
@@ -287,12 +287,38 @@
       },
       "closeFootingPairs": 0,
       "sharedPosts": 0,
+      "physicalSupportOutsideCount": 5,
+      "structuralEnvelopeOutsideCount": 3,
+      "footingOutsideProjectionCount": 2,
+      "physicalSupportOutside": [
+        {
+          "kind": "dropped-beam",
+          "role": "shared-beam"
+        },
+        {
+          "kind": "post-6x6",
+          "role": null
+        },
+        {
+          "kind": "footing-concept",
+          "role": null
+        },
+        {
+          "kind": "post-6x6",
+          "role": null
+        },
+        {
+          "kind": "footing-concept",
+          "role": null
+        }
+      ],
       "joistNominal": "2x10",
       "beamProfile": "3-2x12",
       "joistSpacingIn": 16,
       "joistMaxSpanFt": 14,
       "unresolvedJoistRuns": 0,
       "sharedSupportZones": 3,
+      "framingPlanner": "legacy-bearing-repair",
       "unverifiedBeamLoadCount": 1,
       "pictureFrameFlatBlocks": 4,
       "dividerFlatBlocks": 1,
@@ -323,8 +349,11 @@
       ]
     },
     "alerts": [
-      "info: Grouped 29 individual joist runs into 3 support-length zones. Short/local beams are limited to the zones they bear.",
+      "review: 2 corner trimmer(s) coincident with existing perimeter rim framing omitted to avoid duplicate members; verify rim/trimmer connection design.",
+      "info: Grouped 27 individual joist runs into 3 support-length zones. Short/local beams are limited to the zones they bear.",
       "warning: One or more shared beams exceed the one-sided prescriptive beam load range; engineered design or added support required.",
+      "warning: 3 physical beam/post footprints project beyond the deck outline (1 dropped-beam, 2 post-6x6). Framing is NOT construction-ready; revise support geometry before approval.",
+      "review: 2 conceptual footing pads extend beyond the deck projection. This is not automatically a code violation; verify footing size, site clearances, excavation and setbacks before construction.",
       "warning: 1 beams have tributary load estimates outside the prescriptive one-sided reference range; engineered beam/extra bearing required.",
       "review: Preliminary ledgers on house edges 1. Verify attachment viability, existing band joists, flashing, hardware, lateral connections and load path for EACH wall.",
       "info: Breaker boards required: 1 minimum at 31.1 ft longest continuous board run.",

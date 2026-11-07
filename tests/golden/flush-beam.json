@@ -139,11 +139,10 @@
     }
   },
   "model": {
-    "partCount": 423,
+    "partCount": 422,
     "partsByKind": {
       "baluster": 102,
       "bottom-rail": 9,
-      "corner-trimmer": 1,
       "dropped-beam": 1,
       "earth": 1,
       "fascia": 3,
@@ -196,7 +195,7 @@
       "staircaseCount": 0,
       "boardWidth": 0.4467,
       "boardGap": 0.0156,
-      "partCount": 423,
+      "partCount": 422,
       "maxBoardRun": 15.0754,
       "requiredDividers": 0,
       "dividerRowCount": 0,
@@ -227,12 +226,42 @@
       },
       "closeFootingPairs": 0,
       "sharedPosts": 0,
+      "physicalSupportOutsideCount": 6,
+      "structuralEnvelopeOutsideCount": 3,
+      "footingOutsideProjectionCount": 3,
+      "physicalSupportOutside": [
+        {
+          "kind": "post-6x6",
+          "role": null
+        },
+        {
+          "kind": "footing-concept",
+          "role": null
+        },
+        {
+          "kind": "post-6x6",
+          "role": null
+        },
+        {
+          "kind": "footing-concept",
+          "role": null
+        },
+        {
+          "kind": "post-6x6",
+          "role": null
+        },
+        {
+          "kind": "footing-concept",
+          "role": null
+        }
+      ],
       "joistNominal": "2x10",
       "beamProfile": "3-2x10",
       "joistSpacingIn": 16,
       "joistMaxSpanFt": 14,
       "unresolvedJoistRuns": 0,
       "sharedSupportZones": 1,
+      "framingPlanner": "legacy-bearing-repair",
       "unverifiedBeamLoadCount": 0,
       "pictureFrameFlatBlocks": 2,
       "dividerFlatBlocks": 0,
@@ -263,7 +292,10 @@
       ]
     },
     "alerts": [
+      "review: 1 corner trimmer(s) coincident with existing perimeter rim framing omitted to avoid duplicate members; verify rim/trimmer connection design.",
       "warning: Some irregular areas need local headers or shared support beams; member reactions and hardware are NOT verified for construction.",
+      "warning: 3 physical beam/post footprints project beyond the deck outline (3 post-6x6). Framing is NOT construction-ready; revise support geometry before approval.",
+      "review: 3 conceptual footing pads extend beyond the deck projection. This is not automatically a code violation; verify footing size, site clearances, excavation and setbacks before construction.",
       "review: Preliminary ledgers on house edges 1. Verify attachment viability, existing band joists, flashing, hardware, lateral connections and load path for EACH wall.",
       "review: Flush beam: joist-to-beam hanger design and hardware must be verified; preliminary members are not an approved detail.",
       "review: Framing layout is an explicit bearing concept, NOT a code-verified design. Joist/beam species, grade, spans, connections, ledger, post heights and footing loads require production review."

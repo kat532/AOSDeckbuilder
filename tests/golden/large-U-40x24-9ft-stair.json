@@ -223,11 +223,10 @@
     }
   },
   "model": {
-    "partCount": 2245,
+    "partCount": 2243,
     "partsByKind": {
       "baluster": 268,
       "bottom-rail": 24,
-      "corner-trimmer": 2,
       "divider-blocking-2x6-flat": 1,
       "divider-board": 7,
       "divider-support-joist": 2,
@@ -291,7 +290,7 @@
       "staircaseCount": 1,
       "boardWidth": 0.4467,
       "boardGap": 0.0156,
-      "partCount": 2245,
+      "partCount": 2243,
       "maxBoardRun": 39.0754,
       "requiredDividers": 1,
       "dividerRowCount": 1,
@@ -327,12 +326,54 @@
       },
       "closeFootingPairs": 0,
       "sharedPosts": 0,
+      "physicalSupportOutsideCount": 9,
+      "structuralEnvelopeOutsideCount": 5,
+      "footingOutsideProjectionCount": 4,
+      "physicalSupportOutside": [
+        {
+          "kind": "dropped-beam",
+          "role": "shared-beam"
+        },
+        {
+          "kind": "post-6x6",
+          "role": null
+        },
+        {
+          "kind": "footing-concept",
+          "role": null
+        },
+        {
+          "kind": "post-6x6",
+          "role": null
+        },
+        {
+          "kind": "footing-concept",
+          "role": null
+        },
+        {
+          "kind": "post-6x6",
+          "role": null
+        },
+        {
+          "kind": "footing-concept",
+          "role": null
+        },
+        {
+          "kind": "post-6x6",
+          "role": null
+        },
+        {
+          "kind": "footing-concept",
+          "role": null
+        }
+      ],
       "joistNominal": "2x10",
       "beamProfile": "3-2x12",
       "joistSpacingIn": 16,
       "joistMaxSpanFt": 14,
       "unresolvedJoistRuns": 0,
       "sharedSupportZones": 3,
+      "framingPlanner": "legacy-bearing-repair",
       "unverifiedBeamLoadCount": 1,
       "pictureFrameFlatBlocks": 4,
       "dividerFlatBlocks": 1,
@@ -363,8 +404,11 @@
       ]
     },
     "alerts": [
-      "info: Grouped 35 individual joist runs into 3 support-length zones. Short/local beams are limited to the zones they bear.",
+      "review: 2 corner trimmer(s) coincident with existing perimeter rim framing omitted to avoid duplicate members; verify rim/trimmer connection design.",
+      "info: Grouped 33 individual joist runs into 3 support-length zones. Short/local beams are limited to the zones they bear.",
       "warning: One or more shared beams exceed the one-sided prescriptive beam load range; engineered design or added support required.",
+      "warning: 5 physical beam/post footprints project beyond the deck outline (1 dropped-beam, 4 post-6x6). Framing is NOT construction-ready; revise support geometry before approval.",
+      "review: 4 conceptual footing pads extend beyond the deck projection. This is not automatically a code violation; verify footing size, site clearances, excavation and setbacks before construction.",
       "warning: 1 beams have tributary load estimates outside the prescriptive one-sided reference range; engineered beam/extra bearing required.",
       "review: Stair lower landing, guards and stringer bearing require production verification.",
       "review: All modeled staircases require field verification of stringers, connections, railings and lower landings.",

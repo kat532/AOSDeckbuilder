@@ -142,11 +142,10 @@
     }
   },
   "model": {
-    "partCount": 430,
+    "partCount": 429,
     "partsByKind": {
       "baluster": 72,
       "bottom-rail": 6,
-      "corner-trimmer": 1,
       "dropped-beam": 1,
       "earth": 1,
       "fascia": 3,
@@ -199,7 +198,7 @@
       "staircaseCount": 0,
       "boardWidth": 0.4467,
       "boardGap": 0.0156,
-      "partCount": 430,
+      "partCount": 429,
       "maxBoardRun": 19.0754,
       "requiredDividers": 0,
       "dividerRowCount": 0,
@@ -230,12 +229,17 @@
       },
       "closeFootingPairs": 0,
       "sharedPosts": 0,
+      "physicalSupportOutsideCount": 0,
+      "structuralEnvelopeOutsideCount": 0,
+      "footingOutsideProjectionCount": 0,
+      "physicalSupportOutside": [],
       "joistNominal": "2x10",
       "beamProfile": "3-2x12",
       "joistSpacingIn": 16,
       "joistMaxSpanFt": 14,
       "unresolvedJoistRuns": 0,
       "sharedSupportZones": 1,
+      "framingPlanner": "legacy-bearing-repair",
       "unverifiedBeamLoadCount": 0,
       "pictureFrameFlatBlocks": 2,
       "dividerFlatBlocks": 0,
@@ -266,6 +270,7 @@
       ]
     },
     "alerts": [
+      "review: 1 corner trimmer(s) coincident with existing perimeter rim framing omitted to avoid duplicate members; verify rim/trimmer connection design.",
       "review: Preliminary ledgers on house edges 1. Verify attachment viability, existing band joists, flashing, hardware, lateral connections and load path for EACH wall.",
       "review: Framing layout is an explicit bearing concept, NOT a code-verified design. Joist/beam species, grade, spans, connections, ledger, post heights and footing loads require production review."
     ]

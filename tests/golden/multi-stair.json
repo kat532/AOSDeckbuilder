@@ -228,11 +228,10 @@
     }
   },
   "model": {
-    "partCount": 1149,
+    "partCount": 1148,
     "partsByKind": {
       "baluster": 122,
       "bottom-rail": 13,
-      "corner-trimmer": 1,
       "divider-blocking-2x6-flat": 1,
       "divider-board": 6,
       "divider-support-joist": 2,
@@ -296,7 +295,7 @@
       "staircaseCount": 3,
       "boardWidth": 0.4467,
       "boardGap": 0.0156,
-      "partCount": 1149,
+      "partCount": 1148,
       "maxBoardRun": 29.0754,
       "requiredDividers": 1,
       "dividerRowCount": 1,
@@ -328,12 +327,17 @@
       },
       "closeFootingPairs": 0,
       "sharedPosts": 0,
+      "physicalSupportOutsideCount": 0,
+      "structuralEnvelopeOutsideCount": 0,
+      "footingOutsideProjectionCount": 0,
+      "physicalSupportOutside": [],
       "joistNominal": "2x10",
       "beamProfile": "3-2x12",
       "joistSpacingIn": 16,
       "joistMaxSpanFt": 14,
       "unresolvedJoistRuns": 0,
       "sharedSupportZones": 1,
+      "framingPlanner": "legacy-bearing-repair",
       "unverifiedBeamLoadCount": 1,
       "pictureFrameFlatBlocks": 2,
       "dividerFlatBlocks": 1,
@@ -364,6 +368,7 @@
       ]
     },
     "alerts": [
+      "review: 1 corner trimmer(s) coincident with existing perimeter rim framing omitted to avoid duplicate members; verify rim/trimmer connection design.",
       "warning: One or more shared beams exceed the one-sided prescriptive beam load range; engineered design or added support required.",
       "warning: 1 beams have tributary load estimates outside the prescriptive one-sided reference range; engineered beam/extra bearing required.",
       "review: Stair lower landing, guards and stringer bearing require production verification.",
