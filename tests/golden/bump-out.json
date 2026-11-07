@@ -257,7 +257,7 @@
     }
   },
   "model": {
-    "partCount": 1260,
+    "partCount": 929,
     "partsByKind": {
       "baluster": 132,
       "bottom-rail": 14,
@@ -265,7 +265,7 @@
       "dropped-beam": 2,
       "earth": 1,
       "fascia": 7,
-      "field-board": 982,
+      "field-board": 651,
       "footing-concept": 6,
       "house-wall": 1,
       "joist": 14,
@@ -314,7 +314,7 @@
       "staircaseCount": 0,
       "boardWidth": 0.4467,
       "boardGap": 0.0156,
-      "partCount": 1260,
+      "partCount": 929,
       "maxBoardRun": 19.0754,
       "requiredDividers": 0,
       "dividerRowCount": 0,
@@ -323,7 +323,7 @@
       ],
       "boardCourses": 37,
       "estimatedPhysicalFieldBoards": 37,
-      "fieldBoardFragments": 982,
+      "fieldBoardFragments": 651,
       "boardCoverageFt": 17,
       "maxFrontCantFt": 2,
       "maxRearCantFt": 0,

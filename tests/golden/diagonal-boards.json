@@ -139,14 +139,15 @@
     }
   },
   "model": {
-    "partCount": 516,
+    "partCount": 420,
     "partsByKind": {
       "baluster": 116,
       "bottom-rail": 10,
       "dropped-beam": 1,
       "earth": 1,
       "fascia": 3,
-      "field-board": 299,
+      "field-board": 187,
+      "field-end-blocking": 16,
       "footing-concept": 3,
       "house-wall": 1,
       "joist": 17,
@@ -195,7 +196,7 @@
       "staircaseCount": 0,
       "boardWidth": 0.4467,
       "boardGap": 0.0156,
-      "partCount": 516,
+      "partCount": 420,
       "maxBoardRun": 19.1452,
       "requiredDividers": 0,
       "dividerRowCount": 0,
@@ -204,7 +205,7 @@
       ],
       "boardCourses": 49,
       "estimatedPhysicalFieldBoards": 49,
-      "fieldBoardFragments": 299,
+      "fieldBoardFragments": 187,
       "boardCoverageFt": 22.6274,
       "maxFrontCantFt": 2,
       "maxRearCantFt": 0,
@@ -268,6 +269,7 @@
     },
     "alerts": [
       "review: 1 corner trimmer(s) coincident with existing perimeter rim framing omitted to avoid duplicate members; verify rim/trimmer connection design.",
+      "review: 16 supplemental blocks (13.3 LF) added between joists under field-board ends along the picture frame. Concept only: blocking size, fastening and connections need production review.",
       "review: Preliminary ledgers on house edges 1. Verify attachment viability, existing band joists, flashing, hardware, lateral connections and load path for EACH wall.",
       "review: Diagonal boards use a provisional 12in on-center orthogonal joist layout; verify selected decking span, cut-end blocking and ledger conditions.",
       "review: Framing layout is an explicit bearing concept, NOT a code-verified design. Joist/beam species, grade, spans, connections, ledger, post heights and footing loads require production review."

@@ -227,6 +227,7 @@
 .framingstatus.current{background:#e7f4ec;color:#1f6b45}.framingstatus.pending,.framingstatus.invalid{background:#fdf1dc;color:#8a5a06}.framingstatus.calculating{background:#eef1f4;color:#4d6072}
 .stair-options button{min-height:40px}
 .openings-panel .seg button,.openings-panel .editor-actions button,.openings-panel .stair-picker button{min-height:36px}.openings-panel select{width:100%;border:1px solid #d9e0e5;border-radius:7px;padding:7px 8px;background:#fff;font-size:12px;font-weight:700;color:#233243;min-height:36px}.opening-warn{font-size:10.5px;color:#9a5a06;background:#fdf1dc;border-radius:7px;padding:6px 8px;line-height:1.35}
+.deckline-seg button{flex:1 1 45%!important;min-height:38px}
 .seg.wrap{flex-wrap:wrap}.seg.wrap button{flex:1 1 30%;min-height:36px}.seg.turns button{min-height:36px}.landing-sub{margin-top:2px}
 .framing-pending{font-size:12.5px;line-height:1.45;padding:10px 12px;border-radius:9px;background:#fdf1dc;color:#6b4705;margin-bottom:8px}.framing-pending button{margin-left:6px;min-height:34px;padding:6px 10px;border-radius:8px;border:1px solid #d9a441;background:#fff;font-weight:800;font-size:11.5px}
 @media (max-width:760px){.framingstatus{display:none}}
@@ -1186,7 +1187,9 @@ function sanitize(s){const b=baseIntent(),x=s||{};const q={...b,...x,stairs:{...
  q.features=Array.isArray(x.features)?x.features.filter(f=>f&&Number.isInteger(f.start)&&f.start>=1&&f.start+3<es.length).slice(0,8):[];
  q.bevels=Array.isArray(x.bevels)?x.bevels.filter(b=>b&&Number.isInteger(b.start)&&b.start>=0&&b.start+1<es.length).slice(0,12):[];
  q.borderCount=[0,1,2].includes(Number(q.borderCount))?Number(q.borderCount):1;
- q.deckLine=['horizontal','vertical','diagonal'].includes(q.deckLine)?q.deckLine:'horizontal';
+ q.deckLine=['horizontal','vertical','diagonal','diagonal-left','diagonal-right'].includes(q.deckLine)?q.deckLine:'horizontal';
+ // V5.2 B2: picture frame along house walls only when asked for (written only when on).
+ if(x.frameHouseWalls===true)q.frameHouseWalls=true;else delete q.frameHouseWalls;
  q.dividerMode=['auto','single','double'].includes(q.dividerMode)?q.dividerMode:'auto';q.dividerOffset=clamp(q.dividerOffset,.12,.88);
  // Older project files contain only dividerOffset. New files may include an
  // independently positioned row array; never discard custom rows on save/open.
@@ -1296,7 +1299,8 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  const addContour=(kind,group,outline,y,h,color,opt={})=>{
   if(!outline||outline.length<3)return null;
   if(['field-board','picture-frame','divider-board'].includes(kind))outline=global.AOSGeometry.hull(outline);
-  if(!outline||outline.length<3||Math.abs(global.AOSGeometry.area(outline))<.0005)return null;
+  // V5.2 B2: decking pieces keep small real cut fragments (a dropped fragment left a visible notch).
+  if(!outline||outline.length<3||Math.abs(global.AOSGeometry.area(outline))<(['field-board','picture-frame','divider-board'].includes(kind)?.00005:.0005))return null;
   const center=outline.reduce((v,a)=>[v[0]+a[0]/outline.length,v[1]+a[1]/outline.length],[0,0]);
   const xs=outline.map(x=>x[0]),zs=outline.map(x=>x[1]);
   const part=add(kind,group,center[0],y,center[1],Math.max(.04,Math.max(...xs)-Math.min(...xs)),h,Math.max(.04,Math.max(...zs)-Math.min(...zs)),color,{...opt,yaw:0});
@@ -1386,7 +1390,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  // at approximately a right angle, never simply because it is near a wall.
  const ledgerBearingAt=p=>ledgerEdges.some(e=>Math.abs(dot(e.t,joistD))<.28&&pointOnEdge(p,e,.22));
  const beamD=[joistD[1],-joistD[0]],joistNormal=[-joistD[1],joistD[0]];
- const joistSpacing=q.deckLine==='diagonal'?12:16,FS=global.AOSFramingSolver;
+ const isDiagonal=/^diagonal/.test(q.deckLine),joistSpacing=isDiagonal?12:16,FS=global.AOSFramingSolver;
  if(!FS)throw Error('V4.3 framing solver was not loaded');
  // V4.5: decide the FINISH layout before laying out structural joists.
  // Reserve physical framing lanes for full-length side-border and divider
@@ -1394,18 +1398,33 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  // same location as a flat blocking board.
  const FLAT_W=5.5/12,JOIST_W=1.5/12,SEPARATION=.018;
  const ASSEMBLY_STEP=FLAT_W+JOIST_W+2*SEPARATION;
- const baseDist=es.map(e=>q.houseEdges.includes(e.i)?0:q.borderCount*PITCH);
+ // V5.2 B2: house walls get no picture frame unless the customer asks for it (frameHouseWalls).
+ const unframed=i=>q.houseEdges.includes(i)&&!q.frameHouseWalls;
+ const baseDist=es.map(e=>unframed(e.i)?0:q.borderCount*PITCH);
  const proposedInside=offsetPolygon(poly,baseDist);
  const geo=global.AOSGeometry;if(!geo)throw Error('Geometry module missing');
  const inside=geo.simple(proposedInside)?proposedInside:poly; // invalid offsets must never erase the deck
  if(inside===poly&&q.borderCount)alerts.push({level:'review',message:'Tight concave border offset: clipped board solids replace invalid inset polygon; corner joins need a construction check.'});
- const d=q.deckLine==='horizontal'?fieldAcross:q.deckLine==='vertical'?fieldOut:[(fieldAcross[0]+fieldOut[0])/Math.SQRT2,(fieldAcross[1]+fieldOut[1])/Math.SQRT2],n=[-d[1],d[0]];
+ // V5.2 B2: four directions, relative to the main house wall as drawn with the house at the top of
+ // the plan: Horizontal runs along the house, Vertical away from it; Diagonal left runs like "\"
+ // and Diagonal right like "/", 45 degrees either side (exact mirror images). 'diagonal' is the
+ // pre-B2 single diagonal and keeps its exact direction (it is one of the two).
+ const planRight=[fieldOut[1],-fieldOut[0]];
+ const d=q.deckLine==='horizontal'?fieldAcross:q.deckLine==='vertical'?fieldOut:q.deckLine==='diagonal-left'?[(planRight[0]+fieldOut[0])/Math.SQRT2,(planRight[1]+fieldOut[1])/Math.SQRT2]:q.deckLine==='diagonal-right'?[(planRight[0]-fieldOut[0])/Math.SQRT2,(planRight[1]-fieldOut[1])/Math.SQRT2]:[(fieldAcross[0]+fieldOut[0])/Math.SQRT2,(fieldAcross[1]+fieldOut[1])/Math.SQRT2],n=[-d[1],d[0]];
+ const deckLineResolved=isDiagonal?(dot(d,planRight)*dot(d,fieldOut)>0?'diagonal-left':'diagonal-right'):q.deckLine;
  const deckBoardAxis=d; // Checkpoint 3: landings set to "Match main deck" run their boards this way
  const uv=inside.map(p=>[dot(p,d),dot(p,n)]),umin=Math.min(...uv.map(p=>p[0])),umax=Math.max(...uv.map(p=>p[0])),vmin=Math.min(...uv.map(p=>p[1])),vmax=Math.max(...uv.map(p=>p[1]));
  let maxRun=0;
  for(let v=vmin+BW/2;v<vmax;v+=PITCH)for(let [a,b] of lineIntervals(inside,d,v))maxRun=Math.max(maxRun,b-a);
  const requiredDividers=Math.max(0,Math.ceil((maxRun-.0001)/MAX_FIELD_SECTION_FT)-1);
  const dividerFractions=resolveDividerFractions(q,umax-umin,requiredDividers);
+ // V5.2 B2: custom divider positions are never deleted from the project. If the current size or
+ // board direction leaves one too close to an end or another divider, it is set aside for now
+ // (and comes back when there is room); one too close to an end is nudged in. Both are reported.
+ let dividerAdjust=null;
+ if(Array.isArray(q.dividerPositions)&&q.dividerPositions.length){const stored=q.dividerPositions,kept=stored.filter(v=>dividerFractions.some(u=>Math.abs(u-v)<1e-6)).length;
+   dividerAdjust={stored:stored.length,used:dividerFractions.length,moved:Math.max(0,dividerFractions.length-kept),setAside:Math.max(0,stored.length-dividerFractions.length)};
+   if(dividerAdjust.moved||dividerAdjust.setAside)alerts.push({level:'review',message:`Divider layout adjusted for this deck size and board direction: ${[dividerAdjust.moved?`${dividerAdjust.moved} moved in from an end`:'',dividerAdjust.setAside?`${dividerAdjust.setAside} set aside (too close to another divider; kept in the project and restored when there is room)`:''].filter(Boolean).join(', ')}.`});}
  const dividerRows=dividerFractions.map(v=>umin+(umax-umin)*v);
  const proposedSections=[0,...dividerFractions,1];
  const longestSectionFt=Math.max(...proposedSections.slice(1).map((v,i)=>(v-proposedSections[i])*(umax-umin)));
@@ -1418,7 +1437,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  const reserveFlat=(p)=>reservedFlatLanes.push(coordAlongJoist(p));
  const reserveJoist=(p,kind,ref)=>specialJoists.push({t:coordAlongJoist(p),role:kind,ref});
  for(const e of es){
-   if(!q.borderCount||q.houseEdges.includes(e.i))continue;
+   if(!q.borderCount||unframed(e.i))continue;
    // A rim meeting perpendicular joist ends already has framing support.
    if(Math.abs(dot(e.t,joistD))<.985)continue;
    const inward=[-e.n[0],-e.n[1]];
@@ -1534,26 +1553,45 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  }
  // Generate physical edge boards, not a rectangular masking overlay.
  // Gaps are subtracted from the finished field deck against the true solids.
+ // V5.2 B2: frame courses are exactly one board gap apart (the first course keeps its small
+ // edge relief), and each board is kept whole (its quad) for the field-gap and material takeoff.
+ const frameBoards=[];
  for(let layer=0;layer<q.borderCount;layer++){
-  const a=offsetPolygon(poly,es.map(e=>q.houseEdges.includes(e.i)?0:layer*PITCH+.008));
-  const b=offsetPolygon(poly,es.map(e=>q.houseEdges.includes(e.i)?0:layer*PITCH+BW));
-  for(let e of es){if(q.houseEdges.includes(e.i))continue;const j=(e.i+1)%es.length;
+  const a=offsetPolygon(poly,es.map(e=>unframed(e.i)?0:layer*PITCH+(layer?0:.008)));
+  const b=offsetPolygon(poly,es.map(e=>unframed(e.i)?0:layer*PITCH+BW));
+  for(let e of es){if(unframed(e.i))continue;const j=(e.i+1)%es.length;
    let quad=[a[e.i],a[j],b[j],b[e.i]];
    if(!geo.simple(quad)||!convex(quad)){
     // Fallback at a concave return: a rectangular board-width strip along
     // the actual edge, clipped to the true footprint triangle-by-triangle.
     const n=e.n;quad=[e.a,e.b,[e.b[0]-n[0]*BW,e.b[1]-n[1]*BW],[e.a[0]-n[0]*BW,e.a[1]-n[1]*BW]];
    }
+   const before=parts.length;
    addPhysical('picture-frame',quad,accent,'individual border board; miter/fastener review',occupancy);
+   for(let k=before;k<parts.length;k++)if(parts[k].kind==='picture-frame'){parts[k].frameEdge=e.i;parts[k].frameCourse=layer+1;}
+   frameBoards.push({edge:e.i,course:layer+1,quad,t:e.t});
   }
  }
+ const grow=(poly0,g)=>{const P=geo.area(poly0)<0?[...poly0].reverse():poly0,m=P.length,lines=[];
+   for(let i=0;i<m;i++){const a=P[i],b=P[(i+1)%m],dx=b[0]-a[0],dz=b[1]-a[1],l=Math.hypot(dx,dz)||1,nx=dz/l,nz=-dx/l;lines.push({p:[a[0]+nx*g,a[1]+nz*g],t:[dx/l,dz/l],n:[nx,nz]});}
+   const out=[];for(let i=0;i<m;i++){const L1=lines[(i-1+m)%m],L2=lines[i],den=L1.t[0]*L2.t[1]-L1.t[1]*L2.t[0];
+     if(Math.abs(den)<1e-9){out.push(L2.p);continue;}
+     const s0=((L2.p[0]-L1.p[0])*L2.t[1]-(L2.p[1]-L1.p[1])*L2.t[0])/den,X=[L1.p[0]+L1.t[0]*s0,L1.p[1]+L1.t[1]*s0],v=P[i];
+     // Limit long miter spikes at very sharp corners to a bevel.
+     if(Math.hypot(X[0]-v[0],X[1]-v[1])>g*4){out.push([v[0]+L1.n[0]*g,v[1]+L1.n[1]*g],[v[0]+L2.n[0]*g,v[1]+L2.n[1]*g]);}else out.push(X);}
+   return out;};
+ const frameGrown=frameBoards.map(f=>grow(f.quad,GAP));
  // Deck divider boards are clipped to the footprint and respect existing
  // border boards. The clipping occurs BEFORE the 3D meshes are generated.
+ // V5.2 B2: dividers stop one board gap short of the picture frame and no longer leave slivers
+ // in the small gaps between frame courses (they are cut against the grown frame boards).
  for(let u of dividerRows)for(let z=0;z<barsPerDivider;z++){
   const uu=u+(z-(barsPerDivider-1)/2)*PITCH;dividerCuts.push(uu);
   for(const triangle of triangles){const strip=geo.strip(triangle,d,uu-BW/2,uu+BW/2);if(!strip.length)continue;
-   for(const solid of geo.subtractMany(strip,occupancy)){
-    if(addContour('divider-board','finish',solid,top,FT,accent,{connect:'breaker-divider',label:'divider board cut to border'}))dividerOccupancy.push(solid);
+   for(const solid of geo.subtractMany(strip,frameGrown)){
+    if(Math.abs(geo.area(solid))<.002)continue;
+    const dv=addContour('divider-board','finish',solid,top,FT,accent,{connect:'breaker-divider',label:'divider board cut to border'});
+    if(dv){dividerOccupancy.push(solid);dv.dividerRow=dividerRows.indexOf(u)+1;dv.dividerBar=z+1;}
    }
   }
  }
@@ -1582,18 +1620,19 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    if(b-a<.15)continue;estimatedPhysicalBoards++;
    estimatedPhysicalBoards+=dividerCuts.filter(u=>u>a+.12&&u<b-.12).length;
  }
- const exclusions=[...occupancy,...dividerOccupancy];
- // Use a small realistic relief to avoid surface z-fighting at board joints.
- const gapExclusions=exclusions.map(p=>{
-  const mid=p.reduce((s,v)=>[s[0]+v[0]/p.length,s[1]+v[1]/p.length],[0,0]);
-  return p.map(v=>{const len=Math.hypot(v[0]-mid[0],v[1]-mid[1])||1;const dist=GAP*.32;return [v[0]+(v[0]-mid[0])*dist/len,v[1]+(v[1]-mid[1])*dist/len];});
- });
+ // V5.2 B2: field boards stop exactly one board gap (3/16 in.) short of every frame board and
+ // divider board, the same gap as between field courses. Each whole frame board and divider bar
+ // is grown outward by the gap and subtracted (previously a small radial relief left field boards
+ // almost touching the frame).
+ const vSpan=poly.map(p=>dot(p,n)),vLo=Math.min(...vSpan)-1,vHi=Math.max(...vSpan)+1;
+ const gapExclusions=[...frameGrown,
+   ...dividerCuts.map(uu=>[fromUV(d,uu-BW/2-GAP,vLo),fromUV(d,uu+BW/2+GAP,vLo),fromUV(d,uu+BW/2+GAP,vHi),fromUV(d,uu-BW/2-GAP,vHi)])];
  let fieldPieces=0;
  for(let rowId=0;rowId<boardRows.length;rowId++){
   const row=boardRows[rowId];let segment=0;
   for(const triangle of triangles){const strip=geo.strip(triangle,n,row.low,row.high);if(!strip.length)continue;
    for(const piece of geo.subtractMany(strip,gapExclusions)){
-    if(Math.abs(geo.area(piece))<.0008)continue;
+    if(Math.abs(geo.area(piece))<.0001)continue; // V5.2 B2: keep small real cut ends (was .0008 ft², which left holes)
     const item=addContour('field-board','finish',piece,top,FT,fieldColor,{connect:'field',label:row.width<BW-.03?'ripped edge course':'individual field board'});
     if(item){item.courseId=rowId;item.fragmentId=segment++;fieldPieces++;}
    }
@@ -1733,7 +1772,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  // Side picture-frame edges are parallel to the main joists. The long flat
  // 2x6 runs between the side rim and the support joist for each border board.
  for(let e of es){
-   if(!q.borderCount||q.houseEdges.includes(e.i))continue;
+   if(!q.borderCount||unframed(e.i))continue;
    const alignment=Math.abs(dot(e.t,joistD));
    if(alignment<.985){
      // The front edge is backed by perpendicular joist ends, not flat blocks.
@@ -1792,6 +1831,35 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
      }
    }
  }
+ // V5.2 B2: supplemental blocking under FIELD-BOARD ENDS. Where field boards end against a picture
+ // frame running across (or at an angle to) the joists, their ends fall between joists. A line of
+ // 2x blocking is added between the joists under that joint. Frame edges that run WITH the joists
+ // already have a support joist (above) and get nothing extra; so does a frame the field boards
+ // run parallel to (no ends there). Separate from the framing generator; concept only.
+ let fieldEndBlocks=0,fieldEndBlockLF=0;
+ if(q.borderCount)for(const e of es){
+   if(unframed(e.i))continue;
+   if(Math.abs(dot(e.t,joistD))>=.985||Math.abs(dot(e.t,d))>=.985)continue;
+   const off=q.borderCount*PITCH-GAP/2,inward=[-e.n[0],-e.n[1]],P0=[e.a[0]+inward[0]*off,e.a[1]+inward[1]*off],perp=[-e.t[1],e.t[0]],v=dot(P0,perp);
+   const eu0=Math.min(dot(e.a,e.t),dot(e.b,e.t)),eu1=Math.max(dot(e.a,e.t),dot(e.b,e.t));
+   // Extent: the field region along that line (sampled just inside the frame).
+   const vIn=dot([P0[0]+inward[0]*.03,P0[1]+inward[1]*.03],perp);
+   for(const [a,b] of lineIntervals(inside,e.t,vIn)){
+     const lo0=Math.max(a,eu0-1),hi0=Math.min(b,eu1+1);if(hi0-lo0<.3)continue;
+     const P=fromUV(e.t,lo0,v),Q=fromUV(e.t,hi0,v),cuts=[lo0,hi0];
+     for(const j of joistSegs){const hit=segmentIntersect(j.pA,j.pB,P,Q);if(hit&&hit.u>.002&&hit.u<.998)cuts.push(lo0+(hi0-lo0)*hit.u);}
+     if(q.beamStyle==='flush')for(const bm of beams){const hit=segmentIntersect(bm.a,bm.b,P,Q);if(hit&&hit.u>.002&&hit.u<.998)cuts.push(lo0+(hi0-lo0)*hit.u);}
+     cuts.sort((x,y)=>x-y);
+     for(let h=1;h<cuts.length;h++){
+       // Clear half a joist (and a little) at each crossing; the blocking fits between members.
+       const clearA=h===1?.08:.075/Math.max(.2,Math.abs(dot(e.t,[-joistD[1],joistD[0]])))+.01,clearB=h===cuts.length-1?.08:.075/Math.max(.2,Math.abs(dot(e.t,[-joistD[1],joistD[0]])))+.01;
+       const lo=cuts[h-1]+clearA,hi=cuts[h]-clearB;if(hi-lo<.25)continue;
+       const part=addStrip('field-end-blocking','framing',e.t,lo,hi,v,joistY,1.5*FT,joistDepth,'#c79a62',{connect:`field-end-edge-${e.i}`,label:'supplemental 2x blocking under field-board ends at the picture frame (concept; verify fastening and connections)'});
+       if(part){part.role='field-end-blocking';fieldEndBlocks++;fieldEndBlockLF+=hi-lo;}
+     }
+   }
+ }
+ if(fieldEndBlocks)alerts.push({level:'review',message:`${fieldEndBlocks} supplemental block${fieldEndBlocks>1?'s':''} (${fieldEndBlockLF.toFixed(1)} LF) added between joists under field-board ends along the picture frame. Concept only: blocking size, fastening and connections need production review.`});
  if(angledBorderReview)alerts.push({level:'review',message:'Angled picture-frame edges require specialized support/blocking. Long 2x6 assemblies are generated only parallel to the joists.'});
  if(transverseDividerReview)alerts.push({level:'warning',message:'Divider crosses main joists: a full continuous 2x6 plus new parallel joists would collide with the framing. Segmented support is provisional; header/trimmer reframe is required before construction.'});
  if(q.borderCount===2)alerts.push({level:'review',message:'Double picture-frame corners and doubled support joists require manufacturer-specific blocking/fastener review.'});
@@ -2176,7 +2244,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  if(q.beamStyle==='flush'&&beamDepth>joistDepth+.01)alerts.push({level:'review',message:'Flush-top beam extends below joists: confirm intended flush-connection details.'});
  if(q.beamStyle==='flush')alerts.push({level:'review',message:'Flush beam: joist-to-beam hanger design and hardware must be verified; preliminary members are not an approved detail.'});
  if(q.deckLine==='vertical'&&ledgerEdges.length)alerts.push({level:'review',message:'Some joists may run parallel to a house ledger. Only ledgers that receive actual perpendicular joist ends remove beam/post supports; other locations need independent support review.'});
- if(q.deckLine==='diagonal')alerts.push({level:'review',message:'Diagonal boards use a provisional 12in on-center orthogonal joist layout; verify selected decking span, cut-end blocking and ledger conditions.'});
+ if(isDiagonal)alerts.push({level:'review',message:'Diagonal boards use a provisional 12in on-center orthogonal joist layout; verify selected decking span, cut-end blocking and ledger conditions.'});
  alerts.push({level:'review',message:'Framing layout is an explicit bearing concept, NOT a code-verified design. Joist/beam species, grade, spans, connections, ledger, post heights and footing loads require production review.'});
  const qty=kind=>parts.filter(p=>p.kind===kind).length;
  const counts={joistNominal:`2x${joistNominal}`,joistSpacingIn:joistSpacing,pictureFlatBlocks:flatBorderBlocks,dividerFlatBlocks:flatDividerBlocks,fieldBoards:estimatedPhysicalBoards,borderBoards:qty('picture-frame'),dividers:qty('divider-board'),joists:qty('joist')+qty('picture-support-joist')+qty('divider-support-joist'),pictureSupportJoists:qty('picture-support-joist'),dividerSupportJoists:qty('divider-support-joist'),beams:qty('dropped-beam'),ledger:qty('ledger'),posts:qty('post-6x6'),footings:qty('footing-concept'),stringers:qty('stair-stringer'),treads:qty('stair-tread'),risers:qty('stair-riser'),railPosts:qty('railing-post')+qty('stair-rail-post'),balusters:qty('baluster')+qty('stair-baluster')};
@@ -2202,9 +2270,28 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    beamLengthsFt:beamRecords.map(b=>+b.len.toFixed(3)),postSpacingFt:beamRecords.map(b=>+b.postPitch.toFixed(3)),
    primaryLedgerEdge:q.primaryLedgerEdge,ledgerEdges:ledgerEdges.map(e=>e.i),ledgerCount:ledgerEdges.length,beamRows:beams.length,beamRoles:beamRecords.reduce((m,b)=>{const r=b.role||'shared-beam';m[r]=(m[r]||0)+1;return m;},{}),closeFootingPairs:closeFootings,sharedPosts,physicalSupportOutsideCount:physicalOutside.length,structuralEnvelopeOutsideCount:outsideStructural.length,footingOutsideProjectionCount:outsideFoundations.length,physicalSupportOutside:physicalOutside.map(p=>({kind:p.kind,role:p.role})),joistNominal:`2x${joistNominal}`,beamProfile,joistSpacingIn:joistSpacing,joistMaxSpanFt:FS.JOISTS[joistSpacing][joistNominal].span,unresolvedJoistRuns:beamSupportDiagnostics.length,sharedSupportZones:chosen.groups.length,framingPlanner:chosen.planner||'legacy-bearing-repair',optimizerCandidates:chosen.candidates,unverifiedBeamLoadCount:unsupportedBeamLoads,pictureFrameFlatBlocks:flatBorderBlocks,dividerFlatBlocks:flatDividerBlocks,pictureFrameFlatLF:borderFlatLF,dividerFlatLF:dividerFlatLF,pictureFrameSupportJoists:qty('picture-support-joist'),dividerSupportJoists:qty('divider-support-joist')};
  if(stairModels.some(g=>g.landing))stats.landings=stairModels.filter(g=>g.landing).map(g=>({stair:g.id,edge:g.edge,elevationFt:+g.landing.elevation.toFixed(4),widthFt:g.landing.width,depthFt:g.landing.depth,upperRisers:g.landing.upperRisers,lowerRisers:g.landing.lowerRisers,riserIn:+(g.rise*12).toFixed(3),posts:g.landing.posts,guardLF:+g.landing.guardLF.toFixed(2),turn:g.turn,decking:g.landing.decking,structuralApproval:false}));
+ // V5.2 B2: decking take-off from the boards actually generated (not from mesh fragments):
+ // every field course, picture-frame board and divider bar is measured at its long point.
+ // Kept apart from the landing decking (stats.landings) so nothing is counted twice.
+ const takeoff=(pieces,axisOf,keyOf,tol=.03)=>{const groups=new Map();
+   for(const p of pieces){const k=keyOf(p),ax=axisOf(p),vals=p.footprint.map(v=>dot(v,ax));if(!groups.has(k))groups.set(k,[]);groups.get(k).push([Math.min(...vals),Math.max(...vals)]);}
+   const lengths=[];for(const iv of groups.values()){iv.sort((x,y)=>x[0]-y[0]);let cur=null;
+     for(const [a,b] of iv){if(cur&&a<=cur[1]+tol)cur[1]=Math.max(cur[1],b);else{if(cur)lengths.push(cur[1]-cur[0]);cur=[a,b];}}if(cur)lengths.push(cur[1]-cur[0]);}
+   const stock={12:0,16:0,20:0};let joints=0;for(const L of lengths){if(L<=12+1e-6)stock[12]++;else if(L<=16+1e-6)stock[16]++;else if(L<=20+1e-6)stock[20]++;else{stock[20]+=Math.ceil(L/20-1e-9);joints+=Math.ceil(L/20-1e-9)-1;}}
+   const lf=lengths.reduce((a,b)=>a+b,0);return {pieces:lengths.length,lf:+lf.toFixed(2),longestFt:+(lengths.length?Math.max(...lengths):0).toFixed(2),stockBoards:stock,buttJoints:joints};};
+ const fieldTake=takeoff(parts.filter(p=>p.kind==='field-board'&&p.footprint),()=>d,p=>p.courseId);
+ const frameTake=takeoff(parts.filter(p=>p.kind==='picture-frame'&&p.footprint),p=>es[p.frameEdge].t,p=>`${p.frameEdge}-${p.frameCourse}`);
+ const dividerTake=takeoff(parts.filter(p=>p.kind==='divider-board'&&p.footprint),()=>n,p=>`${p.dividerRow}-${p.dividerBar}`);
+ const fieldWaste=isDiagonal?15:10;
+ const materials={decking:{direction:deckLineResolved,collection:q.collection,fieldColor:q.decking,frameColor:q.border,
+   field:{...fieldTake,wastePct:fieldWaste,orderLF:Math.ceil(fieldTake.lf*(1+fieldWaste/100))},
+   pictureFrame:{courses:q.borderCount,houseWalls:Boolean(q.frameHouseWalls),...frameTake,wastePct:10,orderLF:Math.ceil(frameTake.lf*1.1)},
+   dividers:{rows:dividerRows.length,barsPerRow:barsPerDivider,...dividerTake,wastePct:10,orderLF:Math.ceil(dividerTake.lf*1.1)},
+   note:'Planning quantities: each piece is cut from one stock board (12, 16 or 20 ft); offcut reuse is not assumed. Landing decking is listed with each landing.'},
+   supplementalBlocking:{fieldEndBlocks,lf:+fieldEndBlockLF.toFixed(2)}};
  if(openingModels.length){counts.doors=okOpenings.filter(o=>o.type==='door').length;counts.patioDoors=okOpenings.filter(o=>o.type==='patio').length;counts.windows=okOpenings.filter(o=>o.type==='window').length;
    stats.openings=openingModels.map(({a,b,...r})=>r);}
- return {intent:q,parts,counts,alerts,stats,geometry:{openings:openingModels,poly,edges:es,inside,beams,joists:joistSegs,boardAxis:d,dividerRows,dividerFractions,dividerSpanFt:umax-umin,dividerStart:umin,joistAxis:joistD,stair:firstStair,stairs:stairModels}};
+ return {intent:q,parts,counts,alerts,stats,materials,geometry:{deckLineResolved,dividerAdjust,openings:openingModels,poly,edges:es,inside,beams,joists:joistSegs,boardAxis:d,dividerRows,dividerFractions,dividerSpanFt:umax-umin,dividerStart:umin,joistAxis:joistD,stair:firstStair,stairs:stairModels}};
 }
 global.DeckCore={OPENING_TYPES,OPENING_END_CLEAR,OPENING_GAP,OPENING_MAX_TOP,MAX_OPENINGS,openingProblem,openingTop,openingBottom,stairPlan,LANDING_MIN_HEIGHT,LANDING_TURNS,LANDING_DECK_LINES,MAX_TURN_WIDTH,turnSign,stairFootprints,stairHitsDeck,SCHEMA_VERSION,RAIL_PRODUCTS,railFinish,derivePerimeter,migrate,baseIntent,sanitize,make,stairOverlap,resolveDividerFractions,MAX_DIVIDER_ROWS,MAX_FIELD_SECTION_FT,MIN_DIVIDER_SPACING_FT,PALETTES,RAILS,SHAPES,BW,GAP,PITCH,polygon,edges,validPolygon,lineIntervals,offsetPolygon};
 })(window);
@@ -2971,6 +3058,7 @@ function setProject(raw,commit=true,keepPanel=false){
  if(live){state.rev=(state.rev||0)+1;state.model=previewModel(state.intent,state.lastFull||state.model);setFramingStatus('pending');}
  else state.model=state.intent?buildFull(state.intent):core.make(null);
  if(commit)saveHistory();
+ {const a=state.model?.geometry?.dividerAdjust,key=a&&(a.moved||a.setAside)?`${a.moved}/${a.setAside}`:'';if(key&&key!==state.dividerAdjustKey&&!state.plan.drag)setTimeout(()=>toast(`Dividers adjusted for this size/direction: ${[a.moved?`${a.moved} moved in from an end`:'',a.setAside?`${a.setAside} set aside (kept, restored when there is room)`:''].filter(Boolean).join(', ')}.`),2300);state.dividerAdjustKey=key;}
  // Rebuilding WebGL on every pointer-move makes local edge dragging lag badly.
  // Draw the updated 2D model immediately; upload 3D geometry on release.
  if(!state.model.preview&&(!state.plan.drag||state.view==='3d'))renderer3d.setModel(state.model);
@@ -3013,6 +3101,8 @@ function addDivider(){
  const q=structuredClone(state.intent);q.dividerMode=q.dividerMode==='double'?'double':'single';q.dividerPositions=p;
  if(p.length===1)q.dividerOffset=p[0];state.dividerSelected=idx;setProject(q);toast('Added divider — select or drag to reposition.');
 }
+// V5.2 B2: the longest continuous field-board piece actually generated (from the take-off).
+function longestRun(){return state.model?.materials?.decking?.field?.longestFt||0;}
 function longDividerSection(positions,span){
  const sections=[0,...positions,1];
  return Math.max(...sections.slice(1).map((v,i)=>(v-sections[i])*span));
@@ -3539,7 +3629,7 @@ function renderStairPanel(q){
    <p class="group-title landing-sub">Lower flight</p><div class="seg turns" data-stair-turns>${[['straight','Straight'],['left','↰ Turn left'],['right','Turn right ↱']].map(([v,t])=>`<button type="button" data-action="stair-turn" data-value="${v}" class="${(L.turn||'straight')===v?'selected':''}" aria-pressed="${(L.turn||'straight')===v}" ${v!=='straight'&&stair.width>core.MAX_TURN_WIDTH?'disabled':''}>${t}</button>`).join('')}</div>
    ${L.turn?`<div class="editor-tip">The lower flight turns 90° to your ${L.turn} as you walk down and leaves from the side of the landing. The landing must be at least as deep as the stair is wide (${fmt(stair.width)}).</div>`:stair.width>core.MAX_TURN_WIDTH?`<div class="editor-tip">Turning stairs can be up to ${fmt(core.MAX_TURN_WIDTH)} wide.</div>`:''}
    <p class="group-title landing-sub">Landing decking direction</p><div class="seg wrap" data-landing-decklines>${[['match','Match main deck'],['horizontal','↔ Horizontal'],['vertical','↕ Vertical'],['diagonal-left','⟍ Diagonal left'],['diagonal-right','⟋ Diagonal right']].map(([v,t])=>`<button type="button" data-action="landing-deckline" data-value="${v}" class="${(L.deckLine||'match')===v?'selected':''}" aria-pressed="${(L.deckLine||'match')===v}">${t}</button>`).join('')}</div>
-   <div class="editor-tip">Uses the main deck's ${esc(q.decking)} boards${q.borderCount?` with a ${q.borderCount===2?'double':'single'} ${esc(q.border)} picture frame`:''}. ${(L.deckLine||'match')==='match'?`Follows the main deck's board direction (now ${q.deckLine==='horizontal'?'across':q.deckLine==='vertical'?'outward':'diagonal'}).`:'Horizontal runs parallel to the deck edge, like the treads; vertical runs down the stairs; diagonals lean 45° to your left or right as you walk down.'}${gl?.decking?` ${gl.decking.fieldBoards} field + ${gl.decking.frameBoards} frame boards.`:''}</div>
+   <div class="editor-tip">Uses the main deck's ${esc(q.decking)} boards${q.borderCount?` with a ${q.borderCount===2?'double':'single'} ${esc(q.border)} picture frame`:''}. ${(L.deckLine||'match')==='match'?`Follows the main deck's board direction (now ${({horizontal:'horizontal',vertical:'vertical','diagonal-left':'diagonal left','diagonal-right':'diagonal right'})[state.model.geometry.deckLineResolved]||q.deckLine}).`:'Horizontal runs parallel to the deck edge, like the treads; vertical runs down the stairs; diagonals lean 45° to your left or right as you walk down.'}${gl?.decking?` ${gl.decking.fieldBoards} field + ${gl.decking.frameBoards} frame boards.`:''}</div>
    <div class="editor-tip">${gl?`Upper flight: ${gl.upperRisers} risers down to the landing. Lower flight: ${gl.lowerRisers} risers to grade. Every riser ${inchText(g.rise)}; the landing height is set to a whole number of risers. `:''}Landing posts, footings and framing are drawn as a concept for AOS production review, not an approved structure.</div>`:''}
    ${!canLand&&!L?`<div class="editor-tip">A landing needs at least four risers: a deck about ${fmt(core.LANDING_MIN_HEIGHT)} high or more.</div>`:''}<div class="editor-actions"><button data-action="stair-rail" data-side="left" class="${stair.rails.left?'selected':''}">Left rail ${stair.rails.left?'✓':'+'}</button><button data-action="stair-rail" data-side="right" class="${stair.rails.right?'selected':''}">Right rail ${stair.rails.right?'✓':'+'}</button><button data-action="stair-remove" class="danger">Remove selected</button></div><div class="editor-tip">Drag this staircase in 2D to slide it along its edge. Tap another exposed edge to relocate it.</div></div>`;
  }
@@ -3568,13 +3658,15 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
  if(s===1&&q){html=`<div class="compact-intro">Tap any deck edge to add/remove a house wall. Multiple sides are allowed.</div><div class="field-row">${input('height','DECK HEIGHT',q.height,.5,16,.25)}<div class="summary-card"><strong>${q.houseEdges.length} house side${q.houseEdges.length===1?'':'s'}</strong><span>${q.houseEdges.length?'Attached concept':'Freestanding'}</span></div></div><div class="compact-status">Red edges = house · Tap an edge again to remove</div>${renderOpeningsPanel(q)}`;}
  if(s===2&&q)html=renderStairPanel(q);
  if(s===3&&q){html=`${seg('layoutTab',[['direction','Board direction'],['border','Border & dividers']],state.layoutTab)}`;
-   if(state.layoutTab==='direction')html+=`<p class="group-title">Direction of field boards</p>${seg('deckLine',[['horizontal','↔ Across'],['vertical','↕ Outward'],['diagonal','◢ Diagonal']],q.deckLine)}<div class="compact-status">Joists run perpendicular to field boards (12in OC for diagonal); bearing updates automatically.</div>`;
+   if(state.layoutTab==='direction'){const cur=state.model.geometry.deckLineResolved||q.deckLine,DL={horizontal:'Horizontal',vertical:'Vertical','diagonal-left':'Diagonal left','diagonal-right':'Diagonal right'};
+     html+=`<p class="group-title">Direction of field boards</p><div class="seg wrap deckline-seg">${[['horizontal','↔ Horizontal'],['vertical','↕ Vertical'],['diagonal-left','⟍ Diagonal left'],['diagonal-right','⟋ Diagonal right']].map(([v,t])=>`<button type="button" data-path="deckLine" data-value="${v}" class="${cur===v?'selected':''}" aria-pressed="${cur===v}">${t}</button>`).join('')}</div>
+     <div class="compact-status">${DL[cur]||cur}: ${cur==='horizontal'?'boards run along the house wall.':cur==='vertical'?'boards run straight out from the house wall.':cur==='diagonal-left'?'boards run at 45° like ⟍ (top-left to bottom-right) with the house at the top of the plan.':'boards run at 45° like ⟋ (bottom-left to top-right) with the house at the top of the plan.'} Joists run across the boards${/^diagonal/.test(cur)?' at 12 in. on center':''}; supports update automatically.</div>`;}
    else {
      const dm=dividerInfo(),count=dm.positions.length;
      state.dividerSelected=clamp(state.dividerSelected,0,Math.max(0,count-1));
      const selected=state.dividerSelected,position=count?dm.positions[selected]:.5;
      const bounds=count?dividerBounds(dm.positions,selected,dm.span):{min:.02,max:.98};
-     html+=`<p class="group-title">Picture-frame boards</p>${seg('borderCount',[[0,'None'],[1,'Single'],[2,'Double']],q.borderCount)}<p class="group-title">Breaker / divider boards</p>${seg('dividerMode',[['auto','Automatic'],['single','Single'],['double','Double']],q.dividerMode)}<div class="divider-manager"><button data-action="divider-prev" ${selected<=0?'disabled':''} title="Previous divider">‹</button><strong>${count?`Divider ${selected+1} of ${count}`:'No dividers'}</strong><button data-action="divider-next" ${selected>=count-1?'disabled':''} title="Next divider">›</button><button data-action="divider-remove" ${!count?'disabled':''}>− Remove</button><button class="add" data-action="divider-add" ${count>=core.MAX_DIVIDER_ROWS?'disabled':''}>+ Add</button></div><div class="position-row divider-position"><span>Position</span><input aria-label="Selected divider position" type="range" data-divider-slider min="${bounds.min}" max="${bounds.max}" step="0.005" value="${position}" ${!count?'disabled':''}><output data-divider-readout>${count?fmt(position*dm.span):'—'}</output></div><div class="divider-utilities"><button data-action="divider-remove-all" ${!count?'disabled':''}>Remove All</button><button data-action="divider-reset">↶ Reset to Default</button></div><div class="divider-help ${!count||longDividerSection(dm.positions,dm.span)>core.MAX_FIELD_SECTION_FT+.01?'seams-warning':''}">${!count?'⚠ No divider boards: field decking may need butt seams/joints.':longDividerSection(dm.positions,dm.span)>core.MAX_FIELD_SECTION_FT+.01?'⚠ A section exceeds 20 ft: plan for field seams/joints.':'Drag numbered handles in 2D · 20-ft planning sections'} · ${q.dividerMode==='auto'&&!Array.isArray(q.dividerPositions)?'Default spacing':'Custom layout'}</div>`;
+     html+=`<p class="group-title">Picture-frame boards</p>${seg('borderCount',[[0,'None'],[1,'Single'],[2,'Double']],q.borderCount)}${q.borderCount&&q.houseEdges.length?`<p class="group-title">Along house walls</p>${seg('frameHouseWalls',[['false','No frame (usual)'],['true','Frame house walls too']],String(Boolean(q.frameHouseWalls)))}`:''}<p class="group-title">Breaker / divider boards</p>${seg('dividerMode',[['auto','Automatic'],['single','Single'],['double','Double']],q.dividerMode)}<div class="divider-manager"><button data-action="divider-prev" ${selected<=0?'disabled':''} title="Previous divider">‹</button><strong>${count?`Divider ${selected+1} of ${count}`:'No dividers'}</strong><button data-action="divider-next" ${selected>=count-1?'disabled':''} title="Next divider">›</button><button data-action="divider-remove" ${!count?'disabled':''}>− Remove</button><button class="add" data-action="divider-add" ${count>=core.MAX_DIVIDER_ROWS?'disabled':''}>+ Add</button></div><div class="position-row divider-position"><span>Position</span><input aria-label="Selected divider position" type="range" data-divider-slider min="${bounds.min}" max="${bounds.max}" step="0.005" value="${position}" ${!count?'disabled':''}><output data-divider-readout>${count?fmt(position*dm.span):'—'}</output></div><div class="divider-utilities"><button data-action="divider-remove-all" ${!count?'disabled':''}>Remove All</button><button data-action="divider-reset">↶ Reset to Default</button></div><div class="divider-help ${!count||longDividerSection(dm.positions,dm.span)>core.MAX_FIELD_SECTION_FT+.01?'seams-warning':''}">${!count?'⚠ No divider boards: field decking may need butt seams/joints.':longDividerSection(dm.positions,dm.span)>core.MAX_FIELD_SECTION_FT+.01?'⚠ A section exceeds 20 ft: plan for field seams/joints.':'Drag numbered handles in 2D · 20-ft planning sections'} · ${q.dividerMode==='auto'&&!Array.isArray(q.dividerPositions)?'Default spacing':'Custom layout'}</div><div class="divider-help">Longest field-board run without a divider: ${fmt(longestRun())}. Boards are 20 ft at most, so any longer run needs a divider (or butt joints).${state.model.geometry.dividerAdjust&&(state.model.geometry.dividerAdjust.moved||state.model.geometry.dividerAdjust.setAside)?` <b>Adjusted for this size/direction: ${[state.model.geometry.dividerAdjust.moved?`${state.model.geometry.dividerAdjust.moved} moved in from an end`:'',state.model.geometry.dividerAdjust.setAside?`${state.model.geometry.dividerAdjust.setAside} set aside (kept in the project)`:''].filter(Boolean).join(', ')}.</b>`:''}</div>`;
    }
  }
  if(s===4&&q){html=`${seg('finishTab',[['field','Main decking'],['accent','Border / stair accent']],state.finishTab)}`;
@@ -3603,7 +3695,8 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
    }
  }
  if(s===7&&q){const c=state.model.counts,m=state.model.stats;
-   html=`<div class="metrics metrics-four"><div class="metric"><b>${m.deckArea.toFixed(1)}</b><span>DECK SQ FT</span></div><div class="metric"><b>${m.stairArea.toFixed(1)}</b><span>STAIR SQ FT</span></div><div class="metric"><b>${m.totalArea.toFixed(1)}</b><span>DECK + STAIRS SQ FT</span></div><div class="metric"><b>${m.totalRailLF.toFixed(1)}</b><span>RAILING LF</span></div></div><div class="review-buttons"><button data-action="download-json">Save design + parts</button><button class="primary-small" data-action="export-concept">Customer concept ↗</button></div><p class="compact-review">Railing: ${m.deckRailLF.toFixed(1)} LF deck + ${m.stairRailLF.toFixed(1)} LF stair. Framing: ${c.joists} ${m.joistNominal} joist members, ${c.beams} beams, ${c.posts} posts. Continuous flat 2×6 support: ${c.pictureFlatBlocks} border run(s), ${m.pictureFrameFlatLF.toFixed(1)} LF + ${c.dividerFlatBlocks} divider piece(s), ${m.dividerFlatLF.toFixed(1)} LF.${q.staircases.length?` Stairs: ${q.staircases.length} staircase${q.staircases.length>1?'s':''}, ${c.treads} treads, ${c.risers} risers, ${c.stringers} stringers${c.landings?`; ${c.landings} landing${c.landings>1?'s':''}${c.turningStairs?` (${c.turningStairs} turning)`:''} with ${c.landingPosts} posts, ${c.landingFootings} footings and ${c.landingFraming} framing members (concept, not approved)${c.landingBlocking?`, plus ${c.landingBlocking} picture-frame blocks (concept)`:''}. Landing decking: ${c.landingFieldBoards} field boards, ${c.landingFieldLF.toFixed(1)} LF (order ${c.landingFieldOrderLF} LF with waste)${c.landingFrameBoards?` + ${c.landingFrameBoards} picture-frame boards, ${c.landingFrameLF.toFixed(1)} LF (order ${c.landingFrameOrderLF} LF)`:''}`:''}.`:''} Production review required.</p>`;}
+   html=`<div class="metrics metrics-four"><div class="metric"><b>${m.deckArea.toFixed(1)}</b><span>DECK SQ FT</span></div><div class="metric"><b>${m.stairArea.toFixed(1)}</b><span>STAIR SQ FT</span></div><div class="metric"><b>${m.totalArea.toFixed(1)}</b><span>DECK + STAIRS SQ FT</span></div><div class="metric"><b>${m.totalRailLF.toFixed(1)}</b><span>RAILING LF</span></div></div><div class="review-buttons"><button data-action="download-json">Save design + parts</button><button class="primary-small" data-action="export-concept">Customer concept ↗</button></div><p class="compact-review">Railing: ${m.deckRailLF.toFixed(1)} LF deck + ${m.stairRailLF.toFixed(1)} LF stair. Framing: ${c.joists} ${m.joistNominal} joist members, ${c.beams} beams, ${c.posts} posts. Continuous flat 2×6 support: ${c.pictureFlatBlocks} border run(s), ${m.pictureFrameFlatLF.toFixed(1)} LF + ${c.dividerFlatBlocks} divider piece(s), ${m.dividerFlatLF.toFixed(1)} LF.${q.staircases.length?` Stairs: ${q.staircases.length} staircase${q.staircases.length>1?'s':''}, ${c.treads} treads, ${c.risers} risers, ${c.stringers} stringers${c.landings?`; ${c.landings} landing${c.landings>1?'s':''}${c.turningStairs?` (${c.turningStairs} turning)`:''} with ${c.landingPosts} posts, ${c.landingFootings} footings and ${c.landingFraming} framing members (concept, not approved)${c.landingBlocking?`, plus ${c.landingBlocking} picture-frame blocks (concept)`:''}. Landing decking: ${c.landingFieldBoards} field boards, ${c.landingFieldLF.toFixed(1)} LF (order ${c.landingFieldOrderLF} LF with waste)${c.landingFrameBoards?` + ${c.landingFrameBoards} picture-frame boards, ${c.landingFrameLF.toFixed(1)} LF (order ${c.landingFrameOrderLF} LF)`:''}`:''}.`:''} ${(()=>{const D=state.model.materials?.decking,B=state.model.materials?.supplementalBlocking;if(!D)return '';const st=x=>Object.entries(x.stockBoards).filter(([,n])=>n).map(([l,n])=>`${n}×${l}′`).join(' + ')||'—';
+   return `Decking (${({horizontal:'horizontal',vertical:'vertical','diagonal-left':'diagonal left','diagonal-right':'diagonal right'})[D.direction]||D.direction}): field ${D.field.lf.toFixed(0)} LF in ${D.field.pieces} pieces (${st(D.field)}; order ${D.field.orderLF} LF with ${D.field.wastePct}% waste)${D.pictureFrame.pieces?`; picture frame ${D.pictureFrame.lf.toFixed(0)} LF, ${D.pictureFrame.pieces} boards (${st(D.pictureFrame)})`:''}${D.dividers.pieces?`; dividers ${D.dividers.lf.toFixed(0)} LF, ${D.dividers.pieces} boards (${st(D.dividers)})`:''}${B?.fieldEndBlocks?`; ${B.fieldEndBlocks} supplemental blocks under field-board ends (concept)`:''}.`;})()} Production review required.</p>`;}
  $('stepContent').innerHTML=html;updateHeader();
 }
 // ---- V5.1 projects: storage, autosave, recent projects, honest downloads ----
@@ -3611,7 +3704,7 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
 // space in this preview's database (follows them to any device that opens the same link;
 // nobody else, the owner included, can read it). Anywhere else (the HTML file opened in a
 // browser), in this browser's local storage on this device. The UI always says which.
-const APP_VERSION='5.2-group-b-b1',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
+const APP_VERSION='5.2-group-b-b2',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
 const localProjects={kind:'browser',
  read(){try{const v=JSON.parse(localStorage.getItem(LOCAL_PROJECTS)||'{}');return v&&typeof v==='object'?v:{};}catch(e){return null;}},
  write(m){localStorage.setItem(LOCAL_PROJECTS,JSON.stringify(m));},
@@ -3700,7 +3793,7 @@ function exportConcept(){if(!state.intent){toast('Choose a shape first.');return
  const wasFrame=renderer3d.showStructure;if(wasFrame)renderer3d.setStructureVisible(false);renderer3d.draw();planDraw();
  const pic3d=renderer3d.gl?renderer3d.screenshot():null,pic2d=planCanvas.toDataURL('image/png'),q=state.intent,ec=state.model.geometry.edges;
  if(wasFrame)renderer3d.setStructureVisible(true);
- const html=`<!doctype html><html><head><meta charset="utf-8"><title>AOS Deck Concept</title><style>body{font:14px Arial,sans-serif;color:#24313b;margin:0;padding:35px;background:#f4f4f4}.wrap{max-width:960px;margin:auto;background:white;padding:30px;border-top:8px solid #c32e3c}h1{margin:0}.sub{color:#728090;margin:7px 0 23px}.images{display:grid;grid-template-columns:1fr 1fr;gap:12px}.images img{width:100%;border:1px solid #ddd;border-radius:8px}table{width:100%;margin:18px 0;border-collapse:collapse}td{padding:9px;border-bottom:1px solid #e7e7e7}.note{font-size:12px;color:#71808d;line-height:1.6;border-top:1px solid #ddd;padding-top:14px}@media(max-width:650px){.images{grid-template-columns:1fr}}@media print{body{padding:0;background:white}.wrap{padding:16px}}</style></head><body><div class="wrap"><h1><span style="color:#c32e3c">AOS</span> HOME SOLUTIONS</h1><div class="sub">Deck concept · ${esc(q.project)} · V5.2</div><div class="images">${pic3d?`<img alt="Finished 3D deck" src="${pic3d}">`:''}<img alt="Dimensioned 2D deck" src="${pic2d}"></div><table><tr><td>Shape / overall dimensions</td><td>${esc(q.shape.toUpperCase())} · ${fmt(q.width)} × ${fmt(q.depth)}</td></tr><tr><td>Deck / stairs / total SQ FT</td><td>${state.model.stats.deckArea.toFixed(1)} / ${state.model.stats.stairArea.toFixed(1)} / ${state.model.stats.totalArea.toFixed(1)}</td></tr><tr><td>Deck / stair / total railing LF</td><td>${state.model.stats.deckRailLF.toFixed(1)} / ${state.model.stats.stairRailLF.toFixed(1)} / ${state.model.stats.totalRailLF.toFixed(1)}</td></tr><tr><td>House connections</td><td>${q.houseEdges.length} wall side(s); ${state.model.stats.ledgerCount} preliminary ledgers (edges ${state.model.stats.ledgerEdges.map(i=>i+1).join(', ')||'none'})</td></tr><tr><td>Decking</td><td>${esc(q.collection)} · ${esc(q.decking)}</td></tr><tr><td>Board direction</td><td>${esc(q.deckLine)}</td></tr><tr><td>Picture frame</td><td>${q.borderCount===2?'Double':q.borderCount===1?'Single':'None'} · ${esc(q.border)}</td></tr><tr><td>Stairs</td><td>${q.staircases.length?q.staircases.length+' independent staircases ('+q.staircases.map(s=>fmt(s.width)).join(', ')+')':'None'}</td></tr><tr><td>Railing</td><td>${esc(railSummary(q))}</td></tr></table><p class="note">PRELIMINARY SALES CONCEPT. Visual materials are approximate. Framing, footing layouts, span calculations, hardware, railing anchorage, stair requirements, quantities, code compliance and pricing have not been approved for construction. Structural review and site verification required. No customer pricing is included.</p></div></body></html>`;
+ const html=`<!doctype html><html><head><meta charset="utf-8"><title>AOS Deck Concept</title><style>body{font:14px Arial,sans-serif;color:#24313b;margin:0;padding:35px;background:#f4f4f4}.wrap{max-width:960px;margin:auto;background:white;padding:30px;border-top:8px solid #c32e3c}h1{margin:0}.sub{color:#728090;margin:7px 0 23px}.images{display:grid;grid-template-columns:1fr 1fr;gap:12px}.images img{width:100%;border:1px solid #ddd;border-radius:8px}table{width:100%;margin:18px 0;border-collapse:collapse}td{padding:9px;border-bottom:1px solid #e7e7e7}.note{font-size:12px;color:#71808d;line-height:1.6;border-top:1px solid #ddd;padding-top:14px}@media(max-width:650px){.images{grid-template-columns:1fr}}@media print{body{padding:0;background:white}.wrap{padding:16px}}</style></head><body><div class="wrap"><h1><span style="color:#c32e3c">AOS</span> HOME SOLUTIONS</h1><div class="sub">Deck concept · ${esc(q.project)} · V5.2</div><div class="images">${pic3d?`<img alt="Finished 3D deck" src="${pic3d}">`:''}<img alt="Dimensioned 2D deck" src="${pic2d}"></div><table><tr><td>Shape / overall dimensions</td><td>${esc(q.shape.toUpperCase())} · ${fmt(q.width)} × ${fmt(q.depth)}</td></tr><tr><td>Deck / stairs / total SQ FT</td><td>${state.model.stats.deckArea.toFixed(1)} / ${state.model.stats.stairArea.toFixed(1)} / ${state.model.stats.totalArea.toFixed(1)}</td></tr><tr><td>Deck / stair / total railing LF</td><td>${state.model.stats.deckRailLF.toFixed(1)} / ${state.model.stats.stairRailLF.toFixed(1)} / ${state.model.stats.totalRailLF.toFixed(1)}</td></tr><tr><td>House connections</td><td>${q.houseEdges.length} wall side(s); ${state.model.stats.ledgerCount} preliminary ledgers (edges ${state.model.stats.ledgerEdges.map(i=>i+1).join(', ')||'none'})</td></tr><tr><td>Decking</td><td>${esc(q.collection)} · ${esc(q.decking)}</td></tr><tr><td>Board direction</td><td>${esc(({horizontal:'Horizontal',vertical:'Vertical','diagonal-left':'Diagonal left','diagonal-right':'Diagonal right'})[state.model.geometry.deckLineResolved]||q.deckLine)}</td></tr><tr><td>Picture frame</td><td>${q.borderCount===2?'Double':q.borderCount===1?'Single':'None'} · ${esc(q.border)}${q.borderCount&&q.frameHouseWalls?' · including house walls':''}</td></tr><tr><td>Stairs</td><td>${q.staircases.length?q.staircases.length+' independent staircases ('+q.staircases.map(s=>fmt(s.width)).join(', ')+')':'None'}</td></tr><tr><td>Railing</td><td>${esc(railSummary(q))}</td></tr></table><p class="note">PRELIMINARY SALES CONCEPT. Visual materials are approximate. Framing, footing layouts, span calculations, hardware, railing anchorage, stair requirements, quantities, code compliance and pricing have not been approved for construction. Structural review and site verification required. No customer pricing is included.</p></div></body></html>`;
  offerFile(`${filename()}_AOS_Concept.html`,html,'text/html');
 }
 $('fileInput').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let dat=JSON.parse(await f.text()),q=dat.design||dat.intent||dat;if(!Number.isFinite(Number(q.width))||!Number.isFinite(Number(q.depth)))throw Error('Invalid deck file');await flushSave();loadDesign(q,{});closeProjects();saveProject(false);toast('File opened as a new project.');}catch(err){toast('Unable to open design: '+err.message);}e.target.value='';});
@@ -4167,6 +4260,14 @@ function planDraw(){const {w,h}=canvasSize(),sc=state.plan.scale;ctx.fillStyle='
    }
    for(const [color,polys] of fills){ctx.beginPath();for(const poly of polys){poly.forEach((v,i)=>{const pt=xy(...v);i?ctx.lineTo(...pt):ctx.moveTo(...pt);});ctx.closePath();}ctx.fillStyle=color;ctx.fill();}
    // Draw genuine long board edges, never the polygon triangulation cuts.
+   // V5.2 B2: the long edges of every picture-frame course, so a frame in the same color as the
+   // field still reads as separate boards on the plan (3D draws the same seams).
+   {const seenF=new Set();ctx.save();ctx.strokeStyle='rgba(43,34,27,.45)';ctx.lineWidth=.8;
+    for(const part of model.parts){if(part.kind!=='picture-frame'||!part.footprint||part.frameEdge===undefined)continue;const t=es[part.frameEdge]?.t;if(!t)continue;
+      const poly=part.footprint;for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz);
+        if(len<.15||Math.abs(dx*t[1]-dz*t[0])>.003*len)continue;const key=[a,b].map(p=>p.map(v=>v.toFixed(3)).join(',')).sort().join('|');if(seenF.has(key))continue;seenF.add(key);
+        const aa=xy(...a),bb=xy(...b);ctx.beginPath();ctx.moveTo(...aa);ctx.lineTo(...bb);ctx.stroke();}}
+    ctx.restore();}
    const d=model.geometry.boardAxis,seen=new Set();ctx.save();ctx.strokeStyle='rgba(43,34,27,.35)';ctx.lineWidth=.65;
    for(const part of model.parts){if(part.kind!=='field-board'||!part.footprint)continue;
      const poly=part.footprint;for(let i=0;i<poly.length;i++){
@@ -4405,6 +4506,9 @@ window.AOSDeckStudioTest=Object.freeze({framingStatus:()=>state.framingStatus,is
  toScreen:(x,z)=>{const r=planCanvas.getBoundingClientRect(),p=xy(x,z);return [r.left+p[0],r.top+p[1]];},edges:()=>JSON.parse(JSON.stringify(state.model?.geometry?.edges||[])),
  // Checkpoint 3 correction (read-only): the stair, railing and landing-framing parts the 3D view is drawing.
  scene3d:()=>JSON.parse(JSON.stringify({showStructure:renderer3d.showStructure,stairs:renderer3d.model?.geometry?.stairs||[],parts:(renderer3d.model?.parts||[]).filter(p=>/^(stair-|landing-|opening-|door-|house-wall)/.test(p.kind)).map(({kind,group,connect,role,x,y,z,w,h,d,yaw,rz,label})=>({kind,group,connect,role,x,y,z,w,h,d,yaw,rz,label}))})),
+ // V5.2 B2 (read-only): the decking layout shown in 2D (state.model) and in 3D (renderer3d.model).
+ decking:()=>JSON.parse(JSON.stringify({plan:{direction:state.model?.geometry?.deckLineResolved,axis:state.model?.geometry?.boardAxis,dividers:state.model?.geometry?.dividerRows?.length,dividerAdjust:state.model?.geometry?.dividerAdjust,materials:state.model?.materials,finish:(state.model?.parts||[]).filter(p=>p.group==='finish').length},
+   view3d:{direction:renderer3d.model?.geometry?.deckLineResolved,finish:(renderer3d.model?.parts||[]).filter(p=>p.group==='finish').length,blocks:(renderer3d.model?.parts||[]).filter(p=>p.kind==='field-end-blocking').length}})),
  // V5.2 B1 (read-only): doors/windows as the engine placed them, with their status.
  openings:()=>JSON.parse(JSON.stringify(state.model?.geometry?.openings||[])),
  framingCache:()=>({hits:window.AOSSharedSupport.choose?.hits??null,misses:window.AOSSharedSupport.choose?.misses??null})});

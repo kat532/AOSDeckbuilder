@@ -2,6 +2,7 @@
 // produce IDENTICAL models — every framing part, its position, size, role and label, plus counts,
 // stats and alerts — for every regression deck, the owner's irregular deck and 176 generated
 // angled / bump-out decks. Group A must not change framing (owner instruction, 7 Nov 2026).
+// (Since B2 the decking finish boards are excluded here and tested on their own; see below.)
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -14,11 +15,23 @@ const { fixtures } = require('./fixtures');
 const BASE = path.join(__dirname, 'baseline', 'AOS_Deck_Studio_V5_2_Continuous_Middle_Beams.html');
 const base = loadEngine(BASE), work = loadEngine();
 const r = (v) => typeof v === 'number' ? Math.round(v * 1e6) / 1e6 : v;
+// V5.2 Group B — B2 (owner-requested decking work, 7 Nov 2026) changes ONLY the decking finish:
+// field / picture-frame / divider board geometry (gaps, slivers, frame-course spacing) and adds a
+// separate supplemental-blocking member under field-board ends. Those are compared by the B2
+// decking tests (tests/decking-b2.test.js). EVERYTHING ELSE here — every framing member, its
+// position, size, role and label, railings, stairs, house, counts, stats and alerts — must still be
+// identical to V5.2. Part ids are a running number, so they shift when finish parts change.
+const FINISH = new Set(['field-board', 'picture-frame', 'divider-board', 'field-end-blocking']);
+const FRAGMENT_COUNTS = ['dividers', 'borderBoards'], FINISH_STATS = ['partCount', 'fieldBoardFragments'];
+const B2_ALERT = /supplemental blocks? \([\d.]+ LF\) added between joists under field-board ends/;
 const model = (win, q) => {
   const m = win.DeckCore.make(q);
+  const counts = { ...m.counts }, stats = { ...m.stats };
+  for (const k of FRAGMENT_COUNTS) delete counts[k];
+  for (const k of FINISH_STATS) delete stats[k];
   return JSON.parse(JSON.stringify({
-    parts: m.parts.map(p => Object.fromEntries(Object.entries(p).sort().map(([k, v]) => [k, Array.isArray(v) ? JSON.parse(JSON.stringify(v), (_, x) => r(x)) : r(v)]))),
-    counts: m.counts, alerts: m.alerts, stats: m.stats,
+    parts: m.parts.filter(p => !FINISH.has(p.kind)).map(({ id, ...p }) => Object.fromEntries(Object.entries(p).sort().map(([k, v]) => [k, Array.isArray(v) ? JSON.parse(JSON.stringify(v), (_, x) => r(x)) : r(v)]))),
+    counts, alerts: m.alerts.filter(a => !B2_ALERT.test(a.message)), stats,
   }));
 };
 const outline = (pts) => { const xs = pts.map(p => p[0]), zs = pts.map(p => p[1]); const x0 = Math.min(...xs), x1 = Math.max(...xs), z0 = Math.min(...zs), z1 = Math.max(...zs);

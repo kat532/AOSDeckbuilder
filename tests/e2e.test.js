@@ -1408,13 +1408,13 @@ test('CP3: landing decking direction — five options, Match follows the main de
   const opts = await page.locator('#stepContent [data-action="landing-deckline"]').allInnerTexts();
   assert.deepEqual(opts.map(t => t.replace(/^\W+\s*/, '').trim()), ['Match main deck', 'Horizontal', 'Vertical', 'Diagonal left', 'Diagonal right']);
   assert.equal(await pressed(page, 'landing-deckline'), 'match', 'new and existing landings start on Match main deck');
-  assert.match(await stairPanel(page), /Follows the main deck's board direction \(now across\)/);
+  assert.match(await stairPanel(page), /Follows the main deck's board direction \(now horizontal\)/);
   assert.match(await stairPanel(page), /Uses the main deck's Brown Oak boards with a single Stone Ash picture frame/);
   // Main deck turned to outward boards: the Match landing follows.
   await stepBtn(page, 'Layout').click();
   await page.locator('#stepContent [data-path="deckLine"][data-value="vertical"]').click();
   await stepBtn(page, 'Stairs').click();
-  assert.match(await stairPanel(page), /\(now outward\)/);
+  assert.match(await stairPanel(page), /\(now vertical\)/);
   // An explicit direction is independent of the main deck afterwards.
   await page.locator('#stepContent [data-action="landing-deckline"][data-value="diagonal-right"]').click();
   assert.equal(await pressed(page, 'landing-deckline'), 'diagonal-right');
@@ -1827,6 +1827,130 @@ test('B1: phone-size screen: the controls fit and an opening can be added, selec
   assert.ok(Math.abs((await openingsOf(page))[0].width - 32 / 12) < 1e-3);
   assert.equal((await page.evaluate(() => window.AOSDeckStudioTest.edges())).length, 4);
   fs.writeFileSync(path.join(SHOTS, 'b1-phone.png'), await page.screenshot());
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+// ---- V5.2 Group B — B2: decking layout and appearance ----
+const deckingOf = (page) => page.evaluate(() => window.AOSDeckStudioTest.decking());
+async function toLayout(page, design, tab) { await openDeckFile(page, design); await stepBtn(page, 'Layout').click(); if (tab) await page.locator(`#stepContent [data-path="layoutTab"][data-value="${tab}"]`).click(); }
+const B2_DECK = { shape: 'rectangle', width: 20, depth: 14, height: 4, houseEdges: [0], borderCount: 1 };
+
+test('B2: four labelled directions; diagonal left and right are mirror images in 2D and 3D; Undo/Redo; save/reopen', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toLayout(page, B2_DECK);
+  const labels = await page.locator('#stepContent [data-path="deckLine"]').allInnerTexts();
+  assert.deepEqual(labels.map(t => t.replace(/^\W+\s*/, '').trim()), ['Horizontal', 'Vertical', 'Diagonal left', 'Diagonal right']);
+  const axes = {};
+  for (const dl of ['horizontal', 'vertical', 'diagonal-left', 'diagonal-right']) {
+    await page.locator(`#stepContent [data-path="deckLine"][data-value="${dl}"]`).click(); await page.waitForTimeout(300);
+    assert.equal(await page.locator(`#stepContent [data-path="deckLine"][aria-pressed="true"]`).getAttribute('data-value'), dl);
+    const dk = await deckingOf(page); axes[dl] = dk.plan.axis;
+    assert.equal(dk.plan.direction, dl);
+    fs.writeFileSync(path.join(SHOTS, `b2-${dl}-2d.png`), await page.locator('#planCanvas').screenshot());
+  }
+  const [l, r] = [axes['diagonal-left'], axes['diagonal-right']];
+  assert.ok(l[0] * l[1] > 0 && r[0] * r[1] < 0 && Math.abs(l[1] - -r[1]) < 1e-9 || Math.abs(l[0] + r[0]) < 1e-9, 'mirror images');
+  assert.match(await page.locator('#stepContent').innerText(), /Diagonal right: boards run at 45° like ⟋/);
+  // 3D draws the same boards.
+  await page.locator('#mode3d').click(); await page.waitForTimeout(600);
+  let dk = await deckingOf(page);
+  assert.equal(dk.view3d.direction, 'diagonal-right'); assert.equal(dk.view3d.finish, dk.plan.finish);
+  fs.writeFileSync(path.join(SHOTS, 'b2-diagonal-right-3d.png'), await page.locator('#glCanvas').screenshot());
+  await page.locator('#mode2d').click();
+  await page.locator('#undoBtn').click(); await page.waitForTimeout(300);
+  assert.equal((await deckingOf(page)).plan.direction, 'diagonal-left', 'Undo');
+  await page.locator('#redoBtn').click(); await page.waitForTimeout(300);
+  assert.equal((await deckingOf(page)).plan.direction, 'diagonal-right', 'Redo');
+  const { fresh, data } = await reopen(page, ctx);
+  assert.equal(data.design.deckLine, 'diagonal-right');
+  assert.equal((await deckingOf(fresh.page)).plan.direction, 'diagonal-right');
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+test('B2: an older project with the single diagonal opens unchanged and shows which diagonal it is', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toLayout(page, { ...B2_DECK, deckLine: 'diagonal' });
+  const dk = await deckingOf(page);
+  assert.ok(['diagonal-left', 'diagonal-right'].includes(dk.plan.direction));
+  assert.equal(await page.locator('#stepContent [data-path="deckLine"][aria-pressed="true"]').getAttribute('data-value'), dk.plan.direction);
+  const { data } = await saveFile(page);
+  assert.equal(data.design.deckLine, 'diagonal', 'saved back as it was until the owner picks a direction');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('B2: picture frame none/single/double, house walls excluded unless switched on; take-off in Review', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toLayout(page, { ...B2_DECK, deckLine: 'diagonal-left' }, 'border');
+  let m = (await deckingOf(page)).plan.materials.decking;
+  assert.equal(m.pictureFrame.pieces, 3, 'single frame on the three open edges');
+  assert.match(await page.locator('#stepContent').innerText(), /Along house walls/i);
+  await page.locator('#stepContent [data-path="frameHouseWalls"][data-value="true"]').click(); await page.waitForTimeout(300);
+  m = (await deckingOf(page)).plan.materials.decking;
+  assert.equal(m.pictureFrame.pieces, 4); assert.equal(m.pictureFrame.houseWalls, true);
+  await page.locator('#stepContent [data-path="borderCount"][data-value="2"]').click(); await page.waitForTimeout(300);
+  m = (await deckingOf(page)).plan.materials.decking;
+  assert.equal(m.pictureFrame.pieces, 8, 'double frame on all four edges');
+  assert.ok((await deckingOf(page)).plan.materials.supplementalBlocking.fieldEndBlocks > 0, 'diagonal boards: blocking under field ends');
+  fs.writeFileSync(path.join(SHOTS, 'b2-double-frame-house-2d.png'), await page.locator('#planCanvas').screenshot());
+  await page.locator('#mode3d').click(); await page.waitForTimeout(500);
+  await page.locator('#structureToggle').click(); await page.waitForTimeout(400);
+  assert.ok((await deckingOf(page)).view3d.blocks > 0, 'blocking drawn in framing-only 3D');
+  fs.writeFileSync(path.join(SHOTS, 'b2-blocking-framing.png'), await page.locator('#glCanvas').screenshot());
+  await page.locator('#structureToggle').click(); await page.locator('#mode2d').click();
+  await stepBtn(page, 'Review').click();
+  assert.match(await page.locator('#stepContent').innerText(), /Decking \(diagonal left\): field \d+ LF in \d+ pieces .*order \d+ LF with 15% waste\); picture frame \d+ LF, 8 boards .*supplemental blocks under field-board ends \(concept\)/);
+  const { fresh, data } = await reopen(page, ctx);
+  assert.equal(data.design.frameHouseWalls, true); assert.equal(data.design.borderCount, 2);
+  assert.equal((await deckingOf(fresh.page)).plan.materials.decking.pictureFrame.pieces, 8);
+  await stepBtn(page, 'Layout').click(); await page.locator('#stepContent [data-path="layoutTab"][data-value="border"]').click();
+  await page.locator('#stepContent [data-path="frameHouseWalls"][data-value="false"]').click(); await page.waitForTimeout(300);
+  const { data: d2 } = await saveFile(page);
+  assert.equal('frameHouseWalls' in d2.design, false, 'switched off: not written');
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+test('B2: dividers are kept (never silently removed) through size and direction changes, with an explanation', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toLayout(page, { ...B2_DECK, width: 44, dividerMode: 'single', dividerPositions: [0.45, 0.55] }, 'border');
+  assert.match(await page.locator('#stepContent').innerText(), /Longest field-board run without a divider: \d+′/);
+  assert.equal((await deckingOf(page)).plan.dividers, 2);
+  // Narrow the deck: the two dividers (now 9.6 in. apart) are too close together; one is set aside, not deleted.
+  await stepBtn(page, 'Shape').click();
+  const w = page.locator('#stepContent input[data-field="width"]'); await w.fill('8'); await w.dispatchEvent('change'); await page.waitForTimeout(2800);
+  assert.match(await toastText(page), /Dividers adjusted for this size\/direction: 1 set aside \(kept, restored when there is room\)/);
+  assert.equal((await deckingOf(page)).plan.dividers, 1);
+  await w.fill('44'); await w.dispatchEvent('change'); await page.waitForTimeout(300);
+  assert.equal((await deckingOf(page)).plan.dividers, 2, 'restored');
+  for (const dl of ['vertical', 'diagonal-right']) {
+    await stepBtn(page, 'Layout').click(); await page.locator('#stepContent [data-path="layoutTab"][data-value="direction"]').click();
+    await page.locator(`#stepContent [data-path="deckLine"][data-value="${dl}"]`).click(); await page.waitForTimeout(300);
+    const { data } = await saveFile(page);
+    assert.deepEqual(data.design.dividerPositions, [0.45, 0.55], `${dl}: the saved dividers are unchanged`);
+  }
+  await page.locator('#stepContent [data-path="layoutTab"][data-value="border"]').click();
+  fs.writeFileSync(path.join(SHOTS, 'b2-dividers-diagonal-2d.png'), await page.locator('#planCanvas').screenshot());
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('B2: a landing on Match main deck follows diagonal left and right; an independent one stays put', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toLayout(page, { ...B2_DECK, height: 7, staircases: [
+    { id: 'a', edge: 2, width: 4, offset: -5, rails: { left: true, right: true }, landing: { width: 6, depth: 5, elevation: 3.5 } },
+    { id: 'b', edge: 2, width: 4, offset: 5, rails: { left: true, right: true }, landing: { width: 6, depth: 5, elevation: 3.5, deckLine: 'vertical' } }] });
+  for (const dl of ['diagonal-left', 'diagonal-right']) {
+    await page.locator(`#stepContent [data-path="deckLine"][data-value="${dl}"]`).click(); await page.waitForTimeout(300);
+    await stepBtn(page, 'Stairs').click();
+    assert.match(await page.locator('#stepContent').innerText(), new RegExp(`Follows the main deck's board direction \\(now ${dl.replace('-', ' ')}\\)`));
+    await page.locator('#stepContent [data-action="stair-next"]').click();
+    assert.equal(await page.locator('#stepContent [data-action="landing-deckline"][aria-pressed="true"]').getAttribute('data-value'), 'vertical');
+    await page.locator('#stepContent [data-action="stair-prev"]').click();
+    await stepBtn(page, 'Layout').click();
+  }
   assert.deepEqual(errors, []);
   await ctx.close();
 });
