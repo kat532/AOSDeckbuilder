@@ -2,6 +2,33 @@
 
 All changes to `index.html` and the test suite. Staging and production are deployed separately and only with owner approval.
 
+## V5.1 Phase A (branch `v5.1/phase-a`, stacked on the corner post fix)
+
+Version label: **V5.1 DEV**. 199 automated tests (engine + headless Chrome), all passing.
+
+**A.1 Free Draw**
+- Close by tapping *near* the start pin (32 px desktop / 44 px touch), or by placing a corner within 1 ft of it.
+- Closing only ever uses allowed angles (90°, 45°, 22.5° per mode): close directly, else slide the last corner up to 2 ft along its own edge, else add one corner. Corners left mid-edge at the seam are merged. Invalid drawings are refused with a reason.
+- Live preview of the exact closed shape (green dashed) and a "Tap to close" ring on the start pin (red when it can't close).
+- Header Undo/Redo step through corners while drawing.
+- Overall width/depth on an angled shape now explains that it would bend the angles and points to editing an edge length.
+
+**A.2 Clickable steps**
+- Step bar buttons: Shape, House, Stairs, Layout, Decking, Railings, Framing, Review. Jump anywhere once a valid shape exists; locked while drawing or while the outline is invalid.
+- Visited steps marked; amber dot on steps with warnings. Jumping never changes the design.
+- Fix: typing a project name and then clicking a step lost the first click.
+
+**A.3 2D measurements**
+- "Dims" toolbar button: All / Selected / Off (remembered per browser).
+- Edge lengths on every step, overall size for decks with more than four edges, stair width and distance from both corners, divider distance from the house (or deck edge). Live, collision-checked, stairs kept clear.
+
+**A.4 Projects and saving**
+- V5.0 had no project storage or Recent Projects, and Save always reported success even where downloads are blocked.
+- Autosave ~1 s after each change; header status Saving / Saved time / Not saved.
+- Claude preview: each person's private project space (same link on any device). Downloaded HTML: this browser only. The app says which.
+- Recent projects on the start screen; Projects dialog with Open, Duplicate, Delete (confirmed), New, Open file, Download current.
+- Downloads use the preview's confirmed save; messages never claim success they can't confirm.
+
 ## Unreleased — shared corner post fix (branch `fix/corner-post-count`, stacked on per-edge railing finish)
 
 - **Bug (present in V5.0):** where two railed edges meet, each edge placed its own corner post about 0.1 ft from the other's, so corners were drawn and counted twice. Example: 12×10 deck with three railed edges reported 10 railing posts and 10 caps; the real number is 8.

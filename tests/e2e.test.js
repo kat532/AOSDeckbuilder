@@ -759,3 +759,42 @@ test('projects (preview): a viewer who cannot write gets browser saving and is t
   assert.deepEqual(errors, []);
   await ctx.close();
 });
+
+test('free draw: an angled deck keeps its angles; width explains, edge length edit works', async () => {
+  const { ctx, page, errors } = await openApp();
+  const at = await startFreeDraw(page);
+  await page.locator('[data-action="draw-mode"][data-value="45"]').click();
+  for (const [x, z] of [[0, 0], [16, 0], [16, 9], [13, 12], [3, 12], [0, 9]]) await at(x, z);
+  await at(0.3, 0.3);
+  await page.locator('#dividerConfirmAccept').click();
+  await page.waitForFunction(hasArea);
+  const area0 = await area(page);
+
+  const w = page.locator('#stepContent input[type=number]').first();
+  await w.fill('20'); await w.dispatchEvent('change');
+  assert.match(await page.locator('#toast').innerText(), /would bend this shape's angled edges/);
+  assert.equal(await area(page), area0, 'shape unchanged');
+
+  // Find the topmost editable dimension label (red-outlined) and tap it.
+  const box = await page.locator('#planCanvas').boundingBox();
+  const hit = await page.evaluate(() => {
+    const c = document.getElementById('planCanvas'), g = c.getContext('2d'), { width: W, height: H } = c, d = g.getImageData(0, 0, W, H).data;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = (y * W + x) * 4;
+      if (Math.abs(d[i] - 226) < 14 && Math.abs(d[i + 1] - 152) < 16 && Math.abs(d[i + 2] - 159) < 16) return { x: x + 6, y: y + 12, W, H }; }
+    return null;
+  });
+  assert.ok(hit, 'found an editable length label');
+  await page.mouse.click(box.x + hit.x * box.width / hit.W, box.y + hit.y * box.height / hit.H);
+  const apply = page.locator('[data-action="apply-edge-length"]');
+  await apply.waitFor();
+  const input = page.locator('#stepContent input').first();
+  await input.fill('20'); await apply.click();
+  await page.waitForFunction((a) => Number(document.getElementById('squareFeet').textContent.match(/(\d+)/)[1]) !== a, area0);
+  // Every edge still on a 45° multiple after the edit.
+  const { data } = await saveFile(page);
+  const W = data.design.width, D = data.design.depth, pts = data.design.points.map(([x, z]) => [x * W, z * D]);
+  for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length], deg = Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI;
+    assert.ok(Math.abs(deg / 45 - Math.round(deg / 45)) < 0.01, `edge ${i + 1} at ${deg.toFixed(2)}°`); }
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});

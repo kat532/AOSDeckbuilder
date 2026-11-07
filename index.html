@@ -2879,7 +2879,8 @@ $('stepContent').addEventListener('change',e=>{const slider=e.target.closest('in
  const f=e.target.closest('input[data-field]');if(!f)return;const num=Number(f.value);if(!Number.isFinite(num)||num<=0){renderPanel();return;}
  if(['width','depth'].includes(f.dataset.field)){
    const q=structuredClone(state.intent);q[f.dataset.field]=num;
-   const error=shapeOps.verify(core.polygon(q));if(error){toast(error);renderPanel();return;}
+   const error=shapeOps.verify(core.polygon(q));
+   if(error){toast(/directions are allowed/.test(error)?`Changing the overall ${f.dataset.field} would bend this shape's angled edges. Tap an edge length on the plan to change that edge instead.`:error);renderPanel();return;}
    setProject(q);fit2d();renderer3d.fit();
  }else{patch(f.dataset.field,num);if(f.dataset.field==='height'){fit2d();renderer3d.fit();}}
  });
