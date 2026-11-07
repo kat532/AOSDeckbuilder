@@ -23,6 +23,8 @@ Built on the protected V5.2 baseline (SHA-256 80b6afea…61c6). Version label un
 - L section fields already existed (Leg width, Main deck depth) and are now covered by tests.
 - Changing overall width or depth keeps L, T and U section sizes exact instead of stretching them.
 
+**Checkpoint verification (owner request, 7 Nov)**: full suite on the complete build (SHA-256 604adfc4…bef2): 236 tests, 232 pass, 0 fail, 4 known structural failures (case 4). Added: framing-equivalence test against the protected V5.2 file — every part, count, stat and alert identical on 24 regression decks, the owner deck (3 beams, 8 posts) and 176 generated angled/bump-out decks; Free Draw hand-drawn concave U, near-touching (1 ft clear allowed, touching refused) and 45° closing; house walls + ledgers keep their sides through rectangle → L → U → T → rectangle; four typed/slider corner cuts with no page errors; exact T/U edge geometry after save/reopen.
+
 **Tests added**: 10 browser journeys (D1 ×2, D2 incl. save/reopen, D3, D4 incl. Undo, T, U, L sections incl. save/reopen, owner irregular deck round trip).
 
 **Unresolved / noted**: section fields appear only while the outline keeps the template's structure (after free reshaping, tap-to-edit applies); the Free Draw hint bar still mentions "90° Locked by default" (wording left from older builds); case-4 corner support and outside-outline members remain framing limitations outside Group A.
