@@ -1,0 +1,61 @@
+// Checkpoint guard: the protected V5.2 baseline (SHA-256 80b6afea…) and the working build must
+// produce IDENTICAL models — every framing part, its position, size, role and label, plus counts,
+// stats and alerts — for every regression deck, the owner's irregular deck and 176 generated
+// angled / bump-out decks. Group A must not change framing (owner instruction, 7 Nov 2026).
+'use strict';
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+const { loadEngine } = require('./engine');
+const { fixtures } = require('./fixtures');
+
+const BASE = path.join(__dirname, 'baseline', 'AOS_Deck_Studio_V5_2_Continuous_Middle_Beams.html');
+const base = loadEngine(BASE), work = loadEngine();
+const r = (v) => typeof v === 'number' ? Math.round(v * 1e6) / 1e6 : v;
+const model = (win, q) => {
+  const m = win.DeckCore.make(q);
+  return JSON.parse(JSON.stringify({
+    parts: m.parts.map(p => Object.fromEntries(Object.entries(p).sort().map(([k, v]) => [k, Array.isArray(v) ? JSON.parse(JSON.stringify(v), (_, x) => r(x)) : r(v)]))),
+    counts: m.counts, alerts: m.alerts, stats: m.stats,
+  }));
+};
+const outline = (pts) => { const xs = pts.map(p => p[0]), zs = pts.map(p => p[1]); const x0 = Math.min(...xs), x1 = Math.max(...xs), z0 = Math.min(...zs), z1 = Math.max(...zs);
+  return { shape: 'free', width: x1 - x0, depth: z1 - z0, points: pts.map(([x, z]) => [(x - x0) / (x1 - x0), (z - z0) / (z1 - z0)]) }; };
+function generated() {
+  const out = {};
+  for (const [W, D] of [[16, 12], [20, 14], [24, 16], [30, 18]]) for (const c of [0, 3, 5]) for (const bump of ['none', 'box', 'bay', 'side']) for (const style of ['dropped', 'flush']) for (const sup of ['ledger', 'free']) {
+    if (c === 0 && bump === 'none') continue;
+    const front = [], bw = Math.min(10, W / 2), bd = 4, m0 = W / 2 + bw / 2, m1 = W / 2 - bw / 2;
+    if (bump === 'box') front.push([m0, D], [m0, D + bd], [m1, D + bd], [m1, D]);
+    if (bump === 'bay') front.push([m0, D], [m0 - bd, D + bd], [m1 + bd, D + bd], [m1, D]);
+    const right = bump === 'side' ? [[W, 3], [W + 4, 3], [W + 4, D - 3 - c], [W, D - 3 - c]] : [];
+    const pts = [[0, 0], [W, 0], ...right, ...(c ? [[W, D - c], [W - c, D]] : [[W, D]]), ...front, ...(c ? [[c, D], [0, D - c]] : [[0, D]])];
+    out[`${W}x${D} c${c} ${bump} ${style} ${sup}`] = { ...outline(pts), height: 5, houseEdges: sup === 'free' ? [] : [0], supportMode: sup === 'free' ? 'freestanding' : 'ledger', beamStyle: style };
+  }
+  return out;
+}
+
+test('protected baseline file is the approved V5.2 (SHA-256 80b6afea…)', () => {
+  const h = crypto.createHash('sha256').update(fs.readFileSync(BASE)).digest('hex');
+  assert.equal(h, '80b6afea0adfafb40ed86a02cd1f1fead9e29d72bcd8a5c301241c9d39c061c6');
+});
+
+test('framing and every other model output are identical to V5.2 on all regression decks', () => {
+  const fx = fixtures(work);
+  for (const [name, raw] of Object.entries(fx)) assert.deepEqual(model(work, raw), model(base, raw), name);
+});
+
+test('identical to V5.2 on the owner irregular deck (continuous middle-beam planner)', () => {
+  const owner = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'owner-irregular-deck.json'), 'utf8')).design;
+  const a = model(work, owner), b = model(base, owner);
+  assert.deepEqual(a, b);
+  assert.equal(a.counts.beams, 3); assert.equal(a.counts.posts, 8);
+});
+
+test('identical to V5.2 on 176 generated angled, bay, box and side bump-out decks', () => {
+  let n = 0;
+  for (const [name, q] of Object.entries(generated())) { assert.deepEqual(model(work, q), model(base, q), name); n++; }
+  assert.equal(n, 176);
+});

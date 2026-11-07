@@ -1147,3 +1147,126 @@ test('owner irregular deck (V5.2 fixture) opens, keeps every setting and survive
   assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
   await fresh.ctx.close(); await ctx.close();
 });
+
+// ---- Checkpoint 1 verification (owner request 7 Nov 2026) ----
+const sideKey = (e) => e.n.map(v => Math.round(v)).join(',');
+async function changeShape(page, shape) {
+  await stepBtn(page, 'Shape').click();
+  await page.locator('[data-action="choose-shape"]').click();
+  await page.locator(`#shapeOverlay [data-shape="${shape}"]`).click();
+  await page.locator('#dividerConfirmAccept').click();
+  await page.waitForFunction(hasArea);
+}
+
+test('checkpoint: hand-drawn concave U closes as drawn (8 corners, 150 sq ft)', async () => {
+  const { ctx, page, errors } = await openApp();
+  const at = await startFreeDraw(page);
+  for (const [x, z] of [[0, 0], [16, 0], [16, 12], [11, 12], [11, 5], [5, 5], [5, 12], [0, 12]]) await at(x, z);
+  assert.match(await cornersText(page), /8 corners/);
+  await at(0.3, 0.3);
+  await page.locator('#dividerConfirmAccept').click();
+  await page.waitForFunction(hasArea);
+  assert.equal(await area(page), 150);
+  assert.equal((await edgesOf(page)).length, 8);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('checkpoint: near-touching edges are allowed; an edge that touches is refused', async () => {
+  const { ctx, page, errors } = await openApp();
+  const at = await startFreeDraw(page);
+  await at(0, 0); await at(16, 0); await at(16, 12); await at(8, 12);
+  await at(8, 0); // ends ON edge 1: touching
+  assert.match(await toastText(page), /would cross edge 1/);
+  assert.match(await cornersText(page), /4 corners/);
+  await at(8, 1); // 1 ft clear of edge 1: allowed
+  assert.match(await cornersText(page), /5 corners/);
+  await at(4, 1); await at(4, 12); await at(0, 12);
+  await at(0.3, 0.3);
+  await page.locator('#dividerConfirmAccept').click();
+  await page.waitForFunction(hasArea);
+  assert.equal(await area(page), 16 * 12 - 4 * 11, 'deep notch kept, 1 ft from the house edge');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('checkpoint: angled 45° outline closes with allowed angles and no far corner', async () => {
+  const { ctx, page, errors } = await openApp();
+  const at = await startFreeDraw(page);
+  await at(0, 0); await at(16, 0); await at(16, 9); await at(13, 12); await at(3, 12);
+  await at(0.3, 0.3); // last 45° corner is filled in by closing
+  assert.match(await page.locator('#dividerConfirmMessage').innerText(), /One corner is added|lines up|Confirm/);
+  await page.locator('#dividerConfirmAccept').click();
+  await page.waitForFunction(hasArea);
+  const es = await edgesOf(page);
+  assert.equal(es.length, 6);
+  for (const e of es) { const a = Math.atan2(e.t[1], e.t[0]) / (Math.PI / 4); assert.ok(Math.abs(a - Math.round(a)) < 1e-6, 'edge on the 45° grid'); }
+  const xs = es.map(e => e.a[0]), zs = es.map(e => e.a[1]);
+  assert.ok(Math.max(...xs) - Math.min(...xs) <= 16.01 && Math.max(...zs) - Math.min(...zs) <= 12.01, 'nothing added outside the drawing');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('checkpoint: house walls and ledgers keep their sides through rectangle → L → U → T → rectangle', async () => {
+  const { ctx, page, errors } = await openApp();
+  await openDeckFile(page, { shape: 'rectangle', width: 16, depth: 12, height: 4, houseEdges: [0, 1, 3], ledgerEdges: [0, 3], supportMode: 'ledger' });
+  const want = { house: ['-1,0', '0,-1', '1,0'], ledger: ['-1,0', '0,-1'] };
+  for (const shape of ['L', 'U', 'T', 'rectangle']) {
+    await changeShape(page, shape);
+    const { data } = await saveFile(page), es = await edgesOf(page);
+    const sides = (list) => list.map(i => sideKey(es[i])).sort();
+    assert.deepEqual(sides(data.design.houseEdges), want.house, `${shape}: house walls`);
+    assert.deepEqual(sides(data.design.ledgerEdges), want.ledger, `${shape}: ledgers`);
+    for (const i of data.design.houseEdges) {
+      const same = es.filter(e => sideKey(e) === sideKey(es[i]));
+      assert.ok(same.every(e => e.mid[0] * e.n[0] + e.mid[1] * e.n[1] <= es[i].mid[0] * es[i].n[0] + es[i].mid[1] * es[i].n[1] + 1e-6), `${shape}: wall is the outermost edge on its side`);
+    }
+    assert.ok(!data.design.railEdges.some(i => data.design.houseEdges.includes(i)), `${shape}: no railing on a house wall`);
+    await stepBtn(page, 'Framing').click();
+    assert.match(await page.locator('#stepTitle').innerText(), /Framing & Ledger/);
+    await page.locator('#mode3d').click(); await page.waitForTimeout(300); await page.locator('#mode2d').click();
+  }
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('checkpoint: corner editor applies several typed and slider cuts with no page errors', async () => {
+  const { ctx, page, errors } = await openApp();
+  await chooseShape(page, 'rectangle');
+  for (let k = 0; k < 4; k++) {
+    const es = await edgesOf(page);
+    const corner = es.find(e => es.every(x => Math.hypot(x.a[0] - e.a[0], x.a[1] - e.a[1]) < 1e-9 || true) && Math.abs(Math.abs(e.a[0]) - 8) < 1e-6 && (Math.abs(e.a[1]) < 1e-6 || Math.abs(e.a[1] - 12) < 1e-6));
+    await tapPlan(page, corner.a[0], corner.a[1]);
+    if (k % 2) { const s = page.locator('input[data-corner-slider]'); await s.fill('1.5'); await s.dispatchEvent('change'); }
+    else await page.locator('#cornerSizeInput').fill(`1' 6"`);
+    await page.locator('[data-action="apply-corner"]').click();
+    await page.waitForTimeout(250);
+    assert.equal((await edgesOf(page)).length, 5 + k, `cut ${k + 1} applied`);
+  }
+  assert.equal(await area(page), Math.round(192 - 4 * 1.125));
+  const { fresh, data } = await reopen(page, ctx);
+  assert.equal(data.design.points.length, 8);
+  assert.equal((await edgesOf(fresh.page)).length, 8);
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+test('checkpoint: T and U section edges are exact in the geometry and in the saved file', async () => {
+  const { ctx, page, errors } = await openApp();
+  for (const [shape, edits, expect] of [
+    ['T', [['t-main', `5' 0"`], ['t-ext', `6' 0"`]], { side: 5, ext: 6, stem: 7 }],
+    ['U', [['u-main', `4' 6"`], ['u-left', `4' 0"`], ['u-right', `5' 0"`]], { left: 4, right: 5, arm: 7.5 }],
+  ]) {
+    if (shape === 'T') await chooseShape(page, 'T'); else await changeShape(page, 'U');
+    for (const [key, v] of edits) { const f = page.locator(`#stepContent input[data-section-field="${key}"]`); await f.fill(v); await f.dispatchEvent('change'); await page.waitForTimeout(150); }
+    const L = (await edgesOf(page)).map(e => e.len), has = (v) => L.some(x => Math.abs(x - v) < 1e-9);
+    for (const v of Object.values(expect)) assert.ok(has(v), `${shape}: an edge of exactly ${v} ft (${L.map(x => x.toFixed(4)).join(', ')})`);
+    const { fresh, data } = await reopen(page, ctx);
+    const L2 = (await edgesOf(fresh.page)).map(e => e.len);
+    assert.deepEqual(L2.map(x => +x.toFixed(9)), L.map(x => +x.toFixed(9)), `${shape}: identical after reopen`);
+    assert.equal(data.design.shape, shape);
+    await fresh.ctx.close();
+  }
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
