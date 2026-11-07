@@ -223,6 +223,10 @@
 .shape-help p{margin:0;font-size:13.5px;line-height:1.55;color:#33424f}
 .shape-inline .change-shape{min-height:36px;padding:7px 12px;font-size:11.5px;font-weight:800;white-space:nowrap}
 .len-input{font-variant-numeric:tabular-nums}
+.framingstatus{font:800 9.5px/1 system-ui,sans-serif;letter-spacing:.6px;padding:6px 9px;border-radius:9px;white-space:nowrap}
+.framingstatus.current{background:#e7f4ec;color:#1f6b45}.framingstatus.pending,.framingstatus.invalid{background:#fdf1dc;color:#8a5a06}.framingstatus.calculating{background:#eef1f4;color:#4d6072}
+.framing-pending{font-size:12.5px;line-height:1.45;padding:10px 12px;border-radius:9px;background:#fdf1dc;color:#6b4705;margin-bottom:8px}.framing-pending button{margin-left:6px;min-height:34px;padding:6px 10px;border-radius:8px;border:1px solid #d9a441;background:#fff;font-weight:800;font-size:11.5px}
+@media (max-width:760px){.framingstatus{display:none}}
 </style></head>
 <body><div class="shell">
 <header class="appbar">
@@ -243,7 +247,7 @@
   <section class="workspace" aria-label="Deck visualization">
     <div class="workspace-top">
       <div class="mode-switch" role="group" aria-label="View mode"><button id="mode2d" class="viewmode active" aria-pressed="true">◫ <span>2D PLAN</span></button><button id="mode3d" class="viewmode" aria-pressed="false">⬡ <span>3D DECK</span></button></div>
-      <div class="workspace-extras"><span id="modelBadge" class="countbadge">READY TO DESIGN</span><span id="squareFeet" class="sqft"></span></div>
+      <div class="workspace-extras"><span id="modelBadge" class="countbadge">READY TO DESIGN</span><span id="framingStatus" class="framingstatus" role="status" aria-live="polite" hidden></span><span id="squareFeet" class="sqft"></span></div>
       <div class="viewbuttons"><button id="measureBtn" class="measurebtn" type="button" title="Dimensions: All, Selected or Off" aria-label="Dimensions: All. Tap to change.">Dims <b>All</b></button><button id="zoomOut" class="iconbtn" title="Zoom out" aria-label="Zoom out">−</button><button id="zoomIn" class="iconbtn" title="Zoom in" aria-label="Zoom in">+</button><button id="fitBtn" class="iconbtn fit" title="Fit drawing to screen" aria-label="Fit view">⌗</button></div>
     </div>
     <div class="viewport" id="viewport">
@@ -706,7 +710,17 @@ function buildForSize(runs,poly,joistD,beamD,spacing,style,FS,size){
   diagnosticCount:badRuns.length+invalidRuns.length,score:badRuns.length*300+invalidRuns.length*300+beams.length*12+clusters.length*2+({10:0,8:2,12:4}[size]||0),
   clusterCount:clusters.length,duplicates};
 }
+// V5.1: structural results are cached by their inputs. Cosmetic edits (colors, railing
+// finishes, project name) produce the same joist runs and reuse the cached layout.
+const CACHE=new Map(),CACHE_MAX=24;
 function choose(runs,poly,joistD,beamD,spacing,style,FS){
+ const key=JSON.stringify([runs.map(j=>[j.t,j.a,j.b,j.ledger,j.ledgerEnd,j.role,j.pA,j.pB]),poly,joistD,beamD,spacing,style]);
+ if(CACHE.has(key)){const hit=CACHE.get(key);CACHE.delete(key);CACHE.set(key,hit);choose.hits++;return structuredClone(hit);}
+ const result=chooseUncached(runs,poly,joistD,beamD,spacing,style,FS);
+ CACHE.set(key,structuredClone(result));if(CACHE.size>CACHE_MAX)CACHE.delete(CACHE.keys().next().value);choose.misses++;
+ return result;}
+choose.hits=0;choose.misses=0;
+function chooseUncached(runs,poly,joistD,beamD,spacing,style,FS){
  const layouts=[8,10,12].map(s=>buildForSize(runs,poly,joistD,beamD,spacing,style,FS,s));
  layouts.sort((a,b)=>a.score-b.score);const chosen=layouts[0];
  return {...chosen,candidates:layouts.map(x=>({size:x.joistNominal,beams:x.beams.length,unresolved:x.diagnosticCount,groups:x.groups.length}))};
@@ -2203,15 +2217,39 @@ function selectStair(index){state.stairSelected=clamp(index,0,Math.max(0,(state.
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(state.toastTimeout);state.toastTimeout=setTimeout(()=>el.classList.remove('show'),2200);}
 function showOverlay(){const has=Boolean(state.intent);$('emptyOverlay').classList.toggle('hidden',has||state.freeDraw||state.shapePicker);$('shapeOverlay').classList.toggle('hidden',!state.shapePicker);$('freeDrawOverlay').classList.toggle('hidden',!state.freeDraw);}
 function saveHistory(){const s=JSON.stringify(state.intent);if(s!==JSON.stringify(state.history[state.historyAt])){state.history=state.history.slice(0,state.historyAt+1);state.history.push(state.intent?structuredClone(state.intent):null);if(state.history.length>60)state.history.shift();state.historyAt=state.history.length-1;scheduleAutosave();}}
+// V5.1 framing timing. While an outline or stair is being dragged, only light geometry
+// (outline, edges, stair positions, dimensions, validity) is computed. Boards and
+// framing are rebuilt once, when the edit is committed. The last full result is kept
+// for reference and shown as outdated while an edit is pending.
+function previewModel(q,prev){
+ const poly=core.polygon(q),es=core.edges(poly),area=Math.abs(window.AOSGeometry.area(poly));
+ const stairs=(q.staircases||[]).map(st=>{const e=es[st.edge],old=prev?.geometry?.stairs?.find(g=>g.id===st.id);if(!e)return null;
+   return {...(old||{}),id:st.id,edge:e.i,base:[e.mid[0]+e.t[0]*st.offset,e.mid[1]+e.t[1]*st.offset],tt:e.t,nn:e.n,width:st.width,run:old?.run||Math.max(1,q.height*1.3)};}).filter(Boolean);
+ return {intent:q,parts:[],preview:true,valid:Boolean(core.validPolygon?.(poly)??true),counts:prev?.counts||{},alerts:prev?.alerts||[],
+   stats:{...(prev?.stats||{}),deckArea:area,partCount:prev?.stats?.partCount||0},geometry:{...(prev?.geometry||{}),poly,edges:es,stairs}};}
+function setFramingStatus(st){state.framingStatus=st;const el=$('framingStatus');if(!el)return;
+ el.className='framingstatus '+st;el.textContent=st==='current'?'FRAMING CURRENT':st==='calculating'?'CALCULATING FRAMING…':st==='invalid'?'FRAMING: FIX OUTLINE':st==='pending'?'FRAMING: UPDATE NEEDED':'';
+ el.hidden=!state.intent;}
+function buildFull(q){state.rev=(state.rev||0)+1;const m=core.make(q);state.lastFull=m;setFramingStatus(m.stats?.invalidGeometry?'invalid':'current');return m;}
+// Full rebuild after the screen has painted; a newer edit makes an older run obsolete.
+function scheduleFull(){const rev=state.rev=(state.rev||0)+1;setFramingStatus('calculating');
+ setTimeout(()=>{if(rev!==state.rev||!state.intent||state.plan.drag)return;state.model=buildFull(state.intent);renderer3d.setModel(state.model);
+   $('modelBadge').textContent=state.model.stats.partCount?`${state.model.stats.partCount} COMPONENTS`:'READY TO DESIGN';$('modelDetail').textContent=`${state.model.parts.length} generated parts · preliminary`;
+   renderPanel();planDraw();},0);}
 function setProject(raw,commit=true,keepPanel=false){
- state.intent=raw?core.sanitize(raw):null;state.model=core.make(state.intent);if(commit)saveHistory();
+ state.intent=raw?core.sanitize(raw):null;
+ const live=state.plan.drag&&['vertex','resize-edge','stairs'].includes(state.plan.drag.type)&&state.model?.intent;
+ if(live){state.rev=(state.rev||0)+1;state.model=previewModel(state.intent,state.lastFull||state.model);setFramingStatus('pending');}
+ else state.model=state.intent?buildFull(state.intent):core.make(null);
+ if(commit)saveHistory();
  // Rebuilding WebGL on every pointer-move makes local edge dragging lag badly.
  // Draw the updated 2D model immediately; upload 3D geometry on release.
- if(!state.plan.drag||state.view==='3d')renderer3d.setModel(state.model);
+ if(!state.model.preview&&(!state.plan.drag||state.view==='3d'))renderer3d.setModel(state.model);
  if(state.intent&&!state._fitted){renderer3d.fit();state._fitted=true;}if(!state.intent)state._fitted=false;
- $('modelBadge').textContent=state.model.stats.partCount?`${state.model.stats.partCount} COMPONENTS`:'READY TO DESIGN';
+ if(!state.model.preview)$('modelBadge').textContent=state.model.stats.partCount?`${state.model.stats.partCount} COMPONENTS`:'READY TO DESIGN';
+ if(!state.intent)setFramingStatus('none');
  $('squareFeet').textContent=state.intent?`${Math.round(state.model.stats.deckArea)} SQ FT`:'';
- $('modelDetail').textContent=state.intent?`${state.model.parts.length} generated parts · preliminary`:'Individual components generated automatically';
+ if(!state.model.preview)$('modelDetail').textContent=state.intent?`${state.model.parts.length} generated parts · preliminary`:'Individual components generated automatically';
  if(state.intent)$('projectName').value=state.intent.project;
  showOverlay();if(!keepPanel)renderPanel();else updateHeader();planDraw();
 }
@@ -2694,7 +2732,7 @@ function renderPanel(){const s=state.step,q=state.intent;const inspector=documen
    if(state.framingDetails){
      html=`<div class="action-row"><button data-action="framing-details">← Back to framing choices</button></div><div class="framing-summary"><b>Proposed framing measurements</b><br>${m.stats.joistNominal} @ ${m.stats.joistSpacingIn} in OC · ${m.counts.beams} beam segments · ${m.counts.posts} posts<br>Ledgers: ${ledgerCount} (${m.stats.ledgerEdges.map(i=>i+1).join(', ')||'none'}) · Joist overhang ${fmt(m.stats.maxFrontCantFt)} · Beam-end ${fmt(m.stats.maxBeamCantFt)}<br>${warning}</div>`;
    }else{
-     html=`<div class="compact-intro">Each house wall starts with a ledger. In 2D, tap L/− on that wall to change it.</div><div class="control-group"><p class="group-title">Support system</p>${seg('supportMode',[['ledger','Wall ledgers'],['freestanding','Freestanding']],q.supportMode)}</div><div class="control-group"><p class="group-title">Beam connection</p>${seg('beamStyle',[['dropped','Dropped'],['flush','Flush*']],q.beamStyle)}</div><div class="framing-summary">${m.stats.joistNominal} @ ${m.stats.joistSpacingIn} in · ${m.counts.ledger} ledger(s) · ${m.counts.beams} beams · ${m.counts.posts} posts · ${m.stats.unresolvedJoistRuns?'⚠ Bearing review':'Production review required'}</div><div class="action-row"><button data-action="framing-details">View framing measurements →</button></div>`;
+     html=`<div class="compact-intro">Each house wall starts with a ledger. In 2D, tap L/− on that wall to change it.</div><div class="control-group"><p class="group-title">Support system</p>${seg('supportMode',[['ledger','Wall ledgers'],['freestanding','Freestanding']],q.supportMode)}</div><div class="control-group"><p class="group-title">Beam connection</p>${seg('beamStyle',[['dropped','Dropped'],['flush','Flush*']],q.beamStyle)}</div>${state.framingStatus&&state.framingStatus!=='current'?`<div class="framing-pending ${state.framingStatus}">${state.framingStatus==='invalid'?'Framing can’t be generated until the outline is fixed.':state.framingStatus==='calculating'?'Updating framing…':'The framing below is from before your last change.'}${state.framingStatus==='pending'?' <button type="button" data-action="framing-update">Update framing</button>':''}</div>`:''}<div class="framing-summary">${m.stats.joistNominal} @ ${m.stats.joistSpacingIn} in · ${m.counts.ledger} ledger(s) · ${m.counts.beams} beams · ${m.counts.posts} posts · ${m.stats.unresolvedJoistRuns?'⚠ Bearing review':'Production review required'}</div><div class="action-row"><button data-action="framing-details">View framing measurements →</button></div>`;
    }
  }
  if(s===7&&q){const c=state.model.counts,m=state.model.stats;
@@ -2810,6 +2848,7 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
    state.dividerSelected=clamp(state.dividerSelected+(act==='divider-next'?1:-1),0,Math.max(0,dividerInfo().positions.length-1));
    renderPanel();planDraw();return;
  }
+ if(act==='framing-update'){state.model=buildFull(state.intent);renderer3d.setModel(state.model);renderPanel();planDraw();return;}
  if(act==='framing-details'){state.framingDetails=!state.framingDetails;renderPanel();return;}
  if(act==='undo-point'){undo(false);return;}
  if(act==='finish-draw'){finishFreeDraw();return;}
@@ -3143,7 +3182,9 @@ function planDraw(){const {w,h}=canvasSize(),sc=state.plan.scale;ctx.fillStyle='
  if(state.freeDraw){freePlan();return;}if(!state.intent)return;
  const q=state.intent,model=state.model,p=model.geometry.poly,es=model.geometry.edges;
  polygonPath(p);ctx.fillStyle='#625442';ctx.fill();
- if(state.step===6){for(let part of model.parts)if(['ledger','joist','rim-joist','dropped-beam','post-6x6'].includes(part.kind))shapePart(part);}
+ if(model.preview){for(const g of model.geometry.stairs||[]){const P=(a,t,v)=>[a[0]+t[0]*v,a[1]+t[1]*v],c=[P(g.base,g.tt,-g.width/2),P(g.base,g.tt,g.width/2),P(P(g.base,g.tt,g.width/2),g.nn,g.run),P(P(g.base,g.tt,-g.width/2),g.nn,g.run)];ctx.beginPath();c.forEach((v,i)=>{const pt=xy(...v);i?ctx.lineTo(...pt):ctx.moveTo(...pt);});ctx.closePath();ctx.fillStyle='#7a6250';ctx.fill();}
+   if(state.step===6&&state.lastFull){ctx.save();ctx.globalAlpha=.3;for(let part of state.lastFull.parts)if(['ledger','joist','rim-joist','dropped-beam','post-6x6'].includes(part.kind))shapePart(part);ctx.restore();}}
+ else if(state.step===6){for(let part of model.parts)if(['ledger','joist','rim-joist','dropped-beam','post-6x6'].includes(part.kind))shapePart(part);}
  else {
    // Rasterize clipped polygons as a single union per material/color. Drawing
    // each triangle independently causes anti-aliased diagonal hairlines.
@@ -3344,8 +3385,9 @@ function tapPlan(pt){if(state.freeDraw){if(nearFreeStart(pt)){finishFreeDraw();r
 function planEnd(e){if(!state.plan.pointers.has(e.pointerId))return;const l=local(e),tap=state.plan.tap,drag=state.plan.drag,dimensionTap=state.plan.dimensionTap;
  state.plan.pointers.delete(e.pointerId);if(state.plan.pointers.size) return;
  state.plan.drag=null;state.plan.tap=null;state.plan.dimensionTap=null;
+ if(state.model?.preview&&drag&&JSON.stringify(state.intent)===drag.original){state.model=state.lastFull;setFramingStatus(state.model.stats?.invalidGeometry?'invalid':'current');planDraw();}
  if(dimensionTap!==null&&dimensionTap!==undefined){if(tap&&!tap.moved)selectDimension(dimensionTap);return;}
- if(drag&&drag.type!=='pan'&&JSON.stringify(state.intent)!==drag.original){renderer3d.setModel(state.model);saveHistory();renderPanel();toast(drag.type==='stairs'?'Stair position updated':drag.type==='divider'?'Divider position updated':'Outline updated');return;}
+ if(drag&&drag.type!=='pan'&&JSON.stringify(state.intent)!==drag.original){if(state.model.preview)scheduleFull();else renderer3d.setModel(state.model);saveHistory();renderPanel();toast(drag.type==='stairs'?'Stair position updated':drag.type==='divider'?'Divider position updated':'Outline updated');return;}
  if(drag&&tap?.moved&&state.lastShapeError&&['vertex','resize-edge'].includes(drag.type)){
    toast(state.lastShapeError);state.lastShapeError='';
  }
@@ -3366,6 +3408,10 @@ $('recentProjects').addEventListener('click',e=>{const b=e.target.closest('butto
 addEventListener('pagehide',()=>{if(autosaveTimer)saveProject(false);});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&autosaveTimer)saveProject(false);});
 addEventListener('beforeunload',e=>{const st=state.saveState?.status;if(st==='pending'||st==='saving'||st==='error'){if(autosaveTimer)saveProject(false);e.preventDefault();e.returnValue='';}});
+// Read-only hooks for automated browser tests (no way to change the design through them).
+window.AOSDeckStudioTest=Object.freeze({framingStatus:()=>state.framingStatus,isPreview:()=>Boolean(state.model?.preview),
+ toScreen:(x,z)=>{const r=planCanvas.getBoundingClientRect(),p=xy(x,z);return [r.left+p[0],r.top+p[1]];},edges:()=>JSON.parse(JSON.stringify(state.model?.geometry?.edges||[])),
+ framingCache:()=>({hits:window.AOSSharedSupport.choose?.hits??null,misses:window.AOSSharedSupport.choose?.misses??null})});
 renderPanel();fit2d();updateHeader();renderRecent();
 })();
 

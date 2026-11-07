@@ -901,3 +901,74 @@ test('corrections: dimensions display and accept feet and inches; geometry keeps
   assert.deepEqual(errors, []);
   await ctx.close();
 });
+
+// ---- V5.1 framing timing: light preview while dragging, full rebuild on commit ----
+async function openDeckFile(page, design) {
+  const file = path.join(os.tmpdir(), `aos-deck-${Date.now()}-${Math.random().toString(36).slice(2)}.json`);
+  fs.writeFileSync(file, JSON.stringify({ design }));
+  await page.locator('#openBtn').click();
+  await page.locator('#fileInput').setInputFiles(file);
+  await page.waitForFunction(() => window.AOSDeckStudioTest?.framingStatus() === 'current');
+}
+const BIG = { shape: 'free', width: 48, depth: 42, height: 8, houseEdges: [0], project: 'Big angled',
+  points: [[12, 0], [36, 0], [48, 12], [48, 30], [36, 42], [12, 42], [0, 30], [0, 12]].map(([x, z]) => [x / 48, z / 42]) };
+
+test('framing timing: dragging an edge is light; framing rebuilds once on release', async () => {
+  const { ctx, page, errors } = await openApp({ width: 1280, height: 900 });
+  await openDeckFile(page, BIG);
+  const edges = await page.evaluate(() => window.AOSDeckStudioTest.edges());
+  const e = edges.find(x => Math.abs(x.n[1]) > 0.99 && x.len > 20); // a long straight edge
+  const [sx, sy] = await page.evaluate(([x, z]) => window.AOSDeckStudioTest.toScreen(x, z), e.mid);
+  const [ox, oy] = await page.evaluate(([x, z]) => window.AOSDeckStudioTest.toScreen(x, z), [e.mid[0] + e.n[0], e.mid[1] + e.n[1]]);
+  await page.evaluate(() => { window.__moves = []; let t0 = 0;
+    addEventListener('pointermove', () => { t0 = performance.now(); }, true);
+    document.getElementById('planCanvas').addEventListener('pointermove', () => { if (t0) window.__moves.push(performance.now() - t0); }); });
+  await page.mouse.move(sx, sy); await page.mouse.down();
+  for (let k = 1; k <= 12; k++) await page.mouse.move(sx + (ox - sx) * k * 0.1, sy + (oy - sy) * k * 0.1);
+  assert.equal(await page.evaluate(() => window.AOSDeckStudioTest.isPreview()), true, 'preview while dragging');
+  assert.equal(await page.locator('#framingStatus').innerText(), 'FRAMING: UPDATE NEEDED');
+  const moves = await page.evaluate(() => window.__moves);
+  await page.mouse.up();
+  await page.waitForFunction(() => window.AOSDeckStudioTest.framingStatus() === 'current');
+  assert.equal(await page.evaluate(() => window.AOSDeckStudioTest.isPreview()), false);
+  assert.equal(await page.locator('#framingStatus').innerText(), 'FRAMING CURRENT');
+  const worst = Math.max(...moves.slice(1)), avg = moves.slice(1).reduce((a, b) => a + b, 0) / (moves.length - 1);
+  console.log(`# 48x42 edge drag: ${moves.length} moves, avg ${avg.toFixed(1)} ms, worst ${worst.toFixed(1)} ms`);
+  assert.ok(avg < 25, `average move ${avg.toFixed(1)} ms`);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('framing timing: cosmetic changes reuse the cached framing; structural ones recalculate', async () => {
+  const { ctx, page, errors } = await openApp();
+  await openDeckFile(page, { shape: 'rectangle', width: 16, depth: 12, height: 4, houseEdges: [0] });
+  const c0 = await page.evaluate(() => window.AOSDeckStudioTest.framingCache());
+  await stepBtn(page, 'Railings').click();
+  await page.locator('[data-path="railTab"][data-value="finish"]').click();
+  await page.locator('[data-path="railColor"][data-value="Bronze"]').click();
+  const c1 = await page.evaluate(() => window.AOSDeckStudioTest.framingCache());
+  assert.equal(c1.misses, c0.misses, 'railing color did not recalculate framing');
+  assert.ok(c1.hits > c0.hits);
+  await stepBtn(page, 'House').click();
+  const h = page.locator('#stepContent input[data-field="height"]');
+  await h.fill('7'); await h.dispatchEvent('change');
+  const c2 = await page.evaluate(() => window.AOSDeckStudioTest.framingCache());
+  assert.ok(c2.misses > c1.misses || c2.hits > c1.hits, 'height change was evaluated');
+  await page.locator('#undoBtn').click(); // undo -> same inputs as before -> cache hit
+  const c3 = await page.evaluate(() => window.AOSDeckStudioTest.framingCache());
+  assert.equal(c3.misses, c2.misses, 'undo reused a cached result');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('framing timing: free drawing never runs the framing generator', async () => {
+  const { ctx, page, errors } = await openApp();
+  const c0 = await page.evaluate(() => window.AOSDeckStudioTest.framingCache());
+  const at = await startFreeDraw(page);
+  await at(0, 0); await at(16, 0); await at(16, 12); await at(0, 12);
+  await page.mouse.move(400, 400); await page.mouse.move(420, 410);
+  const c1 = await page.evaluate(() => window.AOSDeckStudioTest.framingCache());
+  assert.equal(c1.hits + c1.misses, c0.hits + c0.misses);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
