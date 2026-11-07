@@ -81,7 +81,7 @@ test('exact width edit, undo and redo', async () => {
   const { ctx, page, errors } = await openApp();
   await chooseShape(page, 'rectangle');
   assert.equal(await area(page), 192);
-  const width = page.locator('#stepContent input[type=number]').first();
+  const width = page.locator('#stepContent input[data-field="width"]').first();
   await width.fill('20');
   await width.dispatchEvent('change');
   await page.waitForFunction(() => /240 SQ FT/.test(document.getElementById('squareFeet').textContent));
@@ -363,7 +363,6 @@ test('free draw: a slightly misaligned last corner is lined up, not jogged', asy
 test('free draw: 45° mode closes a chamfered deck with allowed angles', async () => {
   const { ctx, page, errors } = await openApp();
   const at = await startFreeDraw(page);
-  await page.locator('[data-action="draw-mode"][data-value="45"]').click();
   await at(0, 0); await at(16, 0); await at(16, 12); await at(4, 12); await at(1.5, 9.5);
   await at(0.2, 0.2);
   await page.locator('#dividerConfirmAccept').click();
@@ -402,7 +401,7 @@ test('free draw: closing shape then editing an exact width keeps it valid', asyn
   await page.locator('#dividerConfirmAccept').click();
   await page.waitForFunction(hasArea);
   const before = await area(page);
-  const width = page.locator('#stepContent input[type=number]').first();
+  const width = page.locator('#stepContent input[data-field="width"]').first();
   await width.fill('20'); await width.dispatchEvent('change');
   await page.waitForFunction((b) => Number(document.getElementById('squareFeet').textContent.match(/(\d+)/)[1]) !== b, before);
   assert.equal(await area(page), 240);
@@ -453,7 +452,7 @@ test('steps: fix the deck size from Railings and come back without losing railin
   await page.locator('[data-path="railColor"][data-value="Bronze"]').click();
 
   await stepBtn(page, 'Shape').click();
-  const width = page.locator('#stepContent input[type=number]').first();
+  const width = page.locator('#stepContent input[data-field="width"]').first();
   await width.fill('20'); await width.dispatchEvent('change');
   await page.waitForFunction(() => /240 SQ FT/.test(document.getElementById('squareFeet').textContent));
 
@@ -472,6 +471,7 @@ test('steps: locked while free drawing', async () => {
   await chooseShape(page, 'rectangle');
   await page.locator('#stepContent [data-action="choose-shape"]').click();
   await page.locator('#shapeOverlay [data-shape="free"]').click();
+  await page.locator('#dividerConfirmAccept').click(); // Change deck shape? -> Start Drawing
   assert.equal(await stepBtn(page, 'Decking').isDisabled(), true);
   assert.deepEqual(errors, []);
   await ctx.close();
@@ -515,12 +515,12 @@ test('measurements: All shows edge lengths and stair width + position, live', as
   assert.match(dims, /16′/); assert.match(dims, /12′/);
   await page.locator('[data-action="stair-add"]').click();
   dims = await planDims(page);
-  assert.match(dims, /4′ wide/);
+  assert.match(dims, /4′ 0″ wide/);
   // A centered 4 ft stair on a 16 ft or 12 ft edge leaves equal offsets on both sides.
-  assert.ok(/(^|, )6′(,|\.)/.test(dims) || /(^|, )4′(,|\.)/.test(dims), dims);
+  assert.ok(/(^|, )6′ 0″(,|\.)/.test(dims) || /(^|, )4′ 0″(,|\.)/.test(dims), dims);
   const w = page.locator('#stepContent input').first();
   await w.fill('6'); await w.dispatchEvent('change');
-  await page.waitForFunction(() => /6′ wide/.test(document.getElementById('planCanvas').getAttribute('aria-label')));
+  await page.waitForFunction(() => /6′ 0″ wide/.test(document.getElementById('planCanvas').getAttribute('aria-label')));
   assert.deepEqual(errors, []);
   await ctx.close();
 });
@@ -528,7 +528,7 @@ test('measurements: All shows edge lengths and stair width + position, live', as
 test('measurements: divider distance from the house updates when the divider moves', async () => {
   const { ctx, page, errors } = await openApp();
   await chooseShape(page, 'rectangle');
-  const w = page.locator('#stepContent input[type=number]').first(); // make room for a divider
+  const w = page.locator('#stepContent input[data-field="width"]').first(); // make room for a divider
   await w.fill('24'); await w.dispatchEvent('change');
   await stepBtn(page, 'Layout').click();
   await page.locator('[data-path="deckLine"][data-value="vertical"]').click(); // boards run out from the house
@@ -557,7 +557,7 @@ test('measurements: Selected shows only the selected railing edge; Off hides; ch
   assert.match(await page.locator('#measureBtn').innerText(), /Selected/i);
   assert.match(await planDims(page), /overall/, 'nothing selected: overall size');
   await page.locator('[data-action="rail-target"][data-edge="2"]').click();
-  assert.equal(await planDims(page), '2D plan. Dimensions: 16′.');
+  assert.equal(await planDims(page), '2D plan. Dimensions: 16′ 0″.');
   await page.locator('#measureBtn').click();
   assert.equal(await planDims(page), '2D plan. Dimensions hidden.');
   await page.reload();
@@ -617,12 +617,12 @@ test('projects: explicit Save says where it saved; edits to an opened project ar
   await page.waitForFunction(() => /Saved “Jones deck” in this browser/.test(document.getElementById('toast').textContent));
   await page.reload(); await page.waitForFunction(() => window.DeckCore);
   await page.locator('#recentProjects .recent-item', { hasText: 'Jones deck' }).click();
-  const w = page.locator('#stepContent input[type=number]').first();
+  const w = page.locator('#stepContent input[data-field="width"]').first();
   await w.fill('22'); await w.dispatchEvent('change');
   await waitSaved(page);
   await page.reload(); await page.waitForFunction(() => window.DeckCore);
   await page.locator('#recentProjects .recent-item', { hasText: 'Jones deck' }).click();
-  assert.equal(await page.locator('#stepContent input[type=number]').first().inputValue(), '22');
+  assert.equal(await page.locator('#stepContent input[data-field="width"]').first().inputValue(), '22′ 0″');
   assert.equal(await page.locator('#recentProjects .recent-item').count().then(() => true), true);
   assert.deepEqual(errors, []);
   await ctx.close();
@@ -637,7 +637,7 @@ test('projects: duplicate is independent; delete asks first; new project keeps t
   await row('Original deck \\(copy\\)').waitFor();
   assert.equal(await page.locator('#projectsList .project-row').count(), 2);
   await row('Original deck \\(copy\\)').locator('[data-action="project-open"]').click();
-  const w = page.locator('#stepContent input[type=number]').first();
+  const w = page.locator('#stepContent input[data-field="width"]').first();
   await w.fill('30'); await w.dispatchEvent('change');
   await waitSaved(page);
 
@@ -763,14 +763,13 @@ test('projects (preview): a viewer who cannot write gets browser saving and is t
 test('free draw: an angled deck keeps its angles; width explains, edge length edit works', async () => {
   const { ctx, page, errors } = await openApp();
   const at = await startFreeDraw(page);
-  await page.locator('[data-action="draw-mode"][data-value="45"]').click();
   for (const [x, z] of [[0, 0], [16, 0], [16, 9], [13, 12], [3, 12], [0, 9]]) await at(x, z);
   await at(0.3, 0.3);
   await page.locator('#dividerConfirmAccept').click();
   await page.waitForFunction(hasArea);
   const area0 = await area(page);
 
-  const w = page.locator('#stepContent input[type=number]').first();
+  const w = page.locator('#stepContent input[data-field="width"]').first();
   await w.fill('20'); await w.dispatchEvent('change');
   assert.match(await page.locator('#toast').innerText(), /would bend this shape's angled edges/);
   assert.equal(await area(page), area0, 'shape unchanged');
@@ -795,6 +794,110 @@ test('free draw: an angled deck keeps its angles; width explains, edge length ed
   const W = data.design.width, D = data.design.depth, pts = data.design.points.map(([x, z]) => [x * W, z * D]);
   for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length], deg = Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI;
     assert.ok(Math.abs(deg / 45 - Math.round(deg / 45)) < 0.01, `edge ${i + 1} at ${deg.toFixed(2)}°`); }
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+// ---- V5.1 Phase A corrections ----
+test('corrections: free draw has no angle buttons; edges snap on their own and show the corner angle', async () => {
+  const { ctx, page, errors } = await openApp();
+  const at = await startFreeDraw(page);
+  assert.equal(await page.locator('[data-action="draw-mode"]').count(), 0, 'angle-mode buttons removed');
+  assert.match(await page.locator('#stepContent .shape-help').innerText(), /snap to square, 45° and 22.5°/);
+  const box = await page.locator('#planCanvas').boundingBox();
+  const scale = Math.min(Math.max(Math.min((box.width - 90) / 24, (box.height - 90) / 18), 7), 23);
+  const toPx = (fx, fz) => [box.x + box.width / 2 - 8 * scale + fx * scale, box.y + box.height / 2 - 6 * scale + fz * scale];
+  const label = () => page.locator('#planCanvas').getAttribute('aria-label');
+  await at(0, 0); await at(16, 0);
+  await page.mouse.move(...toPx(16.3, 8));          // slightly off vertical -> square corner
+  assert.match(await label(), /next edge 8′ 0″ · corner 90°/);
+  await at(16.3, 8);
+  await page.mouse.move(...toPx(12.2, 12.1));       // roughly 45°, no mode change needed
+  assert.match(await label(), /corner 135°/);
+  await at(12.2, 12.1);
+  await page.mouse.move(...toPx(4, 12));            // back to square in the same drawing
+  assert.match(await label(), /corner 135°/);
+  await at(4, 12);
+  await at(0.3, 0.3);
+  await page.locator('#dividerConfirmAccept').click();
+  const { data } = await saveFile(page);
+  const W = data.design.width, D = data.design.depth, pts = data.design.points.map(([x, z]) => [x * W, z * D]);
+  const degs = pts.map((a, i) => { const b = pts[(i + 1) % pts.length]; return Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI; });
+  for (const d of degs) assert.ok(Math.abs(d / 22.5 - Math.round(d / 22.5)) < 0.01, `edge at ${d.toFixed(2)}°`);
+  assert.ok(degs.some(d => Math.abs(Math.abs(d) % 90 - 45) < 0.01), 'kept the 45° edge');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('corrections: an inside corner reads 270°', async () => {
+  const { ctx, page, errors } = await openApp();
+  const at = await startFreeDraw(page);
+  const box = await page.locator('#planCanvas').boundingBox();
+  const scale = Math.min(Math.max(Math.min((box.width - 90) / 24, (box.height - 90) / 18), 7), 23);
+  const toPx = (fx, fz) => [box.x + box.width / 2 - 8 * scale + fx * scale, box.y + box.height / 2 - 6 * scale + fz * scale];
+  await at(0, 0); await at(18, 0); await at(18, 6); await at(10, 6);
+  await page.mouse.move(...toPx(10, 13));
+  assert.match(await page.locator('#planCanvas').getAttribute('aria-label'), /corner 270°/);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('corrections: Shape & Size instructions are the new, readable wording', async () => {
+  const { ctx, page, errors } = await openApp({ width: 390, height: 844 });
+  await chooseShape(page, 'rectangle');
+  const help = page.locator('#stepContent .shape-help');
+  assert.equal(await help.locator('strong').innerText(), 'Edit your deck shape');
+  assert.equal(await help.locator('p').innerText(), 'Tap a dimension to enter an exact measurement. Drag an edge or corner to reshape your deck. Tap a corner to add an angled cut.');
+  const size = await help.locator('p').evaluate(e => parseFloat(getComputedStyle(e).fontSize));
+  assert.ok(size >= 13 && size <= 14, `font ${size}px`);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('corrections: Change Deck Shape confirms, can be kept, and undo restores stairs and railings', async () => {
+  const { ctx, page, errors } = await openApp();
+  await chooseShape(page, 'rectangle');
+  await stepBtn(page, 'Stairs').click(); await page.locator('[data-action="stair-add"]').click();
+  await stepBtn(page, 'Railings').click(); await page.locator('[data-path="railTab"][data-value="finish"]').click();
+  await page.locator('[data-action="rail-target"][data-edge="2"]').click(); await page.locator('[data-path="railColor"][data-value="Bronze"]').click();
+  await stepBtn(page, 'Shape').click();
+  const btn = page.locator('#stepContent [data-action="choose-shape"]');
+  assert.equal((await btn.innerText()).trim(), 'Change Deck Shape');
+  await btn.click(); await page.locator('#shapeOverlay [data-shape="L"]').click();
+  const msg = await page.locator('#dividerConfirmMessage').innerText();
+  assert.match(msg, /Removed: 1 staircase, 1 custom railing finish/); assert.match(msg, /Kept: deck height/);
+  assert.equal(await page.locator('#dividerConfirmCancel').innerText(), 'Keep Current Shape');
+  await page.locator('#dividerConfirmCancel').click();
+  assert.equal(await area(page), 192, 'kept the rectangle');
+  await btn.click(); await page.locator('#shapeOverlay [data-shape="L"]').click();
+  await page.locator('#dividerConfirmAccept').click();
+  assert.notEqual(await area(page), 192);
+  await page.locator('#undoBtn').click();
+  assert.equal(await area(page), 192);
+  const { data } = await saveFile(page);
+  assert.equal(data.design.staircases.length, 1);
+  assert.deepEqual(data.design.railOverrides, { 2: { railColor: 'Bronze' } });
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('corrections: dimensions display and accept feet and inches; geometry keeps exact values', async () => {
+  const { ctx, page, errors } = await openApp();
+  await chooseShape(page, 'rectangle');
+  const w = page.locator('#stepContent input[data-field="width"]');
+  assert.equal(await w.inputValue(), '16′ 0″');
+  await w.fill('21 3'); await w.dispatchEvent('change');
+  assert.equal(await page.locator('#stepContent input[data-field="width"]').inputValue(), '21′ 3″');
+  assert.match(await page.locator('#planCanvas').getAttribute('aria-label'), /21′ 3″/);
+  const d = page.locator('#stepContent input[data-field="depth"]');
+  await d.fill(`12' 6"`); await d.dispatchEvent('change');
+  const { data } = await saveFile(page);
+  assert.equal(data.design.width, 21.25); assert.equal(data.design.depth, 12.5);
+  await page.locator('#stepContent input[data-field="width"]').fill('abc');
+  await page.locator('#stepContent input[data-field="width"]').dispatchEvent('change');
+  assert.match(await page.locator('#toast').innerText(), /Enter a length like/);
+  await stepBtn(page, 'House').click();
+  assert.equal(await page.locator('#stepContent input[data-field="height"]').inputValue(), '4′ 0″');
   assert.deepEqual(errors, []);
   await ctx.close();
 });
