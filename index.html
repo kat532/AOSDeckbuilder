@@ -226,6 +226,7 @@
 .framingstatus{font:800 9.5px/1 system-ui,sans-serif;letter-spacing:.6px;padding:6px 9px;border-radius:9px;white-space:nowrap}
 .framingstatus.current{background:#e7f4ec;color:#1f6b45}.framingstatus.pending,.framingstatus.invalid{background:#fdf1dc;color:#8a5a06}.framingstatus.calculating{background:#eef1f4;color:#4d6072}
 .stair-options button{min-height:40px}
+.openings-panel .seg button,.openings-panel .editor-actions button,.openings-panel .stair-picker button{min-height:36px}.openings-panel select{width:100%;border:1px solid #d9e0e5;border-radius:7px;padding:7px 8px;background:#fff;font-size:12px;font-weight:700;color:#233243;min-height:36px}.opening-warn{font-size:10.5px;color:#9a5a06;background:#fdf1dc;border-radius:7px;padding:6px 8px;line-height:1.35}
 .seg.wrap{flex-wrap:wrap}.seg.wrap button{flex:1 1 30%;min-height:36px}.seg.turns button{min-height:36px}.landing-sub{margin-top:2px}
 .framing-pending{font-size:12.5px;line-height:1.45;padding:10px 12px;border-radius:9px;background:#fdf1dc;color:#6b4705;margin-bottom:8px}.framing-pending button{margin-left:6px;min-height:34px;padding:6px 10px;border-radius:8px;border:1px solid #d9a441;background:#fff;font-weight:800;font-size:11.5px}
 @media (max-width:760px){.framingstatus{display:none}}
@@ -1080,6 +1081,19 @@ const LANDING_MIN_HEIGHT=4*7.75/12; // four risers: two above and two below the 
 // V5.2 Checkpoint 3 (A4): a landing stair can carry on straight or turn 90 degrees left or right.
 // "Left" and "right" are as seen by someone walking DOWN the stairs. On the plan (x to the right,
 // z down the screen) that person's left is [n.z, -n.x] for a walking direction n.
+// V5.2 B1: house doors and windows. Sizes in feet; a window's sill is measured above the deck surface.
+const OPENING_TYPES={
+ door:{label:'Door',w:[2,4],h:[6,8],dw:3,dh:80/12,presets:[[36,80],[32,80],[30,80],[36,96]]},
+ patio:{label:'Patio door',w:[4,12],h:[6+4/12,8],dw:6,dh:80/12,presets:[[60,80],[72,80],[96,80],[72,96]]},
+ window:{label:'Window',w:[1,8],h:[1,6],dw:3,dh:4,sill:[.5,6],ds:3,presets:[[24,36],[36,48],[48,48],[60,36]]}},
+ OPENING_END_CLEAR=.25,OPENING_GAP=1/3,OPENING_MAX_TOP=8,MAX_OPENINGS=40;
+// Where an opening may sit on its wall; null when it fits, otherwise the reason.
+function openingProblem(q,es,o,others){const e=es[o.edge];if(!e)return 'no-wall';
+ if(!(q.houseEdges||[]).includes(o.edge))return 'not-house-wall';
+ if(Math.abs(o.offset)+o.width/2>e.len/2-OPENING_END_CLEAR+1e-9)return 'off-wall';
+ for(const x of others||[])if(x.id!==o.id&&x.edge===o.edge&&Math.abs(x.offset-o.offset)<(x.width+o.width)/2+OPENING_GAP-1e-9)return 'overlap';
+ return null;}
+const openingTop=o=>o.type==='window'?o.sill+o.height:o.height,openingBottom=o=>o.type==='window'?o.sill:0;
 const LANDING_TURNS=['straight','left','right'],LANDING_DECK_LINES=['match','horizontal','vertical','diagonal-left','diagonal-right'],MAX_TURN_WIDTH=12;
 function turnSign(e,turn){if(turn!=='left'&&turn!=='right')return 0;const left=[e.n[1],-e.n[0]],k=Math.sign(left[0]*e.t[0]+left[1]*e.t[1])||1;return turn==='left'?k:-k;}
 // The stair's plan footprint as a list of rectangles (world x,z corners). A plain stair or a straight
@@ -1200,6 +1214,18 @@ function sanitize(s){const b=baseIntent(),x=s||{};const q={...b,...x,stairs:{...
  q.project=String(q.project||b.project).slice(0,90);q.attached=q.houseEdges.length>0;
  // Schema v6 (additive): stamp the version and publish a per-edge perimeter view.
  // railEdges/railStyle/railColor remain the source of truth in this release.
+ // V5.2 B1: doors and windows on house walls. Kept even when their wall changes (they are shown
+ // as needing attention instead of being deleted); written only when the project has the list.
+ if(Array.isArray(x.openings)){const seen=new Set();
+   q.openings=x.openings.slice(0,MAX_OPENINGS).filter(o=>o&&OPENING_TYPES[o.type]&&Number.isFinite(Number(o.edge))).map((o,i)=>{const T=OPENING_TYPES[o.type];
+     let id=String(o.id||('opening-'+(i+1)));while(seen.has(id))id+='b';seen.add(id);
+     const r={id,type:o.type,edge:Math.round(Number(o.edge)),offset:Number.isFinite(Number(o.offset))?+clamp(Number(o.offset),-200,200).toFixed(4):0,
+       width:+clamp(Number(o.width)||T.dw,T.w[0],T.w[1]).toFixed(4),height:+clamp(Number(o.height)||T.dh,T.h[0],T.h[1]).toFixed(4)};
+     if(o.type==='window'){r.sill=+clamp(Number.isFinite(Number(o.sill))?Number(o.sill):T.ds,T.sill[0],T.sill[1]).toFixed(4);
+       if(r.sill+r.height>OPENING_MAX_TOP)r.height=+Math.max(T.h[0],OPENING_MAX_TOP-r.sill).toFixed(4);
+       if(r.sill+r.height>OPENING_MAX_TOP)r.sill=+(OPENING_MAX_TOP-r.height).toFixed(4);}
+     return r;});
+ }else delete q.openings;
  q.schemaVersion=SCHEMA_VERSION;q.perimeter=derivePerimeter(q,es);return q;
 }
 // One segment per deck edge, derived from houseEdges, railEdges, the global railing
@@ -1279,12 +1305,70 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  const H=q.height,top=H-.5*FT,fieldColor=PALETTES[q.decking],accent=PALETTES[q.border],railCol=RAILS[q.railColor];
  const minX=Math.min(...poly.map(p=>p[0])),maxX=Math.max(...poly.map(p=>p[0])),minZ=Math.min(...poly.map(p=>p[1])),maxZ=Math.max(...poly.map(p=>p[1]));
  add('earth','site',(minX+maxX)/2,-.24,(minZ+maxZ)/2,Math.max(68,q.width+25),.4,Math.max(66,q.depth+25),'#9aab92',{mat:'ground'});
+ // V5.2 B1: a house wall with doors/windows is built AROUND them: full-height piers between
+ // openings, wall below each window and above each opening. The wall grows taller only when an
+ // opening needs it (walls without openings are unchanged). Openings sit in the deck-facing face.
+ function buildOpeningWall(e,i,list,ctr,yaw){
+   const L=Math.max(.3,e.len-.07),top=H+Math.max(7,Math.max(...list.map(openingTop))+1),P=(s,d,y)=>[e.mid[0]+e.t[0]*s+e.n[0]*d,y,e.mid[1]+e.t[1]*s+e.n[1]*d];
+   const wall=(s0,s1,y0,y1)=>{if(s1-s0<.01||y1-y0<.01)return;const c=P((s0+s1)/2,.29,0);add('house-wall','context',c[0],(y0+y1)/2,c[2],s1-s0,y1-y0,.35,'#d9dbd7',{mat:'siding',yaw,connect:`house-edge-${i}`});};
+   let s=-L/2;
+   for(const o of list){const a=o.offset-o.width/2,b=o.offset+o.width/2;wall(s,a,0,top);wall(a,b,0,H+openingBottom(o));wall(a,b,H+openingTop(o),top);s=b;}
+   wall(s,L/2,0,top);
+   // Siding courses (house side of the wall), interrupted where an opening passes through.
+   const cv=[ctr[0]+e.n[0]*.185,ctr[1]+e.n[1]*.185],Lc=Math.max(.3,e.len-.12);
+   for(let y=.3;y<top-.2;y+=.65){let at=-Lc/2;
+     for(const o of list){if(y<H+openingBottom(o)||y>H+openingTop(o))continue;const a=o.offset-o.width/2,b=o.offset+o.width/2;
+       if(a-at>.05){const m=[cv[0]+e.t[0]*(at+a)/2,cv[1]+e.t[1]*(at+a)/2];add('siding-course','context',m[0],y,m[1],a-at,.024,.025,'#bac2c1',{mat:'metal',yaw});}at=b;}
+     if(Lc/2-at>.05){const m=[cv[0]+e.t[0]*(at+Lc/2)/2,cv[1]+e.t[1]*(at+Lc/2)/2];add('siding-course','context',m[0],y,m[1],Lc/2-at,.024,.025,'#bac2c1',{mat:'metal',yaw});}}
+   const face=.29-.175,TRIM='#f3f1ea',TW=3.5/12,FR=.12;
+   const box=(kind,s0,s1,y0,y1,d,depth,color,mat,o)=>{if(s1-s0<.005||y1-y0<.005)return null;const c=P((s0+s1)/2,d,0);
+     const part=add(kind,'context',c[0],(y0+y1)/2,c[2],s1-s0,y1-y0,depth,color,{mat,yaw,connect:`opening-${o.id}`,label:`${OPENING_TYPES[o.type].label.toLowerCase()} ${Math.round(o.width*12)}×${Math.round(o.height*12)} in. (visual only)`});
+     if(part){part.opening=o.id;part.openingType=o.type;}return part;};
+   for(const o of list){const a=o.offset-o.width/2,b=o.offset+o.width/2,y0=H+openingBottom(o),y1=H+openingTop(o);
+     // Exterior casing: two side boards and a head board, standing proud of the siding.
+     box('opening-trim',a-TW,a,y0,y1+TW,face-.03,.06,TRIM,'paint',o);box('opening-trim',b,b+TW,y0,y1+TW,face-.03,.06,TRIM,'paint',o);
+     box('opening-trim',a-TW,b+TW,y1,y1+TW,face-.035,.07,TRIM,'paint',o);
+     // Frame lining the opening through the wall thickness.
+     box('opening-frame',a,a+FR,y0,y1,.29,.33,TRIM,'paint',o);box('opening-frame',b-FR,b,y0,y1,.29,.33,TRIM,'paint',o);box('opening-frame',a,b,y1-FR,y1,.29,.33,TRIM,'paint',o);
+     if(o.type==='window'){
+       box('opening-frame',a,b,y0,y0+FR,.29,.33,TRIM,'paint',o);
+       box('opening-trim',a-TW-.06,b+TW+.06,y0-.11,y0,face-.08,.2,TRIM,'paint',o);   // sill
+       box('opening-glass',a+FR,b-FR,y0+FR,y1-FR,.3,.03,'#6c8ea3','metal',o);
+       if(o.height>2.4)box('opening-frame',a+FR,b-FR,(y0+y1)/2-.06,(y0+y1)/2+.06,.27,.08,TRIM,'paint',o); // meeting rail
+       if(o.width>3.2)box('opening-frame',(a+b)/2-.05,(a+b)/2+.05,y0+FR,y1-FR,.26,.06,TRIM,'paint',o);       // center mullion
+     }else if(o.type==='door'){
+       box('opening-trim',a,b,y0,y0+.06,face-.04,.18,'#8b8f93','metal',o);           // threshold
+       box('door-slab',a+FR,b-FR,y0+.06,y1-FR,.2,.15,'#3d4a56','wood',o);
+       const gl=Math.min(2.4,(o.height-.2)*.42);box('opening-glass',a+FR+.35,b-FR-.35,y1-FR-.35-gl,y1-FR-.35,.12,.03,'#6c8ea3','metal',o); // glass lite
+       box('door-hardware',b-FR-.42,b-FR-.28,y0+3,y0+3.25,.1,.08,'#c9b27a','metal',o);  // handle
+     }else{ // patio slider: two glass panels in a frame, one sliding in front of the other
+       box('opening-trim',a,b,y0,y0+.06,face-.04,.18,'#8b8f93','metal',o);
+       const m=(a+b)/2,PF='#ecebe6';
+       for(const [s0,s1,d] of [[a+FR,m+.05,.33],[m-.05,b-FR,.24]]){
+         box('opening-frame',s0,s0+.12,y0+.06,y1-FR,d,.07,PF,'paint',o);box('opening-frame',s1-.12,s1,y0+.06,y1-FR,d,.07,PF,'paint',o);
+         box('opening-frame',s0,s1,y1-FR-.12,y1-FR,d,.07,PF,'paint',o);box('opening-frame',s0,s1,y0+.06,y0+.2,d,.07,PF,'paint',o);
+         box('opening-glass',s0+.12,s1-.12,y0+.2,y1-FR-.12,d,.025,'#6c8ea3','metal',o);}
+       box('door-hardware',m-.32,m-.24,y0+3,y0+3.5,.18,.06,'#8b8f93','metal',o);
+     }
+   }
+ }
  // Each selected house wall carries a preliminary ledger by default.
  // The primary reference remains for decking orientation, not exclusive bearing.
  const ledgerEdges=q.supportMode==='ledger'?es.filter(e=>q.ledgerEdges.includes(e.i)):[];
  const ledgerEdge=q.primaryLedgerEdge!==null?es[q.primaryLedgerEdge]:null;
+ // V5.2 B1: doors and windows. Each is checked against its wall; those that fit are cut into
+ // the wall (the wall is built around them) and drawn with frame, trim, glass and door slab.
+ const openingModels=[],okOpenings=[];
+ for(const o of q.openings||[]){const problem=openingProblem(q,es,o,okOpenings);const e=es[o.edge];
+   const rec={id:o.id,type:o.type,edge:o.edge,offset:o.offset,width:o.width,height:o.height,...(o.type==='window'?{sill:o.sill}:{}),bottom:openingBottom(o),top:openingTop(o),status:problem||'ok'};
+   if(e){rec.a=[e.mid[0]+e.t[0]*(o.offset-o.width/2),e.mid[1]+e.t[1]*(o.offset-o.width/2)];rec.b=[e.mid[0]+e.t[0]*(o.offset+o.width/2),e.mid[1]+e.t[1]*(o.offset+o.width/2)];}
+   openingModels.push(rec);if(!problem)okOpenings.push(o);}
+ const OPENING_WHY={'no-wall':'its wall no longer exists','not-house-wall':'its edge is no longer a house wall','off-wall':'it no longer fits on its wall','overlap':'it overlaps another opening'};
+ for(const r of openingModels)if(r.status!=='ok')alerts.push({level:'warning',message:`${OPENING_TYPES[r.type].label} ${openingModels.indexOf(r)+1} (${fmtFt(r.width)} wide, edge ${r.edge+1}) is hidden because ${OPENING_WHY[r.status]}. Move, resize or delete it in House & Height.`});
  for(const i of q.houseEdges){
    const e=es[i],out=.29,ctr=[e.mid[0]+e.n[0]*out,e.mid[1]+e.n[1]*out],yaw=-Math.atan2(e.t[1],e.t[0]);
+   const here=okOpenings.filter(o=>o.edge===i).sort((a,b)=>a.offset-b.offset);
+   if(here.length){buildOpeningWall(e,i,here,ctr,yaw);continue;}
    add('house-wall','context',ctr[0],(H+7)/2,ctr[1],Math.max(.3,e.len-.07),H+7,.35,'#d9dbd7',{mat:'siding',yaw,connect:`house-edge-${i}`});
    // Courses use the edge normal in BOTH world axes; previously side walls drew across the deck.
    for(let y=.3;y<H+6.8;y+=.65){const v=[ctr[0]+e.n[0]*.185,ctr[1]+e.n[1]*.185];
@@ -2118,9 +2202,11 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    beamLengthsFt:beamRecords.map(b=>+b.len.toFixed(3)),postSpacingFt:beamRecords.map(b=>+b.postPitch.toFixed(3)),
    primaryLedgerEdge:q.primaryLedgerEdge,ledgerEdges:ledgerEdges.map(e=>e.i),ledgerCount:ledgerEdges.length,beamRows:beams.length,beamRoles:beamRecords.reduce((m,b)=>{const r=b.role||'shared-beam';m[r]=(m[r]||0)+1;return m;},{}),closeFootingPairs:closeFootings,sharedPosts,physicalSupportOutsideCount:physicalOutside.length,structuralEnvelopeOutsideCount:outsideStructural.length,footingOutsideProjectionCount:outsideFoundations.length,physicalSupportOutside:physicalOutside.map(p=>({kind:p.kind,role:p.role})),joistNominal:`2x${joistNominal}`,beamProfile,joistSpacingIn:joistSpacing,joistMaxSpanFt:FS.JOISTS[joistSpacing][joistNominal].span,unresolvedJoistRuns:beamSupportDiagnostics.length,sharedSupportZones:chosen.groups.length,framingPlanner:chosen.planner||'legacy-bearing-repair',optimizerCandidates:chosen.candidates,unverifiedBeamLoadCount:unsupportedBeamLoads,pictureFrameFlatBlocks:flatBorderBlocks,dividerFlatBlocks:flatDividerBlocks,pictureFrameFlatLF:borderFlatLF,dividerFlatLF:dividerFlatLF,pictureFrameSupportJoists:qty('picture-support-joist'),dividerSupportJoists:qty('divider-support-joist')};
  if(stairModels.some(g=>g.landing))stats.landings=stairModels.filter(g=>g.landing).map(g=>({stair:g.id,edge:g.edge,elevationFt:+g.landing.elevation.toFixed(4),widthFt:g.landing.width,depthFt:g.landing.depth,upperRisers:g.landing.upperRisers,lowerRisers:g.landing.lowerRisers,riserIn:+(g.rise*12).toFixed(3),posts:g.landing.posts,guardLF:+g.landing.guardLF.toFixed(2),turn:g.turn,decking:g.landing.decking,structuralApproval:false}));
- return {intent:q,parts,counts,alerts,stats,geometry:{poly,edges:es,inside,beams,joists:joistSegs,boardAxis:d,dividerRows,dividerFractions,dividerSpanFt:umax-umin,dividerStart:umin,joistAxis:joistD,stair:firstStair,stairs:stairModels}};
+ if(openingModels.length){counts.doors=okOpenings.filter(o=>o.type==='door').length;counts.patioDoors=okOpenings.filter(o=>o.type==='patio').length;counts.windows=okOpenings.filter(o=>o.type==='window').length;
+   stats.openings=openingModels.map(({a,b,...r})=>r);}
+ return {intent:q,parts,counts,alerts,stats,geometry:{openings:openingModels,poly,edges:es,inside,beams,joists:joistSegs,boardAxis:d,dividerRows,dividerFractions,dividerSpanFt:umax-umin,dividerStart:umin,joistAxis:joistD,stair:firstStair,stairs:stairModels}};
 }
-global.DeckCore={stairPlan,LANDING_MIN_HEIGHT,LANDING_TURNS,LANDING_DECK_LINES,MAX_TURN_WIDTH,turnSign,stairFootprints,stairHitsDeck,SCHEMA_VERSION,RAIL_PRODUCTS,railFinish,derivePerimeter,migrate,baseIntent,sanitize,make,stairOverlap,resolveDividerFractions,MAX_DIVIDER_ROWS,MAX_FIELD_SECTION_FT,MIN_DIVIDER_SPACING_FT,PALETTES,RAILS,SHAPES,BW,GAP,PITCH,polygon,edges,validPolygon,lineIntervals,offsetPolygon};
+global.DeckCore={OPENING_TYPES,OPENING_END_CLEAR,OPENING_GAP,OPENING_MAX_TOP,MAX_OPENINGS,openingProblem,openingTop,openingBottom,stairPlan,LANDING_MIN_HEIGHT,LANDING_TURNS,LANDING_DECK_LINES,MAX_TURN_WIDTH,turnSign,stairFootprints,stairHitsDeck,SCHEMA_VERSION,RAIL_PRODUCTS,railFinish,derivePerimeter,migrate,baseIntent,sanitize,make,stairOverlap,resolveDividerFractions,MAX_DIVIDER_ROWS,MAX_FIELD_SECTION_FT,MIN_DIVIDER_SPACING_FT,PALETTES,RAILS,SHAPES,BW,GAP,PITCH,polygon,edges,validPolygon,lineIntervals,offsetPolygon};
 })(window);
 
 </script><script>
@@ -2723,8 +2809,14 @@ function remap(q,oldPoly,newPoly,keepIndex=false){
    q.railOverrides=next;}
  q.houseEdges=wall;q.ledgerEdges=ledger.filter(i=>wall.includes(i));q.railEdges=rail.filter(i=>!wall.includes(i));
  q.staircases=stairs;
+ // V5.2 B1: doors/windows stay at the same spot on the wall line; one whose wall disappears is kept hidden.
+ let lostOpenings=0;
+ if(Array.isArray(q.openings))q.openings=q.openings.map(o=>{const oe=old[o.edge];if(!oe){lostOpenings++;return {...o,edge:-1};}
+   const point=add(oe.mid,mul(oe.t,o.offset)),cand=projected(o.edge);if(!cand.length){lostOpenings++;return {...o,edge:-1};}
+   let best=cand[0],bd=Infinity;for(const e of cand){const off=dot(sub(point,e.mid),e.t),over=Math.max(0,Math.abs(off)-e.len/2);if(over<bd){bd=over;best=e;}}
+   return {...o,edge:best.i,offset:+dot(sub(point,best.mid),best.t).toFixed(4)};});
  if(q.primaryLedgerEdge!==null){const mapped=projected(q.primaryLedgerEdge);q.primaryLedgerEdge=(mapped.find(e=>wall.includes(e.i))||mapped[0])?.i??wall[0]??null;}
- return {missingStairs:lost-stairs.length};
+ return {missingStairs:lost-stairs.length,lostOpenings};
 }
 // V5.1 Free Draw closing. Finds how a drawn corner sequence closes back to its start
 // while every edge keeps an allowed direction for the drawing mode (90°, 45° or 22.5°).
@@ -3004,7 +3096,8 @@ function toggleEdge(kind,i){const q=structuredClone(state.intent),set=new Set(ki
    else{set.add(i);q.ledgerEdges=[...new Set([...q.ledgerEdges,i])];}
    q.houseEdges=[...set];q.railEdges=q.railEdges.filter(e=>e!==i);q.staircases=q.staircases.filter(s=>s.edge!==i);}
  else{if(q.houseEdges.includes(i)){toast('Remove the house wall on this edge first.');return;}if(set.has(i))set.delete(i);else set.add(i);q.railEdges=[...set];}
- patchMany(q);toast(`${kind==='house'?'House wall':'Railing'} ${set.has(i)?'added':'removed'}`);
+ patchMany(q);const n=kind==='house'&&!set.has(i)?(q.openings||[]).filter(o=>o.edge===i).length:0;
+ toast(`${kind==='house'?'House wall':'Railing'} ${set.has(i)?'added':'removed'}${n?`. Its ${n} door/window${n>1?'s are':' is'} kept but hidden until this edge is a house wall again (or move ${n>1?'them':'it'})`:''}`);
 }
 // Replacing an existing deck asks first and says exactly what is kept and what resets.
 // Map each house wall of the old outline to the outermost edge facing the same direction in the new one.
@@ -3014,14 +3107,19 @@ function carryHouseWalls(oldQ,newQ){
    const far=Math.max(...c.map(({x})=>d(x.mid,e.n)));return c.filter(({x})=>d(x.mid,e.n)>far-.5).map(({k})=>k);};
  const map=list=>[...new Set((list||[]).flatMap(side))].sort((a,b)=>a-b);
  const prim=side(oldQ.primaryLedgerEdge??(oldQ.ledgerEdges||[])[0]);
- return {house:map(oldQ.houseEdges),ledger:map(oldQ.ledgerEdges),primary:prim[0]};
+ // V5.2 B1: doors/windows follow their wall to the same side, at the same place along it.
+ const openings=Array.isArray(oldQ.openings)?oldQ.openings.map(o=>{const e=oe[o.edge],to=e?side(o.edge):[];if(!e||!to.length)return {...o,edge:-1};
+   const pt=[e.mid[0]+e.t[0]*o.offset,e.mid[1]+e.t[1]*o.offset];let best=to[0],bd=Infinity;
+   for(const k of to){const x=ne[k],off=d([pt[0]-x.mid[0],pt[1]-x.mid[1]],x.t),over=Math.max(0,Math.abs(off)-x.len/2);if(over<bd){bd=over;best=k;}}
+   const x=ne[best];return {...o,edge:best,offset:+d([pt[0]-x.mid[0],pt[1]-x.mid[1]],x.t).toFixed(4)};}):undefined;
+ return {house:map(oldQ.houseEdges),ledger:map(oldQ.ledgerEdges),primary:prim[0],openings};
 }
 function selectShape(shape){
  if(state.intent&&!state._shapeConfirmed){const q=state.intent,stairs=q.staircases.length,custom=Object.keys(q.railOverrides||{}).length,
    name=shape==='free'?'a new hand-drawn outline':shape==='rectangle'?'a rectangle':shape==='square'?'a square':`a ${shape}-shape`,
    lost=[stairs?`${stairs} staircase${stairs>1?'s':''}`:'',custom?`${custom} custom railing finish${custom>1?'es':''}`:'',shape==='free'&&q.houseEdges.length?'house walls (tap them again after drawing)':'',q.features?.length||q.bevels?.length?'bump-outs and angled cuts':''].filter(Boolean);
    state.shapePicker=false;showOverlay();
-   askDividerConfirmation('Change deck shape?',`This replaces the current outline with ${name}. ${lost.length?`Removed: ${lost.join(', ')}. `:''}Railings go back to every open edge${shape==='free'?' once you finish drawing':''}. Kept: ${shape==='free'?'':'house walls on the same sides, '}deck height, decking, colors, railing product and color, board layout, framing choices and project name. Undo restores the current deck.`,
+   askDividerConfirmation('Change deck shape?',`This replaces the current outline with ${name}. ${lost.length?`Removed: ${lost.join(', ')}. `:''}Railings go back to every open edge${shape==='free'?' once you finish drawing':''}. Kept: ${shape==='free'?'':'house walls on the same sides, '}${q.openings?.length?(shape==='free'?'doors and windows (hidden until you place them on a house wall), ':'doors and windows on their walls (any that no longer fit are kept hidden for you to move), '):''}deck height, decking, colors, railing product and color, board layout, framing choices and project name. Undo restores the current deck.`,
      shape==='free'?'Start Drawing':'Replace Shape',()=>{state._shapeConfirmed=true;try{selectShape(shape);}finally{state._shapeConfirmed=false;}},'Keep Current Shape');
    return;}
  state.shapePicker=false;state.freeDraw=false;state.selectedEdge=null;state.selectedCorner=null;state.previewPoly=null;state.cornerPreview=null;state.cornerKey=null;state.featureSelected=null;if(shape==='free'){state.freeDraw=true;state.freePts=[];state.step=0;state.view='2d';state.plan.panX=state.plan.panY=0;state.plan.scale=clamp(Math.min((planCanvas.clientWidth-90)/24,(planCanvas.clientHeight-90)/18),7,23);state.plan.targetZ=6;state.drawMode='auto';showOverlay();renderPanel();planDraw();toast('Tap each corner. Edges snap to square, 45° and 22.5° on their own.');return;}
@@ -3033,7 +3131,10 @@ function selectShape(shape){
  const ledgers=carried?.house.length?carried.ledger.filter(i=>house.includes(i)):(state.intent&&!state.intent.ledgerEdges?.length?[]:[0]);
  q.railOverrides={};state.railTarget='all';q.houseEdges=house;q.ledgerEdges=ledgers;q.railEdges=Array.from({length:core.polygon(q).length},(_,i)=>i).filter(i=>!house.includes(i));
  if(q.primaryLedgerEdge!==undefined)q.primaryLedgerEdge=ledgers.includes(carried?.primary)?carried.primary:(ledgers[0]??house[0]);q.staircases=[];q.stairs.enabled=false;q.stairs.edge=Math.min(2,q.railEdges.length-1);
- state.view='2d';setProject(q);fit2d();toast(`${shape==='L'||shape==='T'||shape==='U'?shape+'-shape':shape} footprint ready`);
+ if(carried?.openings)q.openings=carried.openings;
+ state.view='2d';setProject(q);fit2d();
+ const hidden=(state.model.geometry.openings||[]).filter(o=>o.status!=='ok').length;
+ toast(`${shape==='L'||shape==='T'||shape==='U'?shape+'-shape':shape} footprint ready${hidden?`. ${hidden} door/window${hidden>1?'s':''} no longer fit${hidden>1?'':'s'} a house wall and ${hidden>1?'are':'is'} hidden: see House & Height`:''}`);
 }
 function finishFreeDraw(){if(state.freePts.length<3){toast('Tap at least three corners.');return;}
  const closing=closeFreeOutline(state.freePts);
@@ -3045,6 +3146,7 @@ function finishFreeDraw(){if(state.freePts.length<3){toast('Tap at least three c
    const xmin=Math.min(...xs),xmax=Math.max(...xs),zmin=Math.min(...zs),zmax=Math.max(...zs),W=xmax-xmin,D=zmax-zmin;
    const q=state.intent?structuredClone(state.intent):core.baseIntent();q.shape='free';q.startShape='free';q.flipL=false;q.features=[];q.bevels=[];q.railOverrides={};state.railTarget='all';q.width=W;q.depth=D;q.originX=(xmin+xmax)/2;q.originZ=zmin;
    q.points=pp.map(p=>[(p[0]-xmin)/W,(p[1]-zmin)/D]);q.houseEdges=[];q.ledgerEdges=[];
+   if(Array.isArray(q.openings))q.openings=q.openings.map(o=>({...o,edge:-1})); // kept, to be placed on a new house wall
    q.railEdges=Array.from({length:pp.length},(_,i)=>i);q.staircases=[];
    state.freeDraw=false;state.freePts=[];state.freeRedo=[];state.selectedCorner=null;state.selectedEdge=null;setProject(q);fit2d();toast('Shape closed. Tap any edge length to set its exact size.');
  };
@@ -3097,7 +3199,7 @@ function storeLocalPolygon(q,p,{freeAngle=false,topology=false}={}){
  q.points=p.map(v=>[(v[0]-xmin)/W,(v[1]-zmin)/D]);
  if(freeAngle||topology)q.shape='free';
  if(q.shape==='square'&&Math.abs(W-D)>.01)q.shape='rectangle';
- if(topology){const changes=shapeOps.remap(q,old,p);state.shapeNotice=changes.missingStairs?`${changes.missingStairs} staircase(s) could not remain on the edited perimeter and were removed. Undo to restore.`:'';}
+ if(topology){const changes=shapeOps.remap(q,old,p);state.shapeNotice=[changes.missingStairs?`${changes.missingStairs} staircase(s) could not remain on the edited perimeter and were removed.`:'',changes.lostOpenings?`${changes.lostOpenings} door/window(s) lost their house wall and are hidden until moved (House & Height).`:''].filter(Boolean).join(' ')+(changes.missingStairs||changes.lostOpenings?' Undo to restore.':'');}
  else for(const stair of q.staircases||[]){const edge=core.edges(p)[stair.edge];
    // V5.2 A3: a full-width stair follows its edge; it only needs the edge to stay at least 3′ 6″.
    if(stair.fullWidth){if(!edge||edge.len<3.5){state.lastShapeError='This edit would leave a full-width staircase on an edge shorter than 3′ 6″. Move that staircase first.';return false;}continue;}
@@ -3379,6 +3481,48 @@ function renderShapePanel(q){
  return html;
 }
 function inchText(ft){const t=Math.round(ft*12*8)/8,w=Math.floor(t+1e-9),f=Math.round((t-w)*8);return `${w}${['','⅛','¼','⅜','½','⅝','¾','⅞'][f]} in.`;}
+// ---- V5.2 B1: house doors and windows ----
+const OPENING_ICON={door:'🚪',patio:'▥',window:'▦'};
+function openingSel(){const list=state.intent?.openings||[];if(!list.length){state.openingSelected=null;return null;}if(!list.some(o=>o.id===state.openingSelected))state.openingSelected=list.at(-1).id;return list.find(o=>o.id===state.openingSelected);}
+function wallName(es,i){const e=es[i];if(!e)return 'no wall';const a=Math.atan2(e.n[1],e.n[0])*180/Math.PI,dirs=['right','bottom-right','bottom','bottom-left','left','top-left','top','top-right'];
+ const d=dirs[((Math.round(a/45)%8)+8)%8],same=es.filter(x=>x.i!==i&&Math.abs(x.n[0]-e.n[0])<1e-6&&Math.abs(x.n[1]-e.n[1])<1e-6&&state.intent?.houseEdges.includes(x.i));
+ return `${d[0].toUpperCase()+d.slice(1)} wall${same.length?` ${fmt(e.len)}`:''}`;}
+function renderOpeningsPanel(q){
+ if(!q.houseEdges.length)return `<div class="editor-tip">Add a house wall to place doors and windows on it.</div>`;
+ const es=core.edges(core.polygon(q)),list=q.openings||[],sel=openingSel(),geo=state.model.geometry.openings||[],wall=q.houseEdges.includes(state.openingWall)?state.openingWall:q.houseEdges[0];state.openingWall=wall;
+ const k=sel?list.indexOf(sel):-1,g=sel?geo.find(x=>x.id===sel.id):null,T=sel?core.OPENING_TYPES[sel.type]:null;
+ const why={'no-wall':'Its wall no longer exists. Move it to a house wall or delete it.','not-house-wall':'Its edge is no longer a house wall. Move it to a house wall or delete it.','off-wall':'It no longer fits on its wall. Move it, make it narrower or delete it.','overlap':'It overlaps another opening. Move it, make it narrower or delete it.'};
+ let html=`<div class="editor-panel openings-panel"><div class="editor-head">DOORS &amp; WINDOWS<span>${list.length?`${list.length} on the house`:'none yet'}</span></div>
+ ${q.houseEdges.length>1?`<p class="group-title">Add to</p><div class="seg">${q.houseEdges.map(i=>`<button type="button" data-action="opening-wall" data-value="${i}" class="${i===wall?'selected':''}" aria-pressed="${i===wall}">${wallName(es,i)}</button>`).join('')}</div>`:''}
+ <div class="editor-actions">${['door','patio','window'].map(t=>`<button data-action="opening-add" data-value="${t}">+ ${core.OPENING_TYPES[t].label}</button>`).join('')}</div>`;
+ if(sel){html+=`<div class="stair-picker"><button data-action="opening-prev" ${k<1?'disabled':''} aria-label="Previous opening">‹</button><strong>${T.label} ${k+1} of ${list.length} · ${wallName(es,sel.edge).toLowerCase()}</strong><button data-action="opening-next" ${k>=list.length-1?'disabled':''} aria-label="Next opening">›</button></div>
+   ${g&&g.status!=='ok'?`<div class="opening-warn">⚠ Hidden: ${why[g.status]}</div>`:''}
+   <div class="seg">${['door','patio','window'].map(t=>`<button type="button" data-action="opening-type" data-value="${t}" class="${sel.type===t?'selected':''}" aria-pressed="${sel.type===t}">${core.OPENING_TYPES[t].label}</button>`).join('')}</div>
+   <label class="editor-tip">Common size<select data-opening-preset><option value="">Custom ${inchSize(sel.width,sel.height)}</option>${T.presets.map(([w,h])=>`<option value="${w}x${h}" ${Math.abs(sel.width*12-w)<.01&&Math.abs(sel.height*12-h)<.01?'selected':''}>${inchSize(w/12,h/12)}</option>`).join('')}</select></label>
+   <div class="editor-fields"><label>Width<input data-opening-field="width" value="${fmt(sel.width)}"></label><label>Height<input data-opening-field="height" value="${fmt(sel.height)}"></label>
+   ${sel.type==='window'?`<label>Sill above deck<input data-opening-field="sill" value="${fmt(sel.sill)}"></label>`:''}<label>From wall center<input data-opening-field="offset" value="${fmt(sel.offset)}"></label></div>
+   ${q.houseEdges.length>1||!q.houseEdges.includes(sel.edge)?`<p class="group-title">On wall</p><div class="seg">${q.houseEdges.map(i=>`<button type="button" data-action="opening-move-wall" data-value="${i}" class="${i===sel.edge?'selected':''}" aria-pressed="${i===sel.edge}">${wallName(es,i)}</button>`).join('')}</div>`:''}
+   <div class="editor-actions"><button data-action="opening-remove" class="danger">Delete ${T.label.toLowerCase()}</button></div>
+   <div class="editor-tip">Drag it along the wall in 2D, or type a position. ${sel.type==='window'?'The sill is measured from the deck surface.':'Doors sit on the deck surface.'} Shown for visualization only.</div>`;}
+ else html+=`<div class="editor-tip">Doors and patio doors sit on the deck surface; windows sit at a sill height above it. Tap one in 2D to select it.</div>`;
+ return html+`</div>`;
+}
+function inchSize(w,h){const f=x=>{const t=Math.round(x*12);return `${t}″`;};return `${f(w)} × ${f(h)} (${fmt(w)} × ${fmt(h)})`;}
+// First free spot for an opening of this width on wall i (center first, then outward).
+function freeOpeningSpot(q,i,width,ignoreId){const e=core.edges(core.polygon(q))[i];if(!e)return null;const max=e.len/2-core.OPENING_END_CLEAR-width/2;if(max<-1e-9)return null;
+ const others=(q.openings||[]).filter(o=>o.id!==ignoreId&&o.edge===i);
+ for(let k=0;k<=Math.ceil(max*4)*2;k++){const off=(k%2?1:-1)*Math.ceil(k/2)/4;if(Math.abs(off)>max+1e-9)continue;
+   if(others.every(o=>Math.abs(o.offset-off)>=(o.width+width)/2+core.OPENING_GAP-1e-9))return off;}
+ return null;}
+function changeOpening(update,done){const q=structuredClone(state.intent),o=(q.openings||[]).find(x=>x.id===state.openingSelected);if(!o)return false;
+ Object.assign(o,update);const T=core.OPENING_TYPES[o.type];
+ if(o.type==='window'&&o.sill===undefined)o.sill=T.ds;if(o.type!=='window')delete o.sill;
+ const others=q.openings.filter(x=>x.id!==o.id&&!core.openingProblem(q,core.edges(core.polygon(q)),x,[]));
+ const problem=core.openingProblem(q,core.edges(core.polygon(q)),o,others);
+ if(problem==='off-wall'){toast(`That doesn't fit: the ${wallName(core.edges(core.polygon(q)),o.edge).toLowerCase()} is ${fmt(core.edges(core.polygon(q))[o.edge].len)} long and an opening must stay ${Math.round(core.OPENING_END_CLEAR*12)} in. from each end.`);renderPanel();return false;}
+ if(problem==='overlap'){toast(`That would overlap another opening on the ${wallName(core.edges(core.polygon(q)),o.edge).toLowerCase()}; openings need ${Math.round(core.OPENING_GAP*12)} in. between them.`);renderPanel();return false;}
+ if(problem==='not-house-wall'){toast('Openings go on house walls only.');renderPanel();return false;}
+ setProject(q);if(done)toast(done);return true;}
 function renderStairPanel(q){
  const list=q.staircases||[];state.stairSelected=clamp(state.stairSelected,0,Math.max(0,list.length-1));
  const stair=list[state.stairSelected],g=state.model.geometry.stairs?.[state.stairSelected];
@@ -3409,7 +3553,7 @@ function renderPanel(){if(panelRendering){panelRenderAgain=true;return;}panelRen
  try{renderPanelNow();}finally{panelRendering=false;}
  if(panelRenderAgain){panelRenderAgain=false;renderPanel();}}
 function renderPanelNow(){const s=state.step,q=state.intent;const inspector=document.querySelector('.inspector');inspector.classList.toggle('divider-editing',s===3&&state.layoutTab==='border');
- inspector.classList.toggle('shape-edit',s===0);inspector.classList.toggle('corner-active',s===0&&state.selectedCorner!==null);inspector.classList.toggle('stair-edit',s===2);
+ inspector.classList.toggle('shape-edit',s===0);inspector.classList.toggle('corner-active',s===0&&state.selectedCorner!==null);inspector.classList.toggle('stair-edit',s===2||s===1&&Boolean(state.intent?.houseEdges?.length));
  // V5.1: clickable steps. Jumping never changes the design; it only opens another panel.
  state.visited=state.visited||new Set([0]);state.visited.add(s);
  const locked=!state.intent||state.freeDraw||state.model?.stats?.invalidGeometry,attention=stepAttention();
@@ -3421,7 +3565,7 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
  $('stepNumber').textContent=`STEP ${String(flowPosition(s)+1).padStart(2,'0')}`;$('stepTitle').textContent=titles[s];$('stepHint').textContent=hints[s];$('progressText').textContent=`Step ${flowPosition(s)+1} of 8`;
  let html='';
  if(s===0)html=renderShapePanel(q);
- if(s===1&&q){html=`<div class="compact-intro">Tap any deck edge to add/remove a house wall. Multiple sides are allowed.</div><div class="field-row">${input('height','DECK HEIGHT',q.height,.5,16,.25)}<div class="summary-card"><strong>${q.houseEdges.length} house side${q.houseEdges.length===1?'':'s'}</strong><span>${q.houseEdges.length?'Attached concept':'Freestanding'}</span></div></div><div class="compact-status">Red edges = house · Tap an edge again to remove</div>`;}
+ if(s===1&&q){html=`<div class="compact-intro">Tap any deck edge to add/remove a house wall. Multiple sides are allowed.</div><div class="field-row">${input('height','DECK HEIGHT',q.height,.5,16,.25)}<div class="summary-card"><strong>${q.houseEdges.length} house side${q.houseEdges.length===1?'':'s'}</strong><span>${q.houseEdges.length?'Attached concept':'Freestanding'}</span></div></div><div class="compact-status">Red edges = house · Tap an edge again to remove</div>${renderOpeningsPanel(q)}`;}
  if(s===2&&q)html=renderStairPanel(q);
  if(s===3&&q){html=`${seg('layoutTab',[['direction','Board direction'],['border','Border & dividers']],state.layoutTab)}`;
    if(state.layoutTab==='direction')html+=`<p class="group-title">Direction of field boards</p>${seg('deckLine',[['horizontal','↔ Across'],['vertical','↕ Outward'],['diagonal','◢ Diagonal']],q.deckLine)}<div class="compact-status">Joists run perpendicular to field boards (12in OC for diagonal); bearing updates automatically.</div>`;
@@ -3467,7 +3611,7 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
 // space in this preview's database (follows them to any device that opens the same link;
 // nobody else, the owner included, can read it). Anywhere else (the HTML file opened in a
 // browser), in this browser's local storage on this device. The UI always says which.
-const APP_VERSION='5.2-group-a-cp3-fix',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
+const APP_VERSION='5.2-group-b-b1',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
 const localProjects={kind:'browser',
  read(){try{const v=JSON.parse(localStorage.getItem(LOCAL_PROJECTS)||'{}');return v&&typeof v==='object'?v:{};}catch(e){return null;}},
  write(m){localStorage.setItem(LOCAL_PROJECTS,JSON.stringify(m));},
@@ -3579,6 +3723,19 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
  if(act==='toggle-snap'){state.drawMode=state.drawMode==='orthogonal'?'free':'orthogonal';renderPanel();return;}
  if(act==='cancel-draw'){state.freeDraw=false;state.freePts=[];showOverlay();renderPanel();planDraw();return;}
  if(act==='stair-add'){addIndependentStair();return;}
+ if(act==='opening-wall'){state.openingWall=Number(b.dataset.value);renderPanel();return;}
+ if(act==='opening-add'){const t=b.dataset.value,T=core.OPENING_TYPES[t],q=structuredClone(state.intent),i=q.houseEdges.includes(state.openingWall)?state.openingWall:q.houseEdges[0];
+   if(i===undefined){toast('Add a house wall first.');return;}
+   const off=freeOpeningSpot(q,i,T.dw);if(off===null){toast(`No room on the ${wallName(core.edges(core.polygon(q)),i).toLowerCase()} for a ${fmt(T.dw)} wide ${T.label.toLowerCase()}. Make room or use another wall.`);return;}
+   const o={id:'opening-'+Date.now().toString(36)+'-'+(q.openings||[]).length,type:t,edge:i,offset:off,width:T.dw,height:T.dh};if(t==='window')o.sill=T.ds;
+   q.openings=[...(q.openings||[]),o];state.openingSelected=o.id;setProject(q);toast(`${T.label} added to the ${wallName(core.edges(core.polygon(q)),i).toLowerCase()}. Drag it in 2D or type its size.`);return;}
+ if(act==='opening-prev'||act==='opening-next'){const list=state.intent.openings||[],k=list.findIndex(o=>o.id===state.openingSelected)+(act==='opening-prev'?-1:1);if(list[k]){state.openingSelected=list[k].id;renderPanel();planDraw();}return;}
+ if(act==='opening-remove'){const q=structuredClone(state.intent),o=(q.openings||[]).find(x=>x.id===state.openingSelected);if(!o)return;q.openings=q.openings.filter(x=>x.id!==o.id);state.openingSelected=null;setProject(q);toast(`${core.OPENING_TYPES[o.type].label} deleted. Undo restores it.`);return;}
+ if(act==='opening-type'){const t=b.dataset.value,T=core.OPENING_TYPES[t],o=openingSel();if(!o||o.type===t)return;
+   const w=clamp(o.width,T.w[0],T.w[1]),h=t==='window'?T.dh:clamp(o.height,T.h[0],T.h[1]);changeOpening({type:t,width:w,height:h,...(t==='window'?{sill:T.ds}:{})},`Changed to a ${T.label.toLowerCase()} (${fmt(w)} × ${fmt(h)}).`);return;}
+ if(act==='opening-move-wall'){const i=Number(b.dataset.value),o=openingSel();if(!o||(o.edge===i&&state.model.geometry.openings?.find(x=>x.id===o.id)?.status==='ok'))return;
+   const off=freeOpeningSpot(state.intent,i,o.width,o.id);if(off===null){toast(`No room on the ${wallName(core.edges(core.polygon(state.intent)),i).toLowerCase()} for this ${fmt(o.width)} wide opening.`);return;}
+   changeOpening({edge:i,offset:off},`Moved to the ${wallName(core.edges(core.polygon(state.intent)),i).toLowerCase()}.`);return;}
  if(act==='stair-prev'||act==='stair-next'){selectStair(state.stairSelected+(act==='stair-prev'?-1:1));return;}
  if(act==='stair-remove'){
    const q=structuredClone(state.intent);q.staircases.splice(state.stairSelected,1);state.stairSelected=Math.max(0,state.stairSelected-1);setProject(q);fit2d();toast('Staircase removed.');return;
@@ -3764,6 +3921,15 @@ $('stepContent').addEventListener('change',e=>{const slider=e.target.closest('in
    }else if(f==='feature-position')state.featureDraft.fraction=clamp(Number(val)/100,.05,.95);
    state.previewPoly=null;state.pendingShapeResult=null;renderPanel();planDraw();return;
  }
+ const of=e.target.closest('input[data-opening-field]');if(of){const o=openingSel();if(!o)return;const key=of.dataset.openingField,v=parseFeet(of.value);
+   if(!Number.isFinite(v)){toast('Enter a measurement like 3′ 0″, 3 0 or 3.');renderPanel();return;}
+   const T=core.OPENING_TYPES[o.type],val=key==='offset'?Math.round(v*48)/48:Math.round(v*48)/48;
+   const lim=key==='width'?T.w:key==='height'?T.h:key==='sill'?T.sill:null;
+   if(lim&&(val<lim[0]-1e-9||val>lim[1]+1e-9)){toast(`${T.label} ${key==='sill'?'sill height':key} must be from ${fmt(lim[0])} to ${fmt(lim[1])}.`);renderPanel();return;}
+   if(o.type==='window'&&(key==='height'?o.sill+val:key==='sill'?val+o.height:0)>core.OPENING_MAX_TOP+1e-9){toast(`The top of a window can be at most ${fmt(core.OPENING_MAX_TOP)} above the deck.`);renderPanel();return;}
+   changeOpening({[key]:val});return;}
+ const ps=e.target.closest('select[data-opening-preset]');if(ps){if(!ps.value)return;const [w,h]=ps.value.split('x').map(Number),o=openingSel();if(!o)return;
+   const up={width:w/12,height:h/12};if(o.type==='window'&&o.sill+h/12>core.OPENING_MAX_TOP)up.sill=core.OPENING_MAX_TOP-h/12;changeOpening(up,`${core.OPENING_TYPES[o.type].label} set to ${inchSize(w/12,h/12)}.`);return;}
  const ss=e.target.closest('input[data-stair-field]');if(ss){
    const val=ss.dataset.stairField,number=parseFeet(ss.value);
    if(!Number.isFinite(number)){toast('Enter a valid measurement.');renderPanel();return;}
@@ -3967,6 +4133,23 @@ function drawMeasurementLayer(q,model,es,bounds,w,h,sc){
        const dist=Math.abs(u-ref),foot=P(c,d,ref-u);measureLine(c,foot);const m=xy(...P(c,d,(ref-u)/2));
        placeMeasure(`${fmt(dist)} from ${he?'house':'edge'}`,m[0],m[1],placed,!!sel);});}}
 }
+function openingSpan(o,es){const drag=state.plan.drag?.type==='opening'&&state.plan.drag.id===o.id?state.plan.drag:null,e=es[o.edge];if(!e)return null;const off=drag?drag.offset:o.offset;
+ return {e,a:[e.mid[0]+e.t[0]*(off-o.width/2),e.mid[1]+e.t[1]*(off-o.width/2)],b:[e.mid[0]+e.t[0]*(off+o.width/2),e.mid[1]+e.t[1]*(off+o.width/2)]};}
+function drawOpenings2d(model,es,sc){const list=state.intent?.openings||[];if(!list.length)return;const geo=model.geometry.openings||[];
+ for(const o of list){const sp=openingSpan(o,es);if(!sp)continue;const st=geo.find(g=>g.id===o.id)?.status||'ok',sel=state.step===1&&o.id===state.openingSelected;
+   const off=.12,A=xy(sp.a[0]+sp.e.n[0]*off,sp.a[1]+sp.e.n[1]*off),B=xy(sp.b[0]+sp.e.n[0]*off,sp.b[1]+sp.e.n[1]*off);
+   ctx.save();ctx.lineCap='butt';
+   if(st!=='ok'&&!(state.plan.drag?.id===o.id)){ctx.setLineDash([5,4]);ctx.strokeStyle='#d98a12';ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(...A);ctx.lineTo(...B);ctx.stroke();ctx.restore();continue;}
+   ctx.strokeStyle='#ffffff';ctx.lineWidth=Math.max(9,sc*.55);ctx.beginPath();ctx.moveTo(...A);ctx.lineTo(...B);ctx.stroke();
+   ctx.strokeStyle=o.type==='window'?'#7fb2cf':o.type==='patio'?'#5f8fac':'#3d4a56';ctx.lineWidth=Math.max(5,sc*.32);ctx.beginPath();ctx.moveTo(...A);ctx.lineTo(...B);ctx.stroke();
+   if(sel){ctx.strokeStyle='#c32e3c';ctx.lineWidth=2.5;const h=Math.max(8,sc*.4),n=[-(B[1]-A[1]),B[0]-A[0]],l=Math.hypot(...n)||1;
+     ctx.beginPath();for(const P of [A,B]){ctx.moveTo(P[0]+n[0]/l*h,P[1]+n[1]/l*h);ctx.lineTo(P[0]-n[0]/l*h,P[1]-n[1]/l*h);}ctx.moveTo(A[0]+n[0]/l*h,A[1]+n[1]/l*h);ctx.lineTo(B[0]+n[0]/l*h,B[1]+n[1]/l*h);ctx.moveTo(A[0]-n[0]/l*h,A[1]-n[1]/l*h);ctx.lineTo(B[0]-n[0]/l*h,B[1]-n[1]/l*h);ctx.stroke();}
+   ctx.restore();}}
+// The opening under a plan point (house step), or null.
+function openingAt(pt){const list=state.intent?.openings||[],es=state.model?.geometry?.edges||[],tol=(window.innerWidth<801?16:11)/state.plan.scale;let best=null,bd=tol;
+ for(const o of list){const sp=openingSpan(o,es);if(!sp)continue;const d=[sp.b[0]-sp.a[0],sp.b[1]-sp.a[1]],l2=d[0]*d[0]+d[1]*d[1]||1,c=[sp.a[0]+sp.e.n[0]*.12,sp.a[1]+sp.e.n[1]*.12];
+   const t=clamp(((pt[0]-c[0])*d[0]+(pt[1]-c[1])*d[1])/l2,0,1),dist=Math.hypot(pt[0]-c[0]-t*d[0],pt[1]-c[1]-t*d[1]);if(dist<bd){bd=dist;best=o;}}
+ return best;}
 function planDraw(){const {w,h}=canvasSize(),sc=state.plan.scale;ctx.fillStyle='#f5f7f8';ctx.fillRect(0,0,w,h);
  const grid=Math.max(8,sc),ox=xy(0,0);ctx.strokeStyle='#e1e9ed';ctx.lineWidth=.7;ctx.beginPath();for(let x=((ox[0]%grid)+grid)%grid;x<w;x+=grid){ctx.moveTo(x,0);ctx.lineTo(x,h);}for(let y=((ox[1]%grid)+grid)%grid;y<h;y+=grid){ctx.moveTo(0,y);ctx.lineTo(w,y);}ctx.stroke();
  if(state.freeDraw){freePlan();return;}if(!state.intent)return;
@@ -4029,6 +4212,9 @@ function planDraw(){const {w,h}=canvasSize(),sc=state.plan.scale;ctx.fillStyle='
  for(let e of es){const a=xy(...e.a),b=xy(...e.b),selected=q.houseEdges.includes(e.i);
   if(selected){const ac=xy(e.mid[0]+e.n[0]*.45,e.mid[1]+e.n[1]*.45),bc=xy(e.mid[0]-e.n[0]*.45,e.mid[1]-e.n[1]*.45);ctx.strokeStyle='#c8d3d8';ctx.lineWidth=Math.max(6,sc*.45);ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();ctx.strokeStyle='#b42d3c';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();}
  }
+ // V5.2 B1: doors and windows on the house walls (selected one bracketed; hidden ones dashed).
+ if(state.step===1&&q.houseEdges.length>1&&es[state.openingWall]&&q.houseEdges.includes(state.openingWall)){const e=es[state.openingWall],a=xy(e.a[0]+e.n[0]*.55,e.a[1]+e.n[1]*.55),b=xy(e.b[0]+e.n[0]*.55,e.b[1]+e.n[1]*.55);ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle='rgba(180,45,60,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();ctx.restore();}
+ drawOpenings2d(model,es,sc);
  polygonPath(p);ctx.strokeStyle='#384b59';ctx.lineWidth=2;ctx.stroke();
  const bounds={xmin:Math.min(...p.map(z=>z[0])),xmax:Math.max(...p.map(z=>z[0])),zmin:Math.min(...p.map(z=>z[1])),zmax:Math.max(...p.map(z=>z[1]))};
  if(state.step===0&&state.selectedEdge!==null&&es[state.selectedEdge]){const e=es[state.selectedEdge],a=xy(...e.a),b=xy(...e.b);ctx.strokeStyle='#c32e3c';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();}
@@ -4085,6 +4271,7 @@ planCanvas.addEventListener('pointerdown',e=>{
  if(state.step===0){const dimension=hitDimensionLabel(l);if(dimension!==null){state.plan.dimensionTap=dimension;state.plan.drag=null;return;}const vertex=detectVertex(p);if(vertex>=0)state.plan.drag={type:'vertex',index:vertex,basePoly:core.polygon(state.intent),original:JSON.stringify(state.intent)};else{
    const nearest=nearestEdge(p);if(nearest)state.plan.drag={type:'resize-edge',edge:nearest,basePoly:core.polygon(state.intent),grab:p.slice(),original:JSON.stringify(state.intent)};
  }}
+ if(state.step===1){const o=openingAt(p);if(o){const e=state.model.geometry.edges[o.edge];state.openingSelected=o.id;state.plan.drag={type:'opening',id:o.id,offset:o.offset,start:o.offset,grab:(p[0]-e.mid[0])*e.t[0]+(p[1]-e.mid[1])*e.t[1]-o.offset};renderPanel();planDraw();}}
  if(state.step===2){const inside=insideStairs(p);if(inside){state.stairSelected=inside.index;state.plan.drag={type:'stairs',index:inside.index,grab:inside.u,original:JSON.stringify(state.intent)};renderPanel();}}
  if(state.step===3&&state.layoutTab==='border'&&state.model.geometry.dividerRows?.length){
    const centers=dividerHandleCenters(state.model),radius=(window.innerWidth<801?21:16)/state.plan.scale;
@@ -4107,6 +4294,10 @@ planCanvas.addEventListener('pointermove',e=>{if(state.freeDraw&&!state.plan.poi
  if(state.plan.pointers.size===2){const after=[...state.plan.pointers.values()],a=Math.hypot(before[0].x-before[1].x,before[0].y-before[1].y),b=Math.hypot(after[0].x-after[1].x,after[0].y-after[1].y);if(a>6&&b>6)state.plan.scale=clamp(state.plan.scale*b/a,3,150);state.plan.panX+=(after[0].x+after[1].x-before[0].x-before[1].x)/2;state.plan.panY+=(after[0].y+after[1].y-before[0].y-before[1].y)/2;state.plan.tap=null;planDraw();return;}
  const drag=state.plan.drag;if(!drag||state.freeDraw||!state.intent)return;
  if(drag.type==='pan'){state.plan.panX+=l.x-prev.x;state.plan.panY+=l.y-prev.y;planDraw();return;}
+ if(drag.type==='opening'){const ip=inv(l.x,l.y),o=(state.intent.openings||[]).find(x=>x.id===drag.id),e=o&&state.model.geometry.edges[o.edge];if(!e)return;
+   const want=Math.round(((ip[0]-e.mid[0])*e.t[0]+(ip[1]-e.mid[1])*e.t[1]-drag.grab)*12)/12,max=e.len/2-core.OPENING_END_CLEAR-o.width/2,off=clamp(want,-max,max);
+   const q={...state.intent,openings:state.intent.openings.map(x=>x.id===o.id?{...x,offset:off}:x)},others=q.openings.filter(x=>x.id!==o.id&&x.edge===o.edge);
+   if(others.every(x=>Math.abs(x.offset-off)>=(x.width+o.width)/2+core.OPENING_GAP-1e-9))drag.offset=off;planDraw();return;}
  const pt=inv(l.x,l.y),q=structuredClone(state.intent);
  if(drag.type==='vertex'){
   if(!movePresetCorner(q,drag.basePoly,drag.index,pt))return;
@@ -4187,6 +4378,7 @@ function planEnd(e){if(!state.plan.pointers.has(e.pointerId))return;const l=loca
  state.plan.drag=null;state.plan.tap=null;state.plan.dimensionTap=null;
  if(state.model?.preview&&drag&&JSON.stringify(state.intent)===drag.original){state.model=state.lastFull;setFramingStatus(state.model.stats?.invalidGeometry?'invalid':'current');planDraw();}
  if(dimensionTap!==null&&dimensionTap!==undefined){if(tap&&!tap.moved)selectDimension(dimensionTap);return;}
+ if(drag?.type==='opening'){if(Math.abs(drag.offset-drag.start)>1e-9){state.openingSelected=drag.id;changeOpening({offset:drag.offset},'Opening moved');}else planDraw();return;}
  if(drag&&drag.type!=='pan'&&JSON.stringify(state.intent)!==drag.original){if(state.model.preview)scheduleFull();else renderer3d.setModel(state.model);saveHistory();renderPanel();toast(drag.type==='stairs'?'Stair position updated':drag.type==='divider'?'Divider position updated':'Outline updated');return;}
  if(drag&&tap?.moved&&state.lastShapeError&&['vertex','resize-edge'].includes(drag.type)){
    toast(state.lastShapeError);state.lastShapeError='';
@@ -4212,7 +4404,9 @@ addEventListener('beforeunload',e=>{const st=state.saveState?.status;if(st==='pe
 window.AOSDeckStudioTest=Object.freeze({framingStatus:()=>state.framingStatus,isPreview:()=>Boolean(state.model?.preview),
  toScreen:(x,z)=>{const r=planCanvas.getBoundingClientRect(),p=xy(x,z);return [r.left+p[0],r.top+p[1]];},edges:()=>JSON.parse(JSON.stringify(state.model?.geometry?.edges||[])),
  // Checkpoint 3 correction (read-only): the stair, railing and landing-framing parts the 3D view is drawing.
- scene3d:()=>JSON.parse(JSON.stringify({showStructure:renderer3d.showStructure,stairs:renderer3d.model?.geometry?.stairs||[],parts:(renderer3d.model?.parts||[]).filter(p=>/^(stair-|landing-)/.test(p.kind)).map(({kind,group,connect,role,x,y,z,w,h,d,yaw,rz,label})=>({kind,group,connect,role,x,y,z,w,h,d,yaw,rz,label}))})),
+ scene3d:()=>JSON.parse(JSON.stringify({showStructure:renderer3d.showStructure,stairs:renderer3d.model?.geometry?.stairs||[],parts:(renderer3d.model?.parts||[]).filter(p=>/^(stair-|landing-|opening-|door-|house-wall)/.test(p.kind)).map(({kind,group,connect,role,x,y,z,w,h,d,yaw,rz,label})=>({kind,group,connect,role,x,y,z,w,h,d,yaw,rz,label}))})),
+ // V5.2 B1 (read-only): doors/windows as the engine placed them, with their status.
+ openings:()=>JSON.parse(JSON.stringify(state.model?.geometry?.openings||[])),
  framingCache:()=>({hits:window.AOSSharedSupport.choose?.hits??null,misses:window.AOSSharedSupport.choose?.misses??null})});
 renderPanel();fit2d();updateHeader();renderRecent();
 })();

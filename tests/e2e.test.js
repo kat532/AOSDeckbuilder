@@ -1656,3 +1656,177 @@ test('CP3 fix: framing-only 3D shows the landing picture-frame support; it follo
   assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
   await fresh.ctx.close(); await ctx.close();
 });
+
+// ---- V5.2 Group B — B1: house doors and windows ----
+const openingsOf = (page) => page.evaluate(() => window.AOSDeckStudioTest.openings());
+const housePanel = (page) => page.locator('#stepContent').innerText();
+async function openingField(page, key, v) { const f = page.locator(`#stepContent input[data-opening-field="${key}"]`); await f.fill(v); await f.dispatchEvent('change'); await page.waitForTimeout(200); }
+async function toHouse(page, design) { await openDeckFile(page, design); await stepBtn(page, 'House').click(); }
+async function openingScreen(page, o, along = 0) { const e = (await edgesOf(page))[o.edge]; const x = e.mid[0] + e.t[0] * (o.offset + along) + e.n[0] * 0.12, z = e.mid[1] + e.t[1] * (o.offset + along) + e.n[1] * 0.12; return page.evaluate(([x, z]) => window.AOSDeckStudioTest.toScreen(x, z), [x, z]); }
+const RECT_HOUSE = { shape: 'rectangle', width: 20, depth: 14, height: 4, houseEdges: [0] };
+
+test('B1: add a door, patio door and window; presets, typed sizes and limits; drag along the wall; delete; Undo/Redo; save/reopen; 3D', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toHouse(page, { ...RECT_HOUSE, width: 28 });
+  assert.match(await housePanel(page), /DOORS & WINDOWS[\s\S]*none yet/);
+  await page.locator('#stepContent [data-action="opening-add"][data-value="door"]').click();
+  assert.match(await toastText(page), /Door added to the top wall/);
+  await page.locator('#stepContent [data-action="opening-add"][data-value="patio"]').click();
+  await page.locator('#stepContent [data-action="opening-add"][data-value="window"]').click();
+  let o = await openingsOf(page);
+  assert.equal(o.length, 3); assert.ok(o.every(x => x.status === 'ok' && x.edge === 0), 'all placed on the house wall without overlapping');
+  assert.match(await housePanel(page), /Window 3 of 3 · top wall/);
+  // Preset and typed sizes, with limits explained.
+  await page.locator('#stepContent select[data-opening-preset]').selectOption('24x36');
+  assert.match(await toastText(page), /Window set to 24″ × 36″/);
+  await openingField(page, 'sill', `5' 6"`);
+  assert.match(await toastText(page), /top of a window can be at most 8′ 0″ above the deck/);
+  await openingField(page, 'width', `9' 0"`);
+  assert.match(await toastText(page), /Window width must be from 1′ 0″ to 8′ 0″/);
+  await openingField(page, 'sill', `3' 6"`);
+  o = await openingsOf(page); assert.equal(o[2].sill, 3.5); assert.equal(o[2].width, 2);
+  // Too wide for the room left on the wall: refused with the reason.
+  await page.locator('#stepContent [data-action="opening-prev"]').click(); // patio door
+  await openingField(page, 'width', `12' 0"`);
+  assert.match(await toastText(page), /overlap another opening on the top wall|doesn't fit/);
+  // Type change keeps it on the wall.
+  await page.locator('#stepContent [data-action="opening-type"][data-value="window"]').click();
+  assert.match(await toastText(page), /Changed to a window/);
+  await page.locator('#undoBtn').click(); await page.waitForTimeout(200);
+  o = await openingsOf(page); assert.equal(o[1].type, 'patio', 'Undo restores the patio door');
+  await page.locator('#redoBtn').click(); await page.waitForTimeout(200);
+  assert.equal((await openingsOf(page))[1].type, 'window', 'Redo');
+  await page.locator('#undoBtn').click(); await page.waitForTimeout(200);
+  // Drag the door 2 ft along the wall in 2D.
+  o = await openingsOf(page);
+  // Drag the opening with the most room 2 ft toward its free side (the others are in the way otherwise).
+  const roomFor = (k, dir) => Math.min(14 - 0.25 - o[k].width / 2 - dir * o[k].offset, ...o.filter((x, j) => j !== k && dir * (x.offset - o[k].offset) > 0).map(x => dir * (x.offset - o[k].offset) - (x.width + o[k].width) / 2 - 1 / 3));
+  const pick = [0, 1, 2].flatMap(k => [1, -1].map(dir => ({ k, dir, r: roomFor(k, dir) }))).sort((x, y) => y.r - x.r)[0];
+  assert.ok(pick.r >= 2, 'room to drag 2 ft');
+  const d0 = o[pick.k], dir = pick.dir;
+  const [sx, sy] = await openingScreen(page, d0), [tx, ty] = await openingScreen(page, d0, 2 * dir);
+  await page.mouse.move(sx, sy); await page.mouse.down(); await page.mouse.move(tx, ty, { steps: 8 }); await page.mouse.up(); await page.waitForTimeout(300);
+  const d1 = (await openingsOf(page))[pick.k];
+  assert.ok(Math.abs(d1.offset - d0.offset - 2 * dir) < 0.2, `dragged ${d1.offset - d0.offset} ft`);
+  assert.equal((await openingsOf(page)).length, 3, 'tapping an opening does not toggle the house wall');
+  assert.deepEqual((await page.evaluate(() => window.AOSDeckStudioTest.edges())).length, 4);
+  // 3D draws them, cut into the wall.
+  await page.locator('#mode3d').click(); await page.waitForTimeout(600);
+  const sc = await scene3d(page);
+  assert.ok(sc.parts.some(p => p.kind === 'door-slab') && sc.parts.filter(p => p.kind === 'opening-glass').length >= 3);
+  fs.writeFileSync(path.join(SHOTS, 'b1-openings-3d.png'), await page.locator('#glCanvas').screenshot());
+  await page.locator('#mode2d').click();
+  // Save / reopen.
+  const { fresh, data } = await reopen(page, ctx);
+  assert.equal(data.design.openings.length, 3);
+  assert.deepEqual((await openingsOf(fresh.page)).map(x => [x.type, x.status]), [['door', 'ok'], ['patio', 'ok'], ['window', 'ok']]);
+  // Delete, then Undo brings it back.
+  await stepBtn(page, 'House').click();
+  await page.locator('#stepContent [data-action="opening-remove"]').click();
+  assert.match(await toastText(page), /deleted\. Undo restores it/);
+  assert.equal((await openingsOf(page)).length, 2);
+  await page.locator('#undoBtn').click(); await page.waitForTimeout(200);
+  assert.equal((await openingsOf(page)).length, 3);
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+test('B1: several house walls (L-shape): choose the wall, move an opening between walls, overlap and fit refused', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toHouse(page, { shape: 'L', width: 24, depth: 18, height: 5, houseEdges: [0, 3] });
+  const walls = await page.locator('#stepContent [data-action="opening-wall"]').allInnerTexts();
+  assert.deepEqual(walls, ['Top wall', 'Left wall']);
+  await page.locator('#stepContent [data-action="opening-wall"][data-value="3"]').click();
+  await page.locator('#stepContent [data-action="opening-add"][data-value="door"]').click();
+  assert.match(await toastText(page), /Door added to the left wall/);
+  // The 7′ 7″ wall has no room for a 3 ft window beside the door.
+  await page.locator('#stepContent [data-action="opening-add"][data-value="window"]').click();
+  assert.match(await toastText(page), /No room on the left wall for a 3′ 0″ wide window/);
+  // Move the door to the top wall; then a 6 ft patio door fits on the left wall.
+  await page.locator('#stepContent [data-action="opening-move-wall"][data-value="0"]').click();
+  assert.match(await toastText(page), /Moved to the top wall/);
+  await page.locator('#stepContent [data-action="opening-add"][data-value="patio"]').click();
+  assert.match(await toastText(page), /Patio door added to the left wall/);
+  const o = await openingsOf(page);
+  assert.deepEqual(o.map(x => [x.type, x.edge, x.status]), [['door', 0, 'ok'], ['patio', 3, 'ok']]);
+  await page.locator('#stepContent [data-action="opening-prev"]').click(); // the door, now on the top wall
+  // Position typed past the end of the wall is refused.
+  await openingField(page, 'offset', `11' 0"`);
+  assert.match(await toastText(page), /doesn't fit: the top wall is 24′ 0″ long/);
+  await page.locator('#mode3d').click(); await page.waitForTimeout(600);
+  fs.writeFileSync(path.join(SHOTS, 'b1-L-two-walls.png'), await page.locator('#glCanvas').screenshot());
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('B1: openings stay on their walls through size changes, shape changes, wall toggles and save/reopen; a hand-drawn outline keeps them hidden', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toHouse(page, { ...RECT_HOUSE, houseEdges: [0, 1], openings: [{ id: 'a', type: 'door', edge: 0, offset: -5, width: 3, height: 80 / 12 }, { id: 'b', type: 'window', edge: 1, offset: 1, width: 3, height: 4, sill: 3 }] });
+  // Deck wider: both stay on their walls.
+  await stepBtn(page, 'Shape').click();
+  const w = page.locator('#stepContent input[data-field="width"]'); await w.fill('26'); await w.dispatchEvent('change'); await page.waitForTimeout(300);
+  let o = await openingsOf(page);
+  assert.deepEqual(o.map(x => [x.id, x.edge, x.offset, x.status]), [['a', 0, -5, 'ok'], ['b', 1, 1, 'ok']]);
+  // Narrow deck: the door no longer fits, so it is hidden (kept) and the panel says why.
+  await w.fill('8'); await w.dispatchEvent('change'); await page.waitForTimeout(300);
+  o = await openingsOf(page); assert.equal(o[0].status, 'off-wall');
+  await stepBtn(page, 'House').click();
+  await page.locator('#stepContent [data-action="opening-prev"]').click();
+  assert.match(await housePanel(page), /Hidden: It no longer fits on its wall/);
+  await page.locator('#undoBtn').click(); await page.waitForTimeout(300);
+  assert.equal((await openingsOf(page))[0].status, 'ok', 'Undo restores the width and the door');
+  // Change shape: rectangle -> L. Walls keep their sides and openings follow.
+  await changeShape(page, 'L');
+  o = await openingsOf(page);
+  assert.ok(o.every(x => x.status === 'ok'), JSON.stringify(o));
+  const es = await edgesOf(page);
+  assert.deepEqual(o.map(x => es[x.edge].n.map(Math.round)), [[0, -1], [1, 0]], 'door on the top wall, window on the right wall');
+  // Removing a house wall hides its openings (kept); adding it back shows them again.
+  await stepBtn(page, 'House').click();
+  const right = o[1].edge, re = es[right], tapWall = () => tapPlan(page, re.mid[0] - re.t[0] * 3 + re.n[0] * 0.1, re.mid[1] - re.t[1] * 3 + re.n[1] * 0.1);
+  await tapWall();
+  assert.match(await toastText(page), /House wall removed\. Its 1 door\/window is kept but hidden/);
+  assert.equal((await openingsOf(page))[1].status, 'not-house-wall');
+  await tapWall();
+  assert.equal((await openingsOf(page))[1].status, 'ok');
+  const { fresh } = await reopen(page, ctx);
+  assert.ok((await openingsOf(fresh.page)).every(x => x.status === 'ok'));
+  // Redrawing the outline by hand: walls must be chosen again, so the openings are kept but hidden.
+  await stepBtn(fresh.page, 'Shape').click();
+  await fresh.page.locator('[data-action="choose-shape"]').click();
+  await fresh.page.locator('#shapeOverlay [data-shape="free"]').click();
+  assert.match(await fresh.page.locator('#dividerConfirm').innerText(), /doors and windows \(hidden until you place them on a house wall\)/);
+  await fresh.page.locator('#dividerConfirmAccept').click();
+  const box = await fresh.page.locator('#planCanvas').boundingBox(), sc = Math.min(Math.max(Math.min((box.width - 90) / 24, (box.height - 90) / 18), 7), 23);
+  const at = (fx, fz) => fresh.page.mouse.click(box.x + box.width / 2 - 8 * sc + fx * sc, box.y + box.height / 2 - 6 * sc + fz * sc);
+  await at(0, 0); await at(16, 0); await at(16, 12); await at(0, 12); await at(0.3, 0.3);
+  if (await fresh.page.locator('#dividerConfirmAccept').isVisible()) await fresh.page.locator('#dividerConfirmAccept').click();
+  await fresh.page.waitForFunction(hasArea);
+  const hidden = await openingsOf(fresh.page);
+  assert.equal(hidden.length, 2); assert.ok(hidden.every(x => x.status === 'no-wall'), JSON.stringify(hidden));
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+test('B1: phone-size screen: the controls fit and an opening can be added, selected in 2D and resized', async () => {
+  const { ctx, page, errors } = await openApp({ width: 390, height: 844 });
+  const file = path.join(os.tmpdir(), `aos-b1-${Date.now()}.json`); fs.writeFileSync(file, JSON.stringify({ design: { ...RECT_HOUSE, openings: [{ id: 'a', type: 'door', edge: 0, offset: -5, width: 3, height: 80 / 12 }] } }));
+  await page.locator('#fileInput').setInputFiles(file);
+  await page.waitForFunction(() => window.AOSDeckStudioTest?.framingStatus() === 'current');
+  await stepBtn(page, 'House').click();
+  await page.locator('#stepContent [data-action="opening-add"][data-value="window"]').click();
+  for (const sel of ['[data-action="opening-add"]', '[data-action="opening-type"]', 'input[data-opening-field]', '[data-action="opening-remove"]']) {
+    const els = page.locator(`#stepContent ${sel}`);
+    for (let i = 0; i < await els.count(); i++) { await els.nth(i).scrollIntoViewIfNeeded(); const b = await els.nth(i).boundingBox(); assert.ok(b.height >= 30 && b.x >= 0 && b.x + b.width <= 390, `${sel} ${i} fits a phone`); }
+  }
+  // Tap the door in the plan to select it.
+  const [x, y] = await openingScreen(page, (await openingsOf(page))[0]);
+  await page.mouse.click(x, y); await page.waitForTimeout(200);
+  assert.match(await housePanel(page), /Door 1 of 2/);
+  await openingField(page, 'width', `2' 8"`);
+  assert.ok(Math.abs((await openingsOf(page))[0].width - 32 / 12) < 1e-3);
+  assert.equal((await page.evaluate(() => window.AOSDeckStudioTest.edges())).length, 4);
+  fs.writeFileSync(path.join(SHOTS, 'b1-phone.png'), await page.screenshot());
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
