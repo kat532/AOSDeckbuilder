@@ -1571,3 +1571,88 @@ test('CP3: finished and framing-only 3D render the turning stair; the landing co
   assert.deepEqual(errors, []);
   await ctx.close();
 });
+
+// ---- V5.2 Group A — Checkpoint 3 corrections: connected stair/landing railings, landing frame blocking ----
+const scene3d = (page) => page.evaluate(() => window.AOSDeckStudioTest.scene3d());
+async function orbit(page, dx, dy) { const b = await page.locator('#glCanvas').boundingBox(); const x = b.x + b.width / 2, y = b.y + b.height / 2; await page.mouse.move(x, y); await page.mouse.down(); await page.mouse.move(x + dx, y + dy, { steps: 6 }); await page.mouse.up(); await page.waitForTimeout(250); }
+function railGaps(scene) { // rail ends (plan + height) that do not finish on a post
+  const posts = scene.parts.filter(p => p.kind === 'stair-rail-post'), bad = [];
+  for (const r of scene.parts.filter(p => p.kind === 'stair-top-rail' || p.kind === 'stair-bottom-rail')) {
+    const t = [Math.cos(-r.yaw), Math.sin(-r.yaw)], hl = r.w / 2 * Math.cos(r.rz || 0), dy = r.w / 2 * Math.abs(Math.sin(r.rz || 0));
+    for (const e of [{ x: r.x - t[0] * hl, z: r.z - t[1] * hl, y: r.y + dy }, { x: r.x + t[0] * hl, z: r.z + t[1] * hl, y: r.y - dy }]) {
+      const near = posts.filter(p => Math.hypot(p.x - e.x, p.z - e.z) <= 0.105 + 1e-9 && p.y + p.h / 2 >= e.y - 1e-9 && p.y - p.h / 2 <= e.y + 1e-9);
+      // The deck-side end of an upper flight finishes on a deck railing post (not in this list); allow ends at the deck height.
+      if (!near.length && !(Math.abs(e.y - 7 - 2.78) < 0.2 || Math.abs(e.y - 7 - 0.58) < 0.2)) bad.push(`${r.kind}/${r.connect} @ ${e.x.toFixed(2)},${e.z.toFixed(2)},${e.y.toFixed(2)}`);
+    }
+  }
+  return bad;
+}
+
+test('CP3 fix: finished 3D railings run unbroken from the upper flight through the landing to the lower flight (straight, left, right; several angles incl. overhead)', async () => {
+  for (const turn of ['straight', 'left', 'right']) {
+    const { ctx, page, errors } = await openApp();
+    await toStairs(page, LANDING_DECK(turn === 'straight' ? {} : { turn }));
+    await page.locator('#mode3d').click(); await page.waitForTimeout(600);
+    let sc = await scene3d(page);
+    assert.equal(sc.showStructure, false, 'finished view');
+    assert.deepEqual(railGaps(sc), [], `${turn}: rail ends without a post`);
+    assert.equal(sc.parts.filter(p => p.connect === 'landing-transition').length, 4, `${turn}: four transition posts (two per flight)`);
+    const shots = [];
+    for (const [i, [dx, dy]] of [[0, 0], [260, 0], [-520, 60], [0, 600]].entries()) { // default, two sides, overhead
+      if (dx || dy) await orbit(page, dx, dy);
+      const png = await page.locator('#glCanvas').screenshot(); shots.push(png);
+      fs.writeFileSync(path.join(SHOTS, `cp3fix-rails-${turn}-${i}.png`), png);
+    }
+    for (let i = 1; i < shots.length; i++) assert.ok(!shots[i].equals(shots[i - 1]), 'each angle drew a different view');
+    // Each rail side on its own: turning the left rail off keeps the right side connected.
+    await page.locator('#mode2d').click();
+    await page.locator('#stepContent [data-action="stair-rail"][data-side="left"]').click(); await page.waitForTimeout(200);
+    await page.locator('#mode3d').click(); await page.waitForTimeout(400);
+    sc = await scene3d(page);
+    assert.deepEqual(railGaps(sc), [], `${turn}: right side alone still connected`);
+    assert.equal(sc.parts.filter(p => p.kind === 'stair-top-rail' && p.connect === 'stair-guard').length, 2, 'one rail per flight on the right');
+    const { data } = await saveFile(page);
+    assert.deepEqual(data.design.staircases[0].rails, { left: false, right: true });
+    await page.locator('#undoBtn').click(); await page.waitForTimeout(300);
+    assert.equal((await scene3d(page)).parts.filter(p => p.kind === 'stair-top-rail' && p.connect === 'stair-guard').length, 4, 'Undo restores both sides');
+    await page.locator('#redoBtn').click(); await page.waitForTimeout(300);
+    assert.equal((await scene3d(page)).parts.filter(p => p.kind === 'stair-top-rail' && p.connect === 'stair-guard').length, 2, 'Redo');
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  }
+});
+
+test('CP3 fix: framing-only 3D shows the landing picture-frame support; it follows the frame choice and board direction', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toStairs(page, LANDING_DECK({ deckLine: 'diagonal-left', width: 7, depth: 6 }));
+  await page.locator('#mode3d').click(); await page.waitForTimeout(500);
+  await page.locator('#structureToggle').click(); await page.waitForTimeout(400);
+  let sc = await scene3d(page);
+  assert.equal(sc.showStructure, true, 'framing-only view');
+  const count = (s) => ({ blocks: s.parts.filter(p => p.kind === 'landing-blocking').length, fieldEnd: s.parts.filter(p => p.kind === 'landing-blocking' && p.role === 'field-end').length, supports: s.parts.filter(p => p.role === 'frame-support').length });
+  const single = count(sc);
+  assert.ok(single.supports >= 2 && single.fieldEnd > 0 && single.blocks > single.fieldEnd, 'support joists, field-end blocking and miter blocks');
+  assert.ok(sc.parts.filter(p => p.kind === 'landing-blocking').every(p => p.group === 'stair-framing'), 'drawn in framing-only 3D');
+  for (const [i, [dx, dy]] of [[0, 0], [0, 600], [300, -200]].entries()) { if (dx || dy) await orbit(page, dx, dy); fs.writeFileSync(path.join(SHOTS, `cp3fix-blocking-${i}.png`), await page.locator('#glCanvas').screenshot()); }
+  // Double frame: more support; no frame: none.
+  await stepBtn(page, 'Layout').click();
+  await page.locator('#stepContent [data-path="layoutTab"][data-value="border"]').click();
+  await page.locator('#stepContent [data-path="borderCount"][data-value="2"]').click(); await page.waitForTimeout(400);
+  const dbl = count(await scene3d(page));
+  assert.ok(dbl.supports > single.supports, 'double frame: a support joist under each joint');
+  await page.locator('#stepContent [data-path="borderCount"][data-value="0"]').click(); await page.waitForTimeout(400);
+  assert.deepEqual(count(await scene3d(page)), { blocks: 0, fieldEnd: 0, supports: 0 }, 'no frame: no frame support');
+  await page.locator('#undoBtn').click(); await page.waitForTimeout(400);
+  assert.deepEqual(count(await scene3d(page)), dbl, 'Undo brings the double-frame support back');
+  // Square board layouts have no field-board ends on the header sides.
+  await stepBtn(page, 'Stairs').click();
+  await page.locator('#stepContent [data-action="landing-deckline"][data-value="horizontal"]').click(); await page.waitForTimeout(400);
+  assert.equal(count(await scene3d(page)).fieldEnd, 0);
+  await stepBtn(page, 'Review').click();
+  assert.match(await page.locator('#stepContent').innerText(), /framing members \(concept, not approved\), plus \d+ picture-frame blocks \(concept\)/);
+  const { fresh } = await reopen(page, ctx);
+  await fresh.page.locator('#mode3d').click(); await fresh.page.waitForTimeout(400);
+  assert.deepEqual(count(await scene3d(fresh.page)), count(await scene3d(page)), 'reopened with the same landing framing');
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
