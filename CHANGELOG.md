@@ -2,6 +2,20 @@
 
 All changes to `index.html` and the test suite. Staging and production are deployed separately and only with owner approval.
 
+## Correction: wrong baseline (7 Nov 2026)
+
+- The file audited below, AOS_Deck_Studio_V5_1_Stacking_Fix_Test.html, is an OLDER development build, not the approved V5.2. It has been renamed in the repository to branch `v5.1/stacking-fix-test` (tag `protect/v5.1-stacking-fix-test`); the tag `protect/v5.2-baseline` was removed so nothing is built on it.
+- Approved baseline: AOS_Deck_Studio_V5_2_Continuous_Middle_Beams.html (Framing & Ledger as Step 3, updated flush/dropped beams, continuous middle beams). Not yet received; it will be stored unchanged with its SHA-256 recorded before any re-audit or code change.
+- The audit findings below were measured on the older build and are pending re-verification against V5.2. No implementation has started.
+
+## Superseded: feature-parity audit of the older build (7 Nov 2026)
+
+- Audited file: AOS_Deck_Studio_V5_1_Stacking_Fix_Test.html (labeled V5.1 · Framing Prototype; SHA-256 0f8e9b10429e639a73fc19c0cd949d718bdf1afdc3ae7415454e9345512acb61), an older build mistakenly treated as V5.2.
+- Owner irregular deck (9 corners, 614 sq ft) added as `tests/fixtures/owner-irregular-deck.json`.
+- Audit: 87 features tested in a browser: 58 working, 13 partial, 14 missing, 2 deferred. Defects D1–D7 recorded (Free Draw accepts a crossing outline; corner tool page error; wrong rejection reason; extra house walls dropped on shape switch; divider readouts disagree; small phone buttons; duplicate corner size field).
+- Existing suite on the baseline: 190/217 pass; all browser journeys pass; the 27 failures are framing snapshots from the earlier framing logic.
+- No implementation yet; scope awaiting owner approval (see "AOS Deck Studio V5.2 — Feature-Parity Audit").
+
 ## Framing rebuild pending (branch `v5.1/framing-rebuild-base`, 6 Nov 2026)
 
 - Owner testing found the framing planner build no better in practice: members outside the deck, and beams, posts and footings that don't form one support plan.
