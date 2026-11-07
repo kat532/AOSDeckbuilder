@@ -1392,3 +1392,182 @@ test('A3: older single-flight and multi-stair projects open unchanged', async ()
   assert.deepEqual(errors, []);
   await ctx.close();
 });
+
+// ---- V5.2 Group A — Checkpoint 3: landing decking direction and A4 turning stairs ----
+const LANDING_DECK = (landing = {}, over = {}) => ({ shape: 'rectangle', width: 24, depth: 14, height: 7, houseEdges: [0], deckLine: 'horizontal', borderCount: 1,
+  staircases: [{ id: 'a', edge: 2, width: 4, offset: 0, rails: { left: true, right: true }, landing: { width: 6, depth: 5, elevation: 3.5, ...landing } }], ...over });
+const pressed = (page, act) => page.locator(`#stepContent [data-action="${act}"][aria-pressed="true"]`).getAttribute('data-value');
+async function planPixel(page, x, z) { // the 2D plan's color at a deck point
+  const [sx, sy] = await page.evaluate(([x, z]) => window.AOSDeckStudioTest.toScreen(x, z), [x, z]);
+  return page.evaluate(([sx, sy]) => { const c = document.getElementById('planCanvas'), r = c.getBoundingClientRect(), k = c.width / r.width; return Array.from(c.getContext('2d').getImageData(Math.round(sx * k), Math.round(sy * k), 1, 1).data.slice(0, 3)); }, [sx - (await page.locator('#planCanvas').boundingBox()).x, sy - (await page.locator('#planCanvas').boundingBox()).y]);
+}
+
+test('CP3: landing decking direction — five options, Match follows the main deck, an override stays; save/reopen and undo/redo', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toStairs(page, LANDING_DECK());
+  const opts = await page.locator('#stepContent [data-action="landing-deckline"]').allInnerTexts();
+  assert.deepEqual(opts.map(t => t.replace(/^\W+\s*/, '').trim()), ['Match main deck', 'Horizontal', 'Vertical', 'Diagonal left', 'Diagonal right']);
+  assert.equal(await pressed(page, 'landing-deckline'), 'match', 'new and existing landings start on Match main deck');
+  assert.match(await stairPanel(page), /Follows the main deck's board direction \(now across\)/);
+  assert.match(await stairPanel(page), /Uses the main deck's Brown Oak boards with a single Stone Ash picture frame/);
+  // Main deck turned to outward boards: the Match landing follows.
+  await stepBtn(page, 'Layout').click();
+  await page.locator('#stepContent [data-path="deckLine"][data-value="vertical"]').click();
+  await stepBtn(page, 'Stairs').click();
+  assert.match(await stairPanel(page), /\(now outward\)/);
+  // An explicit direction is independent of the main deck afterwards.
+  await page.locator('#stepContent [data-action="landing-deckline"][data-value="diagonal-right"]').click();
+  assert.equal(await pressed(page, 'landing-deckline'), 'diagonal-right');
+  await stepBtn(page, 'Layout').click();
+  await page.locator('#stepContent [data-path="deckLine"][data-value="horizontal"]').click();
+  let { data } = await saveFile(page);
+  assert.equal(data.design.deckLine, 'horizontal');
+  assert.equal(data.design.staircases[0].landing.deckLine, 'diagonal-right', 'override kept when the main deck changes');
+  // Undo the main change, then the landing choice: back to Match. Redo brings the choice back.
+  await page.locator('#undoBtn').click(); await page.locator('#undoBtn').click();
+  await stepBtn(page, 'Stairs').click();
+  assert.equal(await pressed(page, 'landing-deckline'), 'match');
+  await page.locator('#redoBtn').click();
+  await stepBtn(page, 'Stairs').click();
+  assert.equal(await pressed(page, 'landing-deckline'), 'diagonal-right');
+  // Picking Match again removes the override from the saved record.
+  for (const v of ['horizontal', 'vertical', 'diagonal-left']) {
+    await page.locator(`#stepContent [data-action="landing-deckline"][data-value="${v}"]`).click();
+    assert.equal(await pressed(page, 'landing-deckline'), v);
+  }
+  ({ data } = await saveFile(page));
+  assert.equal(data.design.staircases[0].landing.deckLine, 'diagonal-left');
+  const { fresh } = await reopen(page, ctx);
+  await stepBtn(fresh.page, 'Stairs').click();
+  assert.equal(await pressed(fresh.page, 'landing-deckline'), 'diagonal-left', 'reopened with the same direction');
+  await fresh.page.locator('#stepContent [data-action="landing-deckline"][data-value="match"]').click();
+  const again = await saveFile(fresh.page);
+  assert.ok(!('deckLine' in again.data.design.staircases[0].landing));
+  await views(fresh.page);
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+test('CP3: landing decking colors follow the main deck in the 2D plan', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toStairs(page, LANDING_DECK({ width: 8, depth: 6 }, { borderCount: 2 }));
+  assert.equal(await page.evaluate(() => window.AOSDeckStudioTest.framingStatus()), 'current');
+  const e = (await edgesOf(page))[2], P = (u, v) => [e.mid[0] + e.t[0] * u + e.n[0] * v, e.mid[1] + e.t[1] * u + e.n[1] * v];
+  // Upper flight run for a 7 ft deck with the landing at 3′ 6″ (11 risers, 6 above): 5 treads.
+  const v0 = 5 * 11 / 12, frame = (u, v) => planPixel(page, ...P(u, v0 + v));
+  const colors = await page.evaluate(() => ({ field: window.DeckCore.PALETTES['Brown Oak'], border: window.DeckCore.PALETTES['Stone Ash'] }));
+  const hex = (c) => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
+  const near = (a, b) => a.every((v, i) => Math.abs(v - b[i]) < 26);
+  // Corners of the double picture frame are the border color; the middle of the landing is field color (sample a few spots, skipping gaps).
+  // (clear of the guard rail drawn 1 in. inside the landing edge)
+  assert.ok(near(await frame(-3.65, 0.3), hex(colors.border)), 'outer frame course at the corner');
+  assert.ok(near(await frame(3.65, 5.7), hex(colors.border)), 'outer frame course at the far corner');
+  await page.screenshot({ path: path.join(SHOTS, 'cp3-colors.png') });
+  const mids = await Promise.all([[-2.4, 1.6], [2.4, 4.3], [-2.4, 4.3]].map(([u, v]) => frame(u, v)));
+  assert.ok(mids.filter(c => near(c, hex(colors.field))).length >= 2, 'field boards in the middle ' + JSON.stringify([mids, hex(colors.field)]));
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('CP3: left and right turns from the staircase editor; depth and collision limits explain themselves; save/reopen/undo', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toStairs(page, LANDING_DECK({ width: 4, depth: 3 }, { staircases: [
+    { id: 'a', edge: 2, width: 4, offset: -4, rails: { left: true, right: true }, landing: { width: 4, depth: 3, elevation: 3.5 } },
+    { id: 'b', edge: 2, width: 4, offset: 3, rails: { left: true, right: true } }] }));
+  assert.equal(await pressed(page, 'stair-turn'), 'straight');
+  // One way runs into stair b and is refused; the other way fits, deepening the landing to the stair width.
+  const tries = {};
+  for (const t of ['left', 'right']) {
+    await page.locator(`#stepContent [data-action="stair-turn"][data-value="${t}"]`).click();
+    tries[t] = await toastText(page);
+    if (await pressed(page, 'stair-turn') === t) { await page.locator('#stepContent [data-action="stair-turn"][data-value="straight"]').click(); }
+  }
+  const bad = Object.keys(tries).find(t => /Not enough room: this stair or its landing would overlap another staircase/.test(tries[t]));
+  const good = bad === 'left' ? 'right' : 'left';
+  assert.ok(bad, 'the colliding turn is refused');
+  assert.match(tries[good], new RegExp(`Lower flight turns ${good}\\. Landing depth set to 4′ 0″ so the lower flight fits`));
+  await page.locator(`#stepContent [data-action="stair-turn"][data-value="${good}"]`).click();
+  assert.equal(await pressed(page, 'stair-turn'), good);
+  assert.match(await stairPanel(page), new RegExp(`turns 90° to your ${good} as you walk down`));
+  assert.equal(await page.locator('#stepContent input[data-stair-field="landingDepth"]').inputValue(), '4′ 0″');
+  assert.match(await page.locator('#planCanvas').getAttribute('aria-label'), new RegExp(`Landing 4′ 0″ × 4′ 0″ · 3′ 2″ high · turns ${good}`));
+  await stairField(page, 'landingDepth', `3' 0"`);
+  assert.match(await toastText(page), /A turning stair needs a landing at least as deep as the stair is wide \(4′ 0″\)/);
+  await stairField(page, 'width', `13' 0"`);
+  assert.match(await toastText(page), /Turning stairs can be up to 12′ 0″ wide/);
+  await views(page);
+  await stepBtn(page, 'Review').click();
+  assert.match(await page.locator('#stepContent').innerText(), /1 landing \(1 turning\) with \d+ posts.*Landing decking: \d+ field boards, [\d.]+ LF \(order \d+ LF with waste\) \+ 4 picture-frame boards/);
+  let { data } = await saveFile(page);
+  assert.equal(data.design.staircases[0].landing.turn, good);
+  assert.equal(data.design.staircases.length, 2);
+  const { fresh } = await reopen(page, ctx);
+  await stepBtn(fresh.page, 'Stairs').click();
+  assert.equal(await pressed(fresh.page, 'stair-turn'), good);
+  for (let i = 0; i < 6 && await page.locator('#undoBtn').isEnabled(); i++) await page.locator('#undoBtn').click();
+  await stepBtn(page, 'Stairs').click();
+  assert.equal(await pressed(page, 'stair-turn'), 'straight', 'Undo returns to the straight landing');
+  await page.locator('#redoBtn').click(); await stepBtn(page, 'Stairs').click();
+  assert.equal(await pressed(page, 'stair-turn'), good, 'Redo turns it again');
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+test('CP3: a turn that would run back over the deck is refused with a reason', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toStairs(page, { shape: 'U', width: 24, depth: 20, height: 7, houseEdges: [0], staircases: [
+    { id: 'u', edge: 3, width: 3, offset: 3, rails: { left: true, right: true }, landing: { width: 3, depth: 3, elevation: 3.5, turn: 'left' } }] });
+  assert.equal(await pressed(page, 'stair-turn'), 'left');
+  await page.locator('#stepContent [data-action="stair-turn"][data-value="right"]').click();
+  assert.match(await toastText(page), /That doesn't fit: the turned lower flight or landing would run back over the deck\. Try turning left/);
+  assert.equal(await pressed(page, 'stair-turn'), 'left', 'nothing changed');
+  await page.locator('#stepContent [data-action="stair-turn"][data-value="straight"]').click();
+  assert.match(await toastText(page), /would run back over the deck/, 'a straight landing here would cross the notch into the other arm');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('CP3: an A3 landing project opens straight, on Match main deck, and saves back unchanged', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toStairs(page, { shape: 'rectangle', width: 20, depth: 14, height: 6, houseEdges: [0], staircases: [{ id: 'a', edge: 2, width: 4, offset: 0, rails: { left: true, right: true }, landing: { width: 6, depth: 5, elevation: 3 } }] });
+  assert.equal(await pressed(page, 'stair-turn'), 'straight');
+  assert.equal(await pressed(page, 'landing-deckline'), 'match');
+  const { data } = await saveFile(page);
+  assert.deepEqual(data.design.staircases[0].landing, { width: 6, depth: 5, elevation: 3 });
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('CP3: finished and framing-only 3D render the turning stair; the landing controls fit a phone', async () => {
+  for (const turn of ['left', 'right']) {
+    const { ctx, page, errors } = await openApp();
+    await toStairs(page, LANDING_DECK({ turn }));
+    await page.locator('#mode3d').click(); await page.waitForTimeout(700);
+    const finished = await page.locator('#glCanvas').screenshot();
+    await page.locator('#structureToggle').click(); await page.waitForTimeout(500);
+    const framing = await page.locator('#glCanvas').screenshot();
+    assert.ok(finished.length > 20000 && framing.length > 20000, 'both views drew');
+    assert.ok(!finished.equals(framing), 'framing-only differs from finished');
+    fs.writeFileSync(path.join(SHOTS, `cp3-${turn}-finished.png`), finished); fs.writeFileSync(path.join(SHOTS, `cp3-${turn}-framing.png`), framing);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  }
+  const { ctx, page, errors } = await openApp({ width: 390, height: 844 });
+  // (the Projects button is hidden on a phone: open the file the way the phone menu does)
+  const file = path.join(os.tmpdir(), `aos-cp3-${Date.now()}.json`); fs.writeFileSync(file, JSON.stringify({ design: LANDING_DECK({ turn: 'left' }) }));
+  await page.locator('#fileInput').setInputFiles(file);
+  await page.waitForFunction(() => window.AOSDeckStudioTest?.framingStatus() === 'current');
+  await stepBtn(page, 'Stairs').click();
+  for (const act of ['stair-turn', 'landing-deckline']) {
+    const btns = page.locator(`#stepContent [data-action="${act}"]`);
+    for (let i = 0; i < await btns.count(); i++) {
+      await btns.nth(i).scrollIntoViewIfNeeded();
+      const b = await btns.nth(i).boundingBox();
+      assert.ok(b.height >= 30 && b.x >= 0 && b.x + b.width <= 390, `${act} ${i} is a usable size on a phone ${JSON.stringify(b)}`);
+    }
+  }
+  await page.locator('#stepContent [data-action="landing-deckline"][data-value="vertical"]').click();
+  assert.equal(await pressed(page, 'landing-deckline'), 'vertical');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});

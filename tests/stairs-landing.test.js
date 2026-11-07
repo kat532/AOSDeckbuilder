@@ -42,10 +42,15 @@ test('landing geometry: upper flight, landing, lower flight follow each other al
   assert.ok(Math.abs(L.v1 - (L.v0 + 5)) < E);
   assert.ok(Math.abs(g.run - (L.v1 + (L.lowerRisers - 1) * step)) < E);
   const along = (p) => (p.x - g.base[0]) * g.nn[0] + (p.z - g.base[1]) * g.nn[1], across = (p) => (p.x - g.base[0]) * g.tt[0] + (p.z - g.base[1]) * g.tt[1];
-  const surf = kinds(m, /^landing-surface$/)[0];
-  assert.ok(Math.abs(along(surf) - (L.v0 + L.v1) / 2) < 1e-9 && Math.abs(across(surf)) < 1e-9);
-  assert.ok(Math.abs(surf.y + surf.h / 2 - L.elevation) < 1e-9, 'landing surface top = landing elevation');
-  assert.ok(Math.abs(surf.w - 6) < E && Math.abs(surf.d - 5) < E);
+  // Checkpoint 3: the landing surface is now real boards (picture frame + field), not one plate.
+  // Together they must cover exactly the landing rectangle, with their tops at the landing elevation.
+  const surf = kinds(m, /^landing-(board|frame)$/);
+  assert.ok(surf.length > 4);
+  for (const p of surf) assert.ok(Math.abs(p.y + p.h / 2 - L.elevation) < 1e-9, 'landing surface top = landing elevation');
+  const pts = surf.flatMap(p => p.footprint.map(([x, z]) => ({ x, z })));
+  const us = pts.map(across), vs = pts.map(along);
+  assert.ok(Math.abs(Math.min(...us) + 3) < 1e-6 && Math.abs(Math.max(...us) - 3) < 1e-6, 'landing 6 ft wide, centered');
+  assert.ok(Math.abs(Math.min(...vs) - L.v0) < 1e-6 && Math.abs(Math.max(...vs) - L.v1) < 1e-6, 'landing 5 ft deep, between the flights');
   const risers = kinds(m, /^stair-riser$/).map(p => [along(p), p.y]);
   const upper = risers.filter(([v]) => v < L.v0 + 1e-6), lower = risers.filter(([v]) => v > L.v1 - 1e-6);
   assert.equal(upper.length, L.upperRisers); assert.equal(lower.length, L.lowerRisers);
