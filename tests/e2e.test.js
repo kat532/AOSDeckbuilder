@@ -865,7 +865,7 @@ test('corrections: Change Deck Shape confirms, can be kept, and undo restores st
   assert.equal((await btn.innerText()).trim(), 'Change Deck Shape');
   await btn.click(); await page.locator('#shapeOverlay [data-shape="L"]').click();
   const msg = await page.locator('#dividerConfirmMessage').innerText();
-  assert.match(msg, /Removed: 1 staircase, 1 custom railing finish/); assert.match(msg, /Kept: deck height/);
+  assert.match(msg, /Removed: 1 staircase, 1 custom railing finish/); assert.match(msg, /Kept: house walls on the same sides, deck height/);
   assert.equal(await page.locator('#dividerConfirmCancel').innerText(), 'Keep Current Shape');
   await page.locator('#dividerConfirmCancel').click();
   assert.equal(await area(page), 192, 'kept the rectangle');
@@ -971,4 +971,179 @@ test('framing timing: free drawing never runs the framing generator', async () =
   assert.equal(c1.hits + c1.misses, c0.hits + c0.misses);
   assert.deepEqual(errors, []);
   await ctx.close();
+});
+
+// ---- V5.2 Group A — A1 defects and A2 section dimensions ----
+const edgesOf = (page) => page.evaluate(() => window.AOSDeckStudioTest.edges());
+async function tapPlan(page, x, z) { const [sx, sy] = await page.evaluate(([x, z]) => window.AOSDeckStudioTest.toScreen(x, z), [x, z]); await page.mouse.click(sx, sy); await page.waitForTimeout(150); }
+async function tapEdgeLabel(page, i) { const e = (await edgesOf(page))[i]; await tapPlan(page, e.mid[0] + e.n[0] * 1.3, e.mid[1] + e.n[1] * 1.3); }
+const toastText = (page) => page.locator('#toast').innerText();
+async function reopen(page, ctx) {
+  const { file, data } = await saveFile(page);
+  const fresh = await openApp();
+  await fresh.page.locator('#fileInput').setInputFiles(file);
+  await fresh.page.waitForFunction(hasArea);
+  return { fresh, data };
+}
+
+test('A1 D1: a free-draw corner whose edge would cross an earlier edge is refused with the reason', async () => {
+  const { ctx, page, errors } = await openApp();
+  const at = await startFreeDraw(page);
+  await at(0, 0); await at(16, 0); await at(16, 12); await at(8, 12);
+  await at(8, -6); // straight down through the first edge
+  assert.match(await toastText(page), /would cross edge 1/);
+  assert.match(await cornersText(page), /4 corners/);
+  await at(4, 12); // a legal corner is still accepted afterward
+  assert.match(await cornersText(page), /5 corners/);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('A1 D1: closing an outline that would cross itself says so and adds no far-away corner', async () => {
+  const { ctx, page, errors } = await openApp();
+  const at = await startFreeDraw(page);
+  await at(0, 0); await at(16, 0); await at(0, 12); await at(16, 12); // the closing edge would cut back across
+  await at(0.3, 0.3);
+  assert.equal(await page.locator('#dividerConfirm').isVisible(), false, 'no close confirmation is offered');
+  assert.match(await toastText(page), /Cannot close yet: The closing edge would cross edge 2/);
+  assert.doesNotMatch(await toastText(page), /directions are allowed/);
+  assert.ok(await page.evaluate(() => !document.getElementById('squareFeet').textContent.match(/\d+ SQ FT/)), 'still drawing; no deck created');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('A1 D2: typing a corner cut size then pressing Apply works with no page error', async () => {
+  const { ctx, page, errors } = await openApp();
+  await chooseShape(page, 'L');
+  const P = await page.evaluate(() => window.AOSDeckStudioTest.edges().map(e => e.a));
+  await tapPlan(page, P[1][0], P[1][1]);
+  await page.locator('#cornerSizeInput').fill(`2' 0"`);
+  await page.locator('[data-action="apply-corner"]').click(); // blur -> change -> render while rendering
+  await page.waitForTimeout(300);
+  const after = await edgesOf(page);
+  assert.equal(after.length, 7, 'the 45° cut added one corner');
+  assert.ok(after.some(e => Math.abs(e.len - Math.SQRT2 * 2) < 0.02), 'a 2 ft × 2 ft cut: angled edge 2.83 ft');
+  // Inside corner with 22.5° (fills the notch) also applies cleanly.
+  const P2 = await page.evaluate(() => window.AOSDeckStudioTest.edges().map(e => e.a));
+  const inner = P2.findIndex((p, i) => { const a = P2[(i - 1 + P2.length) % P2.length], b = P2[(i + 1) % P2.length]; return (p[0] - a[0]) * (b[1] - p[1]) - (p[1] - a[1]) * (b[0] - p[0]) < 0; });
+  await tapPlan(page, P2[inner][0], P2[inner][1]);
+  await page.locator('[data-action="corner-angle"][data-value="22.5"]').click();
+  await page.locator('#cornerSizeInput').fill(`1' 6"`);
+  await page.locator('[data-action="apply-corner"]').click();
+  await page.waitForTimeout(300);
+  assert.equal((await edgesOf(page)).length, 8);
+  await page.locator('#mode3d').click(); await page.waitForTimeout(500);
+  const { fresh, data } = await reopen(page, ctx);
+  assert.equal(data.design.points.length, 8);
+  assert.equal((await edgesOf(fresh.page)).length, 8, 'both cuts survive save and reopen');
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+test('A1 D3: refused edge lengths say why, and nothing changes', async () => {
+  const { ctx, page, errors } = await openApp();
+  await chooseShape(page, 'L');
+  const before = (await edgesOf(page)).map(e => e.len);
+  await tapEdgeLabel(page, 1);
+  const field = page.locator('#stepContent input[data-edge-field="length"]');
+  await field.fill('0.1'); await page.locator('[data-action="apply-edge-length"]').click();
+  assert.match(await toastText(page), /Edge 2 must be at least 0′ 7¼″\. .* is too short; no change made/);
+  await field.fill(`0' 7"`); await page.locator('[data-action="apply-edge-length"]').click();
+  assert.match(await toastText(page), /at least 0′ 7¼″\. 0′ 7″ is too short/);
+  await field.fill(`45' 0"`); await page.locator('[data-action="apply-edge-length"]').click();
+  assert.match(await toastText(page), /Edge 2 can't be 45′ 0″: .*48 × 42 ft editor range.*No change made/);
+  await field.fill('abc'); await page.locator('[data-action="apply-edge-length"]').click();
+  assert.match(await toastText(page), /Enter feet and inches/);
+  assert.deepEqual((await edgesOf(page)).map(e => e.len), before);
+  await field.fill(`4' 0"`); await page.locator('[data-action="apply-edge-length"]').click(); // a valid one still works
+  assert.ok(Math.abs((await edgesOf(page))[1].len - 4) < 1e-9);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('A1 D4: changing deck shape keeps every house wall on the same side', async () => {
+  const { ctx, page, errors } = await openApp();
+  await chooseShape(page, 'rectangle');
+  await stepBtn(page, 'House').click();
+  const r = (await edgesOf(page))[1]; // right side
+  await tapPlan(page, r.mid[0], r.mid[1]);
+  let { data } = await saveFile(page);
+  assert.deepEqual(data.design.houseEdges, [0, 1]);
+  await stepBtn(page, 'Shape').click();
+  await page.locator('[data-action="choose-shape"]').click();
+  await page.locator('#shapeOverlay [data-shape="L"]').click();
+  assert.match(await page.locator('#dividerConfirmMessage').innerText(), /Kept: house walls on the same sides/);
+  await page.locator('#dividerConfirmAccept').click();
+  await page.waitForFunction(hasArea);
+  ({ data } = await saveFile(page));
+  const es = await edgesOf(page);
+  assert.equal(data.design.houseEdges.length, 2);
+  const sides = data.design.houseEdges.map(i => es[i].n.map(Math.round).join(','));
+  assert.deepEqual(sides.sort(), ['0,-1', '1,0'].sort(), 'house walls stay on the house side and the right side');
+  assert.ok(!data.design.railEdges.some(i => data.design.houseEdges.includes(i)), 'no railing on a house wall');
+  await page.locator('#undoBtn').click();
+  ({ data } = await saveFile(page));
+  assert.equal(data.design.shape, 'rectangle', 'Undo restores the rectangle');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+for (const [shape, edits, expectArea] of [
+  ['T', [['t-main', `5' 0"`], ['t-ext', `6' 0"`]], 16 * 5 + 6 * 7],
+  ['U', [['u-main', `4' 6"`], ['u-left', `4' 0"`], ['u-right', `5' 0"`]], 16 * 4.5 + (4 + 5) * 7.5],
+]) {
+  test(`A2: ${shape}-shape section dimensions are exact, reshape the deck and survive save/reopen`, async () => {
+    const { ctx, page, errors } = await openApp();
+    await chooseShape(page, shape);
+    assert.match(await page.locator('#stepContent').innerText(), new RegExp(`${shape}-SHAPE SECTIONS`, 'i'));
+    for (const [key, v] of edits) {
+      const f = page.locator(`#stepContent input[data-section-field="${key}"]`);
+      await f.fill(v); await f.dispatchEvent('change');
+      await page.waitForTimeout(150);
+      assert.equal(await page.locator(`#stepContent input[data-section-field="${key}"]`).inputValue(), v.replace(`'`, '′').replace(`"`, '″'));
+    }
+    assert.ok(Math.abs((await area(page)) - expectArea) <= 0.5, `area ${await area(page)} vs ${expectArea}`);
+    // Overall size still edits independently and the sections keep their exact sizes.
+    const width = page.locator('#stepContent input[data-field="width"]');
+    await width.fill('20'); await width.dispatchEvent('change'); await page.waitForTimeout(200);
+    for (const [key, v] of edits) assert.equal(await page.locator(`#stepContent input[data-section-field="${key}"]`).inputValue(), v.replace(`'`, '′').replace(`"`, '″'), `${key} kept after overall width change`);
+    // A section that leaves too little room is refused with the reason.
+    const main = page.locator(`#stepContent input[data-section-field="${shape === 'T' ? 't-main' : 'u-main'}"]`);
+    await main.fill('11'); await main.dispatchEvent('change');
+    assert.match(await toastText(page), /at least 2′ 0″.*No change made/);
+    await page.locator('#mode3d').click(); await page.waitForTimeout(500);
+    const { fresh, data } = await reopen(page, ctx);
+    await fresh.page.locator('#mode2d').click();
+    for (const [key, v] of edits) assert.equal(await fresh.page.locator(`#stepContent input[data-section-field="${key}"]`).inputValue(), v.replace(`'`, '′').replace(`"`, '″'), `${key} after reopen`);
+    assert.equal(data.design.points.length, 8);
+    assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+    await fresh.ctx.close(); await ctx.close();
+  });
+}
+
+test('A2: L-shape section fields (existing) edit the leg and main depth exactly', async () => {
+  const { ctx, page, errors } = await openApp();
+  await chooseShape(page, 'L');
+  const leg = page.locator('#stepContent input[data-l-leg-field="leg"]'), main = page.locator('#stepContent input[data-l-leg-field="main"]');
+  await leg.fill(`7' 0"`); await leg.dispatchEvent('change'); await page.waitForTimeout(150);
+  await main.fill(`6' 0"`); await main.dispatchEvent('change'); await page.waitForTimeout(150);
+  assert.equal(await area(page), 16 * 6 + 7 * 6);
+  const { fresh } = await reopen(page, ctx);
+  assert.equal(await fresh.page.locator('#stepContent input[data-l-leg-field="leg"]').inputValue(), '7′ 0″');
+  assert.equal(await fresh.page.locator('#stepContent input[data-l-leg-field="main"]').inputValue(), '6′ 0″');
+  assert.deepEqual(errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+test('owner irregular deck (V5.2 fixture) opens, keeps every setting and survives save/reopen', async () => {
+  const owner = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'owner-irregular-deck.json'), 'utf8'));
+  const { ctx, page, errors } = await openApp();
+  await openDeckFile(page, owner.design);
+  assert.equal(await area(page), 614);
+  const { fresh, data } = await reopen(page, ctx);
+  for (const k of ['points', 'houseEdges', 'railEdges', 'railStyle', 'railColor', 'decking', 'border', 'deckLine', 'height', 'supportMode', 'beamStyle'])
+    assert.deepEqual(data.design[k], owner.design[k], k);
+  assert.equal(await area(fresh.page), 614);
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
 });

@@ -2,6 +2,31 @@
 
 All changes to `index.html` and the test suite. Staging and production are deployed separately and only with owner approval.
 
+## V5.2 Group A — checkpoint 1: A1 + A2 (branch `v5.2/feature-recovery`, 7 Nov 2026)
+
+Built on the protected V5.2 baseline (SHA-256 80b6afea…61c6). Version label unchanged (V5.2 · Deck Studio); internal build `5.2-group-a-a1a2`. Framing generator untouched. Project files unchanged in format. 226 tests: 222 pass, 0 fail, 4 known structural failures (case 4, reported as TODO).
+
+**Tests reconciled (owner-approved 7 Nov)**
+- Browser tests follow the V5.2 step order (Framing & Ledger = step 3); the expected step list is the V5.2 order.
+- 23 snapshots updated after `scripts/approve-v52-snapshots.js` verified every difference is case 1 (duplicate corner trimmers on rim joists removed), case 2 (new containment statistics) or case 3 (new outside-outline warnings). It refuses any other difference.
+- Case 4 not accepted: cut-corner snapshot and three angled-corner tests keep their assertions and run as known structural failures with the reason shown.
+
+**A1 — defects**
+- D1 Free Draw: a corner whose edge would cross or touch an earlier edge is refused ("That edge would cross edge 1…"); the next-edge preview turns red and reads "Crosses the outline". Closing a crossing outline gives the crossing reason instead of the angle rule. Closing never adds or slides a corner more than 2 ft outside what was drawn (previously a 4-tap sketch could close as a 30 ft-deep zig-zag). Size reasons (e.g. "at least 4 × 4 ft") are unchanged.
+- D2 Corner tool: typing a cut size then pressing Apply works the first time with no page error. The size field updates the preview, slider and Apply button in place; panel renders can no longer nest.
+- D3 Exact edge length: refusals say why — "Edge 2 must be at least 0′ 7¼″. 0′ 1″ is too short; no change made.", "Edge 2 can't be 45′ 0″: … editor range. No change made." — and nothing changes.
+- D4 Change Deck Shape keeps every house wall (and its ledger) on the same side of the new shape; the confirmation says so; Undo restores the old shape.
+- D7 withdrawn: the second corner control is the size slider paired with the exact field, not a duplicate.
+
+**A2 — section dimensions**
+- T: Main section depth, Extension width. U: Main section depth, Left arm width, Right arm width. Exact feet-and-inches; refusals explain the room needed; Undo works.
+- L section fields already existed (Leg width, Main deck depth) and are now covered by tests.
+- Changing overall width or depth keeps L, T and U section sizes exact instead of stretching them.
+
+**Tests added**: 10 browser journeys (D1 ×2, D2 incl. save/reopen, D3, D4 incl. Undo, T, U, L sections incl. save/reopen, owner irregular deck round trip).
+
+**Unresolved / noted**: section fields appear only while the outline keeps the template's structure (after free reshaping, tap-to-edit applies); the Free Draw hint bar still mentions "90° Locked by default" (wording left from older builds); case-4 corner support and outside-outline members remain framing limitations outside Group A.
+
 ## V5.2 baseline verified and audit rechecked (branch `v5.2/baseline`, 7 Nov 2026)
 
 - Baseline: AOS_Deck_Studio_V5_2_Continuous_Middle_Beams.html, 370,800 bytes, SHA-256 80b6afea0adfafb40ed86a02cd1f1fead9e29d72bcd8a5c301241c9d39c061c6 (title "AOS Deck Studio V5.2 · Continuous Middle Beams", APP_VERSION 5.2-framing-workflow). Stored unchanged; tag `protect/v5.2-baseline-80b6afea`; hash in BASELINE.sha256.

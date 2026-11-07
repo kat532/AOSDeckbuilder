@@ -2447,21 +2447,40 @@ function closeOutline(points,mode='orthogonal',opt={}){
    if(!drop.size)break;r=r.filter((_,i)=>!drop.has(i));}return r;};
  const check=p=>{const q=straighten(p.map(v=>[round(v[0]),round(v[1])]));return {poly:q,error:verify(root.AOSGeometry.area(q)<0?[...q].reverse():q)};};
  const first=pts[0],last=pts.at(-1),prev=pts.at(-2);
+ // V5.2 A1 (D1): an outline that already crosses itself cannot be repaired by closing.
+ for(let k=1;k<pts.length;k++){const hit=pathCrossing(pts.slice(0,k),pts[k]);if(hit>=0)return {error:`Edges ${hit+1} and ${k} cross. Undo corners until the outline no longer crosses itself.`};}
+ {const hit=pathCrossing(pts.slice(1),first);if(hit>=0)return {error:`The closing edge would cross edge ${hit+2}. Move or undo the last corner.`};}
+ // A corner added or moved by closing must stay near what was drawn (within 2 ft of its extent).
+ const xs0=pts.map(v=>v[0]),zs0=pts.map(v=>v[1]),near=P=>P[0]>=Math.min(...xs0)-2&&P[0]<=Math.max(...xs0)+2&&P[1]>=Math.min(...zs0)-2&&P[1]<=Math.max(...zs0)+2;
  if(allowed(sub(first,last))){const c=check(pts);if(!c.error)return {points:c.poly,how:'direct',moved:0};}
  const u=unit(sub(last,prev)),slides=[];
  for(const w of dirs){const X=intersection(prev,u,first,w);if(!X)continue;
-   const shift=length(sub(X,last));if(shift>slideMax||shift<1e-6||dot(sub(X,prev),u)<.6)continue;
+   const shift=length(sub(X,last));if(shift>slideMax||shift<1e-6||dot(sub(X,prev),u)<.6||!near(X))continue;
    const c=check([...pts.slice(0,-1),X]);if(!c.error)slides.push({points:c.poly,how:'slide',moved:shift});}
  if(slides.length)return slides.sort((a,b)=>a.moved-b.moved)[0];
  const corners=[];
  for(const a of dirs)for(const b of dirs){if(Math.abs(cross(a,b))<1e-6)continue;
    const X=intersection(last,a,first,b);if(!X)continue;
-   const t=dot(sub(X,last),a),s=dot(sub(first,X),b);if(t<.6||s<.6)continue;
+   const t=dot(sub(X,last),a),s=dot(sub(first,X),b);if(t<.6||s<.6||!near(X))continue;
    const c=check([...pts,X]);if(!c.error)corners.push({points:c.poly,how:'corner',moved:0,added:[round(X[0]),round(X[1])],extra:t+s});}
  if(corners.length)return corners.sort((a,b)=>a.extra-b.extra)[0];
- return {error:check(pts).error||'These corners cannot close using the allowed angles. Undo a corner or switch the angle mode.'};
+ // Size/area reasons stay as they are; the bare angle-rule message misled people, so it is
+ // replaced by what actually blocks the close.
+ const why=check(pts).error;if(why&&!/directions are allowed/.test(why))return {error:why};
+ return {error:'These corners cannot close with allowed angles without adding a corner outside your drawing. Move or undo the last corner.'};
 }
-root.AOSShape={verify,closeOutline,moveCorner,moveEdge,lengthenEdge,cutCorner,resizeBevel,addFeature,changeFeature,removeFeature,flipHorizontal,feet,remap,near};
+// V5.2 A1 (D1): index of the first drawn edge (pts[i]->pts[i+1]) that the new segment from
+// the last point to P crosses or touches; -1 if none. The edge ending at the last point is its
+// neighbour and is skipped.
+function pathCrossing(pts,P){
+ const A=pts.at(-1);if(!A)return -1;const e=1e-6;
+ const on=(p,q,r)=>Math.abs(cross(sub(q,p),sub(r,p)))<1e-5&&dot(sub(r,p),sub(q,p))>=-e&&dot(sub(r,q),sub(p,q))>=-e;
+ const hit=(a,b,c,d)=>{const u=sub(b,a),v=sub(d,c),d1=cross(u,sub(c,a)),d2=cross(u,sub(d,a)),d3=cross(v,sub(a,c)),d4=cross(v,sub(b,c));
+   return (((d1>e&&d2<-e)||(d1<-e&&d2>e))&&((d3>e&&d4<-e)||(d3<-e&&d4>e)))||on(a,b,c)||on(a,b,d)||on(c,d,a)||on(c,d,b);};
+ for(let i=0;i<pts.length-2;i++)if(hit(A,P,pts[i],pts[i+1]))return i;
+ return -1;
+}
+root.AOSShape={verify,closeOutline,pathCrossing,moveCorner,moveEdge,lengthenEdge,cutCorner,resizeBevel,addFeature,changeFeature,removeFeature,flipHorizontal,feet,remap,near};
 })(window);
 
 </script><script>
@@ -2676,18 +2695,32 @@ function toggleEdge(kind,i){const q=structuredClone(state.intent),set=new Set(ki
  patchMany(q);toast(`${kind==='house'?'House wall':'Railing'} ${set.has(i)?'added':'removed'}`);
 }
 // Replacing an existing deck asks first and says exactly what is kept and what resets.
+// Map each house wall of the old outline to the outermost edge facing the same direction in the new one.
+function carryHouseWalls(oldQ,newQ){
+ const oe=core.edges(core.polygon(oldQ)),ne=core.edges(core.polygon(newQ)),d=(a,b)=>a[0]*b[0]+a[1]*b[1];
+ const side=i=>{const e=oe[i];if(!e)return [];const c=ne.map((x,k)=>({x,k})).filter(({x})=>d(x.n,e.n)>.99);if(!c.length)return [];
+   const far=Math.max(...c.map(({x})=>d(x.mid,e.n)));return c.filter(({x})=>d(x.mid,e.n)>far-.5).map(({k})=>k);};
+ const map=list=>[...new Set((list||[]).flatMap(side))].sort((a,b)=>a-b);
+ const prim=side(oldQ.primaryLedgerEdge??(oldQ.ledgerEdges||[])[0]);
+ return {house:map(oldQ.houseEdges),ledger:map(oldQ.ledgerEdges),primary:prim[0]};
+}
 function selectShape(shape){
  if(state.intent&&!state._shapeConfirmed){const q=state.intent,stairs=q.staircases.length,custom=Object.keys(q.railOverrides||{}).length,
    name=shape==='free'?'a new hand-drawn outline':shape==='rectangle'?'a rectangle':shape==='square'?'a square':`a ${shape}-shape`,
-   lost=[stairs?`${stairs} staircase${stairs>1?'s':''}`:'',custom?`${custom} custom railing finish${custom>1?'es':''}`:'',q.houseEdges.length>1?'extra house walls':'',q.features?.length||q.bevels?.length?'bump-outs and angled cuts':''].filter(Boolean);
+   lost=[stairs?`${stairs} staircase${stairs>1?'s':''}`:'',custom?`${custom} custom railing finish${custom>1?'es':''}`:'',shape==='free'&&q.houseEdges.length?'house walls (tap them again after drawing)':'',q.features?.length||q.bevels?.length?'bump-outs and angled cuts':''].filter(Boolean);
    state.shapePicker=false;showOverlay();
-   askDividerConfirmation('Change deck shape?',`This replaces the current outline with ${name}. ${lost.length?`Removed: ${lost.join(', ')}. `:''}Railings go back to every open edge${shape==='free'?' once you finish drawing':', with the house wall on the top edge'}. Kept: deck height, decking, colors, railing product and color, board layout, framing choices and project name. Undo restores the current deck.`,
+   askDividerConfirmation('Change deck shape?',`This replaces the current outline with ${name}. ${lost.length?`Removed: ${lost.join(', ')}. `:''}Railings go back to every open edge${shape==='free'?' once you finish drawing':''}. Kept: ${shape==='free'?'':'house walls on the same sides, '}deck height, decking, colors, railing product and color, board layout, framing choices and project name. Undo restores the current deck.`,
      shape==='free'?'Start Drawing':'Replace Shape',()=>{state._shapeConfirmed=true;try{selectShape(shape);}finally{state._shapeConfirmed=false;}},'Keep Current Shape');
    return;}
  state.shapePicker=false;state.freeDraw=false;state.selectedEdge=null;state.selectedCorner=null;state.previewPoly=null;state.cornerPreview=null;state.cornerKey=null;state.featureSelected=null;if(shape==='free'){state.freeDraw=true;state.freePts=[];state.step=0;state.view='2d';state.plan.panX=state.plan.panY=0;state.plan.scale=clamp(Math.min((planCanvas.clientWidth-90)/24,(planCanvas.clientHeight-90)/18),7,23);state.plan.targetZ=6;state.drawMode='auto';showOverlay();renderPanel();planDraw();toast('Tap each corner. Edges snap to square, 45° and 22.5° on their own.');return;}
  const q=state.intent?structuredClone(state.intent):core.baseIntent();q.shape=shape;q.startShape=shape;q.points=null;q.flipL=false;q.features=[];q.bevels=[];q.originX=0;q.originZ=0;if(shape==='square'){q.width=12;q.depth=12;}else if(!state.intent){q.width=16;q.depth=12;}
  // Edge identities change when the footprint changes. Do not keep old attachments in invalid positions.
- q.railOverrides={};state.railTarget='all';q.houseEdges=[0];q.ledgerEdges=[0];q.railEdges=Array.from({length:core.polygon(q).length},(_,i)=>i).filter(i=>i!==0);q.staircases=[];q.stairs.enabled=false;q.stairs.edge=Math.min(2,q.railEdges.length-1);
+ // V5.2 A1 (D4): house walls (and their ledgers) move to the edge on the SAME SIDE of the new
+ // shape, so a house wall on the right stays on the right; only the main wall was kept before.
+ const carried=state.intent?carryHouseWalls(state.intent,q):null,house=carried?.house.length?carried.house:[0];
+ const ledgers=carried?.house.length?carried.ledger.filter(i=>house.includes(i)):(state.intent&&!state.intent.ledgerEdges?.length?[]:[0]);
+ q.railOverrides={};state.railTarget='all';q.houseEdges=house;q.ledgerEdges=ledgers;q.railEdges=Array.from({length:core.polygon(q).length},(_,i)=>i).filter(i=>!house.includes(i));
+ if(q.primaryLedgerEdge!==undefined)q.primaryLedgerEdge=ledgers.includes(carried?.primary)?carried.primary:(ledgers[0]??house[0]);q.staircases=[];q.stairs.enabled=false;q.stairs.edge=Math.min(2,q.railEdges.length-1);
  state.view='2d';setProject(q);fit2d();toast(`${shape==='L'||shape==='T'||shape==='U'?shape+'-shape':shape} footprint ready`);
 }
 function finishFreeDraw(){if(state.freePts.length<3){toast('Tap at least three corners.');return;}
@@ -2818,9 +2851,11 @@ function parseExactEdgeLength(raw){
 function updateEdgeDimension(value){
  if(state.selectedEdge===null||!state.intent)return;
  const i=state.selectedEdge,p=core.polygon(state.intent),old=core.edges(p)[i],requested=parseExactEdgeLength(value);
- if(!Number.isFinite(requested)||requested<.6){toast('Enter feet and inches, e.g. 4′ 0″ or 4-0.');return;}
+ // V5.2 A1 (D3): say WHY a length is refused, not only how to type it.
+ if(!Number.isFinite(requested)){toast('Enter feet and inches, e.g. 4′ 0″ or 4-0.');return;}
+ if(requested<7.25/12){toast(`Edge ${i+1} must be at least 0′ 7¼″. ${fmt(requested)} is too short; no change made.`);return;}
  const op=shapeOps.lengthenEdge(p,i,requested);
- if(op.error){toast(op.error);return;}
+ if(op.error){toast(`Edge ${i+1} can't be ${fmt(requested)}: ${op.error} No change made.`);return;}
  if(Math.abs(core.edges(op.points)[i].len-requested)>1e-7){toast('The exact dimension could not be maintained; no change made.');return;}
  if(!applyOutline(op)){renderPanel();return;}
  const actual=core.edges(core.polygon(state.intent))[i].len;
@@ -2938,6 +2973,50 @@ function refreshCornerPreview(){
  state.cornerPreview={base:c,a,b,inside};
 }
 function formatCornerSize(feet){return fmt(Math.round(feet*12)/12);}
+// V5.2 A2: T and U section dimensions. Fields appear while the outline still has the template's
+// structure (8 corners in the template order); after free reshaping, tap-to-edit is used instead.
+const SECTION_TEMPLATES={T:[[0,0],[1,0],[1,.4],[.7,.4],[.7,1],[.3,1],[.3,.4],[0,.4]],U:[[0,0],[1,0],[1,1],[.73,1],[.73,.46],[.27,.46],[.27,1],[0,1]]};
+function sectionDims(q){
+ if(!q||!SECTION_TEMPLATES[q.shape])return null;const P=q.points||SECTION_TEMPLATES[q.shape],E=1e-6,same=(a,b)=>Math.abs(a-b)<E;
+ if(P.length!==8)return null;
+ if(q.shape==='T'){
+   if(!(same(P[2][1],P[3][1])&&same(P[3][1],P[6][1])&&same(P[6][1],P[7][1])&&same(P[3][0],P[4][0])&&same(P[5][0],P[6][0])&&same(P[4][1],1)&&same(P[5][1],1)))return null;
+   return {fields:[{key:'t-main',label:'Main section depth',value:P[2][1]*q.depth},{key:'t-ext',label:'Extension width',value:(P[4][0]-P[5][0])*q.width}],tip:'The extension keeps its position; the main section runs along the house.'};
+ }
+ if(!(same(P[2][1],1)&&same(P[3][1],1)&&same(P[6][1],1)&&same(P[7][1],1)&&same(P[3][0],P[4][0])&&same(P[4][1],P[5][1])&&same(P[5][0],P[6][0])))return null;
+ return {fields:[{key:'u-main',label:'Main section depth',value:P[4][1]*q.depth},{key:'u-left',label:'Left arm width',value:P[6][0]*q.width},{key:'u-right',label:'Right arm width',value:(1-P[3][0])*q.width}],tip:'Arms are measured across; the opening between them is what is left.'};
+}
+function lSections(q){
+ if(q.shape!=='L'||(q.points&&q.points.length!==6))return null;const pts=q.points;
+ return {leg:pts?(q.flipL?pts[3][0]:(1-pts[3][0]))*q.width:.57*q.width,main:pts?(q.flipL?pts[2][1]:pts[4][1])*q.depth:.58*q.depth};
+}
+function keepSectionSizes(oldQ,q){
+ if(q.shape==='L'){const s=lSections(oldQ);if(!s||s.leg<3||s.leg>q.width-2||s.main<3||s.main>q.depth-2)return null;
+   const lr=s.leg/q.width,mr=s.main/q.depth;
+   return q.flipL?[[0,0],[1,0],[1,mr],[lr,mr],[lr,1],[0,1]]:[[0,0],[1,0],[1,1],[1-lr,1],[1-lr,mr],[0,mr]];}
+ const sd=sectionDims(oldQ);if(!sd)return null;const t=structuredClone(q);
+ for(const f of sd.fields){const r=applySectionDim(t,f.key,f.value);if(r.error)return null;t.points=r.points;}
+ return t.points;
+}
+function applySectionDim(q,key,v){
+ const P=(q.points||SECTION_TEMPLATES[q.shape]).map(p=>[...p]),W=q.width,D=q.depth;
+ if(q.shape==='T'){
+   let main=P[2][1]*D,ext=(P[4][0]-P[5][0])*W,center=(P[4][0]+P[5][0])/2*W;
+   if(key==='t-main')main=v;else ext=v;
+   if(main<3||D-main<2)return {error:`Main section depth must be at least 3′ 0″ and leave at least 2′ 0″ of extension (overall depth ${fmt(D)}).`};
+   if(ext<3||W-ext<4)return {error:`Extension width must be at least 3′ 0″ and leave at least 2′ 0″ of main section on each side (overall width ${fmt(W)}).`};
+   center=clamp(center,ext/2+2,W-ext/2-2);
+   const m=main/D,l=(center-ext/2)/W,r=(center+ext/2)/W;
+   return {points:[[0,0],[1,0],[1,m],[r,m],[r,1],[l,1],[l,m],[0,m]]};
+ }
+ let main=P[4][1]*D,left=P[6][0]*W,right=(1-P[3][0])*W;
+ if(key==='u-main')main=v;else if(key==='u-left')left=v;else right=v;
+ if(main<3||D-main<2)return {error:`Main section depth must be at least 3′ 0″ and leave arms at least 2′ 0″ long (overall depth ${fmt(D)}).`};
+ if(left<3||right<3)return {error:'Each arm must be at least 3′ 0″ wide.'};
+ if(W-left-right<2)return {error:`The arms leave an opening of ${fmt(Math.max(0,W-left-right))}; keep at least 2′ 0″ between them (overall width ${fmt(W)}).`};
+ const m=main/D,a=left/W,b=1-right/W;
+ return {points:[[0,0],[1,0],[1,1],[b,1],[b,m],[a,m],[a,1],[0,1]]};
+}
 function renderShapePanel(q){
  if(state.freeDraw)return `<div class="shape-help"><strong>Draw your deck</strong><p>Tap each corner. Edges snap to square, 45° and 22.5° directions on their own, and the corner angle and edge length show as you move. Tap near the green start pin to close.</p></div><div class="action-row"><button data-action="undo-point">↶ Undo point</button><button data-action="finish-draw" ${state.freePts.length<3?'disabled':''}>✓ Finish & Confirm</button><button data-action="cancel-draw">Cancel</button></div><span class="compact-status">${state.freePts.length} corners · ${state.freePts.length>=3?'tap near the green start pin to close. Close is good enough: the last edge is lined up for you.':'tap the plan to place corners.'}</span>`;
  if(!q)return `<div class="shape-grid">${core.SHAPES.map(sh=>`<button data-shape="${sh}">${shapeSvg(sh)}<span>${sh==='free'?'Free Draw':sh==='rectangle'?'Rectangle':sh==='square'?'Square':sh+'-Shape'}</span></button>`).join('')}</div>`;
@@ -2951,6 +3030,9 @@ function renderShapePanel(q){
      html+=`<div class="editor-panel"><div class="editor-head">L-SHAPE SECTIONS</div><div class="editor-fields"><label>Leg width (ft / in)<input data-l-leg-field="leg" value="${fmt(leg)}"></label><label>Main deck depth (ft / in)<input data-l-leg-field="main" value="${fmt(main)}"></label></div><div class="editor-tip">Adjust the extension independently. Overall width and depth remain above.</div></div>`;
    }
  }
+ // V5.2 A2: labeled section dimensions for T and U, like the L-shape sections above.
+ if(corner===null&&edge===null){const sec=sectionDims(q);
+   if(sec)html+=`<div class="editor-panel section-dims"><div class="editor-head">${q.shape}-SHAPE SECTIONS</div><div class="editor-fields">${sec.fields.map(f=>`<label>${f.label} (ft / in)<input data-section-field="${f.key}" value="${fmt(f.value)}" inputmode="text"></label>`).join('')}</div><div class="editor-tip">${sec.tip} Overall width and depth remain above.</div></div>`;}
  if(corner!==null&&poly[corner]){
    const bevel=syncCornerState();refreshCornerPreview();
    const cross=(a,b)=>a[0]*b[1]-a[1]*b[0],pr=poly[(corner+poly.length-1)%poly.length],p=poly[corner],nx=poly[(corner+1)%poly.length];
@@ -2991,7 +3073,14 @@ function renderStairPanel(q){
  }
  return html;
 }
-function renderPanel(){const s=state.step,q=state.intent;const inspector=document.querySelector('.inspector');inspector.classList.toggle('divider-editing',s===3&&state.layoutTab==='border');
+// V5.2 A1 (D2): replacing the panel removes a focused field, which fires its change
+// handler, which used to render the panel again INSIDE the first render (browser
+// NotFoundError). Renders requested during a render now run once, right after it.
+let panelRendering=false,panelRenderAgain=false;
+function renderPanel(){if(panelRendering){panelRenderAgain=true;return;}panelRendering=true;
+ try{renderPanelNow();}finally{panelRendering=false;}
+ if(panelRenderAgain){panelRenderAgain=false;renderPanel();}}
+function renderPanelNow(){const s=state.step,q=state.intent;const inspector=document.querySelector('.inspector');inspector.classList.toggle('divider-editing',s===3&&state.layoutTab==='border');
  inspector.classList.toggle('shape-edit',s===0);inspector.classList.toggle('corner-active',s===0&&state.selectedCorner!==null);inspector.classList.toggle('stair-edit',s===2);
  // V5.1: clickable steps. Jumping never changes the design; it only opens another panel.
  state.visited=state.visited||new Set([0]);state.visited.add(s);
@@ -3050,7 +3139,7 @@ function renderPanel(){const s=state.step,q=state.intent;const inspector=documen
 // space in this preview's database (follows them to any device that opens the same link;
 // nobody else, the owner included, can read it). Anywhere else (the HTML file opened in a
 // browser), in this browser's local storage on this device. The UI always says which.
-const APP_VERSION='5.2-framing-workflow',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
+const APP_VERSION='5.2-group-a-a1a2',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
 const localProjects={kind:'browser',
  read(){try{const v=JSON.parse(localStorage.getItem(LOCAL_PROJECTS)||'{}');return v&&typeof v==='object'?v:{};}catch(e){return null;}},
  write(m){localStorage.setItem(LOCAL_PROJECTS,JSON.stringify(m));},
@@ -3299,9 +3388,23 @@ $('stepContent').addEventListener('change',e=>{const slider=e.target.closest('in
    const error=shapeOps.verify(core.polygon(q));if(error){toast(error);renderPanel();return;}
    setProject(q);fit2d();toast('L-shape section dimensions updated.');return;
  }
+ const xf=e.target.closest('input[data-section-field]');if(xf){
+   const q=structuredClone(state.intent),v=shapeOps.feet(xf.value);
+   if(!Number.isFinite(v)){toast('Enter feet and inches, e.g. 6′ 0″ or 6-0.');renderPanel();return;}
+   const r=applySectionDim(q,xf.dataset.sectionField,v);if(r.error){toast(r.error+' No change made.');renderPanel();return;}
+   q.points=r.points;const error=shapeOps.verify(core.polygon(q));if(error){toast(error+' No change made.');renderPanel();return;}
+   setProject(q);fit2d();toast(`${q.shape}-shape section dimensions updated.`);return;
+ }
  const sf=e.target.closest('input[data-shape-field],select[data-shape-field]');
  if(sf){const f=sf.dataset.shapeField,val=sf.value;
-   if(f==='corner-size'){const feet=shapeOps.feet(val);if(!Number.isFinite(feet)||feet<.25){toast('Enter a valid cut size.');renderPanel();return;}state.cornerSize=Math.round(feet*12)/12;renderPanel();planDraw();return;}
+   if(f==='corner-size'){const feet=shapeOps.feet(val);if(!Number.isFinite(feet)||feet<.25){toast('Enter a valid cut size.');sf.value=formatCornerSize(state.cornerSize);return;}
+     // V5.2 A1 (D2): update the preview, slider and Apply button in place. Re-rendering here replaced
+     // the Apply button between mouse-down (which blurs this field) and mouse-up, so the click was lost.
+     state.cornerSize=Math.round(feet*12)/12;refreshCornerPreview();sf.value=formatCornerSize(state.cornerSize);
+     const slider=$('stepContent').querySelector('input[data-corner-slider]');if(slider)slider.value=state.cornerSize;
+     const hint=$('stepContent').querySelector('.corner-simple .corner-hint:last-of-type');if(hint){hint.textContent=state.cornerPreviewError||'Dashed line = preview · Nothing changes until you apply.';hint.classList.toggle('invalid',Boolean(state.cornerPreviewError));}
+     const apply=$('stepContent').querySelector('[data-action="apply-corner"]');if(apply)apply.disabled=!state.pendingCornerResult;
+     planDraw();return;}
    else if(f==='corner-orient')state.cornerOrientation=val;
    else if(f==='feature-width'||f==='feature-depth'){
      const feet=shapeOps.feet(val);if(!Number.isFinite(feet)||feet<.25){toast('Enter a valid dimension.');renderPanel();return;}
@@ -3320,6 +3423,8 @@ $('stepContent').addEventListener('change',e=>{const slider=e.target.closest('in
  if(num<Number(f.dataset.min)||num>Number(f.dataset.max)){toast(`Enter a length between ${fmt(Number(f.dataset.min))} and ${fmt(Number(f.dataset.max))}.`);renderPanel();return;}
  if(['width','depth'].includes(f.dataset.field)){
    const q=structuredClone(state.intent);q[f.dataset.field]=num;
+   // V5.2 A2: L, T and U sections keep their exact sizes when the overall size changes.
+   const kept=keepSectionSizes(state.intent,q);if(kept)q.points=kept;
    const error=shapeOps.verify(core.polygon(q));
    if(error){toast(/directions are allowed/.test(error)?`Changing the overall ${f.dataset.field} would bend this shape's angled edges. Tap an edge length on the plan to change that edge instead.`:error);renderPanel();return;}
    setProject(q);fit2d();renderer3d.fit();
@@ -3385,7 +3490,9 @@ function freePlan(){ctx.save();
    if(Math.hypot(...v)>.4){const turn=Math.atan2(u[0]*v[1]-u[1]*v[0],u[0]*v[0]+u[1]*v[1])*180/Math.PI,area=window.AOSGeometry.area([...raw,c]),interior=180-turn*(area<0?-1:1);
      const ang=Math.round(interior*10)/10,label=`${Number.isInteger(ang)?ang:ang.toFixed(1)}°`,at=xy(...P);
      ctx.save();ctx.font='800 12px system-ui';const tw=ctx.measureText(label).width+14;ctx.fillStyle='#26805b';ctx.beginPath();ctx.roundRect(at[0]+12,at[1]+10,tw,22,6);ctx.fill();ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,at[0]+12+tw/2,at[1]+21.5);ctx.restore();live=` · corner ${label}`;}}
- if(raw.length>=1&&hover&&!closing){const a=xy(...raw.at(-1)),candidate=snapFreePoint(hover),b=xy(...candidate);ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle='#26805b';ctx.lineWidth=1.7;ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();ctx.restore();const distance=Math.hypot(candidate[0]-raw.at(-1)[0],candidate[1]-raw.at(-1)[1]);if(distance>.4)dimLabel(fmt(distance),(a[0]+b[0])/2,(a[1]+b[1])/2-17);}
+ if(raw.length>=1&&hover&&!closing){const a=xy(...raw.at(-1)),candidate=snapFreePoint(hover),b=xy(...candidate),crosses=shapeOps.pathCrossing(raw,candidate)>=0;
+   // V5.2 A1 (D1): the next-edge preview turns red, and says so, when that edge would cross the outline.
+   ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle=crosses?'#c32e3c':'#26805b';ctx.lineWidth=crosses?2.4:1.7;ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();ctx.restore();const distance=Math.hypot(candidate[0]-raw.at(-1)[0],candidate[1]-raw.at(-1)[1]);if(distance>.4)dimLabel(crosses?'Crosses the outline':fmt(distance),(a[0]+b[0])/2,(a[1]+b[1])/2-17);}
  raw.forEach((p,i)=>{if(i){const a=xy(...raw[i-1]),b=xy(...p);dimLabel(fmt(Math.hypot(p[0]-raw[i-1][0],p[1]-raw[i-1][1])),(a[0]+b[0])/2,(a[1]+b[1])/2-14);}const pt=xy(...p);ctx.beginPath();ctx.arc(...pt,i===0?8:5,0,Math.PI*2);ctx.fillStyle=i===0?'#27835b':'#c32e3c';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();});
  {const c=hover&&raw.length&&!closing?snapFreePoint(hover):null,len=c?Math.hypot(c[0]-raw.at(-1)[0],c[1]-raw.at(-1)[1]):0;
    planCanvas.setAttribute('aria-label',`Free draw: ${raw.length} corner${raw.length===1?'':'s'}${closing?' · ready to close':c&&len>.4?` · next edge ${fmt(len)}${live}`:''}.`);}
@@ -3643,7 +3750,10 @@ planCanvas.addEventListener('pointermove',e=>{if(state.freeDraw&&!state.plan.poi
  patchMany(q,false,true);planDraw();
 });
 function tapPlan(pt){if(state.freeDraw){if(nearFreeStart(pt)){finishFreeDraw();return;}
- if(state.freePts.length>=36){toast('Maximum 36 corners.');return;}const snapped=snapFreePoint(pt);if(state.freePts.at(-1)&&Math.hypot(snapped[0]-state.freePts.at(-1)[0],snapped[1]-state.freePts.at(-1)[1])<.6){toast('Move at least 7 in. from the last corner.');return;}state.freePts.push(snapped);state.freeRedo=[];renderPanel();planDraw();updateHeader();return;}
+ if(state.freePts.length>=36){toast('Maximum 36 corners.');return;}const snapped=snapFreePoint(pt);if(state.freePts.at(-1)&&Math.hypot(snapped[0]-state.freePts.at(-1)[0],snapped[1]-state.freePts.at(-1)[1])<.6){toast('Move at least 7 in. from the last corner.');return;}
+ // V5.2 A1 (D1): a new edge may not cross or touch an edge already drawn.
+ {const hit=shapeOps.pathCrossing(state.freePts,snapped);if(hit>=0){toast(`That edge would cross edge ${hit+1}. Tap somewhere else, or undo a corner.`);planDraw();return;}}
+ state.freePts.push(snapped);state.freeRedo=[];renderPanel();planDraw();updateHeader();return;}
  if(!state.intent)return;const edge=nearestEdge(pt);
  if(state.step===0){
    const vertex=detectVertex(pt);
