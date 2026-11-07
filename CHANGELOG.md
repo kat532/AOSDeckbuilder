@@ -2,6 +2,41 @@
 
 All changes to `index.html` and the test suite. Staging and production are deployed separately and only with owner approval.
 
+## V5.1 Phase A — Corrections (branch `v5.1/phase-a-corrections`)
+
+Version label: **V5.1 · Phase A Corrections**. 214 automated tests, all passing.
+
+**Priority 1 — Excessive framing supports on angled decks (root cause fixed)**
+- Present since V4.7 (identical counts in V5.0). Rectangles, L, T and U shapes were never affected.
+- Cause: joists were grouped only when their start AND end matched within 2.4 in. Along a 45° edge each joist is 16 in longer than the next, so every corner joist got its own beam line. One such line requested from both sides was stretched across the deck, which broke the long joists' ¼-backspan cantilever check and triggered a second full-width beam 1.7 ft away. Leftover corner joists each received a 0.7–1.6 ft "repair" beam with 2 posts.
+- Fix (owner-approved Option A):
+  1. A joist ending on an angled edge first joins the neighboring shared beam when that beam meets its span, 2 ft cantilever and ¼-backspan rules.
+  2. Corner joists that cannot reach it get ONE beam parallel to that angled edge (inset adapted to the shortest joist so every overhang stays within ¼ of its span), finishing at the deck edge like the main beams.
+  3. Existing repair, pruning and every joist check are unchanged; anything unresolved stays a warning.
+  4. Where beams meet, one post carries both ends (flagged for connection review).
+- Beam roles: shared beam, angled corner beam, local support beam, perimeter flush header; rim joists stay separate parts. Labels and `stats.beamRoles` show the role.
+- New review flags: angled corner beams (AOS production review), local support beams, footings closer than 3 ft (guideline, not removed), shared posts.
+
+| Deck | Posts/footings before | After |
+| --- | --- | --- |
+| 18×12, two 45° corners (reported) | 12 | 7 |
+| 18×12 two corners, freestanding | 14 | 10 |
+| 20×14, large corners | 21 | 7 |
+| 16×16 octagon, freestanding | 24 | 14 |
+| 16×12, one corner | 9 | 5 |
+| Hexagon fixture | 25, 3 joists unsupported | 7, all supported (now warns: beam load outside reference range) |
+| Rectangle / L / T / U | 3 / 5 / 6 / 10 | unchanged |
+
+**Priority 2 — Automatic Free Draw angles**: Square/45°/22.5° buttons removed; each edge snaps on its own; live corner angle (90°, 135°, 270°…) and edge length; closing prefers the simplest angle grid used; finishing a drawing keeps materials, colors, height and name.
+
+**Priority 3 — Shape & Size help**: "Edit your deck shape" at 13.5–14 px.
+
+**Priority 4 — Change Deck Shape**: replaces "Templates"; replacing a deck confirms and lists what is removed and kept; Undo restores.
+
+**Dimensions**: feet and inches everywhere a length shows (21′ 3″, 16′ 0″); inputs accept 21′ 3″, 21 3, 21.25; geometry keeps exact values.
+
+**Known limitations**: on decks with corner beams, the corner beam's posts sit within 3 ft of the main beam's end post (flagged; a beam-to-beam connection could remove one post but needs production input). Angled flush-beam decks keep a perimeter header per edge.
+
 ## V5.1 Phase A (branch `v5.1/phase-a`, stacked on the corner post fix)
 
 Version label: **V5.1 DEV**. 199 automated tests (engine + headless Chrome), all passing.

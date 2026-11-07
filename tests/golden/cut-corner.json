@@ -194,23 +194,23 @@
     }
   },
   "model": {
-    "partCount": 584,
+    "partCount": 574,
     "partsByKind": {
       "baluster": 116,
       "bottom-rail": 10,
       "corner-trimmer": 1,
-      "dropped-beam": 4,
+      "dropped-beam": 2,
       "earth": 1,
       "fascia": 4,
       "field-board": 349,
-      "footing-concept": 9,
+      "footing-concept": 5,
       "house-wall": 1,
       "joist": 14,
       "ledger": 1,
       "picture-blocking-2x6-flat": 2,
       "picture-frame": 8,
       "picture-support-joist": 2,
-      "post-6x6": 9,
+      "post-6x6": 5,
       "post-cap": 11,
       "railing-post": 11,
       "rim-joist": 4,
@@ -228,10 +228,10 @@
       "joists": 16,
       "pictureSupportJoists": 2,
       "dividerSupportJoists": 0,
-      "beams": 4,
+      "beams": 2,
       "ledger": 1,
-      "posts": 9,
-      "footings": 9,
+      "posts": 5,
+      "footings": 5,
       "stringers": 0,
       "treads": 0,
       "risers": 0,
@@ -251,7 +251,7 @@
       "staircaseCount": 0,
       "boardWidth": 0.4467,
       "boardGap": 0.0156,
-      "partCount": 584,
+      "partCount": 574,
       "maxBoardRun": 19.0754,
       "requiredDividers": 0,
       "dividerRowCount": 0,
@@ -266,29 +266,31 @@
       "maxRearCantFt": 0,
       "maxBeamCantFt": 1,
       "beamLengthsFt": [
-        1.6,
-        16.71,
-        0.747,
-        1.047
+        18,
+        2.861
       ],
       "postSpacingFt": [
-        1.067,
-        7.355,
-        0.498,
-        0.698
+        8,
+        1.908
       ],
       "primaryLedgerEdge": 0,
       "ledgerEdges": [
         0
       ],
       "ledgerCount": 1,
-      "beamRows": 4,
+      "beamRows": 2,
+      "beamRoles": {
+        "shared-beam": 1,
+        "corner-beam": 1
+      },
+      "closeFootingPairs": 2,
+      "sharedPosts": 0,
       "joistNominal": "2x10",
       "beamProfile": "3-2x12",
       "joistSpacingIn": 16,
       "joistMaxSpanFt": 14,
       "unresolvedJoistRuns": 0,
-      "sharedSupportZones": 5,
+      "sharedSupportZones": 1,
       "unverifiedBeamLoadCount": 0,
       "pictureFrameFlatBlocks": 2,
       "dividerFlatBlocks": 0,
@@ -300,28 +302,28 @@
       "optimizerCandidates": [
         {
           "size": 10,
-          "beams": 4,
+          "beams": 2,
           "unresolved": 0,
-          "groups": 5
+          "groups": 1
         },
         {
           "size": 12,
-          "beams": 4,
+          "beams": 2,
           "unresolved": 0,
-          "groups": 5
+          "groups": 1
         },
         {
           "size": 8,
-          "beams": 5,
+          "beams": 3,
           "unresolved": 0,
-          "groups": 5
+          "groups": 1
         }
       ]
     },
     "alerts": [
-      "info: Grouped 17 individual joist runs into 5 support-length zones. Short/local beams are limited to the zones they bear.",
       "warning: Some irregular areas need local headers or shared support beams; member reactions and hardware are NOT verified for construction.",
-      "review: Interior/shared beams may carry joists from two sides. Tributary beam and post reactions must be independently calculated.",
+      "review: 1 angled corner beam proposed: one beam parallel to each angled edge carries the corner joists that cannot reach the main beam. Bearing, post loads and connections require AOS production review.",
+      "review: 2 pairs of footings closer than 3 ft (AOS spacing guideline). Confirm they are needed or consolidate during production review.",
       "review: Angled picture-frame edges require specialized support/blocking. Long 2x6 assemblies are generated only parallel to the joists.",
       "review: Preliminary ledgers on house edges 1. Verify attachment viability, existing band joists, flashing, hardware, lateral connections and load path for EACH wall.",
       "review: Framing layout is an explicit bearing concept, NOT a code-verified design. Joist/beam species, grade, spans, connections, ledger, post heights and footing loads require production review."

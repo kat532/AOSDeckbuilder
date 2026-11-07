@@ -419,8 +419,41 @@ function lineGroups(runs,spacing){const groups=[];
  return groups;
 }
 function buildForSize(runs,poly,joistD,beamD,spacing,style,FS,size){
- const groups=lineGroups(runs,spacing),requests=[],invalidRuns=[];
- const beamWidth=4.5/12,nSpacing=spacing/12;
+ const beamWidth=4.5/12,nSpacing=spacing/12,requests=[],invalidRuns=[];
+ // V5.1 corrections: a joist that ends on an ANGLED perimeter edge is a "corner joist".
+ // Previously every such joist (each a little longer than its neighbor) formed its own
+ // group and its own beam line, producing many short beams, posts and footings.
+ const angled=[];for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length],L=Math.hypot(b[0]-a[0],b[1]-a[1]);if(L<.3)continue;
+   const t=[(b[0]-a[0])/L,(b[1]-a[1])/L],al=Math.abs(dot(t,joistD));if(al>.1&&al<.95)angled.push({i,a,b,t,len:L});}
+ const onEdge=(p,e)=>{const v=[p[0]-e.a[0],p[1]-e.a[1]],along=dot(v,e.t);return along>-.12&&along<e.len+.12&&Math.abs(v[0]*e.t[1]-v[1]*e.t[0])<.12;};
+ for(const j of runs){j.cornerA=style==='dropped'?angled.find(e=>onEdge(j.pA,e))||null:null;j.cornerB=style==='dropped'?angled.find(e=>onEdge(j.pB,e))||null:null;}
+ const regular=runs.filter(j=>!j.cornerA&&!j.cornerB),cornerRuns=runs.filter(j=>j.cornerA||j.cornerB);
+ const groups=lineGroups(regular.length?regular:runs,spacing);
+ const lim0=FS.JOISTS[spacing][size],capC=style==='flush'?0:Math.min(2,lim0.cant);
+ // One joist against a list of bearing positions: the same rules as the final check below.
+ function runOK(j,sp){sp=[...new Set(sp.map(v=>+v.toFixed(4)))].sort((a,b)=>a-b);if(sp.length<2)return false;
+  const spans=sp.slice(1).map((v,k)=>v-sp[k]);if(spans.some(x=>x>lim0.span+.07))return false;
+  const back=sp[0]-j.a,front=j.b-sp.at(-1);if(back<-.01||front<-.01)return false;
+  if(style==='flush')return back<=beamWidth/2+.06&&front<=beamWidth/2+.06;
+  if(back>capC+.01||front>capC+.01)return false;
+  if(back>.06&&!j.ledger&&back>spans[0]/4+.06)return false;
+  if(front>.06&&front>spans.at(-1)/4+.06)return false;return true;}
+ const solve=g=>{const longest=g.items.reduce((a,b)=>b.b-b.a>a.b-a.a?b:a),mode=g.ledger&&g.ledgerEnd?'both-ledgers':g.ledger||g.ledgerEnd?'ledger':'freestanding';
+   g.longest=longest;g.solution=FS.solveRun(longest.b-longest.a,mode,style,spacing,size);
+   g.rowsAt=g.solution?g.solution.rows.map(r=>g.ledgerEnd&&!g.ledger?longest.b-r:longest.a+r):null;};
+ if(regular.length)groups.forEach(solve);
+ // Step 1 (existing framing first): a corner joist joins the nearest neighboring group
+ // whose shared beam rows already satisfy its span and cantilever rules.
+ let cornerPending=regular.length?[...cornerRuns]:[];
+ for(let pass=0;pass<6&&cornerPending.length;pass++){let moved=false;
+  for(const j of [...cornerPending]){
+   const cand=groups.filter(g=>g.rowsAt&&g.ledger===j.ledger&&g.ledgerEnd===j.ledgerEnd&&g.items.some(x=>Math.abs(x.t-j.t)<=nSpacing*1.6+.02))
+     .sort((a,b)=>Math.min(...a.items.map(x=>Math.abs(x.t-j.t)))-Math.min(...b.items.map(x=>Math.abs(x.t-j.t))));
+   for(const g of cand){const sp=[...(j.ledger?[j.a]:[]),...(j.ledgerEnd?[j.b]:[]),...g.rowsAt.filter(u=>u>=j.a-.01&&u<=j.b+.01)];
+     if(runOK(j,sp)){g.items.push(j);cornerPending.splice(cornerPending.indexOf(j),1);moved=true;break;}}
+  }
+  if(!moved)break;
+ }
  // A flush outer beam is a SHARED structural edge/header. The old solver
  // emitted a different short beam at each angled joist endpoint.
  const perimeter=[];
@@ -435,13 +468,12 @@ function buildForSize(runs,poly,joistD,beamD,spacing,style,FS,size){
    // Some very short perimeter members need a trimmer/header design rather
    // than an automatic post footing; always carry a review marker.
    const hasHits=runs.some(j=>{const v=crossing(j.pA,j.pB,aa,bb);return v!==null;});
-   if(hasHits)perimeter.push({a:aa,b:bb,len,u:null,lo:0,hi:len,eq:Math.max(0,...runs.map(j=>j.b-j.a)),source:'perimeter flush header; connections and concentrated loads require review',interior:false,needsConnectionReview:true,items:[]});
+   if(hasHits)perimeter.push({a:aa,b:bb,len,u:null,role:'perimeter-header',lo:0,hi:len,eq:Math.max(0,...runs.map(j=>j.b-j.a)),source:'perimeter flush header; connections and concentrated loads require review',interior:false,needsConnectionReview:true,items:[]});
  }
  const perimeterSupports=(j,u)=>perimeter.some(bm=>{const t=crossing(j.pA,j.pB,bm.a,bm.b);return t!==null&&Math.abs(j.a+(j.b-j.a)*t-u)<beamWidth/2+.20;});
  for(const g of groups){
-  const longest=g.items.reduce((a,b)=>b.b-b.a>a.b-a.a?b:a);
-  const mode=g.ledger&&g.ledgerEnd?'both-ledgers':g.ledger||g.ledgerEnd?'ledger':'freestanding';
-  const solution=FS.solveRun(longest.b-longest.a,mode,style,spacing,size);
+  if(!g.longest)solve(g);
+  const longest=g.longest,solution=g.solution;
   if(!solution){invalidRuns.push(...g.items);continue;}
   // All joists of the same length/category share the same structural beam rows.
   for(const j of g.items)for(let k=0;k<solution.rows.length;k++){
@@ -479,7 +511,30 @@ function buildForSize(runs,poly,joistD,beamD,spacing,style,FS,size){
    const duplicate=beams.find(x=>Math.abs(x.u-best.u)<.09 && Math.abs(x.lo-lo)<.20&&Math.abs(x.hi-hi)<.20);
    const eq=Math.max(...hits.map(x=>x.eq));
    if(duplicate){duplicate.eq=Math.max(duplicate.eq,eq);duplicate.interior ||=hits.some(x=>x.interior);duplicate.items.push(...hits);continue;}
-   beams.push({a:A,b:B,len:hi-lo,u:best.u,lo,hi,eq,source:'shared-bearing support',interior:hits.some(x=>x.interior),items:hits});
+   beams.push({a:A,b:B,len:hi-lo,u:best.u,lo,hi,eq,role:'shared-beam',source:'shared-bearing support',interior:hits.some(x=>x.interior),items:hits});
+  }
+ }
+ // Step 2 (Option A): one beam parallel to each angled edge carries the corner joists
+ // that could not use an existing beam line. Every result stays subject to review.
+ if(style==='dropped'&&cornerPending.length){
+  const c0=Math.min(1.5,capC*.75),byEdge=new Map();
+  // Each angled end without a ledger gets considered (freestanding corner joists can have two).
+  for(const j of cornerPending)for(const [e,endB] of [[j.cornerB,true],[j.cornerA,false]]){if(!e||(endB?j.ledgerEnd:j.ledger))continue;
+    const key=e.i+(endB?'b':'a');if(!byEdge.has(key))byEdge.set(key,{e,endB,items:[]});byEdge.get(key).items.push(j);}
+  for(const {e,endB,items} of byEdge.values()){
+   // Overhang past this beam must stay within 1/4 of the span behind it, for the SHORTEST joist carried:
+   // other end on a ledger -> c <= L/5; other end also overhanging -> c <= L/6 (small margin).
+   const c=Math.max(.5,Math.min(c0,...items.map(j=>{const L=j.b-j.a,otherLedger=endB?j.ledger:j.ledgerEnd;return (otherLedger?L/5:L/6)-.05;})));
+   const s=endB?[-joistD[0],-joistD[1]]:joistD,cross=items.map(j=>{const p=endB?j.pB:j.pA;return [p[0]+s[0]*c,p[1]+s[1]*c];});
+   const d=e.t,n=[-d[1],d[0]],v=cross.reduce((acc,p)=>acc+dot(p,n),0)/cross.length,ws=cross.map(p=>dot(p,d));
+   const pitch=nSpacing/Math.max(.2,Math.abs(d[0]*joistD[1]-d[1]*joistD[0]));
+   let lo=Math.min(...ws)-pitch*.45,hi=Math.max(...ws)+pitch*.45;if(hi-lo<1){const m=(lo+hi)/2;lo=m-.5;hi=m+.5;}
+   const span=intervals(poly,d,v).find(([a,b])=>a<=Math.max(...ws)+.05&&b>=Math.min(...ws)-.05);if(!span)continue;
+   // Like the shared beams: finish at the deck edge when the last corner joist is within ~one joist space of it
+   // (the corner trimmer joist sits ON that edge).
+   lo=Math.max(lo,span[0]);hi=Math.min(hi,span[1]);if(lo-span[0]<pitch*.85)lo=span[0];if(span[1]-hi<pitch*.85)hi=span[1];if(hi-lo<.45)continue;
+   beams.push({a:uv(d,lo,v),b:uv(d,hi,v),len:hi-lo,u:null,lo,hi,eq:Math.max(...items.map(j=>j.b-j.a)),role:'corner-beam',
+     source:'angled corner beam; bearing, posts and connections require AOS production review',interior:false,needsConnectionReview:true,items:items.map(j=>({j,t:j.t}))});
   }
  }
  function supportRecords(j){const results=j.ledger?[{u:j.a,beam:null}]:[];
@@ -507,7 +562,7 @@ function buildForSize(runs,poly,joistD,beamD,spacing,style,FS,size){
    }
    if(!shift.size)break;
    let changed=0;
-   for(const [bm,limits] of shift){let target=bm.u;
+   for(const [bm,limits] of shift){if(bm.u==null)continue;let target=bm.u;
      if(limits.lo>target)target=limits.lo;
      if(limits.hi<target)target=limits.hi;
      if(limits.lo>limits.hi)continue;
@@ -572,7 +627,7 @@ function buildForSize(runs,poly,joistD,beamD,spacing,style,FS,size){
      if(hi-lo<.30)continue;
      if(beams.some(bm=>Math.abs(bm.u-u)<(style==='flush'?.025:.13)&&bm.lo<=lo+.20&&bm.hi>=hi-.20))continue;
      let equivalent=Math.max(...batch.map(i=>i.j.b-i.j.a));
-     beams.push({a:uv(beamD,lo,u),b:uv(beamD,hi,u),len:hi-lo,u,lo,hi,eq:equivalent,source:'local shared-bearing repair; header design unverified',interior:true,needsConnectionReview:true,items:batch});inserted++;
+     beams.push({a:uv(beamD,lo,u),b:uv(beamD,hi,u),len:hi-lo,u,lo,hi,eq:equivalent,role:'local-support',source:'local shared-bearing repair; header design unverified',interior:true,needsConnectionReview:true,items:batch});inserted++;
     }
    }
   }
@@ -620,7 +675,7 @@ function buildForSize(runs,poly,joistD,beamD,spacing,style,FS,size){
      const last=rec.at(-1),prior=sp.at(-2),front=j.b-sp.at(-1);
      if(!last.beam||front<=.06||front<= (sp.at(-1)-prior)/4+.06)continue;
      const target=(4*j.b+prior)/5+.018;
-     const bm=last.beam,old=bm.u,delta=target-old;
+     const bm=last.beam;if(bm.u==null)continue;const old=bm.u,delta=target-old;
      if(delta<=.001||delta>.4)continue;
      const spans=intervals(poly,beamD,target),mid=(bm.lo+bm.hi)/2;
      if(!spans.some(([a,b])=>a<mid+.05&&b>mid-.05&&bm.lo>=a-.15&&bm.hi<=b+.15))continue;
@@ -892,7 +947,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  if(!global.AOSGeometry.simple(poly)||poly.some((p,i)=>Math.hypot(p[0]-poly[(i+1)%poly.length][0],p[1]-poly[(i+1)%poly.length][1])<1e-5)){
    return {intent:q,parts:[],counts:{},alerts:[{level:'warning',message:'Invalid deck outline: fix crossed, overlapping, tiny or degenerate edges before generating the deck.'}],stats:{deckArea:0,totalArea:0,partCount:0,unresolvedJoistRuns:0,invalidGeometry:true},geometry:{poly:[],edges:[],inside:[],beams:[],joists:[],boardAxis:[1,0],joistAxis:[0,1],stair:{enabled:false}}};
  }
- const add=(kind,group,x,y,z,w,h,d,color,opts={})=>{if(!Number.isFinite(w)||!Number.isFinite(d)||w<=0||h<=0||d<=0)return null;const p={id:`${kind}-${++no}`,kind,group,x,y,z,w,h,d,color,mat:opts.mat||'wood',yaw:opts.yaw||0,rx:opts.rx||0,rz:opts.rz||0,connect:opts.connect||'deck',label:opts.label||kind};parts.push(p);return p;};
+ const add=(kind,group,x,y,z,w,h,d,color,opts={})=>{if(!Number.isFinite(w)||!Number.isFinite(d)||w<=0||h<=0||d<=0)return null;const p={id:`${kind}-${++no}`,kind,group,x,y,z,w,h,d,color,mat:opts.mat||'wood',yaw:opts.yaw||0,rx:opts.rx||0,rz:opts.rz||0,connect:opts.connect||'deck',label:opts.label||kind,...(opts.role?{role:opts.role}:{})};parts.push(p);return p;};
  const fromUV=uvPoint;
  const addStrip=(kind,group,d,u0,u1,v,y,width,height,color,opt={})=>{const xy=fromUV(d,(u0+u1)/2,v),ang=Math.atan2(d[1],d[0]);return add(kind,group,xy[0],y,xy[1],u1-u0,height,width,color,{...opt,yaw:-ang});};
  const addContour=(kind,group,outline,y,h,color,opt={})=>{
@@ -1161,14 +1216,16 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  // constraints. Flush: zero joist and beam end overhang. Dropped: <=1 ft beam
  // end overhang and <=1/4 adjacent post span. All post loads need review.
  let unsupportedBeamLoads=0;
- const beamRecords=[];
+ const beamRecords=[],postPoints=[],ROLE_LABEL={'shared-beam':'shared beam','corner-beam':'angled corner beam','local-support':'local support beam','perimeter-header':'perimeter flush header'};
+ let sharedPosts=0;
  for(let bm of beams){
    const t=[(bm.b[0]-bm.a[0])/bm.len,(bm.b[1]-bm.a[1])/bm.len],mid=[(bm.a[0]+bm.b[0])/2,(bm.a[1]+bm.b[1])/2];
    const postLayout=FS.postsForBeam(bm.len,bm.eq,q.beamStyle,beamProfile,Boolean(bm.interior));
    if(!postLayout){alerts.push({level:'warning',message:'Beam has no feasible support-post spacing within preliminary limits.'});continue;}
    if(!postLayout.tableRangeCovered)unsupportedBeamLoads++;
+   const role=bm.role||'shared-beam';
    add('dropped-beam','framing',mid[0],beamY,mid[1],bm.len,beamDepth,beamWidth,'#856143',{
-     yaw:-Math.atan2(t[1],t[0]),connect:`beam-${bm.source}`,label:`${beamProfile} ${q.beamStyle} beam candidate; beam loads unverified`});
+     yaw:-Math.atan2(t[1],t[0]),connect:`beam-${bm.source}`,role,label:`${beamProfile} ${q.beamStyle} ${ROLE_LABEL[role]||'beam'} candidate; ${role==='corner-beam'?'bearing, posts and connections require AOS production review':'beam loads unverified'}`});
    bm.posts=postLayout.positions.length;bm.postOverhang=postLayout.endCantilever;bm.postPitch=postLayout.span;
    beamRecords.push({...bm});
    for(let postIndex=0;postIndex<postLayout.positions.length;postIndex++){
@@ -1180,11 +1237,20 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
        along=postIndex===0?r:postIndex===postLayout.positions.length-1?bm.len-r:along;
      }
      const point=[bm.a[0]+t[0]*along,bm.a[1]+t[1]*along],base=.12,postH=beamBottom-base;
+     // Where two beams meet, one post carries both (connection flagged below), never two side by side.
+     if(postPoints.some(p=>Math.hypot(p[0]-point[0],p[1]-point[1])<.6)){sharedPosts++;continue;}
      if(postH<=.4){alerts.push({level:'review',message:'Low deck elevation needs an alternate beam/post/pier detail.'});continue;}
      add('post-6x6','framing',point[0],base+postH/2,point[1],5.5*FT,postH,5.5*FT,'#9e7b57',{connect:'beam-post',label:'6x6 post candidate; verify load'});
-     add('footing-concept','foundation',point[0],-.22,point[1],1.5,.62,1.5,'#a6a3a0',{mat:'concrete',connect:'post-footing',label:'footing size/depth unverified'});
+     add('footing-concept','foundation',point[0],-.22,point[1],1.5,.62,1.5,'#a6a3a0',{mat:'concrete',connect:'post-footing',label:'footing size/depth unverified'});postPoints.push(point);
    }
  }
+ // V5.1 corrections: AOS practical guideline (not a rule): footings about 3 ft or more apart.
+ let closeFootings=0;for(let i=0;i<postPoints.length;i++)for(let k=i+1;k<postPoints.length;k++)if(Math.hypot(postPoints[i][0]-postPoints[k][0],postPoints[i][1]-postPoints[k][1])<3-1e-6)closeFootings++;
+ const cornerBeams=beamRecords.filter(b=>b.role==='corner-beam').length,localBeams=beamRecords.filter(b=>b.role==='local-support').length;
+ if(cornerBeams)alerts.push({level:'review',message:`${cornerBeams} angled corner beam${cornerBeams>1?'s':''} proposed: one beam parallel to each angled edge carries the corner joists that cannot reach the main beam. Bearing, post loads and connections require AOS production review.`});
+ if(localBeams)alerts.push({level:'review',message:`${localBeams} local support beam${localBeams>1?'s':''} added for joists no shared beam could carry; confirm or redesign during AOS production review.`});
+ if(closeFootings)alerts.push({level:'review',message:`${closeFootings} pair${closeFootings>1?'s':''} of footings closer than 3 ft (AOS spacing guideline). Confirm they are needed or consolidate during production review.`});
+ if(sharedPosts)alerts.push({level:'review',message:`${sharedPosts} post${sharedPosts>1?'s':''} carry two beam ends where beams meet; connection hardware requires review.`});
  if(unsupportedBeamLoads)alerts.push({level:'warning',message:`${unsupportedBeamLoads} beams have tributary load estimates outside the prescriptive one-sided reference range; engineered beam/extra bearing required.`});
  // V4.5 AOS continuous longitudinal blocking assemblies. Every selected
  // board gets ONE 2x6-flat RUN (not repeated short cross-bay blocks), with
@@ -1436,7 +1502,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    stairRun:run,stairRise:rise,riserCount:q.staircases.length?risers:0,staircaseCount:q.staircases.length,boardWidth:BW,boardGap:GAP,partCount:parts.length,maxBoardRun:maxRun,requiredDividers,dividerRowCount:dividerRows.length,dividerSectionLengthsFt:[0,...dividerFractions,1].slice(1).map((v,i)=>+(v-([0,...dividerFractions,1][i]))*(umax-umin)).map(v=>+v.toFixed(2)),boardCourses:boardRows.length,estimatedPhysicalFieldBoards:estimatedPhysicalBoards,fieldBoardFragments:fieldPieces,boardCourseWidthsFt:boardRows.map(x=>+x.width.toFixed(5)),boardCoverageFt:boardRows.length?+(boardRows.at(-1).high-boardRows[0].low).toFixed(5):0,
    maxFrontCantFt:Math.max(0,...joistSegs.map(j=>j.solution?.joistCantileverFront||0)),maxRearCantFt:Math.max(0,...joistSegs.map(j=>j.solution?.joistCantileverRear||0)),maxBeamCantFt:Math.max(0,...beamRecords.map(b=>b.postOverhang||0)),
    beamLengthsFt:beamRecords.map(b=>+b.len.toFixed(3)),postSpacingFt:beamRecords.map(b=>+b.postPitch.toFixed(3)),
-   primaryLedgerEdge:q.primaryLedgerEdge,ledgerEdges:ledgerEdges.map(e=>e.i),ledgerCount:ledgerEdges.length,beamRows:beams.length,joistNominal:`2x${joistNominal}`,beamProfile,joistSpacingIn:joistSpacing,joistMaxSpanFt:FS.JOISTS[joistSpacing][joistNominal].span,unresolvedJoistRuns:beamSupportDiagnostics.length,sharedSupportZones:chosen.groups.length,optimizerCandidates:chosen.candidates,unverifiedBeamLoadCount:unsupportedBeamLoads,pictureFrameFlatBlocks:flatBorderBlocks,dividerFlatBlocks:flatDividerBlocks,pictureFrameFlatLF:borderFlatLF,dividerFlatLF:dividerFlatLF,pictureFrameSupportJoists:qty('picture-support-joist'),dividerSupportJoists:qty('divider-support-joist')};
+   primaryLedgerEdge:q.primaryLedgerEdge,ledgerEdges:ledgerEdges.map(e=>e.i),ledgerCount:ledgerEdges.length,beamRows:beams.length,beamRoles:beamRecords.reduce((m,b)=>{const r=b.role||'shared-beam';m[r]=(m[r]||0)+1;return m;},{}),closeFootingPairs:closeFootings,sharedPosts,joistNominal:`2x${joistNominal}`,beamProfile,joistSpacingIn:joistSpacing,joistMaxSpanFt:FS.JOISTS[joistSpacing][joistNominal].span,unresolvedJoistRuns:beamSupportDiagnostics.length,sharedSupportZones:chosen.groups.length,optimizerCandidates:chosen.candidates,unverifiedBeamLoadCount:unsupportedBeamLoads,pictureFrameFlatBlocks:flatBorderBlocks,dividerFlatBlocks:flatDividerBlocks,pictureFrameFlatLF:borderFlatLF,dividerFlatLF:dividerFlatLF,pictureFrameSupportJoists:qty('picture-support-joist'),dividerSupportJoists:qty('divider-support-joist')};
  return {intent:q,parts,counts,alerts,stats,geometry:{poly,edges:es,inside,beams,joists:joistSegs,boardAxis:d,dividerRows,dividerFractions,dividerSpanFt:umax-umin,dividerStart:umin,joistAxis:joistD,stair:firstStair,stairs:stairModels}};
 }
 global.DeckCore={SCHEMA_VERSION,RAIL_PRODUCTS,railFinish,derivePerimeter,migrate,baseIntent,sanitize,make,stairOverlap,resolveDividerFractions,MAX_DIVIDER_ROWS,MAX_FIELD_SECTION_FT,MIN_DIVIDER_SPACING_FT,PALETTES,RAILS,SHAPES,BW,GAP,PITCH,polygon,edges,validPolygon,lineIntervals,offsetPolygon};

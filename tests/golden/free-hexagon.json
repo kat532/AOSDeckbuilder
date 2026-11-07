@@ -215,7 +215,7 @@
     }
   },
   "model": {
-    "partCount": 1443,
+    "partCount": 1400,
     "partsByKind": {
       "baluster": 132,
       "bottom-rail": 10,
@@ -223,18 +223,18 @@
       "divider-blocking-2x6-flat": 1,
       "divider-board": 11,
       "divider-support-joist": 2,
-      "dropped-beam": 10,
+      "dropped-beam": 3,
       "earth": 1,
       "fascia": 5,
       "field-board": 1131,
-      "footing-concept": 25,
+      "footing-concept": 7,
       "house-wall": 1,
       "joist": 16,
       "ledger": 1,
       "picture-blocking-2x6-flat": 2,
       "picture-frame": 11,
       "picture-support-joist": 2,
-      "post-6x6": 25,
+      "post-6x6": 7,
       "post-cap": 11,
       "railing-post": 11,
       "rim-joist": 5,
@@ -242,7 +242,7 @@
       "top-rail": 10
     },
     "counts": {
-      "joistNominal": "2x10",
+      "joistNominal": "2x12",
       "joistSpacingIn": 16,
       "pictureFlatBlocks": 2,
       "dividerFlatBlocks": 1,
@@ -252,10 +252,10 @@
       "joists": 20,
       "pictureSupportJoists": 2,
       "dividerSupportJoists": 2,
-      "beams": 10,
+      "beams": 3,
       "ledger": 1,
-      "posts": 25,
-      "footings": 25,
+      "posts": 7,
+      "footings": 7,
       "stringers": 0,
       "treads": 0,
       "risers": 0,
@@ -275,7 +275,7 @@
       "staircaseCount": 0,
       "boardWidth": 0.4467,
       "boardGap": 0.0156,
-      "partCount": 1443,
+      "partCount": 1400,
       "maxBoardRun": 23.0754,
       "requiredDividers": 1,
       "dividerRowCount": 1,
@@ -291,42 +291,34 @@
       "maxRearCantFt": 0,
       "maxBeamCantFt": 1,
       "beamLengthsFt": [
-        21.377,
-        16.919,
-        13.317,
-        0.747,
-        1.632,
-        1.047,
-        1.047,
-        1.137,
-        0.957,
-        10.2
+        13.6,
+        6.633,
+        6.378
       ],
       "postSpacingFt": [
-        6.459,
-        7.459,
-        5.659,
-        0.498,
-        1.088,
-        0.698,
-        0.698,
-        0.758,
-        0.638,
-        4.1
+        5.8,
+        4.633,
+        4.378
       ],
       "primaryLedgerEdge": 0,
       "ledgerEdges": [
         0
       ],
       "ledgerCount": 1,
-      "beamRows": 10,
-      "joistNominal": "2x10",
+      "beamRows": 3,
+      "beamRoles": {
+        "shared-beam": 1,
+        "corner-beam": 2
+      },
+      "closeFootingPairs": 0,
+      "sharedPosts": 0,
+      "joistNominal": "2x12",
       "beamProfile": "3-2x12",
       "joistSpacingIn": 16,
-      "joistMaxSpanFt": 14,
-      "unresolvedJoistRuns": 3,
-      "sharedSupportZones": 14,
-      "unverifiedBeamLoadCount": 0,
+      "joistMaxSpanFt": 16.5,
+      "unresolvedJoistRuns": 0,
+      "sharedSupportZones": 1,
+      "unverifiedBeamLoadCount": 1,
       "pictureFrameFlatBlocks": 2,
       "dividerFlatBlocks": 1,
       "pictureFrameFlatLF": 21,
@@ -336,31 +328,30 @@
       "boardCourseCount": 39,
       "optimizerCandidates": [
         {
-          "size": 10,
-          "beams": 10,
-          "unresolved": 3,
-          "groups": 14
+          "size": 12,
+          "beams": 3,
+          "unresolved": 0,
+          "groups": 1
         },
         {
-          "size": 12,
-          "beams": 11,
-          "unresolved": 3,
-          "groups": 14
+          "size": 10,
+          "beams": 4,
+          "unresolved": 0,
+          "groups": 1
         },
         {
           "size": 8,
-          "beams": 9,
-          "unresolved": 4,
-          "groups": 14
+          "beams": 7,
+          "unresolved": 0,
+          "groups": 1
         }
       ]
     },
     "alerts": [
-      "warning: 3 joist runs do not yet have confirmed beam/ledger bearing. Concept NOT cleared for construction; revise local beams or headers.",
-      "info: Grouped 23 individual joist runs into 14 support-length zones. Short/local beams are limited to the zones they bear.",
-      "review: Alternative uniform joist sizes were compared, but some complex shapes still require a real trimmer/header load path review.",
       "warning: Some irregular areas need local headers or shared support beams; member reactions and hardware are NOT verified for construction.",
-      "review: Interior/shared beams may carry joists from two sides. Tributary beam and post reactions must be independently calculated.",
+      "warning: One or more shared beams exceed the one-sided prescriptive beam load range; engineered design or added support required.",
+      "review: 2 angled corner beams proposed: one beam parallel to each angled edge carries the corner joists that cannot reach the main beam. Bearing, post loads and connections require AOS production review.",
+      "warning: 1 beams have tributary load estimates outside the prescriptive one-sided reference range; engineered beam/extra bearing required.",
       "review: Angled picture-frame edges require specialized support/blocking. Long 2x6 assemblies are generated only parallel to the joists.",
       "review: Preliminary ledgers on house edges 1. Verify attachment viability, existing band joists, flashing, hardware, lateral connections and load path for EACH wall.",
       "info: Breaker boards required: 1 minimum at 23.1 ft longest continuous board run.",

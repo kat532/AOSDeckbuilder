@@ -233,6 +233,11 @@
       ],
       "ledgerCount": 1,
       "beamRows": 1,
+      "beamRoles": {
+        "shared-beam": 1
+      },
+      "closeFootingPairs": 0,
+      "sharedPosts": 0,
       "joistNominal": "2x10",
       "beamProfile": "3-2x12",
       "joistSpacingIn": 16,
