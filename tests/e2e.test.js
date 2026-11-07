@@ -42,6 +42,11 @@ async function chooseShape(page, shape) {
 const area = (page) => page.evaluate(() => Number(document.getElementById('squareFeet').textContent.match(/(\d+(?:\.\d+)?) SQ FT/)?.[1]));
 const hasArea = () => /\d+ SQ FT/.test(document.getElementById('squareFeet')?.textContent || '');
 const stepText = (page) => page.locator('#progressText').innerText();
+// V5.1: Save project stores the project; a .json file comes from Projects › Download current.
+async function downloadViaProjects(page) {
+  await page.locator('#openBtn').click();
+  await page.locator('#projectsDialog [data-action="project-download"]').click();
+}
 
 for (const shape of ['rectangle', 'square', 'L', 'T', 'U']) {
   test(`choose ${shape} shows a complete preview with no errors`, async () => {
@@ -105,7 +110,7 @@ test('save -> open round trip restores the same design', async () => {
   const { ctx, page, errors } = await openApp();
   await chooseShape(page, 'L');
   await page.locator('#nextBtn').click();
-  const [download] = await Promise.all([page.waitForEvent('download'), page.locator('#saveBtn').click()]);
+  const [download] = await Promise.all([page.waitForEvent('download'), downloadViaProjects(page)]);
   const file = path.join(os.tmpdir(), `aos-roundtrip-${Date.now()}.json`);
   await download.saveAs(file);
   const saved = JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -121,7 +126,7 @@ test('save -> open round trip restores the same design', async () => {
   await fresh.page.locator('#fileInput').setInputFiles(file);
   await fresh.page.waitForFunction(hasArea);
   assert.equal(await area(fresh.page), before);
-  const [again] = await Promise.all([fresh.page.waitForEvent('download'), fresh.page.locator('#saveBtn').click()]);
+  const [again] = await Promise.all([fresh.page.waitForEvent('download'), downloadViaProjects(fresh.page)]);
   const file2 = file.replace('.json', '-2.json');
   await again.saveAs(file2);
   const resaved = JSON.parse(fs.readFileSync(file2, 'utf8'));
@@ -162,7 +167,7 @@ async function toRailingFinish(page) {
 }
 const customCount = (page) => page.locator('#stepContent .rail-custom').count();
 async function saveFile(page) {
-  const [d] = await Promise.all([page.waitForEvent('download'), page.locator('#saveBtn').click()]);
+  const [d] = await Promise.all([page.waitForEvent('download'), downloadViaProjects(page)]);
   const f = path.join(os.tmpdir(), `aos-rail-${Date.now()}-${Math.random().toString(36).slice(2)}.json`);
   await d.saveAs(f);
   return { file: f, data: JSON.parse(fs.readFileSync(f, 'utf8')) };
@@ -559,6 +564,198 @@ test('measurements: Selected shows only the selected railing edge; Off hides; ch
   await page.waitForFunction(() => window.DeckCore);
   assert.match(await page.locator('#measureBtn').innerText(), /Off/i);
   await page.locator('#measureBtn').click(); // back to All for other tests sharing this browser profile
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+// ---- V5.1 projects: autosave, recent projects, reopen, duplicate, delete ----
+// Standalone HTML mode (no Claude viewer): projects live in this browser's storage.
+const saveStatus = (page) => page.locator('#saveStatus').innerText();
+const waitSaved = (page) => page.waitForFunction(() => /Saved/.test(document.getElementById('saveStatus').textContent), null, { timeout: 8000 });
+async function renameProject(page, name) {
+  await page.locator('#projectName').fill(name);
+  await page.locator('#projectName').dispatchEvent('change');
+}
+async function makeProject(page, name) {
+  await chooseShape(page, 'rectangle');
+  await renameProject(page, name);
+  await stepBtn(page, 'Stairs').click();
+  await page.locator('[data-action="stair-add"]').click();
+  await stepBtn(page, 'Railings').click();
+  await page.locator('[data-path="railTab"][data-value="finish"]').click();
+  await page.locator('[data-action="rail-target"][data-edge="1"]').click();
+  await page.locator('[data-path="railColor"][data-value="White"]').click();
+  await waitSaved(page);
+}
+
+test('projects: autosave, close and reopen from Recent projects keeps stairs, railings and size', async () => {
+  const { ctx, page, errors } = await openApp();
+  await makeProject(page, 'Smith backyard');
+  const { data: before } = await saveFile(page);
+  await page.close();
+
+  const again = await ctx.newPage(); // reopening the application in the same browser
+  await again.goto(APP); await again.waitForFunction(() => window.DeckCore);
+  const recent = again.locator('#recentProjects .recent-item', { hasText: 'Smith backyard' });
+  await recent.waitFor();
+  await recent.click();
+  await again.waitForFunction(() => /\d+ SQ FT/.test(document.getElementById('squareFeet').textContent));
+  assert.equal(await again.locator('#projectName').inputValue(), 'Smith backyard');
+  const { data: after } = await saveFile(again);
+  assert.deepEqual(after.design, before.design);
+  assert.equal(after.design.staircases.length, 1);
+  assert.deepEqual(after.design.railOverrides, { 1: { railColor: 'White' } });
+  assert.equal(await again.locator('#undoBtn').isDisabled(), true, 'opening starts a fresh undo history');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('projects: explicit Save says where it saved; edits to an opened project are saved', async () => {
+  const { ctx, page, errors } = await openApp();
+  await makeProject(page, 'Jones deck');
+  await page.locator('#saveBtn').click();
+  await page.waitForFunction(() => /Saved “Jones deck” in this browser/.test(document.getElementById('toast').textContent));
+  await page.reload(); await page.waitForFunction(() => window.DeckCore);
+  await page.locator('#recentProjects .recent-item', { hasText: 'Jones deck' }).click();
+  const w = page.locator('#stepContent input[type=number]').first();
+  await w.fill('22'); await w.dispatchEvent('change');
+  await waitSaved(page);
+  await page.reload(); await page.waitForFunction(() => window.DeckCore);
+  await page.locator('#recentProjects .recent-item', { hasText: 'Jones deck' }).click();
+  assert.equal(await page.locator('#stepContent input[type=number]').first().inputValue(), '22');
+  assert.equal(await page.locator('#recentProjects .recent-item').count().then(() => true), true);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('projects: duplicate is independent; delete asks first; new project keeps the list', async () => {
+  const { ctx, page, errors } = await openApp();
+  await makeProject(page, 'Original deck');
+  await page.locator('#openBtn').click();
+  const row = (name) => page.locator('#projectsList .project-row', { has: page.locator('b', { hasText: new RegExp(`^${name}$`) }) });
+  await row('Original deck').locator('[data-action="project-duplicate"]').click();
+  await row('Original deck \\(copy\\)').waitFor();
+  assert.equal(await page.locator('#projectsList .project-row').count(), 2);
+  await row('Original deck \\(copy\\)').locator('[data-action="project-open"]').click();
+  const w = page.locator('#stepContent input[type=number]').first();
+  await w.fill('30'); await w.dispatchEvent('change');
+  await waitSaved(page);
+
+  await page.locator('#openBtn').click();
+  assert.match(await row('Original deck').innerText(), /192 sq ft/, 'original untouched');
+  assert.match(await row('Original deck \\(copy\\)').innerText(), /Open now/);
+  await row('Original deck').locator('[data-action="project-delete"]').click();
+  assert.match(await row('Original deck').innerText(), /Delete for good\?/);
+  await row('Original deck').locator('[data-action="project-delete-no"]').click();
+  assert.equal(await page.locator('#projectsList .project-row').count(), 2, 'Keep cancels');
+  await row('Original deck').locator('[data-action="project-delete"]').click();
+  await row('Original deck').locator('[data-action="project-delete-yes"]').click();
+  await page.waitForFunction(() => document.querySelectorAll('#projectsList .project-row').length === 1);
+
+  await page.locator('[data-action="project-new"]').click();
+  assert.equal(await page.locator('#emptyOverlay').isVisible(), true);
+  assert.equal(await page.locator('#recentProjects .recent-item').count(), 1);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('projects: opening a .json file adds it as a new project', async () => {
+  const { ctx, page, errors } = await openApp();
+  const file = path.join(os.tmpdir(), `aos-import-${Date.now()}.json`);
+  fs.writeFileSync(file, JSON.stringify({ design: { shape: 'L', width: 24, depth: 18, height: 4, houseEdges: [0], project: 'Imported L' } }));
+  await page.locator('#openBtn').click();
+  await page.locator('#fileInput').setInputFiles(file);
+  await page.waitForFunction(hasArea);
+  await waitSaved(page);
+  await page.locator('#openBtn').click();
+  assert.match(await page.locator('#projectsList').innerText(), /Imported L/);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('projects: blocked browser storage shows "Not saved" instead of failing silently', async () => {
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  await ctx.addInitScript(() => { Storage.prototype.setItem = function () { throw new DOMException('blocked', 'SecurityError'); }; });
+  const page = await ctx.newPage();
+  const errors = []; page.on('pageerror', e => errors.push(String(e)));
+  await page.goto(APP); await page.waitForFunction(() => window.DeckCore);
+  await chooseShape(page, 'rectangle');
+  await page.waitForFunction(() => /Not saved/.test(document.getElementById('saveStatus').textContent), null, { timeout: 8000 });
+  await page.locator('#saveBtn').click();
+  await page.waitForFunction(() => /Not saved: this browser is blocking storage/.test(document.getElementById('toast').textContent));
+  assert.match(await page.locator('#saveStatus').getAttribute('title'), /Download current/);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('steps: typing a project name then clicking a step opens that step on the first click', async () => {
+  const { ctx, page, errors } = await openApp();
+  await chooseShape(page, 'rectangle');
+  await page.locator('#projectName').click();
+  await page.keyboard.press('Control+A');
+  await page.keyboard.type('Lake house');
+  await stepBtn(page, 'Stairs').click(); // the name field commits on blur during this click
+  assert.equal((await page.locator('#stepTitle').innerText()).trim(), 'Stairs');
+  assert.equal(await page.locator('#projectName').inputValue(), 'Lake house');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+// Claude preview mode, using a stand-in for the viewer's db/user/downloads capabilities
+// (the real runtime only exists inside claude.ai). Exercises the same code path the preview takes.
+async function openAppWithViewerStub({ canWrite = true } = {}) {
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  await ctx.addInitScript(({ canWrite }) => {
+    const store = (window.__stubStore = window.__stubStore || new Map()), saves = (window.__stubSaves = []);
+    const snap = (id, v) => ({ id, exists: v !== undefined, data: () => (v === undefined ? undefined : JSON.parse(JSON.stringify(v))), metadata: { fromCache: false, hasPendingWrites: false } });
+    const db = {
+      collection(path) {
+        if (!/^data\/users\/viewer-1$/.test(path)) throw new TypeError('unexpected collection ' + path);
+        return {
+          async get() { const docs = [...store.entries()].map(([k, v]) => snap(k, v)); return { docs, size: docs.length, empty: !docs.length }; },
+          doc(id) { return {
+            async get() { return snap(id, store.get(id)); },
+            async set(v) { if (!canWrite) throw { code: 'invalid_argument', message: 'no write' }; store.set(id, JSON.parse(JSON.stringify(v))); },
+            async delete() { store.delete(id); },
+          }; },
+        };
+      },
+    };
+    const user = { async id() { return 'viewer-1'; } };
+    const downloads = { async save(r) { saves.push({ filename: r.filename, size: String(r.data).length }); return { status: 'saved' }; } };
+    window.claude = { use: async (name) => ({ db, user, downloads }[name] || null) };
+  }, { canWrite });
+  const page = await ctx.newPage();
+  const errors = []; page.on('pageerror', e => errors.push(String(e)));
+  await page.goto(APP); await page.waitForFunction(() => window.DeckCore);
+  return { ctx, page, errors };
+}
+
+test('projects (preview): saves to the viewer’s private project space and downloads through the viewer', async () => {
+  const { ctx, page, errors } = await openAppWithViewerStub();
+  await chooseShape(page, 'rectangle');
+  await renameProject(page, 'Preview deck');
+  await waitSaved(page);
+  assert.match(await page.locator('#saveStatus').getAttribute('title'), /to your projects/);
+  const stored = await page.evaluate(() => [...window.__stubStore.values()]);
+  assert.equal(stored.length, 1);
+  assert.equal(stored[0].name, 'Preview deck');
+  assert.equal(stored[0].design.width, 16);
+  await page.locator('#openBtn').click();
+  assert.match(await page.locator('#projectsWhere').innerText(), /Only you can see them/);
+  await page.locator('#projectsDialog [data-action="project-download"]').click();
+  await page.waitForFunction(() => window.__stubSaves.length === 1);
+  assert.match(await page.evaluate(() => window.__stubSaves[0].filename), /^Preview_deck_AOS_Deck\.json$/);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('projects (preview): a viewer who cannot write gets browser saving and is told so', async () => {
+  const { ctx, page, errors } = await openAppWithViewerStub({ canWrite: false });
+  await chooseShape(page, 'rectangle');
+  await waitSaved(page);
+  assert.match(await page.locator('#saveStatus').getAttribute('title'), /in this browser/);
+  assert.match(await page.locator('#toast').innerText(), /saved in this browser instead/);
   assert.deepEqual(errors, []);
   await ctx.close();
 });
