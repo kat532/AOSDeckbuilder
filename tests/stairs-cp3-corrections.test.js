@@ -114,7 +114,7 @@ test('R4 plain stairs (no landing) keep exactly the V5.2 railing', () => {
 function frameCase(turn, dl, bc, LW, LD) {
   const q = deck({ borderCount: bc, staircases: [stairOf(turnLanding(turn, { width: LW, depth: LD, ...(dl === 'match' ? {} : { deckLine: dl }) }))] });
   const m = build(q), g = m.geometry.stairs[0];
-  const L = toLocal(g), members = kinds(m, /^landing-(beam|rim|joist|blocking)$/);
+  const L = toLocal(g), members = kinds(m, /^landing-(beam|rim|joist|blocking|flat-2x6)$/);
   const boxes = members.map(p => ({ p, ...bbox(footprintLocal(g, p)) }));
   return { m, g, L, boxes, members };
 }
@@ -172,7 +172,16 @@ test('F3 support follows the frame choice and board direction: none without a fr
     if (c.bc === 0) { assert.equal(blocks.length + sup.length, 0, 'no frame: no picture-frame blocking or support joists'); }
     else {
       assert.ok(sup.length >= 2 * c.bc - 0, `${c.turn}/${c.dl}/bc${c.bc}: support joist under each frame joint on both sides`);
-      assert.ok(blocks.some(b => b.role === 'miter'), 'miter blocks');
+      // B2 owner finding #1: each frame course on the sides running with the joists sits on a 2x6
+      // laid FLAT (5.5 in. wide, 1.5 in. thick, top flush with the joists), beside its support joist.
+      const flats = members.filter(p => p.kind === 'landing-flat-2x6');
+      assert.equal(flats.length, 2 * c.bc, `${c.turn}/${c.dl}/bc${c.bc}: one flat 2x6 per course per side`);
+      for (const f of flats) {
+        assert.ok(Math.abs(f.d - 5.5 / 12) < 1e-9 && Math.abs(f.h - 1.5 / 12) < 1e-9, 'laid flat: 5.5 in. wide, 1.5 in. thick');
+        assert.ok(Math.abs(f.y + f.h / 2 - (Ld.elevation - 1 / 12)) < 1e-9, 'top flush with the joists, under the decking');
+        assert.equal(f.group, 'stair-framing'); assert.match(f.label, /laid flat/);
+      }
+      assert.equal(sup.length, 2 * c.bc, 'a support joist beside each flat 2x6');
       const dir = Ld.decking.direction;
       const fieldEnd = blocks.filter(b => b.role === 'field-end').length;
       // Field-end blocking only when field boards have ends on the sides that run across the joists.
@@ -180,6 +189,9 @@ test('F3 support follows the frame choice and board direction: none without a fr
       else assert.ok(fieldEnd > 0, `${c.dl}: diagonal field ends on all four sides need blocking`);
     }
     assert.equal(m.counts.landingBlocking, blocks.length); assert.equal(m.counts.landingFrameSupportJoists, sup.length);
+    const flats = members.filter(p => p.kind === 'landing-flat-2x6');
+    assert.equal(m.counts.landingFlat2x6, flats.length); assert.equal(F.flat2x6, flats.length);
+    assert.ok(Math.abs(m.counts.landingFlat2x6LF - flats.reduce((a, f) => a + f.w, 0)) < 0.01, 'flat 2x6 LF from the generated members');
     assert.equal(F.blocks, blocks.length); assert.equal(F.supportJoists, sup.length);
     // Joists always cross the field boards (square layouts).
     if (Ld.decking.direction === 'horizontal') assert.equal(F.joistAxis, 'down the stair');
@@ -210,7 +222,7 @@ test('F4 blocking updates with landing size, direction and frame; review flag; m
   assert.ok(c2.landingFrameSupportJoists > a.landingFrameSupportJoists, 'double frame: more support joists');
   assert.equal(count({ width: 6, depth: 5, deckLine: 'horizontal' }, 0).landingBlocking, 0);
   const m = build(deck({ borderCount: 1, staircases: [stairOf({ deckLine: 'diagonal-right' })] }));
-  assert.ok(m.alerts.some(x => x.level === 'review' && /picture-frame support joist.*block.*production review/.test(x.message)));
+  assert.ok(m.alerts.some(x => x.level === 'review' && /flat-laid 2x6 run.*support joist.*block.*production review/.test(x.message)));
   assert.ok(kinds(m, /^landing-blocking$/).every(p => p.group === 'stair-framing' && /concept/.test(p.label)));
   const without = build(deck({ borderCount: 1, staircases: [{ id: 's1', edge: 2, width: 4, offset: 0, rails: { left: true, right: true } }] }));
   for (const turn of TURNS) for (const bc of [0, 1, 2]) {

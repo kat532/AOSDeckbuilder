@@ -1629,9 +1629,10 @@ test('CP3 fix: framing-only 3D shows the landing picture-frame support; it follo
   await page.locator('#structureToggle').click(); await page.waitForTimeout(400);
   let sc = await scene3d(page);
   assert.equal(sc.showStructure, true, 'framing-only view');
-  const count = (s) => ({ blocks: s.parts.filter(p => p.kind === 'landing-blocking').length, fieldEnd: s.parts.filter(p => p.kind === 'landing-blocking' && p.role === 'field-end').length, supports: s.parts.filter(p => p.role === 'frame-support').length });
+  const count = (s) => ({ blocks: s.parts.filter(p => p.kind === 'landing-blocking').length, fieldEnd: s.parts.filter(p => p.kind === 'landing-blocking' && p.role === 'field-end').length, supports: s.parts.filter(p => p.role === 'frame-support').length, flats: s.parts.filter(p => p.kind === 'landing-flat-2x6').length });
   const single = count(sc);
-  assert.ok(single.supports >= 2 && single.fieldEnd > 0 && single.blocks > single.fieldEnd, 'support joists, field-end blocking and miter blocks');
+  // (B2 finding #1: mitered corners are now carried by the flat 2x6 runs, not separate miter blocks.)
+  assert.ok(single.supports >= 2 && single.fieldEnd > 0 && single.flats === 2, 'support joists, flat 2x6 runs and field-end blocking');
   assert.ok(sc.parts.filter(p => p.kind === 'landing-blocking').every(p => p.group === 'stair-framing'), 'drawn in framing-only 3D');
   for (const [i, [dx, dy]] of [[0, 0], [0, 600], [300, -200]].entries()) { if (dx || dy) await orbit(page, dx, dy); fs.writeFileSync(path.join(SHOTS, `cp3fix-blocking-${i}.png`), await page.locator('#glCanvas').screenshot()); }
   // Double frame: more support; no frame: none.
@@ -1641,7 +1642,7 @@ test('CP3 fix: framing-only 3D shows the landing picture-frame support; it follo
   const dbl = count(await scene3d(page));
   assert.ok(dbl.supports > single.supports, 'double frame: a support joist under each joint');
   await page.locator('#stepContent [data-path="borderCount"][data-value="0"]').click(); await page.waitForTimeout(400);
-  assert.deepEqual(count(await scene3d(page)), { blocks: 0, fieldEnd: 0, supports: 0 }, 'no frame: no frame support');
+  assert.deepEqual(count(await scene3d(page)), { blocks: 0, fieldEnd: 0, supports: 0, flats: 0 }, 'no frame: no frame support');
   await page.locator('#undoBtn').click(); await page.waitForTimeout(400);
   assert.deepEqual(count(await scene3d(page)), dbl, 'Undo brings the double-frame support back');
   // Square board layouts have no field-board ends on the header sides.
@@ -1649,7 +1650,7 @@ test('CP3 fix: framing-only 3D shows the landing picture-frame support; it follo
   await page.locator('#stepContent [data-action="landing-deckline"][data-value="horizontal"]').click(); await page.waitForTimeout(400);
   assert.equal(count(await scene3d(page)).fieldEnd, 0);
   await stepBtn(page, 'Review').click();
-  assert.match(await page.locator('#stepContent').innerText(), /framing members \(concept, not approved\), plus \d+ picture-frame blocks \(concept\)/);
+  assert.match(await page.locator('#stepContent').innerText(), /framing members \(concept, not approved\), plus \d+ flat 2×6 runs \([\d.]+ LF\)/);
   const { fresh } = await reopen(page, ctx);
   await fresh.page.locator('#mode3d').click(); await fresh.page.waitForTimeout(400);
   assert.deepEqual(count(await scene3d(fresh.page)), count(await scene3d(page)), 'reopened with the same landing framing');
@@ -1953,4 +1954,33 @@ test('B2: a landing on Match main deck follows diagonal left and right; an indep
   }
   assert.deepEqual(errors, []);
   await ctx.close();
+});
+
+// ---- V5.2 B2 owner finding #1: flat-laid 2x6 under the landing picture frame ----
+test('B2 fix: framing-only 3D draws the landing flat 2x6 runs; they follow the frame choice; listed in Review', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toLayout(page, { ...B2_DECK, height: 7, borderCount: 1, staircases: [{ id: 'a', edge: 2, width: 4, offset: 0, rails: { left: true, right: true }, landing: { width: 6, depth: 5, elevation: 3.5, turn: 'left' } }] }, 'border');
+  await page.locator('#mode3d').click(); await page.waitForTimeout(500);
+  const flats = async () => (await scene3d(page)).parts.filter(p => p.kind === 'landing-flat-2x6');
+  let f = await flats();
+  assert.equal(f.length, 2, 'single frame: a flat 2x6 on each side running with the joists');
+  assert.ok(f.every(p => Math.abs(p.d - 5.5 / 12) < 1e-9 && Math.abs(p.h - 1.5 / 12) < 1e-9 && p.group === 'stair-framing'), 'laid flat');
+  fs.writeFileSync(path.join(SHOTS, 'b2fix-landing-finished.png'), await page.locator('#glCanvas').screenshot());
+  await page.locator('#structureToggle').click(); await page.waitForTimeout(400);
+  assert.equal((await scene3d(page)).showStructure, true);
+  fs.writeFileSync(path.join(SHOTS, 'b2fix-landing-framing.png'), await page.locator('#glCanvas').screenshot());
+  await page.locator('#structureToggle').click(); await page.locator('#mode2d').click();
+  await page.locator('#stepContent [data-path="borderCount"][data-value="2"]').click(); await page.waitForTimeout(400);
+  assert.equal((await flats()).length, 4, 'double frame: two per side');
+  await page.locator('#stepContent [data-path="borderCount"][data-value="0"]').click(); await page.waitForTimeout(400);
+  assert.equal((await flats()).length, 0, 'no frame: none');
+  await page.locator('#undoBtn').click(); await page.waitForTimeout(400);
+  assert.equal((await flats()).length, 4, 'Undo');
+  await stepBtn(page, 'Review').click();
+  assert.match(await page.locator('#stepContent').innerText(), /framing members \(concept, not approved\), plus 4 flat 2×6 runs \([\d.]+ LF\)/);
+  const { fresh } = await reopen(page, ctx);
+  await fresh.page.locator('#mode3d').click(); await fresh.page.waitForTimeout(400);
+  assert.equal((await scene3d(fresh.page)).parts.filter(p => p.kind === 'landing-flat-2x6').length, 4, 'reopened');
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
 });
