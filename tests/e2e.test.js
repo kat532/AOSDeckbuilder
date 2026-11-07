@@ -420,3 +420,81 @@ test('free draw: hovering near the start shows the closing preview (screenshot)'
   assert.deepEqual(errors, []);
   await ctx.close();
 });
+
+// ---- V5.1 clickable steps ----
+const stepBtn = (page, name) => page.locator(`#stepdots [data-step]`, { hasText: name });
+
+test('steps: locked until a shape exists, then every step can be opened directly', async () => {
+  const { ctx, page, errors } = await openApp();
+  assert.equal(await page.locator('#stepdots [data-step]').count(), 8);
+  assert.equal(await stepBtn(page, 'Railings').isDisabled(), true);
+  await chooseShape(page, 'rectangle');
+  await stepBtn(page, 'Railings').click();
+  assert.equal((await page.locator('#stepTitle').innerText()).trim(), 'Railings');
+  await stepBtn(page, 'House').click();
+  assert.equal((await page.locator('#stepTitle').innerText()).trim(), 'House & Height');
+  assert.equal(await stepBtn(page, 'Railings').getAttribute('class').then(c => /\bdone\b/.test(c)), true, 'visited step marked done');
+  assert.equal(await stepBtn(page, 'House').getAttribute('aria-current'), 'step');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('steps: fix the deck size from Railings and come back without losing railing work', async () => {
+  const { ctx, page, errors } = await openApp();
+  await chooseShape(page, 'rectangle');
+  await stepBtn(page, 'Railings').click();
+  await page.locator('[data-path="railTab"][data-value="finish"]').click();
+  await page.locator('[data-action="rail-target"][data-edge="2"]').click();
+  await page.locator('[data-path="railColor"][data-value="Bronze"]').click();
+
+  await stepBtn(page, 'Shape').click();
+  const width = page.locator('#stepContent input[type=number]').first();
+  await width.fill('20'); await width.dispatchEvent('change');
+  await page.waitForFunction(() => /240 SQ FT/.test(document.getElementById('squareFeet').textContent));
+
+  await stepBtn(page, 'Railings').click();
+  assert.equal((await page.locator('#stepTitle').innerText()).trim(), 'Railings');
+  const { data } = await saveFile(page);
+  assert.equal(data.design.width, 20);
+  assert.deepEqual(data.design.railOverrides, { 2: { railColor: 'Bronze' } });
+  assert.deepEqual(data.design.railEdges, [1, 2, 3]);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('steps: locked while free drawing', async () => {
+  const { ctx, page, errors } = await openApp();
+  await chooseShape(page, 'rectangle');
+  await page.locator('#stepContent [data-action="choose-shape"]').click();
+  await page.locator('#shapeOverlay [data-shape="free"]').click();
+  assert.equal(await stepBtn(page, 'Decking').isDisabled(), true);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('steps: a framing warning marks the Framing step', async () => {
+  const { ctx, page, errors } = await openApp();
+  const big = { application: 'AOS Deck Studio', design: { shape: 'U', width: 40, depth: 24, height: 9, houseEdges: [0], staircases: [{ id: 's1', enabled: true, edge: 2, width: 6, offset: 0, rails: { left: true, right: true } }] } };
+  const file = path.join(os.tmpdir(), `aos-bigU-${Date.now()}.json`);
+  fs.writeFileSync(file, JSON.stringify(big));
+  await page.locator('#fileInput').setInputFiles(file);
+  await page.waitForFunction(hasArea);
+  assert.match(await stepBtn(page, 'Framing').getAttribute('class'), /\battention\b/);
+  assert.doesNotMatch(await stepBtn(page, 'Decking').getAttribute('class'), /\battention\b/);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('steps: phone width keeps step buttons tappable', async () => {
+  const { ctx, page, errors } = await openApp({ width: 390, height: 844 });
+  await chooseShape(page, 'rectangle');
+  const sizes = await page.locator('#stepdots [data-step]').evaluateAll(els => els.map(e => { const r = e.getBoundingClientRect(); return [r.width, r.height]; }));
+  for (const [w, h] of sizes) assert.ok(h >= 34 && w >= 26, `step button ${w}x${h}`);
+  await page.locator('#stepdots [data-step="5"]').click();
+  assert.equal((await page.locator('#stepTitle').innerText()).trim(), 'Railings');
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  assert.ok(overflow <= 1, `horizontal overflow ${overflow}px`);
+  await page.screenshot({ path: path.join(SHOTS, 'phone-steps.png') });
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});

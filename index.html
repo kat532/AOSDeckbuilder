@@ -179,6 +179,20 @@
  .brandtext strong{font-size:11px;letter-spacing:1px}
 }
 @media (max-width:365px){.aos-brand-compact{width:50px;height:27px}.brand{gap:5px}.brandtext strong{font-size:10px;letter-spacing:.65px}}
+.progressbar{height:auto;min-height:44px;flex:0 0 auto}
+.stepdots{gap:2px}
+.stepdots .stepdot{appearance:none;border:0;background:none;width:auto;height:auto;padding:6px 7px 5px;border-radius:7px;display:flex;flex-direction:column;align-items:stretch;gap:4px;cursor:pointer;position:relative;font:inherit}
+.stepdots .stepbar{display:block;min-width:40px;height:5px;border-radius:9px;background:#e8eaed}
+.stepdots .stepdot.done .stepbar{background:#293b48}
+.stepdots .stepdot.current .stepbar{background:var(--red)}
+.stepdots .steplabel{font-size:10px;font-weight:720;color:#7a8794;letter-spacing:.2px;text-align:left;white-space:nowrap}
+.stepdots .stepdot.done .steplabel{color:#33495a}
+.stepdots .stepdot.current .steplabel{color:var(--red-dark)}
+.stepdots .stepdot:hover:not(:disabled):not(.current){background:#f2f4f6}
+.stepdots .stepdot:disabled{cursor:not-allowed;opacity:.5}
+.stepdots .stepdot:focus-visible{outline:2px solid var(--red);outline-offset:1px}
+.stepdots .step-alert{position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:#d98a12;box-shadow:0 0 0 2px #fff}
+@media (max-width:760px){.progressbar{min-height:40px}.stepdots .steplabel{display:none}.stepdots .stepdot{padding:15px 2px}.stepdots .stepbar{min-width:24px}}
 </style></head>
 <body><div class="shell">
 <header class="appbar">
@@ -2232,7 +2246,17 @@ function finishFreeDraw(){if(state.freePts.length<3){toast('Tap at least three c
    `${adjust}Confirm the ${pp.length}-corner outline shown with the green dashed line. Afterward, tap any edge to type its exact length.`,
    'Use This Shape',complete);
 }
-function stepTo(i){state.cornerPreview=null;if(!state.intent&&i>0){toast('Choose a shape first.');return;}state.step=clamp(i,0,titles.length-1);state.framingDetails=false;if([0,1,2,3,5,6].includes(state.step))state.view='2d';if([4,7].includes(state.step)&&state.intent)state.view='3d';if(state.step===7&&renderer3d.showStructure)renderer3d.setStructureVisible(false);renderPanel();updateHeader();}
+const stepShort=['Shape','House','Stairs','Layout','Decking','Railings','Framing','Review'];
+// Steps whose settings currently produce a warning (not the standing production-review notes).
+function stepAttention(){const out=new Set(),m=state.model;if(!state.intent||!m)return out;
+ if(m.stats?.invalidGeometry)out.add(0);
+ for(const a of m.alerts||[]){if(a.level!=='warning')continue;const t=a.message;
+   if(/outline|footprint|triangulat/i.test(t))out.add(0);else if(/stair/i.test(t))out.add(2);else if(/divider|border|picture/i.test(t))out.add(3);
+   else if(/rail|guard/i.test(t))out.add(5);else out.add(6);}
+ return out;}
+function stepTo(i){state.cornerPreview=null;if(!state.intent&&i>0){toast('Choose a shape first.');return;}
+ if(i>0&&state.freeDraw){toast('Finish or cancel the drawing first.');return;}
+ if(i>0&&state.model?.stats?.invalidGeometry){toast('Fix the deck outline first: it has crossed or overlapping edges.');return;}state.step=clamp(i,0,titles.length-1);state.framingDetails=false;if([0,1,2,3,5,6].includes(state.step))state.view='2d';if([4,7].includes(state.step)&&state.intent)state.view='3d';if(state.step===7&&renderer3d.showStructure)renderer3d.setStructureVisible(false);renderPanel();updateHeader();}
 function changeView(v){if(!state.intent&&v==='3d'){toast('Choose a shape first.');return;}state.view=v;updateHeader();}
 function updateHeader(){
  $('undoBtn').disabled=state.historyAt===0;$('redoBtn').disabled=state.historyAt>=state.history.length-1;
@@ -2497,7 +2521,11 @@ function renderStairPanel(q){
 }
 function renderPanel(){const s=state.step,q=state.intent;const inspector=document.querySelector('.inspector');inspector.classList.toggle('divider-editing',s===3&&state.layoutTab==='border');
  inspector.classList.toggle('shape-edit',s===0);inspector.classList.toggle('corner-active',s===0&&state.selectedCorner!==null);inspector.classList.toggle('stair-edit',s===2);
- $('stepdots').innerHTML=titles.map((_,i)=>`<div class="stepdot ${i<s?'done':i===s?'current':''}" title="${titles[i]}"></div>`).join('');
+ // V5.1: clickable steps. Jumping never changes the design; it only opens another panel.
+ state.visited=state.visited||new Set([0]);state.visited.add(s);
+ const locked=!state.intent||state.freeDraw||state.model?.stats?.invalidGeometry,attention=stepAttention();
+ $('stepdots').innerHTML=titles.map((t,i)=>{const done=i!==s&&state.visited.has(i),dis=locked&&i!==0&&i!==s;
+   return `<button type="button" class="stepdot ${i===s?'current':done?'done':''}${attention.has(i)?' attention':''}" data-step="${i}" ${dis?'disabled':''} ${i===s?'aria-current="step"':''} aria-label="Step ${i+1}: ${t}${attention.has(i)?', needs attention':''}${done?', visited':''}" title="${t}${attention.has(i)?' · needs attention':''}"><span class="stepbar"></span><span class="steplabel">${stepShort[i]}</span>${attention.has(i)?'<span class="step-alert" aria-hidden="true"></span>':''}</button>`;}).join('');
  $('stepNumber').textContent=`STEP ${String(s+1).padStart(2,'0')}`;$('stepTitle').textContent=titles[s];$('stepHint').textContent=hints[s];$('progressText').textContent=`Step ${s+1} of 8`;
  let html='';
  if(s===0)html=renderShapePanel(q);
@@ -2552,7 +2580,7 @@ function exportConcept(){if(!state.intent){toast('Choose a shape first.');return
  const html=`<!doctype html><html><head><meta charset="utf-8"><title>AOS Deck Concept</title><style>body{font:14px Arial,sans-serif;color:#24313b;margin:0;padding:35px;background:#f4f4f4}.wrap{max-width:960px;margin:auto;background:white;padding:30px;border-top:8px solid #c32e3c}h1{margin:0}.sub{color:#728090;margin:7px 0 23px}.images{display:grid;grid-template-columns:1fr 1fr;gap:12px}.images img{width:100%;border:1px solid #ddd;border-radius:8px}table{width:100%;margin:18px 0;border-collapse:collapse}td{padding:9px;border-bottom:1px solid #e7e7e7}.note{font-size:12px;color:#71808d;line-height:1.6;border-top:1px solid #ddd;padding-top:14px}@media(max-width:650px){.images{grid-template-columns:1fr}}@media print{body{padding:0;background:white}.wrap{padding:16px}}</style></head><body><div class="wrap"><h1><span style="color:#c32e3c">AOS</span> HOME SOLUTIONS</h1><div class="sub">Deck concept · ${esc(q.project)} · V5.0</div><div class="images">${pic3d?`<img alt="Finished 3D deck" src="${pic3d}">`:''}<img alt="Dimensioned 2D deck" src="${pic2d}"></div><table><tr><td>Shape / overall dimensions</td><td>${esc(q.shape.toUpperCase())} · ${fmt(q.width)} × ${fmt(q.depth)}</td></tr><tr><td>Deck / stairs / total SQ FT</td><td>${state.model.stats.deckArea.toFixed(1)} / ${state.model.stats.stairArea.toFixed(1)} / ${state.model.stats.totalArea.toFixed(1)}</td></tr><tr><td>Deck / stair / total railing LF</td><td>${state.model.stats.deckRailLF.toFixed(1)} / ${state.model.stats.stairRailLF.toFixed(1)} / ${state.model.stats.totalRailLF.toFixed(1)}</td></tr><tr><td>House connections</td><td>${q.houseEdges.length} wall side(s); ${state.model.stats.ledgerCount} preliminary ledgers (edges ${state.model.stats.ledgerEdges.map(i=>i+1).join(', ')||'none'})</td></tr><tr><td>Decking</td><td>${esc(q.collection)} · ${esc(q.decking)}</td></tr><tr><td>Board direction</td><td>${esc(q.deckLine)}</td></tr><tr><td>Picture frame</td><td>${q.borderCount===2?'Double':q.borderCount===1?'Single':'None'} · ${esc(q.border)}</td></tr><tr><td>Stairs</td><td>${q.staircases.length?q.staircases.length+' independent staircases ('+q.staircases.map(s=>fmt(s.width)).join(', ')+')':'None'}</td></tr><tr><td>Railing</td><td>${esc(railSummary(q))}</td></tr></table><p class="note">PRELIMINARY SALES CONCEPT. Visual materials are approximate. Framing, footing layouts, span calculations, hardware, railing anchorage, stair requirements, quantities, code compliance and pricing have not been approved for construction. Structural review and site verification required. No customer pricing is included.</p></div></body></html>`;
  download(`${filename()}_AOS_V5_0_Concept.html`,html,'text/html');toast('Customer concept saved without pricing.');
 }
-$('fileInput').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let dat=JSON.parse(await f.text()),q=dat.design||dat.intent||dat;if(!Number.isFinite(Number(q.width))||!Number.isFinite(Number(q.depth)))throw Error('Invalid deck file');state.freeDraw=false;state.shapePicker=false;setProject(q);fit2d();stepTo(0);toast('Project loaded.');}catch(err){toast('Unable to open design: '+err.message);}e.target.value='';});
+$('fileInput').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let dat=JSON.parse(await f.text()),q=dat.design||dat.intent||dat;if(!Number.isFinite(Number(q.width))||!Number.isFinite(Number(q.depth)))throw Error('Invalid deck file');state.freeDraw=false;state.shapePicker=false;setProject(q);fit2d();state.visited=new Set(titles.keys());stepTo(0);toast('Project loaded.');}catch(err){toast('Unable to open design: '+err.message);}e.target.value='';});
 $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;
  if(b.dataset.shape){selectShape(b.dataset.shape);return;}
  const act=b.dataset.action;if(act==='apply-edge-length'){const field=$('stepContent').querySelector('input[data-edge-field="length"]');if(field)updateEdgeDimension(field.value);return;}if(act==='done-edge'){selectionClear();renderPanel();planDraw();return;}if(act==='choose-shape'){state.shapePicker=true;showOverlay();return;}
@@ -2750,7 +2778,8 @@ $('stepContent').addEventListener('change',e=>{
 $('stepContent').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('input[data-field]'))e.target.blur();});
 $('shapeOverlay').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.shape)selectShape(b.dataset.shape);else if(b.dataset.action==='close-shapes'){state.shapePicker=false;showOverlay();}});
 $('startFromCanvas').onclick=()=>{state.shapePicker=true;showOverlay();};
-$('backBtn').onclick=()=>stepTo(state.step-1);$('nextBtn').onclick=()=>state.step===7?toast('Save the design or export a concept.'):stepTo(state.step+1);
+$('backBtn').onclick=()=>stepTo(state.step-1);
+$('stepdots').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b||b.disabled)return;const i=Number(b.dataset.step);if(i!==state.step)stepTo(i);});$('nextBtn').onclick=()=>state.step===7?toast('Save the design or export a concept.'):stepTo(state.step+1);
 $('mode2d').onclick=()=>changeView('2d');$('mode3d').onclick=()=>changeView('3d');
 $('undoBtn').onclick=()=>undo();$('redoBtn').onclick=()=>undo(true);$('saveBtn').onclick=saveDesign;$('openBtn').onclick=()=>$('fileInput').click();
 $('projectName').addEventListener('change',e=>{if(state.intent)patch('project',e.target.value);});
