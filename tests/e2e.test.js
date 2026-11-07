@@ -498,3 +498,67 @@ test('steps: phone width keeps step buttons tappable', async () => {
   assert.deepEqual(errors, []);
   await ctx.close();
 });
+
+// ---- V5.1 measurements ----
+const planDims = (page) => page.locator('#planCanvas').getAttribute('aria-label');
+
+test('measurements: All shows edge lengths and stair width + position, live', async () => {
+  const { ctx, page, errors } = await openApp();
+  await chooseShape(page, 'rectangle'); // 16 x 12
+  await stepBtn(page, 'Stairs').click();
+  let dims = await planDims(page);
+  assert.match(dims, /16′/); assert.match(dims, /12′/);
+  await page.locator('[data-action="stair-add"]').click();
+  dims = await planDims(page);
+  assert.match(dims, /4′ wide/);
+  // A centered 4 ft stair on a 16 ft or 12 ft edge leaves equal offsets on both sides.
+  assert.ok(/(^|, )6′(,|\.)/.test(dims) || /(^|, )4′(,|\.)/.test(dims), dims);
+  const w = page.locator('#stepContent input').first();
+  await w.fill('6'); await w.dispatchEvent('change');
+  await page.waitForFunction(() => /6′ wide/.test(document.getElementById('planCanvas').getAttribute('aria-label')));
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('measurements: divider distance from the house updates when the divider moves', async () => {
+  const { ctx, page, errors } = await openApp();
+  await chooseShape(page, 'rectangle');
+  const w = page.locator('#stepContent input[type=number]').first(); // make room for a divider
+  await w.fill('24'); await w.dispatchEvent('change');
+  await stepBtn(page, 'Layout').click();
+  await page.locator('[data-path="deckLine"][data-value="vertical"]').click(); // boards run out from the house
+  await page.locator('[data-path="layoutTab"][data-value="border"]').click();
+  await page.locator('[data-action="divider-add"]').click();
+  let dims = await planDims(page);
+  const before = dims.match(/(\d+′(?: \d+″)?) from house/);
+  assert.ok(before, dims);
+  const slider = page.locator('[data-divider-slider]');
+  await slider.evaluate(el => { el.value = String(Number(el.min) + (Number(el.max) - Number(el.min)) * 0.2); el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); });
+  await page.waitForTimeout(150);
+  dims = await planDims(page);
+  const after = dims.match(/(\d+′(?: \d+″)?) from house/);
+  assert.ok(after, dims);
+  assert.notEqual(after[1], before[1], 'label follows the divider');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('measurements: Selected shows only the selected railing edge; Off hides; choice is remembered', async () => {
+  const { ctx, page, errors } = await openApp();
+  await chooseShape(page, 'rectangle');
+  await stepBtn(page, 'Railings').click();
+  await page.locator('[data-path="railTab"][data-value="finish"]').click();
+  await page.locator('#measureBtn').click();
+  assert.match(await page.locator('#measureBtn').innerText(), /Selected/i);
+  assert.match(await planDims(page), /overall/, 'nothing selected: overall size');
+  await page.locator('[data-action="rail-target"][data-edge="2"]').click();
+  assert.equal(await planDims(page), '2D plan. Dimensions: 16′.');
+  await page.locator('#measureBtn').click();
+  assert.equal(await planDims(page), '2D plan. Dimensions hidden.');
+  await page.reload();
+  await page.waitForFunction(() => window.DeckCore);
+  assert.match(await page.locator('#measureBtn').innerText(), /Off/i);
+  await page.locator('#measureBtn').click(); // back to All for other tests sharing this browser profile
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
