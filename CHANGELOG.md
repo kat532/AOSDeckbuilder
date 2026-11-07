@@ -2,6 +2,26 @@
 
 All changes to `index.html` and the test suite. Staging and production are deployed separately and only with owner approval.
 
+## V5.2 Group A — checkpoint 2: A3 full-width stairs and landings (branch `v5.2/feature-recovery`, 7 Nov 2026)
+
+Built on checkpoint 1 (tag `checkpoint/v5.2-groupA-a1a2`, unchanged). Internal build `5.2-group-a-a3`. Main deck framing generator untouched. 254 tests: 250 pass, 0 fail, 4 known structural failures (case 4).
+
+**Full-width stairs**
+- "Full edge width" on any stair: it spans the whole edge (offset 0), the deck railing on that edge becomes the stair opening, and the stair follows the edge when the deck size changes. A second stair cannot share that edge. Turning it off returns to 4′ 0″.
+
+**Straight stairs with a landing**
+- "Landing" on any stair: upper flight → landing → lower flight to grade, in a straight line.
+- Landing width (stair width to +8 ft), depth (3–12 ft) and height above grade, in feet and inches. Every riser is the same height (total rise ÷ total risers, at most 7¾ in.); the landing height snaps to a whole number of risers with at least two risers above and below, and the app says when it moved it. Needs a deck of about 2′ 7″ or more; otherwise the button explains why it is unavailable.
+- Drawn in 2D (landing platform, both flights, "Landing W × D · H high" dimension), finished 3D (treads, closed risers, skirts, landing surface and fascia) and framing-only 3D (both flights' stringers and the landing frame on its posts and footings).
+- Stair railings follow each flight's pitch; guards on the open landing sides whenever the landing is more than 30 in. above grade, otherwise where that side's stair railing is on.
+- Landing supports are separate from the deck framing: doubled 2x8 headers, rims, 2x8 joists at 16 in., 6x6 posts on concrete pads, counted separately (landings, landing posts, landing footings, landing framing). Main deck joists, beams, posts and footings are identical with or without a landing (tested). Every landing carries a review flag: concept only, NOT structurally approved. A landing too low for posts, or one that runs back under the deck, is flagged.
+- Quantities: treads, risers, stringers for both flights; stair area includes the landing; stair railing length includes both flights and the landing guards; the Review step lists landings, posts, footings and framing members.
+- Saved as `landing: {width, depth, elevation}` and `fullWidth: true` on the stair record; older single-flight and multi-stair files open unchanged and plain stairs build exactly as in V5.2 (framing-equivalence test).
+
+**Tests added**: 13 engine tests (equal risers across 20 height/elevation combinations, flight/landing positions, support isolation, review flags, guards, quantities, limits, full width, overlaps, under-deck warning, save/reopen and compatibility) and 5 browser journeys (full width incl. deck resize and reopen; landing sizes, snapping, 2D label, 3D and framing-only, Review step, save/reopen, Undo; limits and low decks; several stairs with overlap refusal; old files).
+
+**Known limitations**: landing framing is a fixed concept layout (not sized from loads); landing guard returns are drawn only when the landing is wider than the stair by about 1 ft; the stair hint bar and some phone labels from earlier builds are unchanged; turning stairs (A4) not started.
+
 ## V5.2 Group A — checkpoint 1: A1 + A2 (branch `v5.2/feature-recovery`, 7 Nov 2026)
 
 Built on the protected V5.2 baseline (SHA-256 80b6afea…61c6). Version label unchanged (V5.2 · Deck Studio); internal build `5.2-group-a-a1a2`. Framing generator untouched. Project files unchanged in format. 226 tests: 222 pass, 0 fail, 4 known structural failures (case 4, reported as TODO).

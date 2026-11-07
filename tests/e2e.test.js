@@ -1270,3 +1270,125 @@ test('checkpoint: T and U section edges are exact in the geometry and in the sav
   assert.deepEqual(errors, []);
   await ctx.close();
 });
+
+// ---- V5.2 Group A — A3: full-width stairs and landings ----
+async function toStairs(page, design) {
+  await openDeckFile(page, design);
+  await stepBtn(page, 'Stairs').click();
+}
+const stairPanel = (page) => page.locator('#stepContent').innerText();
+async function stairField(page, key, v) { const f = page.locator(`#stepContent input[data-stair-field="${key}"]`); await f.fill(v); await f.dispatchEvent('change'); await page.waitForTimeout(150); }
+async function views(page) { // 2D -> 3D finished -> 3D framing-only -> back
+  await page.locator('#mode3d').click(); await page.waitForTimeout(500);
+  await page.locator('#structureToggle').click(); await page.waitForTimeout(400);
+  await page.locator('#structureToggle').click(); await page.locator('#mode2d').click(); await page.waitForTimeout(200);
+}
+
+test('A3: full-width stair spans the edge, follows a width change, survives save/reopen and turns off again', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toStairs(page, { shape: 'rectangle', width: 16, depth: 12, height: 4, houseEdges: [0], staircases: [{ id: 'a', edge: 2, width: 4, offset: 0 }] });
+  await page.locator('[data-action="stair-full"]').click();
+  assert.match(await toastText(page), /spans the full 16′ 0″ edge/);
+  assert.equal(await page.locator('#stepContent input[data-stair-field="width"]').inputValue(), '16′ 0″');
+  assert.ok(await page.locator('#stepContent input[data-stair-field="width"]').isDisabled());
+  assert.match(await page.locator('#planCanvas').getAttribute('aria-label'), /16′ 0″ wide/);
+  await views(page);
+  // The deck gets wider: the stair follows its edge.
+  await stepBtn(page, 'Shape').click();
+  const w = page.locator('#stepContent input[data-field="width"]'); await w.fill('20'); await w.dispatchEvent('change'); await page.waitForTimeout(200);
+  let { data } = await saveFile(page);
+  assert.equal(data.design.staircases[0].fullWidth, true);
+  assert.equal(data.design.staircases[0].width, 20);
+  const { fresh } = await reopen(page, ctx);
+  await stepBtn(fresh.page, 'Stairs').click();
+  assert.equal(await fresh.page.locator('#stepContent input[data-stair-field="width"]').inputValue(), '20′ 0″');
+  await fresh.page.locator('[data-action="stair-full"]').click();
+  assert.equal(await fresh.page.locator('#stepContent input[data-stair-field="width"]').inputValue(), '4′ 0″');
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+test('A3: landing with width, depth and height; riser-snapped height; 2D/3D/framing; save, reopen and undo', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toStairs(page, { shape: 'rectangle', width: 20, depth: 14, height: 6, houseEdges: [0], staircases: [{ id: 'a', edge: 2, width: 4, offset: 0 }] });
+  await page.locator('[data-action="stair-landing"]').click();
+  assert.match(await toastText(page), /Landing added halfway down/);
+  await stairField(page, 'landingWidth', `6' 0"`);
+  await stairField(page, 'landingDepth', `5' 0"`);
+  await stairField(page, 'landingElevation', `3' 2"`);
+  assert.match(await toastText(page), /Landing set to 3′ 0″ above grade so every riser is the same height \(7¼ in\.\)/);
+  const text = await stairPanel(page);
+  assert.match(text, /10 risers · 5 \+ 5/);
+  assert.match(text, /Upper flight: 5 risers down to the landing\. Lower flight: 5 risers to grade/);
+  assert.match(text, /not an approved structure/);
+  assert.match(await page.locator('#planCanvas').getAttribute('aria-label'), /Landing 6′ 0″ × 5′ 0″ · 3′ 0″ high/);
+  await views(page);
+  // Framing step lists the landing separately and keeps the review flag.
+  await stepBtn(page, 'Review').click();
+  assert.match(await page.locator('#stepContent').innerText(), /1 landing with 4 posts, 4 footings and \d+ framing members \(concept, not approved\)/);
+  const { fresh, data } = await reopen(page, ctx);
+  assert.deepEqual(data.design.staircases[0].landing, { width: 6, depth: 5, elevation: 3 });
+  await stepBtn(fresh.page, 'Stairs').click();
+  assert.equal(await fresh.page.locator('#stepContent input[data-stair-field="landingDepth"]').inputValue(), '5′ 0″');
+  // 3 recorded changes (the 3′ 2″ height snapped to the 3′ 0″ default): undo all of them.
+  for (let i = 0; i < 6 && await page.locator('#undoBtn').isEnabled(); i++) await page.locator('#undoBtn').click();
+  await stepBtn(page, 'Stairs').click();
+  assert.match(await stairPanel(page), /Landing \+/, 'Undo returns to a straight stair');
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+test('A3: landing limits explain themselves; low decks cannot add one', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toStairs(page, { shape: 'rectangle', width: 16, depth: 12, height: 2, houseEdges: [0], staircases: [{ id: 'a', edge: 2, width: 4, offset: 0 }] });
+  assert.ok(await page.locator('[data-action="stair-landing"]').isDisabled());
+  assert.match(await stairPanel(page), /A landing needs at least four risers: a deck about 2′ 7″ high or more/);
+  // Raise the deck: now a landing is allowed, and bad sizes are refused with the reason.
+  await stepBtn(page, 'House').click();
+  const h = page.locator('#stepContent input[data-field="height"]'); await h.fill('6'); await h.dispatchEvent('change');
+  await stepBtn(page, 'Stairs').click();
+  await page.locator('[data-action="stair-landing"]').click();
+  await stairField(page, 'landingWidth', `2' 0"`);
+  assert.match(await toastText(page), /Landing width must be from 4′ 0″ \(the stair width\) to 12′ 0″/);
+  await stairField(page, 'landingDepth', `20' 0"`);
+  assert.match(await toastText(page), /Landing depth must be from 3′ 0″ to 12′ 0″/);
+  await stairField(page, 'landingElevation', `7' 0"`);
+  assert.match(await toastText(page), /between grade and the deck \(6′ 0″\)/);
+  assert.equal(await page.locator('#stepContent input[data-stair-field="landingWidth"]').inputValue(), '4′ 0″', 'nothing changed');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('A3: a landing stair and plain stairs together; a landing that would hit another stair is refused', async () => {
+  const { ctx, page, errors } = await openApp();
+  await toStairs(page, { shape: 'rectangle', width: 24, depth: 14, height: 6, houseEdges: [0], staircases: [
+    { id: 'a', edge: 2, width: 4, offset: -3 }, { id: 'b', edge: 2, width: 4, offset: 4 }, { id: 'c', edge: 1, width: 4, offset: 0 }] });
+  await page.locator('[data-action="stair-landing"]').click(); // stair 1
+  await stairField(page, 'landingWidth', `6' 0"`); // stair 1 landing spans 6 ft to 0 ft left of center
+  await page.locator('[data-action="stair-next"]').click();
+  await page.locator('[data-action="stair-landing"]').click(); // stair 2 (4 ft right of center) gets a 4 ft landing: fits
+  assert.match(await toastText(page), /Landing added/);
+  await stairField(page, 'landingWidth', `10' 0"`); // would reach 1 ft into stair 1's landing
+  assert.match(await toastText(page), /Not enough room: this stair or its landing would overlap another staircase/);
+  let { data } = await saveFile(page);
+  assert.equal(data.design.staircases.length, 3);
+  assert.deepEqual(data.design.staircases.map(s => Boolean(s.landing)), [true, true, false]);
+  await views(page);
+  const { fresh, data: d2 } = await reopen(page, ctx);
+  assert.deepEqual(d2.design.staircases.map(s => s.landing?.width ?? null), [6, 4, null]);
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+test('A3: older single-flight and multi-stair projects open unchanged', async () => {
+  const { ctx, page, errors } = await openApp();
+  await openDeckFile(page, { shape: 'rectangle', width: 20, depth: 14, height: 5, houseEdges: [0], stairs: { enabled: true, edge: 2, width: 4, offset: 0, rails: { left: true, right: true } } });
+  let { data } = await saveFile(page);
+  assert.equal(data.design.staircases.length, 1);
+  assert.ok(!('landing' in data.design.staircases[0]) && !('fullWidth' in data.design.staircases[0]));
+  await stepBtn(page, 'Stairs').click();
+  assert.match(await stairPanel(page), /Full edge width \+/);
+  assert.match(await stairPanel(page), /Landing \+/);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});

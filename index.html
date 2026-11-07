@@ -225,6 +225,7 @@
 .len-input{font-variant-numeric:tabular-nums}
 .framingstatus{font:800 9.5px/1 system-ui,sans-serif;letter-spacing:.6px;padding:6px 9px;border-radius:9px;white-space:nowrap}
 .framingstatus.current{background:#e7f4ec;color:#1f6b45}.framingstatus.pending,.framingstatus.invalid{background:#fdf1dc;color:#8a5a06}.framingstatus.calculating{background:#eef1f4;color:#4d6072}
+.stair-options button{min-height:40px}
 .framing-pending{font-size:12.5px;line-height:1.45;padding:10px 12px;border-radius:9px;background:#fdf1dc;color:#6b4705;margin-bottom:8px}.framing-pending button{margin-left:6px;min-height:34px;padding:6px 10px;border-radius:8px;border:1px solid #d9a441;background:#fff;font-weight:800;font-size:11.5px}
 @media (max-width:760px){.framingstatus{display:none}}
 </style></head>
@@ -1062,13 +1063,28 @@ function edges(p){return p.map((a,i)=>{let b=p[(i+1)%p.length],dx=b[0]-a[0],dz=b
 function intersects(a,b,c,d){const orient=(p,q,r)=>(q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]);let u=orient(a,b,c),v=orient(a,b,d),w=orient(c,d,a),x=orient(c,d,b);return u*v<-1e-5&&w*x<-1e-5;}
 function validPolygon(pts){if(pts.length<3||pts.length>36||Math.abs(signedArea(pts))<12)return false;let n=pts.length;for(let i=0;i<n;i++){let a=pts[i],b=pts[(i+1)%n];if(Math.hypot(a[0]-b[0],a[1]-b[1])<.6)return false;for(let j=i+1;j<n;j++){if(j===i+1||(i===0&&j===n-1))continue;if(intersects(a,b,pts[j],pts[(j+1)%n]))return false;}}return true;}
 
+// V5.2 A3: a staircase is one flight, or an upper flight + landing + lower flight to grade.
+// Both flights share ONE riser height (total rise / total risers), so the landing always sits a
+// whole number of risers below the deck, with at least two risers above and below it.
+function stairPlan(height,s){
+ const step=11/12,N=Math.max(2,Math.ceil(height/(7.75/12))),rise=height/N,width=s.width,L=s.landing;
+ if(!L||N<4)return {N,rise,width,landing:null,run:Math.max(0,N-1)*step,footWidth:width};
+ const want=Number.isFinite(Number(L.elevation))?Number(L.elevation):height/2;
+ const k=clamp(Math.round((height-want)/rise),2,N-2),elevation=height-k*rise;
+ const upperRun=(k-1)*step,lowerRun=(N-k-1)*step,lw=Math.max(width,Number(L.width)||width),depth=Number(L.depth)||4;
+ return {N,rise,width,landing:{upperRisers:k,lowerRisers:N-k,elevation,width:lw,depth,upperRun,lowerRun},run:upperRun+depth+lowerRun,footWidth:lw};
+}
+const fmtFt=v=>{const t=Math.round(v*12),f=Math.floor(t/12);return `${f}′ ${t-f*12}″`;};
+const LANDING_MIN_HEIGHT=4*7.75/12; // four risers: two above and two below the landing
 function stairOverlap(es,height,s,t){
  const run=(Math.max(2,Math.ceil(height/(7.75/12)))-1)*11/12;
  function corners(stair){const e=es[stair.edge];if(!e)return [];
    const ctr=[e.mid[0]+e.t[0]*stair.offset,e.mid[1]+e.t[1]*stair.offset];
-   return [[-1,0],[1,0],[1,run],[-1,run]].map(([side,v])=>[
-      ctr[0]+e.t[0]*side*stair.width/2+e.n[0]*v,
-      ctr[1]+e.t[1]*side*stair.width/2+e.n[1]*v]);
+   // A landing makes the stair's footprint longer and possibly wider than the flight.
+   const pl=stair.landing?stairPlan(height,stair):null,r=pl?.landing?pl.run:run,w=pl?.landing?pl.footWidth:stair.width;
+   return [[-1,0],[1,0],[1,r],[-1,r]].map(([side,v])=>[
+      ctr[0]+e.t[0]*side*w/2+e.n[0]*v,
+      ctr[1]+e.t[1]*side*w/2+e.n[1]*v]);
  }
  const A=corners(s),B=corners(t);if(!A.length||!B.length)return false;
  for(const p of [A,B])for(let k=0;k<4;k++){
@@ -1097,13 +1113,22 @@ function sanitize(s){const b=baseIntent(),x=s||{};const q={...b,...x,stairs:{...
    if(raw?.enabled===false)continue;
    const edgeId=Number(raw?.edge),edge=es[edgeId];
    if(!edge||q.houseEdges.includes(edgeId)||edge.len<3.5)continue;
-   const width=clamp(raw?.width??4,3,Math.max(3,edge.len-.5));
-   const reach=Math.max(0,(edge.len-width)/2-.08),offset=clamp(raw?.offset??0,-reach,reach);
+   // V5.2 A3: a full-width stair spans its whole edge and follows that edge's length.
+   const full=raw?.fullWidth===true;
+   const width=full?edge.len:clamp(raw?.width??4,3,Math.max(3,edge.len-.5));
+   const reach=Math.max(0,(edge.len-width)/2-.08),offset=full?0:clamp(raw?.offset??0,-reach,reach);
    // Maintain a six-inch separation between openings on the same edge.
    const same=q.staircases.filter(s=>s.edge===edgeId);
    if(same.some(s=>Math.abs(s.offset-offset)<(s.width+width)/2+.5))continue;
    const candidate={id:String(raw?.id||('stair-'+(q.staircases.length+1))),enabled:true,
      edge:edgeId,width,offset,rails:{left:raw?.rails?.left!==false,right:raw?.rails?.right!==false}};
+   if(full)candidate.fullWidth=true;
+   // V5.2 A3: optional landing. The elevation is stored as built (a whole number of risers).
+   if(raw?.landing&&typeof raw.landing==='object'&&q.height>=LANDING_MIN_HEIGHT-1e-9){
+     const lw=clamp(Number(raw.landing.width)||width,width,Math.min(width+8,40)),depth=clamp(Number(raw.landing.depth)||4,3,12);
+     const pl=stairPlan(q.height,{width,landing:{width:lw,depth,elevation:raw.landing.elevation}});
+     if(pl.landing)candidate.landing={width:+lw.toFixed(4),depth:+depth.toFixed(4),elevation:+pl.landing.elevation.toFixed(4)};
+   }
    if(q.staircases.some(s=>stairOverlap(es,q.height,s,candidate)))continue;
    q.staircases.push(candidate);
  }
@@ -1654,28 +1679,33 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  for(let e of es){if(q.houseEdges.includes(e.i))continue;const v=[e.mid[0]+e.n[0]*.035,e.mid[1]+e.n[1]*.035];
    add('fascia','finish',v[0],H-.39,v[1],e.len,.7,.09,accent,{yaw:-Math.atan2(e.t[1],e.t[0]),connect:`fascia-${e.i}`});}
  // V5: every staircase builds its own treads, risers, stringers and skirts.
- const stairModels=[];
+ // V5.2 A3: flight() is the original single-flight builder, parameterized by the flight's top and
+ // bottom elevations and where it starts along the stair (v0). A staircase without a landing calls
+ // it exactly once with top = deck height, bottom = grade and v0 = 0, so its parts are unchanged.
+ const stairModels=[],landingGuardPosts=[];
  for(const stair of q.staircases){
  const se=es[stair.edge],tt=se.t,nn=se.n,base=[se.mid[0]+tt[0]*stair.offset,se.mid[1]+tt[1]*stair.offset];
- const toWorld=(u,v)=>[base[0]+u*tt[0]+v*nn[0],base[1]+u*tt[1]+v*nn[1]];
- const stairW=stair.width,risers=Math.max(2,Math.ceil(H/(7.75/12))),rise=H/risers,stepD=11/12,run=Math.max(0,(risers-1))*stepD;
+ const stairBase=base;
+ function flight(v0,top,bottom,risers,rise){
+ const fbase=v0?[stairBase[0]+nn[0]*v0,stairBase[1]+nn[1]*v0]:stairBase;
+ const base=fbase,toWorld=(u,v)=>[base[0]+u*tt[0]+v*nn[0],base[1]+u*tt[1]+v*nn[1]];
+ const stairW=stair.width,stepD=11/12,run=Math.max(0,(risers-1))*stepD;
  // Shared pitch between the FIRST and LAST finished tread elevations. The total
  // deck-to-grade rise includes the final riser, and is NOT the rail/skirt pitch.
- const stairTop=H-rise,stairBottom=rise;
  const stairSlope=stepD>1e-8?rise/stepD:0;
  const stairPitchRise=stairSlope*run;
  // Tread noses are at v=(i+1)*stepD, y=H-(i+1)*rise.
  // Their common pitch line extrapolates to H at v=0 (deck rim).
  // The previous skirt and rail incorrectly anchored at H-rise at v=0,
  // putting the upper skirt edge a full riser BELOW the tread noses.
- const noseElevationAt=v=>H-stairSlope*v;
+ const noseElevationAt=v=>top-stairSlope*v;
  const noseAtFirst=stepD, noseAtLast=run;
  {
    const crossYaw=-Math.atan2(tt[1],tt[0]),alongYaw=-Math.atan2(nn[1],nn[0]);
    for(let i=0;i<risers;i++){
      const x=i*stepD;
-     let p=toWorld(0,x);add('stair-riser','stair',p[0],H-(i+.5)*rise,p[1],stairW,Math.max(.1,rise-.025),FT,accent,{yaw:crossYaw,connect:'stairs',label:'closed riser'});
-     if(i<risers-1){p=toWorld(0,(i+.5)*stepD);add('stair-tread','stair',p[0],H-(i+1)*rise-.5*FT,p[1],stairW,FT,stepD-.02,accent,{yaw:crossYaw,connect:'stairs'});}
+     let p=toWorld(0,x);add('stair-riser','stair',p[0],top-(i+.5)*rise,p[1],stairW,Math.max(.1,rise-.025),FT,accent,{yaw:crossYaw,connect:'stairs',label:'closed riser'});
+     if(i<risers-1){p=toWorld(0,(i+.5)*stepD);add('stair-tread','stair',p[0],top-(i+1)*rise-.5*FT,p[1],stairW,FT,stepD-.02,accent,{yaw:crossYaw,connect:'stairs'});}
    }
    // V4.7 stringers: true stepped side profiles, with their top edges
    // BELOW finished treads, a level bottom cut ABOVE grade and a clear
@@ -1688,13 +1718,13 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    const stringerCenterSpan=stairW-2*stringerSideInset;
    const profile=[];
    for(let i=0;i<risers-1;i++){
-     const y=H-(i+1)*rise-FT;
+     const y=top-(i+1)*rise-FT;
      // A horizontal tread seat followed by a vertical riser cut, never a
      // diagonal shortcut between successive tread seats.
      profile.push([i*stepD,y],[(i+1)*stepD,y]);
      if(i<risers-2)profile.push([(i+1)*stepD,y-rise]);
    }
-   const topHeight=H-rise-FT;
+   const topHeight=top-rise-FT-bottom;
    // The lower stringer cut uses a toe transition instead of a single
    // over-long diagonal box. Maintain a positive residual profile beneath
    // EVERY notch. This is geometric clearance only, not a lumber strength
@@ -1705,15 +1735,15 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    // an approval of notched stringer capacity.
    const bottoms=[];
    for(let i=0;i<risers;i++){
-     const x=i*stepD,upper=H-(i+1)*rise-FT;
-     const bottom=Math.max(.025,upper-throat);
-     bottoms.push([x,bottom]);
+     const x=i*stepD,upper=top-(i+1)*rise-FT;
+     const lowest=Math.max(bottom+.025,upper-throat);
+     bottoms.push([x,lowest]);
    }
    for(const b of bottoms.reverse())profile.push(b);
    if(risers<=2||throat<.29||!geo.simple(profile))alerts.push({level:'review',message:'Low-rise or nonstandard stair stringer needs an alternate toe/landing detail and verified residual throat.'});
    for(let k=0;k<nstr;k++){
      const off=-stringerCenterSpan/2+stringerCenterSpan*k/(nstr-1),p=toWorld(off,stringerRun/2);
-     const part=add('stair-stringer','stair-framing',p[0],H/2,p[1],Math.max(.2,stringerRun),Math.max(.1,H),1.5*FT,'#a38158',{
+     const part=add('stair-stringer','stair-framing',p[0],(top+bottom)/2,p[1],Math.max(.2,stringerRun),Math.max(.1,top-bottom),1.5*FT,'#a38158',{
        connect:'stairs',label:'individually notched 2x stringer; verify remaining throat, top hanger and bottom landing'});
      if(part){part.profile2d=profile.map(x=>[...x]);part.profileBase=base;part.profileTT=tt;part.profileNN=nn;part.profileOffset=off;}
    }
@@ -1731,7 +1761,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
      // Preserve the straight tread-nose-pitch upper edge and full board depth
      // until the board reaches finished grade. Clip ONLY the cosmetic lower
      // profile against grade; never bury the skirt below the generated ground.
-     const gradeClearance=.025,low0=top0-skirtDepth,low1=top1-skirtDepth;
+     const gradeClearance=bottom+.025,low0=top0-skirtDepth,low1=top1-skirtDepth;
      const skirtProfile=[[0,top0],[run,top1]];
      if(low1<gradeClearance){
        skirtProfile.push([run,gradeClearance]);
@@ -1742,7 +1772,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
        // The skirt's inside face sits just outside the structural stringer,
        // with a small overlap at the tread edge for a continuous gray finish.
        const off=side*(stairW/2-.01+skirtThickness/2),pos=toWorld(off,run/2);
-       const skirt=add('stair-skirt','stair',pos[0],H/2,pos[1],run,skirtDepth,skirtThickness,accent,{connect:'stairs',label:'continuous finished diagonal stair skirt covering outside stringer'});
+       const skirt=add('stair-skirt','stair',pos[0],(top+bottom)/2,pos[1],run,skirtDepth,skirtThickness,accent,{connect:'stairs',label:'continuous finished diagonal stair skirt covering outside stringer'});
        if(skirt){skirt.profile2d=skirtProfile.map(v=>[...v]);skirt.profileBase=base;skirt.profileTT=tt;skirt.profileNN=nn;skirt.profileOffset=off;skirt.profileThickness=skirtThickness;}
      }
    }
@@ -1750,8 +1780,52 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
 
    if(run>6)alerts.push({level:'review',message:'Stair lower landing, guards and stringer bearing require production verification.'});
  }
- stairModels.push({id:stair.id,base,edge:se.i,tt,nn,run,width:stairW,risers,rise,
-   pitchRise:stairPitchRise,pitch:Math.atan2(stairPitchRise,run),enabled:true});
+ return {run,stairPitchRise};
+ }
+ const plan=stair.landing?stairPlan(H,stair):null,L=plan?.landing;
+ if(!L){
+   const risers=Math.max(2,Math.ceil(H/(7.75/12))),rise=H/risers,{run,stairPitchRise}=flight(0,H,0,risers,rise),stairW=stair.width;
+   stairModels.push({id:stair.id,base,edge:se.i,tt,nn,run,width:stairW,risers,rise,
+     pitchRise:stairPitchRise,pitch:Math.atan2(stairPitchRise,run),enabled:true});
+   continue;
+ }
+ // ---- V5.2 A3: upper flight -> landing -> lower flight to grade ----
+ const upper=flight(0,H,L.elevation,L.upperRisers,plan.rise),v0=upper.run,v1=v0+L.depth;
+ const lower=flight(v1,L.elevation,0,L.lowerRisers,plan.rise);
+ const toW=(u,v)=>[base[0]+u*tt[0]+v*nn[0],base[1]+u*tt[1]+v*nn[1]],crossYaw=-Math.atan2(tt[1],tt[0]),alongYaw=-Math.atan2(nn[1],nn[0]);
+ const LW=L.width,LD=L.depth,E=L.elevation,c=toW(0,(v0+v1)/2);
+ add('landing-surface','stair',c[0],E-FT/2,c[1],LW,FT,LD,accent,{yaw:crossYaw,connect:'stairs',label:`stair landing ${fmtFt(LW)} × ${fmtFt(LD)}, ${fmtFt(E)} above grade`});
+ for(const [u,v,w,yaw] of [[-LW/2,(v0+v1)/2,LD,alongYaw],[LW/2,(v0+v1)/2,LD,alongYaw],[0,v1,LW,crossYaw]]){const f=toW(u,v);
+   add('landing-fascia','stair',f[0],E-.39,f[1],w,.7,.09,accent,{yaw,connect:'stairs'});}
+ // Landing framing is kept apart from the main deck framing generator: a flush 2x8 frame
+ // (doubled headers front and back, rims at the sides, joists 16 in. on center) on 6x6 posts
+ // and concrete pads. A layout CONCEPT ONLY: never presented as structurally approved.
+ const jd=7.25/12,frameTop=E-FT,frameBottom=frameTop-jd,midY=frameTop-jd/2;
+ for(const v of [v0+.125,v1-.125]){const h=toW(0,v);add('landing-beam','stair-framing',h[0],midY,h[1],LW,jd,.25,'#856143',{yaw:crossYaw,connect:'landing',label:'doubled 2x8 landing header (concept; verify span, hangers and stringer bearing)'});}
+ for(const u of [-LW/2+.0625,LW/2-.0625]){const rr=toW(u,(v0+v1)/2);add('landing-rim','stair-framing',rr[0],midY,rr[1],LD-.5,jd,.125,'#a07b55',{yaw:alongYaw,connect:'landing',label:'landing rim joist (concept)'});}
+ const nj=Math.max(0,Math.floor((LW-.25)/(16/12)));
+ for(let k=1;k<=nj;k++){const u=-LW/2+k*(LW/(nj+1));if(LW/2-Math.abs(u)<.3)continue;const j=toW(u,(v0+v1)/2);
+   add('landing-joist','stair-framing',j[0],midY,j[1],LD-.5,jd,1.5*FT,'#a07b55',{yaw:alongYaw,connect:'landing',label:'2x8 landing joist, 16 in. on center (concept)'});}
+ const postH=frameBottom-.12,nu=Math.max(2,Math.ceil((LW-.5)/6)+1),nv=LD>8?3:2;let landingPosts=0;
+ if(postH>=.4){
+   for(let a=0;a<nu;a++)for(let b=0;b<nv;b++){
+     if(nv===3&&b===1&&a>0&&a<nu-1)continue;
+     const u=-LW/2+.25+(LW-.5)*a/(nu-1),v=v0+.25+(LD-.5)*b/(nv-1),pp=toW(u,v);
+     add('landing-post','stair-framing',pp[0],.12+postH/2,pp[1],5.5*FT,postH,5.5*FT,'#9e7b57',{connect:'landing-post',label:'6x6 landing post (concept; verify size, height and bracing)'});
+     add('landing-footing','foundation',pp[0],-.22,pp[1],1.5,.62,1.5,'#a6a3a0',{mat:'concrete',connect:'landing-footing',label:'landing footing (concept; verify size, frost depth and soil)'});
+     landingPosts++;
+   }
+ }else alerts.push({level:'review',message:`Stair landing on edge ${se.i+1} is only ${fmtFt(E)} above grade: there is no room for posts under its frame. It needs a pier, block or slab support detail from AOS production.`});
+ if(postH>=.4)alerts.push({level:'review',message:`Stair landing on edge ${se.i+1}: its ${landingPosts} posts, footings, headers and joists are an AOS layout CONCEPT, separate from the deck framing, and are NOT structurally approved. Verify post size and height, footing size and frost depth, header and joist spans, stringer bearing and lateral bracing in production review.`});
+ // A landing or lower flight that runs back under the deck outline cannot be built as drawn.
+ const inPoly=pt=>{let yes=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a[1]>pt[1])!==(b[1]>pt[1])&&pt[0]<(b[0]-a[0])*(pt[1]-a[1])/(b[1]-a[1])+a[0])yes=!yes;}return yes;};
+ const probe=[];for(const fu of [-.45,0,.45])for(const fv of [.15,.5,.85])probe.push(toW(fu*LW,v0+fv*(plan.run-v0)));
+ if(probe.some(inPoly))alerts.push({level:'warning',message:`Stair on edge ${se.i+1}: its landing or lower flight runs back under the deck outline. Move the stair, shorten the landing or turn the stair.`});
+ stairModels.push({id:stair.id,base,edge:se.i,tt,nn,run:plan.run,width:stair.width,risers:plan.N,rise:plan.rise,
+   pitchRise:upper.stairPitchRise,pitch:Math.atan2(upper.stairPitchRise,upper.run),enabled:true,
+   area:stair.width*(upper.run+lower.run)+LW*LD,
+   landing:{v0,v1,width:LW,depth:LD,elevation:E,upperRisers:L.upperRisers,lowerRisers:L.lowerRisers,posts:landingPosts,guardLF:0},
+   flights:[{v0:0,run:upper.run,top:H,risers:L.upperRisers,pitchRise:upper.stairPitchRise},{v0:v1,run:lower.run,top:E,risers:L.lowerRisers,pitchRise:lower.stairPitchRise}]});
  }
  const deckGuardPostCenters=[];
  function railSegment(e,start,end,connection='deck-guard',col=railCol){
@@ -1772,10 +1846,13 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    let at=0;for(const gap of openings){railSegment(e,at,Math.max(at,gap.start),'deck-guard',edgeCol);at=Math.max(at,gap.end);}railSegment(e,at,e.len,'deck-guard',edgeCol);
  }
  for(const stair of q.staircases){
-   const g=stairModels.find(x=>x.id===stair.id);if(!g)continue;
+   const g0=stairModels.find(x=>x.id===stair.id);if(!g0)continue;
+   // V5.2 A3: a landing stair rails each flight; a plain stair is one flight from the deck to grade.
+   for(const fl of g0.flights||[null]){
+   const g=fl?{...g0,base:[g0.base[0]+g0.nn[0]*fl.v0,g0.base[1]+g0.nn[1]*fl.v0],run:fl.run,pitchRise:fl.pitchRise}:g0,top=fl?fl.top:H;
    const {tt,nn,base,run,risers,rise,pitchRise:stairPitchRise,width:stairW}=g;
    const toWorld=(u,v)=>[base[0]+u*tt[0]+v*nn[0],base[1]+u*tt[1]+v*nn[1]];
-   const noseElevationAt=v=>H-(rise/(11/12))*v;
+   const noseElevationAt=v=>top-(rise/(11/12))*v;
    const stairCol=RAILS[railFinish(q,stair.edge).railColor]||railCol;
    for(let side of [-1,1]){const key=side<0?'left':'right';if(!stair.rails[key])continue;
      const u=side*stairW/2,yaw=-Math.atan2(nn[1],nn[0]),slope=-Math.atan2(stairPitchRise,run),pt=toWorld(u,run/2);
@@ -1785,13 +1862,37 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
      const count=Math.max(2,Math.ceil(run/5.4)+1);
      for(let i=0;i<count;i++){
        const v=run*i/(count-1),p=toWorld(u,v),baseY=noseElevationAt(v);
-       if(!(i===0&&deckGuardPostCenters.some(x=>Math.hypot(x[0]-p[0],x[1]-p[1])<.30)))
+       if(!(i===0&&[...deckGuardPostCenters,...landingGuardPosts].some(x=>Math.hypot(x[0]-p[0],x[1]-p[1])<.30)))
          add('stair-rail-post','rail',p[0],baseY+1.5,p[1],.21,3.0,.21,stairCol,{mat:'metal',connect:'stair-guard'});
        if(i<count-1){const balN=Math.max(1,Math.floor((run/(count-1))/(4/12))-1);
          for(let j=1;j<=balN;j++){const vv=v+(run/(count-1))*j/(balN+1),s=toWorld(u,vv),yy=noseElevationAt(vv);
            add('stair-baluster','rail',s[0],yy+1.73,s[1],.054,2.3,.054,stairCol,{mat:'metal',connect:'stair-guard'});}
        }
      }
+   }
+   }
+   if(g0.landing){
+ // Guards on open landing sides: drawn when the landing is more than 30 in. above grade,
+ // otherwise wherever that side's stair railing is turned on.
+ const LG=g0.landing,LW=LG.width,E=LG.elevation,v0=LG.v0,v1=LG.v1,guardsNeeded=E>2.5+1e-9,stairCol=RAILS[railFinish(q,stair.edge).railColor]||railCol;let guardLF=0;
+ const toW=(u,v)=>[g0.base[0]+u*g0.tt[0]+v*g0.nn[0],g0.base[1]+u*g0.tt[1]+v*g0.nn[1]];
+ function guardLine(ua,va,ub,vb){const a=toW(ua,va),b=toW(ub,vb),len=Math.hypot(b[0]-a[0],b[1]-a[1]);if(len<.46)return;
+   const t=[(b[0]-a[0])/len,(b[1]-a[1])/len],yaw=-Math.atan2(t[1],t[0]),nr=Math.max(1,Math.ceil(len/5.5)),P=x=>[a[0]+t[0]*x,a[1]+t[1]*x];
+   for(let bay=0;bay<nr;bay++){const s0=len*bay/nr,s1=len*(bay+1)/nr;
+     for(const x of bay?[s1]:[s0,s1]){const pt=P(x);if([...deckGuardPostCenters,...landingGuardPosts].some(z=>Math.hypot(z[0]-pt[0],z[1]-pt[1])<.30))continue;landingGuardPosts.push(pt);
+       add('stair-rail-post','rail',pt[0],E+1.52,pt[1],.21,3.05,.21,stairCol,{mat:'metal',connect:'landing-guard'});}
+     const m=P((s0+s1)/2),Lb=s1-s0;add('stair-top-rail','rail',m[0],E+3.02,m[1],Lb,.14,.12,stairCol,{yaw,mat:'metal',connect:'landing-guard'});
+     add('stair-bottom-rail','rail',m[0],E+.51,m[1],Lb,.11,.10,stairCol,{yaw,mat:'metal',connect:'landing-guard'});
+     const num=Math.max(0,Math.floor(Lb/(4.25/12))-1);for(let k=1;k<=num;k++){const sp=P(s0+Lb*k/(num+1));add('stair-baluster','rail',sp[0],E+1.78,sp[1],.054,2.38,.054,stairCol,{mat:'metal',connect:'landing-guard'});}
+   }guardLF+=len;}
+ const W2=stair.width/2,in8=.08;
+ for(const [side,key] of [[-1,'left'],[1,'right']]){if(!guardsNeeded&&!stair.rails[key])continue;
+   guardLine(side*(LW/2-in8),v0,side*(LW/2-in8),v1);                       // landing side
+   if(LW/2-in8-W2>=.46){guardLine(side*W2,v0+in8,side*(LW/2-in8),v0+in8);    // beside the upper flight
+                        guardLine(side*W2,v1-in8,side*(LW/2-in8),v1-in8);}   // beside the lower flight
+ }
+ if(guardsNeeded)alerts.push({level:'review',message:`Stair landing on edge ${g0.edge+1} is ${fmtFt(E)} above grade (over 30 in.): guards are drawn on its open sides; verify guard height, openings and post attachment.`});
+ LG.guardLF=guardLF;
    }
  }
  if(q.staircases.length)alerts.push({level:'review',message:'All modeled staircases require field verification of stringers, connections, railings and lower landings.'});
@@ -1805,21 +1906,28 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  alerts.push({level:'review',message:'Framing layout is an explicit bearing concept, NOT a code-verified design. Joist/beam species, grade, spans, connections, ledger, post heights and footing loads require production review.'});
  const qty=kind=>parts.filter(p=>p.kind===kind).length;
  const counts={joistNominal:`2x${joistNominal}`,joistSpacingIn:joistSpacing,pictureFlatBlocks:flatBorderBlocks,dividerFlatBlocks:flatDividerBlocks,fieldBoards:estimatedPhysicalBoards,borderBoards:qty('picture-frame'),dividers:qty('divider-board'),joists:qty('joist')+qty('picture-support-joist')+qty('divider-support-joist'),pictureSupportJoists:qty('picture-support-joist'),dividerSupportJoists:qty('divider-support-joist'),beams:qty('dropped-beam'),ledger:qty('ledger'),posts:qty('post-6x6'),footings:qty('footing-concept'),stringers:qty('stair-stringer'),treads:qty('stair-tread'),risers:qty('stair-riser'),railPosts:qty('railing-post')+qty('stair-rail-post'),balusters:qty('baluster')+qty('stair-baluster')};
- const stairArea=stairModels.reduce((total,g)=>total+g.width*g.run,0);
+ // V5.2 A3: landing parts are counted on their own; designs without a landing are unchanged.
+ if(stairModels.some(g=>g.landing))Object.assign(counts,{landings:stairModels.filter(g=>g.landing).length,landingPosts:qty('landing-post'),landingFootings:qty('landing-footing'),landingFraming:qty('landing-beam')+qty('landing-rim')+qty('landing-joist')});
+ const stairArea=stairModels.reduce((total,g)=>total+(g.area??g.width*g.run),0);
  const firstStair=stairModels[0]||{enabled:false,base:[0,0],edge:0,tt:[1,0],nn:[0,1],run:0,width:0,risers:0,rise:0,pitchRise:0,pitch:0};
  const run=firstStair.run,risers=firstStair.risers,rise=firstStair.rise;
  let deckRailLF=0,stairRailLF=0;
  for(let e of es){if(!q.railEdges.includes(e.i)||q.houseEdges.includes(e.i))continue;
    deckRailLF+=e.len-q.staircases.filter(s=>s.edge===e.i).reduce((a,s)=>a+s.width,0);}
- for(const stair of q.staircases){const g=stairModels.find(x=>x.id===stair.id);if(g)stairRailLF+=(Number(stair.rails.left)+Number(stair.rails.right))*Math.hypot(g.run,H);}
+ for(const stair of q.staircases){const g=stairModels.find(x=>x.id===stair.id);if(!g)continue;
+   if(!g.flights){stairRailLF+=(Number(stair.rails.left)+Number(stair.rails.right))*Math.hypot(g.run,H);continue;}
+   // V5.2 A3: each flight's sloped rails plus the landing guards.
+   for(const f of g.flights)stairRailLF+=(Number(stair.rails.left)+Number(stair.rails.right))*Math.hypot(f.run,f.risers*g.rise);
+   stairRailLF+=g.landing.guardLF;}
  const stats={deckArea:Math.abs(signedArea(poly)),stairArea,totalArea:Math.abs(signedArea(poly))+stairArea,deckRailLF,stairRailLF,totalRailLF:deckRailLF+stairRailLF,
    stairRun:run,stairRise:rise,riserCount:q.staircases.length?risers:0,staircaseCount:q.staircases.length,boardWidth:BW,boardGap:GAP,partCount:parts.length,maxBoardRun:maxRun,requiredDividers,dividerRowCount:dividerRows.length,dividerSectionLengthsFt:[0,...dividerFractions,1].slice(1).map((v,i)=>+(v-([0,...dividerFractions,1][i]))*(umax-umin)).map(v=>+v.toFixed(2)),boardCourses:boardRows.length,estimatedPhysicalFieldBoards:estimatedPhysicalBoards,fieldBoardFragments:fieldPieces,boardCourseWidthsFt:boardRows.map(x=>+x.width.toFixed(5)),boardCoverageFt:boardRows.length?+(boardRows.at(-1).high-boardRows[0].low).toFixed(5):0,
    maxFrontCantFt:Math.max(0,...joistSegs.map(j=>j.solution?.joistCantileverFront||0)),maxRearCantFt:Math.max(0,...joistSegs.map(j=>j.solution?.joistCantileverRear||0)),maxBeamCantFt:Math.max(0,...beamRecords.map(b=>b.postOverhang||0)),
    beamLengthsFt:beamRecords.map(b=>+b.len.toFixed(3)),postSpacingFt:beamRecords.map(b=>+b.postPitch.toFixed(3)),
    primaryLedgerEdge:q.primaryLedgerEdge,ledgerEdges:ledgerEdges.map(e=>e.i),ledgerCount:ledgerEdges.length,beamRows:beams.length,beamRoles:beamRecords.reduce((m,b)=>{const r=b.role||'shared-beam';m[r]=(m[r]||0)+1;return m;},{}),closeFootingPairs:closeFootings,sharedPosts,physicalSupportOutsideCount:physicalOutside.length,structuralEnvelopeOutsideCount:outsideStructural.length,footingOutsideProjectionCount:outsideFoundations.length,physicalSupportOutside:physicalOutside.map(p=>({kind:p.kind,role:p.role})),joistNominal:`2x${joistNominal}`,beamProfile,joistSpacingIn:joistSpacing,joistMaxSpanFt:FS.JOISTS[joistSpacing][joistNominal].span,unresolvedJoistRuns:beamSupportDiagnostics.length,sharedSupportZones:chosen.groups.length,framingPlanner:chosen.planner||'legacy-bearing-repair',optimizerCandidates:chosen.candidates,unverifiedBeamLoadCount:unsupportedBeamLoads,pictureFrameFlatBlocks:flatBorderBlocks,dividerFlatBlocks:flatDividerBlocks,pictureFrameFlatLF:borderFlatLF,dividerFlatLF:dividerFlatLF,pictureFrameSupportJoists:qty('picture-support-joist'),dividerSupportJoists:qty('divider-support-joist')};
+ if(stairModels.some(g=>g.landing))stats.landings=stairModels.filter(g=>g.landing).map(g=>({stair:g.id,edge:g.edge,elevationFt:+g.landing.elevation.toFixed(4),widthFt:g.landing.width,depthFt:g.landing.depth,upperRisers:g.landing.upperRisers,lowerRisers:g.landing.lowerRisers,riserIn:+(g.rise*12).toFixed(3),posts:g.landing.posts,guardLF:+g.landing.guardLF.toFixed(2),structuralApproval:false}));
  return {intent:q,parts,counts,alerts,stats,geometry:{poly,edges:es,inside,beams,joists:joistSegs,boardAxis:d,dividerRows,dividerFractions,dividerSpanFt:umax-umin,dividerStart:umin,joistAxis:joistD,stair:firstStair,stairs:stairModels}};
 }
-global.DeckCore={SCHEMA_VERSION,RAIL_PRODUCTS,railFinish,derivePerimeter,migrate,baseIntent,sanitize,make,stairOverlap,resolveDividerFractions,MAX_DIVIDER_ROWS,MAX_FIELD_SECTION_FT,MIN_DIVIDER_SPACING_FT,PALETTES,RAILS,SHAPES,BW,GAP,PITCH,polygon,edges,validPolygon,lineIntervals,offsetPolygon};
+global.DeckCore={stairPlan,LANDING_MIN_HEIGHT,SCHEMA_VERSION,RAIL_PRODUCTS,railFinish,derivePerimeter,migrate,baseIntent,sanitize,make,stairOverlap,resolveDividerFractions,MAX_DIVIDER_ROWS,MAX_FIELD_SECTION_FT,MIN_DIVIDER_SPACING_FT,PALETTES,RAILS,SHAPES,BW,GAP,PITCH,polygon,edges,validPolygon,lineIntervals,offsetPolygon};
 })(window);
 
 </script><script>
@@ -2410,10 +2518,10 @@ function remap(q,oldPoly,newPoly,keepIndex=false){
  for(const s of q.staircases||[]){const oldEdge=old[s.edge];if(!oldEdge)continue;
    const point=add(oldEdge.mid,mul(oldEdge.t,s.offset));
    const match=nearestIndex(now,point,oldEdge),e=match.edge;
-   if(!e||match.score>.8||wall.includes(e.i)||e.len<s.width+.35)continue;
+   if(!e||match.score>.8||wall.includes(e.i)||(s.fullWidth?e.len<3.5:e.len<s.width+.35))continue;
    const off=dot(sub(point,e.mid),e.t),limit=(e.len-s.width)/2-.08;
-   if(Math.abs(off)>limit+.3)continue;
-   const candidate={...s,edge:e.i,offset:Math.max(-limit,Math.min(limit,off))};
+   if(!s.fullWidth&&Math.abs(off)>limit+.3)continue;
+   const candidate=s.fullWidth?{...s,edge:e.i,width:e.len,offset:0}:{...s,edge:e.i,offset:Math.max(-limit,Math.min(limit,off))};
    if(stairs.some(t=>t.edge===candidate.edge&&Math.abs(t.offset-candidate.offset)<(t.width+candidate.width)/2+.5))continue;
    stairs.push(candidate);
  }
@@ -2518,8 +2626,10 @@ function firstAvailableStairEdge(q,width=4,preferOther=true){
 }
 function validStairPlacement(q,index,edgeId,offset,width){
  const e=core.edges(core.polygon(q))[edgeId];
- if(!e||q.houseEdges.includes(edgeId)||e.len<width+.35)return false;
- if(Math.abs(offset)>(e.len-width)/2-.075)return false;
+ // V5.2 A3: a full-width stair takes the whole edge, centered.
+ if(e&&q.staircases[index]?.fullWidth){width=e.len;offset=0;if(q.staircases[index])q.staircases[index].width=e.len;}
+ if(!e||q.houseEdges.includes(edgeId)||(!q.staircases[index]?.fullWidth&&e.len<width+.35))return false;
+ if(!q.staircases[index]?.fullWidth&&Math.abs(offset)>(e.len-width)/2-.075)return false;
  return q.staircases.every((s,i)=>i===index||(
    (s.edge!==edgeId||Math.abs(s.offset-offset)>=(s.width+width)/2+.5)&&
    !core.stairOverlap(core.edges(core.polygon(q)),q.height,s,{...q.staircases[index],edge:edgeId,offset,width})
@@ -2531,11 +2641,11 @@ function addIndependentStair(){
  q.staircases.push({id:'stair-'+Date.now().toString(36)+'-'+q.staircases.length,enabled:true,width:4,...position,rails:{left:true,right:true}});
  state.stairSelected=q.staircases.length-1;setProject(q);fit2d();toast('New staircase added. Tap another deck edge to relocate it.');
 }
-function changeSelectedStair(update){
+function changeSelectedStair(update,done){
  const q=structuredClone(state.intent),s=q.staircases[state.stairSelected];if(!s)return;
- Object.assign(s,update);
- if(!validStairPlacement(q,state.stairSelected,s.edge,s.offset,s.width)){toast('Staircase would overlap another opening or exceed the deck edge.');renderPanel();return;}
- setProject(q);
+ Object.assign(s,update);for(const k of Object.keys(s))if(s[k]===undefined)delete s[k];
+ if(!validStairPlacement(q,state.stairSelected,s.edge,s.offset,s.width)){toast(s.landing||s.fullWidth?'Not enough room: this stair or its landing would overlap another staircase or opening.':'Staircase would overlap another opening or exceed the deck edge.');renderPanel();return;}
+ setProject(q);if(done)toast(done);
 }
 function selectStair(index){state.stairSelected=clamp(index,0,Math.max(0,(state.intent?.staircases||[]).length-1));renderPanel();planDraw();}
 
@@ -2786,7 +2896,10 @@ function storeLocalPolygon(q,p,{freeAngle=false,topology=false}={}){
  if(freeAngle||topology)q.shape='free';
  if(q.shape==='square'&&Math.abs(W-D)>.01)q.shape='rectangle';
  if(topology){const changes=shapeOps.remap(q,old,p);state.shapeNotice=changes.missingStairs?`${changes.missingStairs} staircase(s) could not remain on the edited perimeter and were removed. Undo to restore.`:'';}
- else for(const stair of q.staircases||[]){const edge=core.edges(p)[stair.edge];if(!edge||edge.len<stair.width+.35||Math.abs(stair.offset)>(edge.len-stair.width)/2-.075){
+ else for(const stair of q.staircases||[]){const edge=core.edges(p)[stair.edge];
+   // V5.2 A3: a full-width stair follows its edge; it only needs the edge to stay at least 3′ 6″.
+   if(stair.fullWidth){if(!edge||edge.len<3.5){state.lastShapeError='This edit would leave a full-width staircase on an edge shorter than 3′ 6″. Move that staircase first.';return false;}continue;}
+   if(!edge||edge.len<stair.width+.35||Math.abs(stair.offset)>(edge.len-stair.width)/2-.075){
    state.lastShapeError='This edit would leave a staircase without enough edge space. Move that staircase first.';return false;
  }}
  return true;
@@ -3063,13 +3176,21 @@ function renderShapePanel(q){
  if(state.previewPoly)html+=`<div class="editor-actions"><button class="primary" data-action="apply-preview">✓ Apply preview</button><button data-action="cancel-preview">Discard preview</button></div>`;
  return html;
 }
+function inchText(ft){const t=Math.round(ft*12*8)/8,w=Math.floor(t+1e-9),f=Math.round((t-w)*8);return `${w}${['','⅛','¼','⅜','½','⅝','¾','⅞'][f]} in.`;}
 function renderStairPanel(q){
  const list=q.staircases||[];state.stairSelected=clamp(state.stairSelected,0,Math.max(0,list.length-1));
  const stair=list[state.stairSelected],g=state.model.geometry.stairs?.[state.stairSelected];
  let html=`<div class="compact-intro">Each staircase is independent. Add stairs, tap any stair to select, or tap an exposed edge to move the selected stair.</div><div class="stair-picker"><button data-action="stair-prev" ${state.stairSelected<1?'disabled':''}>‹</button><strong>${list.length?`Stair ${state.stairSelected+1} of ${list.length}`:'No staircases'}</strong><button data-action="stair-next" ${state.stairSelected>=list.length-1?'disabled':''}>›</button><button class="red" data-action="stair-add">+ Add Stairs</button></div>`;
  if(stair){
    const e=core.edges(core.polygon(q))[stair.edge];
-   html+=`<div class="editor-panel"><div class="editor-head">STAIR ${state.stairSelected+1} · EDGE ${stair.edge+1}<span>${g?.risers||'—'} risers</span></div><div class="editor-fields"><label>Stair width (ft / in)<input data-stair-field="width" value="${fmt(stair.width)}"></label><label>Position from edge center<input data-stair-field="offset" value="${fmt(stair.offset)}"></label></div><div class="editor-actions"><button data-action="stair-rail" data-side="left" class="${stair.rails.left?'selected':''}">Left rail ${stair.rails.left?'✓':'+'}</button><button data-action="stair-rail" data-side="right" class="${stair.rails.right?'selected':''}">Right rail ${stair.rails.right?'✓':'+'}</button><button data-action="stair-remove" class="danger">Remove selected</button></div><div class="editor-tip">Drag this staircase in 2D to slide it along its edge. Tap another exposed edge to relocate it.</div></div>`;
+   // V5.2 A3: full-width stairs and landings.
+   const full=Boolean(stair.fullWidth),L=stair.landing,gl=g?.landing,canLand=q.height>=core.LANDING_MIN_HEIGHT-1e-9;
+   html+=`<div class="editor-panel"><div class="editor-head">STAIR ${state.stairSelected+1} · EDGE ${stair.edge+1}<span>${g?.risers||'—'} risers${gl?` · ${gl.upperRisers} + ${gl.lowerRisers}`:''}</span></div>
+   <div class="editor-actions stair-options"><button data-action="stair-full" class="${full?'selected':''}" aria-pressed="${full}">Full edge width ${full?'✓':'+'}</button><button data-action="stair-landing" class="${L?'selected':''}" aria-pressed="${Boolean(L)}" ${!canLand&&!L?'disabled':''}>Landing ${L?'✓':'+'}</button></div>
+   <div class="editor-fields"><label>Stair width (ft / in)<input data-stair-field="width" value="${fmt(stair.width)}" ${full?'disabled':''}></label><label>Position from edge center<input data-stair-field="offset" value="${fmt(stair.offset)}" ${full?'disabled':''}></label></div>
+   ${full?`<div class="editor-tip">Spans the whole ${fmt(e?.len||stair.width)} edge and follows it if the edge changes length.</div>`:''}
+   ${L?`<div class="editor-head landing-head">LANDING<span>${gl?`${fmt(gl.elevation)} above grade`:''}</span></div><div class="editor-fields landing-fields"><label>Landing width<input data-stair-field="landingWidth" value="${fmt(L.width)}" inputmode="text"></label><label>Landing depth<input data-stair-field="landingDepth" value="${fmt(L.depth)}" inputmode="text"></label><label>Landing height above grade<input data-stair-field="landingElevation" value="${fmt(L.elevation)}" inputmode="text"></label></div><div class="editor-tip">${gl?`Upper flight: ${gl.upperRisers} risers down to the landing. Lower flight: ${gl.lowerRisers} risers to grade. Every riser ${inchText(g.rise)}; the landing height is set to a whole number of risers. `:''}Landing posts, footings and framing are drawn as a concept for AOS production review, not an approved structure.</div>`:''}
+   ${!canLand&&!L?`<div class="editor-tip">A landing needs at least four risers: a deck about ${fmt(core.LANDING_MIN_HEIGHT)} high or more.</div>`:''}<div class="editor-actions"><button data-action="stair-rail" data-side="left" class="${stair.rails.left?'selected':''}">Left rail ${stair.rails.left?'✓':'+'}</button><button data-action="stair-rail" data-side="right" class="${stair.rails.right?'selected':''}">Right rail ${stair.rails.right?'✓':'+'}</button><button data-action="stair-remove" class="danger">Remove selected</button></div><div class="editor-tip">Drag this staircase in 2D to slide it along its edge. Tap another exposed edge to relocate it.</div></div>`;
  }
  return html;
 }
@@ -3131,7 +3252,7 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
    }
  }
  if(s===7&&q){const c=state.model.counts,m=state.model.stats;
-   html=`<div class="metrics metrics-four"><div class="metric"><b>${m.deckArea.toFixed(1)}</b><span>DECK SQ FT</span></div><div class="metric"><b>${m.stairArea.toFixed(1)}</b><span>STAIR SQ FT</span></div><div class="metric"><b>${m.totalArea.toFixed(1)}</b><span>DECK + STAIRS SQ FT</span></div><div class="metric"><b>${m.totalRailLF.toFixed(1)}</b><span>RAILING LF</span></div></div><div class="review-buttons"><button data-action="download-json">Save design + parts</button><button class="primary-small" data-action="export-concept">Customer concept ↗</button></div><p class="compact-review">Railing: ${m.deckRailLF.toFixed(1)} LF deck + ${m.stairRailLF.toFixed(1)} LF stair. Framing: ${c.joists} ${m.joistNominal} joist members, ${c.beams} beams, ${c.posts} posts. Continuous flat 2×6 support: ${c.pictureFlatBlocks} border run(s), ${m.pictureFrameFlatLF.toFixed(1)} LF + ${c.dividerFlatBlocks} divider piece(s), ${m.dividerFlatLF.toFixed(1)} LF. Production review required.</p>`;}
+   html=`<div class="metrics metrics-four"><div class="metric"><b>${m.deckArea.toFixed(1)}</b><span>DECK SQ FT</span></div><div class="metric"><b>${m.stairArea.toFixed(1)}</b><span>STAIR SQ FT</span></div><div class="metric"><b>${m.totalArea.toFixed(1)}</b><span>DECK + STAIRS SQ FT</span></div><div class="metric"><b>${m.totalRailLF.toFixed(1)}</b><span>RAILING LF</span></div></div><div class="review-buttons"><button data-action="download-json">Save design + parts</button><button class="primary-small" data-action="export-concept">Customer concept ↗</button></div><p class="compact-review">Railing: ${m.deckRailLF.toFixed(1)} LF deck + ${m.stairRailLF.toFixed(1)} LF stair. Framing: ${c.joists} ${m.joistNominal} joist members, ${c.beams} beams, ${c.posts} posts. Continuous flat 2×6 support: ${c.pictureFlatBlocks} border run(s), ${m.pictureFrameFlatLF.toFixed(1)} LF + ${c.dividerFlatBlocks} divider piece(s), ${m.dividerFlatLF.toFixed(1)} LF.${q.staircases.length?` Stairs: ${q.staircases.length} staircase${q.staircases.length>1?'s':''}, ${c.treads} treads, ${c.risers} risers, ${c.stringers} stringers${c.landings?`; ${c.landings} landing${c.landings>1?'s':''} with ${c.landingPosts} posts, ${c.landingFootings} footings and ${c.landingFraming} framing members (concept, not approved)`:''}.`:''} Production review required.</p>`;}
  $('stepContent').innerHTML=html;updateHeader();
 }
 // ---- V5.1 projects: storage, autosave, recent projects, honest downloads ----
@@ -3139,7 +3260,7 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
 // space in this preview's database (follows them to any device that opens the same link;
 // nobody else, the owner included, can read it). Anywhere else (the HTML file opened in a
 // browser), in this browser's local storage on this device. The UI always says which.
-const APP_VERSION='5.2-group-a-a1a2',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
+const APP_VERSION='5.2-group-a-a3',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
 const localProjects={kind:'browser',
  read(){try{const v=JSON.parse(localStorage.getItem(LOCAL_PROJECTS)||'{}');return v&&typeof v==='object'?v:{};}catch(e){return null;}},
  write(m){localStorage.setItem(LOCAL_PROJECTS,JSON.stringify(m));},
@@ -3254,6 +3375,17 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
  if(act==='stair-prev'||act==='stair-next'){selectStair(state.stairSelected+(act==='stair-prev'?-1:1));return;}
  if(act==='stair-remove'){
    const q=structuredClone(state.intent);q.staircases.splice(state.stairSelected,1);state.stairSelected=Math.max(0,state.stairSelected-1);setProject(q);fit2d();toast('Staircase removed.');return;
+ }
+ if(act==='stair-full'){
+   const s=currentStair();if(!s)return;const e=core.edges(core.polygon(state.intent))[s.edge];
+   if(s.fullWidth){changeSelectedStair({fullWidth:false,width:Math.min(4,Math.max(3,(e?.len||4)-.5)),offset:0},'Stair width set back to 4′ 0″.');return;}
+   changeSelectedStair({fullWidth:true,width:e.len,offset:0},`Stair now spans the full ${fmt(e.len)} edge.`);return;
+ }
+ if(act==='stair-landing'){
+   const s=currentStair();if(!s)return;
+   if(s.landing){changeSelectedStair({landing:undefined},'Landing removed: one straight flight to grade.');return;}
+   if(state.intent.height<core.LANDING_MIN_HEIGHT-1e-9){toast(`A landing needs at least four risers: a deck about ${fmt(core.LANDING_MIN_HEIGHT)} high or more.`);return;}
+   changeSelectedStair({landing:{width:s.width,depth:4,elevation:state.intent.height/2}},'Landing added halfway down. Set its size and height below.');return;
  }
  if(act==='stair-rail'){
    const q=structuredClone(state.intent),stair=q.staircases[state.stairSelected];if(stair){const side=b.dataset.side;stair.rails[side]=!stair.rails[side];setProject(q);}return;
@@ -3416,6 +3548,17 @@ $('stepContent').addEventListener('change',e=>{const slider=e.target.closest('in
    const val=ss.dataset.stairField,number=parseFeet(ss.value);
    if(!Number.isFinite(number)){toast('Enter a valid measurement.');renderPanel();return;}
    const stair=currentStair();if(!stair)return;
+   if(val.startsWith('landing')&&stair.landing){
+     // V5.2 A3: landing sizes in whole inches; height snaps to a whole number of risers.
+     const key={landingWidth:'width',landingDepth:'depth',landingElevation:'elevation'}[val],L={...stair.landing};
+     const v=Math.round(number*12)/12,H=state.intent.height;
+     if(key==='width'&&(v<stair.width||v>stair.width+8)){toast(`Landing width must be from ${fmt(stair.width)} (the stair width) to ${fmt(stair.width+8)}.`);renderPanel();return;}
+     if(key==='depth'&&(v<3||v>12)){toast('Landing depth must be from 3′ 0″ to 12′ 0″.');renderPanel();return;}
+     if(key==='elevation'&&(v<=0||v>=H)){toast(`Landing height must be between grade and the deck (${fmt(H)}).`);renderPanel();return;}
+     L[key]=v;const plan=core.stairPlan(H,{...stair,landing:L});
+     if(key==='elevation')L.elevation=+plan.landing.elevation.toFixed(4);
+     changeSelectedStair({landing:L},key==='elevation'&&Math.abs(plan.landing.elevation-v)>1/24?`Landing set to ${fmt(plan.landing.elevation)} above grade so every riser is the same height (${inchText(plan.rise)}).`:undefined);fit2d();return;
+   }
    changeSelectedStair({[val]:val==='width'?Math.round(number*12)/12:Math.round(number*4)/4});fit2d();return;
  }
  const fs=e.target.closest('select[data-feature-select]');if(fs){state.featureSelected=fs.value;state.shapeTool='feature-edit';const f=selectedFeature();if(f)state.featureDraft={width:f.width,depth:f.depth,fraction:f.fraction,kind:f.kind};renderPanel();return;}
@@ -3580,6 +3723,14 @@ function drawMeasurementLayer(q,model,es,bounds,w,h,sc){
    const A=P(e.a,e.n,-inset);
    if(s0>.3){const a=A,b=P(A,e.t,s0);measureLine(a,b);const m=xy(...P(a,e.t,s0/2));placeMeasure(fmt(s0),m[0],m[1],placed,!!sel);}
    if(s1>.3){const a=P(A,e.t,s0+g.width),b=P(A,e.t,e.len);measureLine(a,b);const m=xy(...P(a,e.t,s1/2));placeMeasure(fmt(s1),m[0],m[1],placed,!!sel);}
+   // V5.2 A3: landing size and height, beside the landing.
+   if(g.landing){const L=g.landing,mid=P(g.base,g.nn,(L.v0+L.v1)/2),label=`Landing ${fmt(L.width)} × ${fmt(L.depth)} · ${fmt(L.elevation)} high`;
+     ctx.save();ctx.font='700 10px system-ui';const half=(ctx.measureText(label).width+18)/2;ctx.restore();
+     // Clear of the landing (and of the stair's own footprint): half the label width plus a margin, either side.
+     const off=Math.max(L.width,g.width)/2+(half+14)/sc,cw=planCanvas.clientWidth,ch=planCanvas.clientHeight;
+     // Right of the landing, else left of it, else just past the foot of the stair; only spots that fit the visible plan.
+     const spots=[xy(...P(mid,g.tt,off)),xy(...P(mid,g.tt,-off)),xy(...P(g.base,g.nn,g.run+(30/sc)))].filter(([x,y])=>x-half>2&&x+half<cw-2&&y>14&&y<ch-64); // clear of the hint bar along the bottom
+     if(!spots.some(([x,y])=>placeMeasure(label,x,y,placed,false))){const f=spots[0]||xy(...P(g.base,g.nn,g.run+(30/sc)));placeMeasure(label,clamp(f[0],half+4,cw-half-4),Math.min(f[1],ch-64),placed,true);}}
  });
  // Dividers: distance from the house wall (or the deck edge) measured along the boards.
  if(state.step!==6){const centers=dividerHandleCenters(model),d=model.geometry.boardAxis;
@@ -3597,7 +3748,7 @@ function planDraw(){const {w,h}=canvasSize(),sc=state.plan.scale;ctx.fillStyle='
  polygonPath(p);ctx.fillStyle='#625442';ctx.fill();
  if(model.preview){for(const g of model.geometry.stairs||[]){const P=(a,t,v)=>[a[0]+t[0]*v,a[1]+t[1]*v],c=[P(g.base,g.tt,-g.width/2),P(g.base,g.tt,g.width/2),P(P(g.base,g.tt,g.width/2),g.nn,g.run),P(P(g.base,g.tt,-g.width/2),g.nn,g.run)];ctx.beginPath();c.forEach((v,i)=>{const pt=xy(...v);i?ctx.lineTo(...pt):ctx.moveTo(...pt);});ctx.closePath();ctx.fillStyle='#7a6250';ctx.fill();}
    if(state.step===6&&state.lastFull){ctx.save();ctx.globalAlpha=.3;for(let part of state.lastFull.parts)if(['ledger','joist','rim-joist','dropped-beam','post-6x6'].includes(part.kind))shapePart(part);ctx.restore();}}
- else if(state.step===6){for(let part of model.parts)if(['ledger','joist','rim-joist','dropped-beam','post-6x6'].includes(part.kind))shapePart(part);}
+ else if(state.step===6){for(let part of model.parts)if(['ledger','joist','rim-joist','dropped-beam','post-6x6','landing-beam','landing-rim','landing-joist','landing-post'].includes(part.kind))shapePart(part);}
  else {
    // Rasterize clipped polygons as a single union per material/color. Drawing
    // each triangle independently causes anti-aliased diagonal hairlines.
@@ -3617,7 +3768,7 @@ function planDraw(){const {w,h}=canvasSize(),sc=state.plan.scale;ctx.fillStyle='
      }
    }
    ctx.restore();
-   for(const part of model.parts)if(part.kind==='stair-tread')shapePart(part);
+   for(const part of model.parts)if(part.kind==='stair-tread'||part.kind==='landing-surface')shapePart(part);
  }
 
  if(state.step!==6){
@@ -3690,7 +3841,7 @@ function nearestEdge(pt){const es=state.model.geometry.edges,threshold=(window.i
 function insideStairs(pt){
  for(let k=0;k<(state.model?.geometry.stairs||[]).length;k++){
    const g=state.model.geometry.stairs[k],dx=pt[0]-g.base[0],dz=pt[1]-g.base[1],u=dx*g.tt[0]+dz*g.tt[1],v=dx*g.nn[0]+dz*g.nn[1];
-   if(Math.abs(u)<=g.width/2+.7&&v>=-.3&&v<=g.run+.5)return {index:k,u,v};
+   if(Math.abs(u)<=Math.max(g.width,g.landing?.width||0)/2+.7&&v>=-.3&&v<=g.run+.5)return {index:k,u,v};
  }return null;
 }
 function detectVertex(pt){const p=state.model.geometry.poly,threshold=(window.innerWidth<801?22:16)/state.plan.scale;for(let i=0;i<p.length;i++)if(Math.hypot(...[pt[0]-p[i][0],pt[1]-p[i][1]])<threshold)return i;return -1;}
@@ -3773,12 +3924,12 @@ function tapPlan(pt){if(state.freeDraw){if(nearFreeStart(pt)){finishFreeDraw();r
    if(!edge)return;
    if(state.intent.houseEdges.includes(edge.i)){toast('Stairs cannot attach to house walls.');return;}
    const q=structuredClone(state.intent),existing=q.staircases[state.stairSelected];
-   const width=existing?.width||4;
-   if(edge.len<width+.35){toast('This edge is too short for the selected stair width.');return;}
+   const full=Boolean(existing?.fullWidth),width=full?edge.len:existing?.width||4;
+   if(!full&&edge.len<width+.35){toast('This edge is too short for the selected stair width.');return;}
    const v=[pt[0]-edge.mid[0],pt[1]-edge.mid[1]],limit=(edge.len-width)/2-.08;
-   const offset=clamp(Math.round((v[0]*edge.t[0]+v[1]*edge.t[1])*4)/4,-limit,limit);
+   const offset=full?0:clamp(Math.round((v[0]*edge.t[0]+v[1]*edge.t[1])*4)/4,-limit,limit);
    if(!existing){q.staircases.push({id:'stair-'+Date.now().toString(36),edge:edge.i,width,offset,enabled:true,rails:{left:true,right:true}});state.stairSelected=q.staircases.length-1;}
-   else{existing.edge=edge.i;existing.offset=offset;}
+   else{existing.edge=edge.i;existing.offset=offset;if(full)existing.width=width;}
    if(!validStairPlacement(q,state.stairSelected,edge.i,offset,width)){toast('Not enough room here, or another staircase overlaps.');return;}
    setProject(q);fit2d();toast('Staircase positioned.');return;
  }
