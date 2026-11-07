@@ -313,3 +313,110 @@ test('railing finish: tapping an edge on the 2D plan selects it; tapping again r
   assert.deepEqual(errors, []);
   await ctx.close();
 });
+
+// ---- V5.1 Free Draw ----
+async function startFreeDraw(page) {
+  if (await page.locator('#shapeOverlay').isHidden()) await page.locator('#startFromCanvas').click();
+  await page.locator('#shapeOverlay [data-shape="free"]').click();
+  const box = await page.locator('#planCanvas').boundingBox();
+  // Same formula the app uses when Free Draw starts (feet -> CSS px).
+  const scale = Math.min(Math.max(Math.min((box.width - 90) / 24, (box.height - 90) / 18), 7), 23);
+  const o = { x: box.x + box.width / 2 - 8 * scale, y: box.y + box.height / 2 - 6 * scale };
+  return (fx, fz) => page.mouse.click(o.x + fx * scale, o.y + fz * scale);
+}
+const cornersText = (page) => page.locator('#stepContent .compact-status').innerText();
+
+test('free draw: three corners + tap near start closes a rectangle', async () => {
+  const { ctx, page, errors } = await openApp();
+  const at = await startFreeDraw(page);
+  await at(0, 0); await at(16, 0); await at(16, 12);
+  assert.match(await cornersText(page), /3 corners/);
+  await at(0.4, 0.3); // near the start pin, not on it
+  await page.locator('#dividerConfirmAccept').click();
+  await page.waitForFunction(hasArea);
+  const { data } = await saveFile(page);
+  assert.equal(data.design.shape, 'free');
+  assert.equal(data.design.points.length, 4);
+  assert.ok(Math.abs(data.design.width - 16) < 0.3 && Math.abs(data.design.depth - 12) < 0.3, `${data.design.width} x ${data.design.depth}`);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('free draw: a slightly misaligned last corner is lined up, not jogged', async () => {
+  const { ctx, page, errors } = await openApp();
+  const at = await startFreeDraw(page);
+  await at(0, 0); await at(16, 0); await at(16, 12); await at(0.75, 12);
+  await at(0.2, 0.2);
+  assert.match(await page.locator('#dividerConfirmMessage').innerText(), /last corner moves .* along its edge/);
+  await page.locator('#dividerConfirmAccept').click();
+  const { data } = await saveFile(page);
+  assert.equal(data.design.points.length, 4, 'still a 4-corner rectangle');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('free draw: 45° mode closes a chamfered deck with allowed angles', async () => {
+  const { ctx, page, errors } = await openApp();
+  const at = await startFreeDraw(page);
+  await page.locator('[data-action="draw-mode"][data-value="45"]').click();
+  await at(0, 0); await at(16, 0); await at(16, 12); await at(4, 12); await at(1.5, 9.5);
+  await at(0.2, 0.2);
+  await page.locator('#dividerConfirmAccept').click();
+  const { data } = await saveFile(page);
+  const W = data.design.width, D = data.design.depth;
+  const pts = data.design.points.map(([x, z]) => [x * W, z * D]);
+  for (let i = 0; i < pts.length; i++) {
+    const a = pts[i], b = pts[(i + 1) % pts.length];
+    const deg = Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI;
+    assert.ok(Math.abs(deg / 45 - Math.round(deg / 45)) < 0.01, `edge ${i + 1} at ${deg.toFixed(1)}°`);
+  }
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('free draw: header undo/redo step through corners while drawing', async () => {
+  const { ctx, page, errors } = await openApp();
+  const at = await startFreeDraw(page);
+  await at(0, 0); await at(12, 0); await at(12, 10);
+  await page.locator('#undoBtn').click();
+  assert.match(await cornersText(page), /2 corners/);
+  await page.locator('#redoBtn').click();
+  assert.match(await cornersText(page), /3 corners/);
+  assert.equal(await page.locator('#redoBtn').isDisabled(), true);
+  await page.locator('[data-action="undo-point"]').click();
+  assert.match(await cornersText(page), /2 corners/);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('free draw: closing shape then editing an exact width keeps it valid', async () => {
+  const { ctx, page, errors } = await openApp();
+  const at = await startFreeDraw(page);
+  await at(0, 0); await at(16, 0); await at(16, 12);
+  await at(0.3, 0.3);
+  await page.locator('#dividerConfirmAccept').click();
+  await page.waitForFunction(hasArea);
+  const before = await area(page);
+  const width = page.locator('#stepContent input[type=number]').first();
+  await width.fill('20'); await width.dispatchEvent('change');
+  await page.waitForFunction((b) => Number(document.getElementById('squareFeet').textContent.match(/(\d+)/)[1]) !== b, before);
+  assert.equal(await area(page), 240);
+  await page.locator('#undoBtn').click();
+  assert.equal(await area(page), before);
+  await page.screenshot({ path: path.join(SHOTS, 'freedraw-closed-edited.png') });
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('free draw: hovering near the start shows the closing preview (screenshot)', async () => {
+  const { ctx, page, errors } = await openApp();
+  const at = await startFreeDraw(page);
+  await at(0, 0); await at(16, 0); await at(16, 12); await at(0.5, 12);
+  const box = await page.locator('#planCanvas').boundingBox();
+  const scale = Math.min(Math.max(Math.min((box.width - 90) / 24, (box.height - 90) / 18), 7), 23);
+  await page.mouse.move(box.x + box.width / 2 - 8 * scale + 6, box.y + box.height / 2 - 6 * scale + 5);
+  await page.waitForTimeout(150);
+  await page.screenshot({ path: path.join(SHOTS, 'freedraw-close-indicator.png') });
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});

@@ -1993,7 +1993,43 @@ function remap(q,oldPoly,newPoly,keepIndex=false){
  if(q.primaryLedgerEdge!==null){const mapped=projected(q.primaryLedgerEdge);q.primaryLedgerEdge=(mapped.find(e=>wall.includes(e.i))||mapped[0])?.i??wall[0]??null;}
  return {missingStairs:lost-stairs.length};
 }
-root.AOSShape={verify,moveCorner,moveEdge,lengthenEdge,cutCorner,resizeBevel,addFeature,changeFeature,removeFeature,flipHorizontal,feet,remap,near};
+// V5.1 Free Draw closing. Finds how a drawn corner sequence closes back to its start
+// while every edge keeps an allowed direction for the drawing mode (90°, 45° or 22.5°).
+// It never bends an edge to an unsupported angle; it either closes or explains why not.
+//  1. direct  - the last corner already lines up with the start.
+//  2. slide   - the last corner slides along its own edge (≤ slideMax ft) until it lines up.
+//  3. corner  - one corner is added, joining the last corner to the start at allowed angles.
+function closeOutline(points,mode='orthogonal',opt={}){
+ const pts=(points||[]).map(p=>[+p[0],+p[1]]);
+ const step=mode==='orthogonal'?Math.PI/2:mode==='22.5'?Math.PI/8:Math.PI/4;
+ const snapDistance=opt.snapDistance??1,slideMax=opt.slideMax??2;
+ // A last corner placed on or very near the start pin means "close here", not a new corner.
+ if(pts.length>=4&&length(sub(pts.at(-1),pts[0]))<snapDistance)pts.pop();
+ if(pts.length<3)return {error:'Tap at least three corners.'};
+ const allowed=v=>{const d=length(v);if(d<.60)return false;const a=Math.atan2(v[1],v[0]);return Math.abs(Math.sin(a-Math.round(a/step)*step))*d<.035;};
+ const dirs=[];for(let k=0;k<Math.round(2*Math.PI/step);k++)dirs.push([Math.cos(k*step),Math.sin(k*step)]);
+ // Corners left in the middle of a straight edge at the closing seam add nothing; merge them.
+ const straighten=q=>{let r=q;for(let pass=0;pass<3&&r.length>3;pass++){const n=r.length,drop=new Set();
+   for(const i of [n-1,0,n-2]){const a=r[(i-1+n)%n],b=r[i],c=r[(i+1)%n],d1=sub(b,a),d2=sub(c,b);
+     if(Math.abs(cross(unit(d1),unit(d2)))<1e-4&&dot(d1,d2)>0)drop.add(i);}
+   if(!drop.size)break;r=r.filter((_,i)=>!drop.has(i));}return r;};
+ const check=p=>{const q=straighten(p.map(v=>[round(v[0]),round(v[1])]));return {poly:q,error:verify(root.AOSGeometry.area(q)<0?[...q].reverse():q)};};
+ const first=pts[0],last=pts.at(-1),prev=pts.at(-2);
+ if(allowed(sub(first,last))){const c=check(pts);if(!c.error)return {points:c.poly,how:'direct',moved:0};}
+ const u=unit(sub(last,prev)),slides=[];
+ for(const w of dirs){const X=intersection(prev,u,first,w);if(!X)continue;
+   const shift=length(sub(X,last));if(shift>slideMax||shift<1e-6||dot(sub(X,prev),u)<.6)continue;
+   const c=check([...pts.slice(0,-1),X]);if(!c.error)slides.push({points:c.poly,how:'slide',moved:shift});}
+ if(slides.length)return slides.sort((a,b)=>a.moved-b.moved)[0];
+ const corners=[];
+ for(const a of dirs)for(const b of dirs){if(Math.abs(cross(a,b))<1e-6)continue;
+   const X=intersection(last,a,first,b);if(!X)continue;
+   const t=dot(sub(X,last),a),s=dot(sub(first,X),b);if(t<.6||s<.6)continue;
+   const c=check([...pts,X]);if(!c.error)corners.push({points:c.poly,how:'corner',moved:0,added:[round(X[0]),round(X[1])],extra:t+s});}
+ if(corners.length)return corners.sort((a,b)=>a.extra-b.extra)[0];
+ return {error:check(pts).error||'These corners cannot close using the allowed angles. Undo a corner or switch the angle mode.'};
+}
+root.AOSShape={verify,closeOutline,moveCorner,moveEdge,lengthenEdge,cutCorner,resizeBevel,addFeature,changeFeature,removeFeature,flipHorizontal,feet,remap,near};
 })(window);
 
 </script><script>
@@ -2004,7 +2040,7 @@ root.AOSShape={verify,moveCorner,moveEdge,lengthenEdge,cutCorner,resizeBevel,add
 const $=id=>document.getElementById(id),core=window.DeckCore;
 const titles=['Shape & Size','House & Height','Stairs','Decking Layout','Decking Selection','Railings','Framing & Ledger','Review & Present'];
 const hints=['Choose and shape','Tap house edges','Tap an edge to add','Choose board pattern','Choose finish colors','Tap to add/remove','Review wall ledgers & supports','Finished and framing'];
-const state={dimensionLabels:[],intent:null,model:null,step:0,view:'2d',layoutTab:'direction',finishTab:'field',railTab:'locations',railTarget:'all',dividerSelected:0,stairSelected:0,selectedCorner:null,previewPoly:null,cornerPreview:null,cornerPreviewError:'',cornerKey:null,cornerSize:1,cornerAngle:45,cornerOrientation:'first',shapeTool:null,featureDraft:{kind:'bump',width:4,depth:2,fraction:.5},featureSelected:null,shapePicker:false,freeDraw:false,freePts:[],freeHover:null,drawSnap:true,drawMode:'orthogonal',selectedEdge:null,framingDetails:false,history:[null],historyAt:0,plan:{scale:18,panX:0,panY:0,targetZ:6,pointers:new Map(),drag:null,tap:null},toastTimeout:0};
+const state={dimensionLabels:[],intent:null,model:null,step:0,view:'2d',layoutTab:'direction',finishTab:'field',railTab:'locations',railTarget:'all',dividerSelected:0,stairSelected:0,selectedCorner:null,previewPoly:null,cornerPreview:null,cornerPreviewError:'',cornerKey:null,cornerSize:1,cornerAngle:45,cornerOrientation:'first',shapeTool:null,featureDraft:{kind:'bump',width:4,depth:2,fraction:.5},featureSelected:null,shapePicker:false,freeDraw:false,freePts:[],freeHover:null,freeRedo:[],drawSnap:true,drawMode:'orthogonal',selectedEdge:null,framingDetails:false,history:[null],historyAt:0,plan:{scale:18,panX:0,panY:0,targetZ:6,pointers:new Map(),drag:null,tap:null},toastTimeout:0};
 const planCanvas=$('planCanvas'),ctx=planCanvas.getContext('2d'),glCanvas=$('glCanvas'),renderer3d=new window.Deck3D(glCanvas);
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const fmt=v=>{const f=Math.floor(+v+1e-5),i=Math.round((+v-f)*12);return `${f+(i>=12?1:0)}′${i>=12?'':i?` ${i}″`:''}`;};
@@ -2158,7 +2194,11 @@ function resetDividers(){
  q.dividerMode='auto';q.dividerPositions=null;q.dividerOffset=.5;
  state.dividerSelected=0;setProject(q);toast('Default divider layout restored.');
 }
-function undo(re=false){const i=state.historyAt+(re?1:-1);if(i<0||i>=state.history.length)return;state.historyAt=i;setProject(state.history[i],false);fit2d();toast(re?'Restored':'Undone');}
+function undo(re=false){
+ if(state.freeDraw){state.freeRedo=state.freeRedo||[];
+   if(re){const p=state.freeRedo.pop();if(p)state.freePts.push(p);}else{const p=state.freePts.pop();if(p)state.freeRedo.push(p);}
+   renderPanel();planDraw();updateHeader();return;}
+ const i=state.historyAt+(re?1:-1);if(i<0||i>=state.history.length)return;state.historyAt=i;setProject(state.history[i],false);fit2d();toast(re?'Restored':'Undone');}
 function railSummary(q){const keys=Object.keys(q.railOverrides||{}).map(Number).sort((a,b)=>a-b),base=`${q.railStyle} · ${q.railColor}`;
  return keys.length?`${base} (other edges); `+keys.map(k=>{const f=core.railFinish(q,k);return `Edge ${k+1}: ${f.railStyle} · ${f.railColor}`;}).join('; '):base;}
 function toggleEdge(kind,i){const q=structuredClone(state.intent),set=new Set(kind==='house'?q.houseEdges:q.railEdges);
@@ -2169,32 +2209,34 @@ function toggleEdge(kind,i){const q=structuredClone(state.intent),set=new Set(ki
  else{if(q.houseEdges.includes(i)){toast('Remove the house wall on this edge first.');return;}if(set.has(i))set.delete(i);else set.add(i);q.railEdges=[...set];}
  patchMany(q);toast(`${kind==='house'?'House wall':'Railing'} ${set.has(i)?'added':'removed'}`);
 }
-function selectShape(shape){state.shapePicker=false;state.freeDraw=false;state.selectedEdge=null;state.selectedCorner=null;state.previewPoly=null;state.cornerPreview=null;state.cornerKey=null;state.featureSelected=null;if(shape==='free'){state.freeDraw=true;state.freePts=[];state.step=0;state.view='2d';state.plan.panX=state.plan.panY=0;state.plan.scale=clamp(Math.min((planCanvas.clientWidth-90)/24,(planCanvas.clientHeight-90)/18),7,23);state.plan.targetZ=6;showOverlay();renderPanel();planDraw();state.drawMode='orthogonal';toast('90° LOCKED: tap corners, then the green starting point or Finish Shape.');return;}
+function selectShape(shape){state.shapePicker=false;state.freeDraw=false;state.selectedEdge=null;state.selectedCorner=null;state.previewPoly=null;state.cornerPreview=null;state.cornerKey=null;state.featureSelected=null;if(shape==='free'){state.freeDraw=true;state.freePts=[];state.step=0;state.view='2d';state.plan.panX=state.plan.panY=0;state.plan.scale=clamp(Math.min((planCanvas.clientWidth-90)/24,(planCanvas.clientHeight-90)/18),7,23);state.plan.targetZ=6;showOverlay();renderPanel();planDraw();state.drawMode='orthogonal';toast('90° locked: tap each corner, then tap near the green start pin to close.');return;}
  const q=state.intent?structuredClone(state.intent):core.baseIntent();q.shape=shape;q.startShape=shape;q.points=null;q.flipL=false;q.features=[];q.bevels=[];q.originX=0;q.originZ=0;if(shape==='square'){q.width=12;q.depth=12;}else if(!state.intent){q.width=16;q.depth=12;}
  // Edge identities change when the footprint changes. Do not keep old attachments in invalid positions.
  q.railOverrides={};state.railTarget='all';q.houseEdges=[0];q.ledgerEdges=[0];q.railEdges=Array.from({length:core.polygon(q).length},(_,i)=>i).filter(i=>i!==0);q.staircases=[];q.stairs.enabled=false;q.stairs.edge=Math.min(2,q.railEdges.length-1);
  state.view='2d';setProject(q);fit2d();toast(`${shape==='L'||shape==='T'||shape==='U'?shape+'-shape':shape} footprint ready`);
 }
 function finishFreeDraw(){if(state.freePts.length<3){toast('Tap at least three corners.');return;}
- let pp=completeOrthoFootprint(state.freePts);if(window.AOSGeometry.area(pp)<0)pp=pp.reverse();
+ const closing=shapeOps.closeOutline(state.freePts,state.drawMode);
+ if(closing.error){toast('Cannot close yet: '+closing.error);planDraw();return;}
+ let pp=closing.points.map(p=>[...p]);if(window.AOSGeometry.area(pp)<0)pp=pp.reverse();
  const xs=pp.map(p=>p[0]),zs=pp.map(p=>p[1]);
- const error=shapeOps.verify(pp);
- if(error){toast('Cannot finish: '+error+'. Add or undo points.');return;}
+ const adjust=closing.how==='slide'?`The last corner moves ${fmtInches(closing.moved)} along its edge so the closing edge lines up. `:closing.how==='corner'?'One corner is added so every edge keeps an allowed angle. ':'';
  const complete=()=>{
    const xmin=Math.min(...xs),xmax=Math.max(...xs),zmin=Math.min(...zs),zmax=Math.max(...zs),W=xmax-xmin,D=zmax-zmin;
    const q=core.baseIntent();q.shape='free';q.width=W;q.depth=D;q.originX=(xmin+xmax)/2;q.originZ=zmin;
    q.points=pp.map(p=>[(p[0]-xmin)/W,(p[1]-zmin)/D]);q.houseEdges=[];q.ledgerEdges=[];
    q.railEdges=Array.from({length:pp.length},(_,i)=>i);q.staircases=[];
-   state.freeDraw=false;state.freePts=[];state.selectedCorner=null;state.selectedEdge=null;setProject(q);fit2d();toast('Custom deck footprint completed. You can edit it at any time.');
+   state.freeDraw=false;state.freePts=[];state.freeRedo=[];state.selectedCorner=null;state.selectedEdge=null;setProject(q);fit2d();toast('Shape closed. Tap any edge length to set its exact size.');
  };
  askDividerConfirmation('Finish this deck shape?',
-   `Confirm the ${pp.length}-corner outline. Its edges follow the 0°, 22.5°, 45°, 67.5° and 90° direction rules. You can still move or edit corners afterward.`,
+   `${adjust}Confirm the ${pp.length}-corner outline shown with the green dashed line. Afterward, tap any edge to type its exact length.`,
    'Use This Shape',complete);
 }
 function stepTo(i){state.cornerPreview=null;if(!state.intent&&i>0){toast('Choose a shape first.');return;}state.step=clamp(i,0,titles.length-1);state.framingDetails=false;if([0,1,2,3,5,6].includes(state.step))state.view='2d';if([4,7].includes(state.step)&&state.intent)state.view='3d';if(state.step===7&&renderer3d.showStructure)renderer3d.setStructureVisible(false);renderPanel();updateHeader();}
 function changeView(v){if(!state.intent&&v==='3d'){toast('Choose a shape first.');return;}state.view=v;updateHeader();}
 function updateHeader(){
  $('undoBtn').disabled=state.historyAt===0;$('redoBtn').disabled=state.historyAt>=state.history.length-1;
+ if(state.freeDraw){$('undoBtn').disabled=!state.freePts.length;$('redoBtn').disabled=!(state.freeRedo||[]).length;}
  $('backBtn').disabled=state.step===0;$('nextBtn').disabled=state.step===0&&(!state.intent||state.freeDraw);
  $('nextBtn').innerHTML=state.step===7?'Finish <span class="arrow">✓</span>':`Next <span class="next-name">${titles[state.step+1]}</span><span class="arrow">→</span>`;
  for(const v of ['2d','3d']){$('mode'+v).classList.toggle('active',state.view===v);$('mode'+v).setAttribute('aria-pressed',String(state.view===v));}
@@ -2310,6 +2352,12 @@ function selectDimension(index,focus=true){
 function hitDimensionLabel(pt){
  return (state.dimensionLabels||[]).find(x=>pt.x>=x.box.l-6&&pt.x<=x.box.r+6&&pt.y>=x.box.t-7&&pt.y<=x.box.b+7)?.edgeIndex??null;
 }
+// V5.1: generous closing target. A tap near the start pin, or a corner that would snap
+// within 1 ft of it, means "close the shape".
+const freeCloseRadius=()=>(window.innerWidth<801?44:32)/state.plan.scale;
+function nearFreeStart(pt){const s=state.freePts[0];if(!s||state.freePts.length<3||!pt)return false;
+ const sn=snapFreePoint(pt);return Math.hypot(pt[0]-s[0],pt[1]-s[1])<freeCloseRadius()||Math.hypot(sn[0]-s[0],sn[1]-s[1])<1;}
+const fmtInches=ft=>{const i=Math.round(ft*12);return i>=12?fmt(ft):`${i}″`;};
 function snapFreePoint(pt){
  const prev=state.freePts.at(-1);let p=[Math.round(pt[0]*4)/4,Math.round(pt[1]*4)/4];
  if(!prev)return p;
@@ -2395,7 +2443,7 @@ function refreshCornerPreview(){
 }
 function formatCornerSize(feet){return fmt(Math.round(feet*12)/12);}
 function renderShapePanel(q){
- if(state.freeDraw)return `<div class="compact-intro">Place points one edge at a time. Each new line snaps to the chosen direction. Live dimensions appear as you draw.</div><div class="seg draw-modes"><button data-action="draw-mode" data-value="orthogonal" class="${state.drawMode==='orthogonal'?'selected':''}">Square</button><button data-action="draw-mode" data-value="45" class="${state.drawMode==='45'?'selected':''}">45°</button><button data-action="draw-mode" data-value="22.5" class="${state.drawMode==='22.5'?'selected':''}">22.5°</button></div><div class="action-row"><button data-action="undo-point">↶ Undo point</button><button data-action="finish-draw" ${state.freePts.length<3?'disabled':''}>✓ Finish & Confirm</button><button data-action="cancel-draw">Cancel</button></div><span class="compact-status">${state.freePts.length} points · tap the green starting pin to close. Undo any point before confirming.</span>`;
+ if(state.freeDraw)return `<div class="compact-intro">Place points one edge at a time. Each new line snaps to the chosen direction. Live dimensions appear as you draw.</div><div class="seg draw-modes"><button data-action="draw-mode" data-value="orthogonal" class="${state.drawMode==='orthogonal'?'selected':''}">Square</button><button data-action="draw-mode" data-value="45" class="${state.drawMode==='45'?'selected':''}">45°</button><button data-action="draw-mode" data-value="22.5" class="${state.drawMode==='22.5'?'selected':''}">22.5°</button></div><div class="action-row"><button data-action="undo-point">↶ Undo point</button><button data-action="finish-draw" ${state.freePts.length<3?'disabled':''}>✓ Finish & Confirm</button><button data-action="cancel-draw">Cancel</button></div><span class="compact-status">${state.freePts.length} corners · ${state.freePts.length>=3?'tap near the green start pin to close. Close is good enough: the last edge is lined up for you.':'tap the plan to place corners.'}</span>`;
  if(!q)return `<div class="shape-grid">${core.SHAPES.map(sh=>`<button data-shape="${sh}">${shapeSvg(sh)}<span>${sh==='free'?'Free Draw':sh==='rectangle'?'Rectangle':sh==='square'?'Square':sh+'-Shape'}</span></button>`).join('')}</div>`;
  const es=state.model.geometry.edges,corner=state.selectedCorner,edge=state.selectedEdge,poly=state.model.geometry.poly;
  let html=corner!==null||edge!==null?'':`<div class="shape-inline"><span><b>${q.shape==='free'?'Custom':q.shape==='rectangle'?'Rectangle':q.shape==='square'?'Square':q.shape+'-Shape'}</b> · ${poly.length} corners</span><button data-action="choose-shape">Templates</button></div><div class="field-row">${input('width','OVERALL WIDTH',q.width,4,48)}${input('depth','OVERALL DEPTH',q.depth,4,42)}</div>`;
@@ -2517,7 +2565,7 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
    renderPanel();planDraw();return;
  }
  if(act==='framing-details'){state.framingDetails=!state.framingDetails;renderPanel();return;}
- if(act==='undo-point'){state.freePts.pop();renderPanel();planDraw();return;}
+ if(act==='undo-point'){undo(false);return;}
  if(act==='finish-draw'){finishFreeDraw();return;}
  if(act==='draw-mode'){state.drawMode=b.dataset.value;renderPanel();planDraw();return;}
  if(act==='toggle-snap'){state.drawMode=state.drawMode==='orthogonal'?'free':'orthogonal';renderPanel();return;}
@@ -2730,13 +2778,19 @@ function fit2d(){
 function polygonPath(p){ctx.beginPath();p.forEach((v,i)=>{const t=xy(v[0],v[1]);i?ctx.lineTo(...t):ctx.moveTo(...t);});ctx.closePath();}
 function shapePart(p){if(p.footprint){ctx.save();ctx.beginPath();p.footprint.forEach((pt,i)=>{let v=xy(pt[0],pt[1]);i?ctx.lineTo(...v):ctx.moveTo(...v);});ctx.closePath();ctx.fillStyle=p.color;ctx.fill();/* Seal antialias hairlines between clipped triangles using their own fill color; do not draw dark triangulation edges. */ctx.strokeStyle=p.color;ctx.lineWidth=1.2;ctx.stroke();ctx.restore();return;}const [x,y]=xy(p.x,p.z),sc=state.plan.scale;ctx.save();ctx.translate(x,y);ctx.rotate(-(p.yaw||0));ctx.fillStyle=p.color;ctx.fillRect(-p.w*sc/2,-p.d*sc/2,p.w*sc,p.d*sc);if(['field-board','picture-frame','divider-board','stair-tread'].includes(p.kind)){ctx.strokeStyle='rgba(50,37,28,.3)';ctx.lineWidth=.65;ctx.strokeRect(-p.w*sc/2,-p.d*sc/2,p.w*sc,p.d*sc);}ctx.restore();}
 function dimLabel(t,x,y,vertical=false,editable=false){ctx.save();ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';if(vertical){const a=typeof vertical==='number'?vertical:Math.PI/2;ctx.translate(x,y);ctx.rotate((a>Math.PI/2&&a<3*Math.PI/2)?a-Math.PI:a);x=0;y=0;}const w=ctx.measureText(t).width+16;ctx.fillStyle='rgba(255,255,255,.96)';ctx.strokeStyle=editable?'rgba(195,46,60,.56)':'#d8e1e5';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(x-w/2,y-12,w,24,5);ctx.fill();ctx.stroke();ctx.fillStyle='#354554';ctx.fillText(t,x,y);ctx.restore();}
-function freePlan(){ctx.save();ctx.lineWidth=2;ctx.strokeStyle='#c32e3c';ctx.fillStyle='rgba(195,46,60,.13)';
- const raw=state.freePts,closed=raw.length>=3?completeOrthoFootprint(raw):raw;
- ctx.beginPath();closed.forEach((p,i)=>{let v=xy(...p);i?ctx.lineTo(...v):ctx.moveTo(...v);});
- if(closed.length>=3)ctx.closePath();ctx.fill();ctx.stroke();
- if(closed.length>raw.length){const p=xy(...closed.at(-1));ctx.fillStyle='#2b8b60';ctx.beginPath();ctx.arc(...p,5,0,Math.PI*2);ctx.fill();}
- if(raw.length>=1&&state.freeHover){const a=xy(...raw.at(-1)),b=xy(...snapFreePoint(state.freeHover));ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle='#26805b';ctx.lineWidth=1.7;ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();ctx.restore();const candidate=snapFreePoint(state.freeHover),distance=Math.hypot(candidate[0]-raw.at(-1)[0],candidate[1]-raw.at(-1)[1]);if(distance>.4)dimLabel(fmt(distance),(a[0]+b[0])/2,(a[1]+b[1])/2-17);}
- raw.forEach((p,i)=>{if(i){const a=xy(...raw[i-1]),b=xy(...p);dimLabel(fmt(Math.hypot(p[0]-raw[i-1][0],p[1]-raw[i-1][1])),(a[0]+b[0])/2,(a[1]+b[1])/2-14);}const pt=xy(...p);ctx.beginPath();ctx.arc(...pt,i===0?8:5,0,Math.PI*2);ctx.fillStyle=i===0?'#27835b':'#c32e3c';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();});ctx.restore();}
+function freePlan(){ctx.save();
+ const raw=state.freePts,res=raw.length>=3?shapeOps.closeOutline(raw,state.drawMode):null,closed=res&&!res.error?res.points:null;
+ const hover=state.freeHover,closing=hover&&nearFreeStart(hover);
+ if(closed){ctx.beginPath();closed.forEach((p,i)=>{const v=xy(...p);i?ctx.lineTo(...v):ctx.moveTo(...v);});ctx.closePath();
+   ctx.fillStyle=closing?'rgba(38,128,91,.16)':'rgba(195,46,60,.08)';ctx.fill();
+   ctx.save();ctx.setLineDash([7,5]);ctx.strokeStyle='#26805b';ctx.lineWidth=closing?2.6:1.7;ctx.stroke();ctx.restore();}
+ if(raw.length>1){ctx.beginPath();raw.forEach((p,i)=>{const v=xy(...p);i?ctx.lineTo(...v):ctx.moveTo(...v);});ctx.strokeStyle='#c32e3c';ctx.lineWidth=2.5;ctx.stroke();}
+ if(raw.length>=1&&hover&&!closing){const a=xy(...raw.at(-1)),candidate=snapFreePoint(hover),b=xy(...candidate);ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle='#26805b';ctx.lineWidth=1.7;ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();ctx.restore();const distance=Math.hypot(candidate[0]-raw.at(-1)[0],candidate[1]-raw.at(-1)[1]);if(distance>.4)dimLabel(fmt(distance),(a[0]+b[0])/2,(a[1]+b[1])/2-17);}
+ raw.forEach((p,i)=>{if(i){const a=xy(...raw[i-1]),b=xy(...p);dimLabel(fmt(Math.hypot(p[0]-raw[i-1][0],p[1]-raw[i-1][1])),(a[0]+b[0])/2,(a[1]+b[1])/2-14);}const pt=xy(...p);ctx.beginPath();ctx.arc(...pt,i===0?8:5,0,Math.PI*2);ctx.fillStyle=i===0?'#27835b':'#c32e3c';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();});
+ if(raw.length>=3){const s0=xy(...raw[0]),ok=closed&&!res.error;
+   ctx.beginPath();ctx.arc(...s0,closing?17:13,0,Math.PI*2);ctx.lineWidth=closing?3:1.6;ctx.strokeStyle=ok?'#26805b':'#c32e3c';ctx.setLineDash(closing?[]:[3,3]);ctx.stroke();ctx.setLineDash([]);
+   if(closing)dimLabel(ok?'Tap to close':'Can’t close here',s0[0],s0[1]-30);}
+ ctx.restore();}
 // Collision-aware dimensions. The selected edge always takes priority; other
 // dimensions can be revealed by tapping them instead of piling labels together.
 function smartDimensions(es,w,h,sc){
@@ -2928,8 +2982,8 @@ planCanvas.addEventListener('pointermove',e=>{if(state.freeDraw&&!state.plan.poi
  }
  patchMany(q,false,true);planDraw();
 });
-function tapPlan(pt){if(state.freeDraw){if(state.freePts.length>=3&&Math.hypot(pt[0]-state.freePts[0][0],pt[1]-state.freePts[0][1])<(window.innerWidth<801?28:20)/state.plan.scale){finishFreeDraw();return;}
- if(state.freePts.length>=36){toast('Maximum 36 corners.');return;}const snapped=snapFreePoint(pt);if(state.freePts.at(-1)&&Math.hypot(snapped[0]-state.freePts.at(-1)[0],snapped[1]-state.freePts.at(-1)[1])<.6){toast('Move at least 7 in. from the last corner.');return;}state.freePts.push(snapped);renderPanel();planDraw();return;}
+function tapPlan(pt){if(state.freeDraw){if(nearFreeStart(pt)){finishFreeDraw();return;}
+ if(state.freePts.length>=36){toast('Maximum 36 corners.');return;}const snapped=snapFreePoint(pt);if(state.freePts.at(-1)&&Math.hypot(snapped[0]-state.freePts.at(-1)[0],snapped[1]-state.freePts.at(-1)[1])<.6){toast('Move at least 7 in. from the last corner.');return;}state.freePts.push(snapped);state.freeRedo=[];renderPanel();planDraw();updateHeader();return;}
  if(!state.intent)return;const edge=nearestEdge(pt);
  if(state.step===0){
    const vertex=detectVertex(pt);
