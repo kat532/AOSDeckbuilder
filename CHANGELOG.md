@@ -2,6 +2,50 @@
 
 All changes to `index.html` and the test suite. Staging and production are deployed separately and only with owner approval.
 
+## Framing rebuild pending (branch `v5.1/framing-rebuild-base`, 6 Nov 2026)
+
+- Owner testing found the framing planner build no better in practice: members outside the deck, and beams, posts and footings that don't form one support plan.
+- An audit of 156 generated angled and bump-out decks confirmed solid parts outside the deck on 140 of them in every version, including V5.0, plus tiny repair beams and beams with fewer than two posts. The planner build's footprint check gave false passes because it tested only centers and end points.
+- Decision pending: replace the support planner (beams, posts, footings) with a plan-first sequence. See "Framing Generator Rebuild: Diagnosis & Plan".
+- Private preview reverted to the Phase A Corrections framing plus the framing timing work (no framing while drawing or dragging); 217/217 tests pass. The planner build is kept on `v5.1/framing-planner` (tag `protect/v5.1-framing-planner-2c6cffc`).
+
+## V5.1 framing planner (not in use; kept for reference) (branch `v5.1/framing-planner`, stacked on Phase A Corrections)
+
+Version label unchanged: **V5.1 · Phase A Corrections** (internal build `5.1-phase-a-corrections+framing-planner`). 231 automated tests, all passing.
+
+**Performance (framing on commit)**
+- Dragging an edge, corner or stair shows a light outline preview; the full framing is rebuilt once on release. 48×42 angled deck: about 0.4 ms per pointer move (was ~360 ms).
+- Header chip: Framing current / Update needed / Calculating / Fix outline. The Framing step keeps the last framing faded with an "Update framing" button. Only the newest result is applied.
+- Structural results are cached by their inputs: colors, railings and names reuse the framing; Undo back to an earlier design is instant.
+
+**Plan-first framing (MN R507 based)**
+1. Existing beams first: before anything is added, a shared beam line is extended under the joists it already crosses (one continuous line instead of short local beams).
+2. Angled corners: one beam parallel to each angled edge (unchanged rule), and where it crosses the main beam both end at the crossing on ONE shared post (the beam follows the deck outline). The connection is flagged for production review.
+3. A shared beam end that overlaps a corner beam under the same joist is shortened, never split or removed, when that fixes a cantilever.
+4. Flush decks: angled flush headers now count as bearing (the joist end is cut on the angle), so they no longer trigger a cluster of local beams.
+5. Local support beams remain only as a last resort and are flagged. No structural check was relaxed.
+
+**Sizing and validation (structure model, separate from the renderer)**
+- Every joist's load is followed to its actual bearings (half of each span, cantilevers with their back-span effect); ledger load goes to the house. Deck area is fully accounted for (checked in tests).
+- Beams: equivalent joist span from the actual tributary; posts spaced by MRC Table R507.5 (3-ply, one-sided). Beams carrying joists on both sides are outside that table, keep the AOS 6 ft post-spacing proxy and are flagged. That adds posts on L (+1), T (+2) and two-house-wall decks.
+- Footings: each post's tributary area sized from Minn. R. 1309.0507 Table R507.3.1 at the chosen soil value (interpolated, never extrapolated; over 160 sq ft = engineered footing warning); bottom at the frost depth for the chosen zone. 3D footings are drawn at the table size.
+- Checks recorded with sources: joist span/overhang (R507.6, ¼ span, AOS 2 ft), beam span (R507.5), footing size (MN R507.3.1), post height (R507.4, 6x6 ≤ 14 ft), framing inside the outline, ledger verified. Never marked code-checked.
+- Framing step: "Design assumptions (AOS production)" (soil 1,500–3,000+ psf, frost Zone I 5 ft / Zone II 3 ft 6 in, ledger verified or not), saved with the project and undoable. "View framing measurements" lists the checks, each beam (post spacing vs allowed) and each post (deck carried, footing, height).
+- Tables re-entered from MRC 2020 R507 and the Minnesota rule; the solver's existing joist and 3-ply beam tables were confirmed identical.
+
+| Deck | V5.0 | Phase A Corrections | Framing planner |
+| --- | --- | --- | --- |
+| 18×12 two 45° corners (reported) | 12 posts | 3 beams / 7 posts | 3 beams / 5 posts |
+| 20×14 large corners | 21 posts | 3 / 7 | 3 / 6 |
+| 16×16 octagon, freestanding | 24 posts | 6 / 14 | 6 / 8 |
+| 16×12 one corner | 9 posts | 2 / 5 | 2 / 4 |
+| 48×42 angled | — | 17 beams / 48 posts, 1 unresolved joist | 9 / 32, all joists bear |
+| 18×12 two corners, flush | — | 7 / 8 | 4 / 5 |
+| Rectangle / U | 3 / 10 posts | unchanged | unchanged |
+| L / T | 5 / 6 posts | unchanged | 6 / 8 (two-sided beam rule) |
+
+**Known limitations**: header/trimmer framing with hangers is not generated yet (angled corners use a corner beam, flagged); two-sided beams and all connections still need production review; ledger fastener spacing (MN Table R507.9.1.3(1)) is not computed; 2-ply beam rows are stored for reference only (single source).
+
 ## V5.1 Phase A — Corrections (branch `v5.1/phase-a-corrections`)
 
 Version label: **V5.1 · Phase A Corrections**. 214 automated tests, all passing.
