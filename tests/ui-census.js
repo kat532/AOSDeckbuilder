@@ -30,7 +30,6 @@ const STATES = [
   ['1 Shape & Size · corner selected', (p) => seq(p, step(0), tapPlan(vertex(2)))],
   ['2 House & Height · Walls & doors', (p) => seq(p, step(1), tab('houseTab', 'walls'))],
   ['2 House & Height · Siding & color', (p) => seq(p, step(1), tab('houseTab', 'look'))],
-  ['2 House & Height · Patio & walkway', (p) => seq(p, step(1), tab('houseTab', 'yard'))],
   ['3 Framing & Ledger', (p) => seq(p, step(6))],
   ['3 Framing & Ledger · measurements', (p) => seq(p, step(6), act('[data-action="framing-details"]'))],
   ['4 Stairs · stair with landing', (p) => seq(p, step(2))],
@@ -42,7 +41,9 @@ const STATES = [
   ['7 Railings · locations', (p) => seq(p, step(5), tab('railTab', 'locations'))],
   ['7 Railings · finish, all edges', (p) => seq(p, step(5), tab('railTab', 'finish'))],
   ['7 Railings · finish, custom edge', (p) => seq(p, step(5), tab('railTab', 'finish'), act('[data-action="rail-target"][data-edge="2"]'))],
-  ['8 Review & Present', (p) => seq(p, step(7))],
+  // V5.3 C2: patios and walkways have their own step (ID 8), shown before Review (now step 9).
+  ['8 Patio & Walkway', (p) => seq(p, step(8))],
+  ['9 Review & Present', (p) => seq(p, step(7))],
 ];
 
 // Stable identity of a control: tag + id + its data-* attributes (or its text when it has none).

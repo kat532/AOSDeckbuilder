@@ -61,18 +61,19 @@ for (const shape of ['rectangle', 'square', 'L', 'T', 'U']) {
   });
 }
 
-test('all 8 steps can be walked forward and back', async () => {
+// V5.3 C2: nine steps (Patio & Walkway added before Review; Stairs is titled Stairs & Landings).
+test('all 9 steps can be walked forward and back', async () => {
   const { ctx, page, errors } = await openApp();
   await chooseShape(page, 'rectangle');
   const titles = [];
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 9; i++) {
     titles.push(await page.locator('#stepTitle').innerText());
     await page.screenshot({ path: path.join(SHOTS, `step-${i + 1}.png`) });
-    if (i < 7) await page.locator('#nextBtn').click();
+    if (i < 8) await page.locator('#nextBtn').click();
   }
-  assert.deepEqual(titles.map(t => t.trim()), ['Shape & Size', 'House & Height', 'Framing & Ledger', 'Stairs', 'Decking Layout', 'Decking Selection', 'Railings', 'Review & Present']);
-  for (let i = 0; i < 7; i++) await page.locator('#backBtn').click();
-  assert.match(await stepText(page), /Step 1 of 8/);
+  assert.deepEqual(titles.map(t => t.trim()), ['Shape & Size', 'House & Height', 'Framing & Ledger', 'Stairs & Landings', 'Decking Layout', 'Decking Selection', 'Railings', 'Patio & Walkway', 'Review & Present']);
+  for (let i = 0; i < 8; i++) await page.locator('#backBtn').click();
+  assert.match(await stepText(page), /Step 1 of 9/);
   assert.deepEqual(errors, []);
   await ctx.close();
 });
@@ -151,7 +152,8 @@ test('V5.0 files saved before this change still open', async () => {
 test('phone viewport: app loads and every step renders', async () => {
   const { ctx, page, errors } = await openApp({ width: 390, height: 844 });
   await chooseShape(page, 'rectangle');
-  for (let i = 0; i < 7; i++) await page.locator('#nextBtn').click();
+  for (let i = 0; i < 8; i++) await page.locator('#nextBtn').click(); // V5.3 C2: Review is now the 9th step
+  assert.match(await stepText(page), /Step 9 of 9/);
   await page.screenshot({ path: path.join(SHOTS, 'phone-review.png') });
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   assert.ok(overflow <= 1, `horizontal overflow ${overflow}px`);
@@ -430,7 +432,7 @@ const stepBtn = (page, name) => page.locator(`#stepdots [data-step]`, { hasText:
 
 test('steps: locked until a shape exists, then every step can be opened directly', async () => {
   const { ctx, page, errors } = await openApp();
-  assert.equal(await page.locator('#stepdots [data-step]').count(), 8);
+  assert.equal(await page.locator('#stepdots [data-step]').count(), 9); // V5.3 C2: nine steps
   assert.equal(await stepBtn(page, 'Railings').isDisabled(), true);
   await chooseShape(page, 'rectangle');
   await stepBtn(page, 'Railings').click();
@@ -695,7 +697,7 @@ test('steps: typing a project name then clicking a step opens that step on the f
   await page.keyboard.press('Control+A');
   await page.keyboard.type('Lake house');
   await stepBtn(page, 'Stairs').click(); // the name field commits on blur during this click
-  assert.equal((await page.locator('#stepTitle').innerText()).trim(), 'Stairs');
+  assert.equal((await page.locator('#stepTitle').innerText()).trim(), 'Stairs & Landings'); // V5.3 C2 title
   assert.equal(await page.locator('#projectName').inputValue(), 'Lake house');
   assert.deepEqual(errors, []);
   await ctx.close();
@@ -1996,6 +1998,8 @@ const B3_DECK = { shape: 'rectangle', width: 20, depth: 14, height: 6, houseEdge
   staircases: [{ id: 'a', edge: 2, width: 4, offset: 3, landing: { width: 6, depth: 5, elevation: 3, turn: 'left' }, rails: { left: true, right: true } }] };
 const prop = (page) => page.evaluate(() => window.AOSDeckStudioTest.property());
 const cam = (page) => page.evaluate(() => window.AOSDeckStudioTest.camera());
+// V5.3 C2: patio and walkway controls moved from House & Height (tab 'yard') to their own step 8.
+async function toPatioStep(page) { await stepBtn(page, 'Patio').click(); await page.waitForTimeout(150); }
 async function toHouseTab(page, tab) { await stepBtn(page, 'House').click(); await page.locator(`#stepContent [data-path="houseTab"][data-value="${tab}"]`).click(); await page.waitForTimeout(150); }
 async function glShot(page, name) { await page.evaluate(() => document.getElementById('toast').classList.remove('show')); await page.waitForTimeout(250); fs.writeFileSync(path.join(SHOTS, name), await page.locator('#glCanvas').screenshot()); }
 async function dragGL(page, dx, dy, button = 'left') { const b = await page.locator('#glCanvas').boundingBox(), x = b.x + b.width / 2, y = b.y + b.height / 2;
@@ -2040,7 +2044,7 @@ test('B3: siding style and exterior color — 3D walls change, doors/windows unc
 test('B3: concrete patio and walkway — add, resize, turn, drag, refused into the house, delete, undo/redo, save/reopen, 3D at grade', async () => {
   const { ctx, page, errors } = await openApp();
   await openDeckFile(page, B3_DECK);
-  await toHouseTab(page, 'yard');
+  await toPatioStep(page);
   await page.locator('#stepContent [data-action="surface-add"][data-value="patio"]').click(); await page.waitForTimeout(300);
   await page.locator('#stepContent [data-action="surface-add"][data-value="walkway"]').click(); await page.waitForTimeout(300);
   let p = await prop(page);
@@ -2171,7 +2175,10 @@ test('B3: touchscreen — one finger rotates, two fingers pinch-zoom and move; U
   await page.locator('#cameraUnderBtn').click(); await page.waitForTimeout(200); assert.ok((await cam(page)).eye[1] >= .65 - 1e-9); await glShot(page, 'b3-phone-under.png');
   // House step tabs on a phone.
   await page.locator('#mode2d').click(); await toHouseTab(page, 'look');
-  for (const t of ['walls', 'look', 'yard']) assert.ok(await page.locator(`#stepContent [data-path="houseTab"][data-value="${t}"]`).isVisible());
+  for (const t of ['walls', 'look']) assert.ok(await page.locator(`#stepContent [data-path="houseTab"][data-value="${t}"]`).isVisible());
+  // V5.3 C2: the third House tab (Patio & walkway) moved to its own step, which is reachable from the phone step bar.
+  assert.equal(await page.locator('#stepContent [data-path="houseTab"][data-value="yard"]').count(), 0);
+  assert.ok(await page.locator('#stepdots [data-step="8"]').isVisible());
   await page.screenshot({ path: path.join(SHOTS, 'b3-phone-house-look.png') });
   assert.deepEqual(errors, []);
   await ctx.close();
@@ -2297,7 +2304,7 @@ for (const quality of ['full', 'lite']) test(`B3c: patio and walkway are visible
   const { ctx, page, errors } = await openApp();
   await page.goto(APP + `?quality=${quality}`); await page.waitForFunction(() => window.DeckCore && window.Deck3D);
   await openDeckFile(page, { ...B3_DECK, surfaces: [] });
-  await toHouseTab(page, 'yard');
+  await toPatioStep(page);
   await page.locator('#stepContent [data-action="surface-add"][data-value="patio"]').click(); await page.waitForTimeout(300);
   let sf = (await prop(page)).surfaces[0];
   const check3d = async (s, label) => {
@@ -2318,18 +2325,18 @@ for (const quality of ['full', 'lite']) test(`B3c: patio and walkway are visible
   await glShot(page, `b3c-patio-3d-${quality}.png`);
   // Move in 2D (drag), then the 3D slab is at the new place.
   const at = (x, z) => page.evaluate(([x, z]) => window.AOSDeckStudioTest.toScreen(x, z), [x, z]);
-  await toHouseTab(page, 'yard');
+  await toPatioStep(page);
   let [sx, sy] = await at(sf.x - sf.width / 2 + 1, sf.z + sf.length / 2 - 1), [tx, ty] = await at(sf.x - sf.width / 2 - 7, sf.z + sf.length / 2 + 3);
   await page.mouse.move(sx, sy); await page.mouse.down(); await page.mouse.move(tx, ty, { steps: 10 }); await page.mouse.up(); await page.waitForTimeout(300);
   const moved = (await prop(page)).surfaces[0]; assert.ok(Math.abs(moved.x - sf.x + 8) < .3 && Math.abs(moved.z - sf.z - 4) < .3, 'moved in 2D');
   await check3d(moved, 'moved');
   // Resize by typing; 3D follows.
-  await toHouseTab(page, 'yard');
+  await toPatioStep(page);
   const lf = page.locator('#stepContent input[data-surface-field="length"]'); await lf.fill('16'); await lf.dispatchEvent('change'); await page.waitForTimeout(250);
   const resized = (await prop(page)).surfaces[0]; assert.equal(resized.length, 16);
   await check3d(resized, 'resized');
   // Delete: gone from 3D; undo brings it back exactly; redo removes it again.
-  await toHouseTab(page, 'yard');
+  await toPatioStep(page);
   await page.locator('#stepContent [data-action="surface-remove"]').click(); await page.waitForTimeout(250);
   await page.locator('#mode3d').click(); await page.waitForTimeout(300);
   assert.equal((await prop(page)).parts3d.filter(x => x.kind === 'concrete-surface').length, 0, 'deleted: not in 3D');
@@ -2340,7 +2347,7 @@ for (const quality of ['full', 'lite']) test(`B3c: patio and walkway are visible
   await page.locator('#redoBtn').click(); await page.waitForTimeout(250); assert.equal((await prop(page)).surfaces.length, 0);
   await page.locator('#undoBtn').click(); await page.waitForTimeout(250);
   // A walkway too, then save/reopen: both shown in 3D after reopening.
-  await toHouseTab(page, 'yard'); await page.locator('#stepContent [data-action="surface-add"][data-value="walkway"]').click(); await page.waitForTimeout(300);
+  await toPatioStep(page); await page.locator('#stepContent [data-action="surface-add"][data-value="walkway"]').click(); await page.waitForTimeout(300);
   const both = (await prop(page)).surfaces; assert.equal(both.length, 2);
   await page.screenshot({ path: path.join(SHOTS, `b3c-patio-walkway-2d-${quality}.png`) });
   const { fresh, data } = await reopen(page, ctx);

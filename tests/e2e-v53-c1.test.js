@@ -15,6 +15,9 @@ const APP = pathToFileURL(path.join(__dirname, '..', 'index.html')).href;
 const CHROME = process.env.CHROME_PATH || '/usr/bin/google-chrome';
 const SHOTS = path.join(__dirname, '..', 'test-results', 'screenshots');
 const BASE = JSON.parse(fs.readFileSync(path.join(__dirname, 'baseline', 'controls-d404af5.json'), 'utf8'));
+// V5.3 C2: the C0 inventory as the nine-step workflow must show it (tests/baseline/c2-expected.js lists
+// every allowed difference: Patio & Walkway moved from House & Height to its own step 8).
+const EXPECT = require('./baseline/c2-expected').expectedC2(BASE);
 let browser;
 test.before(async () => { browser = await chromium.launch({ executablePath: CHROME, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] }); fs.mkdirSync(SHOTS, { recursive: true }); });
 test.after(async () => { await browser?.close(); });
@@ -42,11 +45,11 @@ const stateFn = (name) => STATES.find(([n]) => n === name)[1];
 for (const [name, vp, mode] of VIEWPORTS) test(`C1 ${name}: every control from the C0 census is present and reachable by ${mode === 'touch' ? 'finger scrolling' : 'mouse wheel'}; Back/Next never move`, async () => {
   const { ctx, page, errors, cdp } = await newPage(vp, mode === 'touch');
   const c = await census(page, { APP, fs, os, path, mode, cdp });
-  assert.deepEqual(c.chrome, BASE.chrome, 'header, step bar, view tools and Back/Next unchanged');
-  assert.deepEqual(Object.keys(c.states), Object.keys(BASE.states), 'same steps, tabs and editing states');
+  assert.deepEqual(c.chrome, EXPECT.chrome, 'header, step bar, view tools and Back/Next unchanged');
+  assert.deepEqual(Object.keys(c.states), Object.keys(EXPECT.states), 'same steps, tabs and editing states');
   for (const [s, v] of Object.entries(c.states)) {
     const keys = (list) => list.filter(x => !x.hidden).map(x => x.key).sort();
-    assert.deepEqual(keys(v.controls), keys(BASE.states[s]), `${s}: same controls as the baseline (none removed or added)`);
+    assert.deepEqual(keys(v.controls), keys(EXPECT.states[s]), `${s}: same controls as the baseline (none removed or added)`);
     assert.deepEqual(v.unreachable, [], `${s}: every control can be scrolled to and pressed`);
     assert.equal(v.footerMoved, false, `${s}: Back/Next stay fixed while the panel scrolls`);
     assert.equal(v.scroll.overflowY, 'auto', `${s}: the settings area scrolls`);
