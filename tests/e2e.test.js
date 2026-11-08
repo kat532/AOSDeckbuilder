@@ -1740,9 +1740,14 @@ test('B1: several house walls (L-shape): choose the wall, move an opening betwee
   await page.locator('#stepContent [data-action="opening-wall"][data-value="3"]').click();
   await page.locator('#stepContent [data-action="opening-add"][data-value="door"]').click();
   assert.match(await toastText(page), /Door added to the left wall/);
-  // The 7′ 7″ wall has no room for a 3 ft window beside the door.
+  // The 7′ 7″ wall has no room for a 3 ft window beside the door. V5.2 B3 corrections (owner request,
+  // 8 Nov 2026: windows on short wall sections): the window is now added as wide as the free space
+  // allows instead of being refused; it stays clear of the corners and of the door.
   await page.locator('#stepContent [data-action="opening-add"][data-value="window"]').click();
-  assert.match(await toastText(page), /No room on the left wall for a 3′ 0″ wide window/);
+  assert.match(await toastText(page), /Window added to the left wall \(1′ 8″ wide to fit\)/);
+  { const [door, win] = await openingsOf(page); assert.equal(win.status, 'ok'); assert.ok(win.width < 3);
+    assert.ok(Math.abs(win.offset - door.offset) >= (win.width + door.width) / 2 + 1 / 3 - 1e-9, 'clear of the door'); }
+  await page.locator('#stepContent [data-action="opening-remove"]').click(); assert.equal((await openingsOf(page)).length, 1);
   // Move the door to the top wall; then a 6 ft patio door fits on the left wall.
   await page.locator('#stepContent [data-action="opening-move-wall"][data-value="0"]').click();
   assert.match(await toastText(page), /Moved to the top wall/);

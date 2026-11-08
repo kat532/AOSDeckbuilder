@@ -1093,7 +1093,8 @@ const OPENING_TYPES={
 // Where an opening may sit on its wall; null when it fits, otherwise the reason.
 function openingProblem(q,es,o,others){const e=es[o.edge];if(!e)return 'no-wall';
  if(!(q.houseEdges||[]).includes(o.edge))return 'not-house-wall';
- const R=openingRange(q,es,o.edge);if(o.offset-o.width/2<R[0]-1e-9||o.offset+o.width/2>R[1]+1e-9)return 'off-wall';
+ const R=openingRange(q,es,o.edge),tol=5e-4; // sizes/positions are saved to 1/10000 ft
+ if(o.offset-o.width/2<R[0]-tol||o.offset+o.width/2>R[1]+tol)return 'off-wall';
  for(const x of others||[])if(x.id!==o.id&&x.edge===o.edge&&Math.abs(x.offset-o.offset)<(x.width+o.width)/2+OPENING_GAP-1e-9)return 'overlap';
  return null;}
 const openingTop=o=>o.type==='window'?o.sill+o.height:o.height,openingBottom=o=>o.type==='window'?o.sill:0;
@@ -3895,7 +3896,7 @@ function inchSize(w,h){const f=x=>{const t=Math.round(x*12);return `${t}″`;};r
 // First free spot for an opening of this width on wall i (center first, then outward).
 function freeOpeningSpot(q,i,width,ignoreId){const es=core.edges(core.polygon(q)),e=es[i];if(!e)return null;
  // V5.2 B3 corrections: the usable part of the wall (3 in. from deck corners, clear of outside house corners).
- const R=core.openingRange(q,es,i),lo=R[0]+width/2,hi=R[1]-width/2;if(hi<lo-1e-9)return null;
+ width=+width.toFixed(4);const R=core.openingRange(q,es,i),lo=R[0]+width/2,hi=R[1]-width/2;if(hi<lo-1e-9)return null;
  const center=clamp(0,lo,hi); // centred on the wall when it fits
  const others=(q.openings||[]).filter(o=>o.id!==ignoreId&&o.edge===i),span=hi-lo;
  for(let k=0;k<=Math.ceil(span*4)*2+2;k++){const off=+(clamp(center+(k%2?1:-1)*Math.ceil(k/2)/4,lo,hi)).toFixed(4);
@@ -3911,7 +3912,8 @@ function changeOpening(update,done){const q=structuredClone(state.intent),o=(q.o
  // V5.2 B3 corrections: a wider/narrower size that still fits the wall slides along it instead of being refused.
  const R=core.openingRange(q,core.edges(core.polygon(q)),o.edge);
  if(problem==='off-wall'&&update.offset===undefined&&R[1]-R[0]>=o.width-1e-9){const was=o.offset;o.offset=+clamp(o.offset,R[0]+o.width/2,R[1]-o.width/2).toFixed(4);problem=core.openingProblem(q,core.edges(core.polygon(q)),o,others);if(problem)o.offset=was;}
- if(problem==='off-wall'){toast(`That doesn't fit: on the ${wallName(core.edges(core.polygon(q)),o.edge).toLowerCase()} an opening can be at most ${fmt(Math.max(0,R[1]-R[0]))} wide (3 in. from each deck corner${R[1]-R[0]<core.edges(core.polygon(q))[o.edge].len-.5-1e-6?', clear of the house corner':''}).`);renderPanel();return false;}
+ if(problem==='off-wall'){const len=core.edges(core.polygon(q))[o.edge].len,corner=R[1]-R[0]<len-.5-1e-6,wn=wallName(core.edges(core.polygon(q)),o.edge).toLowerCase();
+   toast(update.offset!==undefined&&update.width===undefined?`That doesn't fit: the ${wn} is ${fmt(len)} long and an opening must stay ${Math.round(core.OPENING_END_CLEAR*12)} in. from each end${corner?' and clear of the house corner':''}.`:`That doesn't fit: on the ${wn} an opening can be at most ${fmt(Math.max(0,R[1]-R[0]))} wide (${Math.round(core.OPENING_END_CLEAR*12)} in. from each deck corner${corner?', clear of the house corner':''}).`);renderPanel();return false;}
  if(problem==='overlap'){toast(`That would overlap another opening on the ${wallName(core.edges(core.polygon(q)),o.edge).toLowerCase()}; openings need ${Math.round(core.OPENING_GAP*12)} in. between them.`);renderPanel();return false;}
  if(problem==='not-house-wall'){toast('Openings go on house walls only.');renderPanel();return false;}
  setProject(q);if(done)toast(done);return true;}
