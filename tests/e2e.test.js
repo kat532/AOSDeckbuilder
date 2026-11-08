@@ -1984,3 +1984,216 @@ test('B2 fix: framing-only 3D draws the landing flat 2x6 runs; they follow the f
   assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
   await fresh.ctx.close(); await ctx.close();
 });
+
+// ---------------- V5.2 Group B — B3: property & 3D presentation ----------------
+const B3_DECK = { shape: 'rectangle', width: 20, depth: 14, height: 6, houseEdges: [0], borderCount: 1, decking: 'Brown Oak', border: 'Stone Ash', project: 'B3 showcase',
+  openings: [{ id: 'd', type: 'door', edge: 0, offset: -6.5 }, { id: 'p', type: 'patio', edge: 0, offset: 1, width: 6 }, { id: 'w', type: 'window', edge: 0, offset: 7, width: 3, height: 4, sill: 3 }],
+  staircases: [{ id: 'a', edge: 2, width: 4, offset: 3, landing: { width: 6, depth: 5, elevation: 3, turn: 'left' }, rails: { left: true, right: true } }] };
+const prop = (page) => page.evaluate(() => window.AOSDeckStudioTest.property());
+const cam = (page) => page.evaluate(() => window.AOSDeckStudioTest.camera());
+async function toHouseTab(page, tab) { await stepBtn(page, 'House').click(); await page.locator(`#stepContent [data-path="houseTab"][data-value="${tab}"]`).click(); await page.waitForTimeout(150); }
+async function glShot(page, name) { await page.evaluate(() => document.getElementById('toast').classList.remove('show')); await page.waitForTimeout(250); fs.writeFileSync(path.join(SHOTS, name), await page.locator('#glCanvas').screenshot()); }
+async function dragGL(page, dx, dy, button = 'left') { const b = await page.locator('#glCanvas').boundingBox(), x = b.x + b.width / 2, y = b.y + b.height / 2;
+  await page.mouse.move(x, y); await page.mouse.down({ button }); await page.mouse.move(x + dx, y + dy, { steps: 10 }); await page.mouse.up({ button }); await page.waitForTimeout(120); }
+
+test('B3: siding style and exterior color — 3D walls change, doors/windows unchanged, undo/redo and save/reopen', async () => {
+  const { ctx, page, errors } = await openApp();
+  await openDeckFile(page, B3_DECK);
+  const before = await page.evaluate(() => window.AOSDeckStudioTest.openings());
+  await toHouseTab(page, 'look');
+  assert.match(await page.locator('#stepContent').innerText(), /Lap siding · Light Gray/);
+  for (const style of ['board-batten', 'shake', 'brick', 'lap']) {
+    await page.locator(`#stepContent [data-path="siding"][data-value="${style}"]`).click(); await page.waitForTimeout(250);
+    const p = await prop(page);
+    assert.equal(p.siding, style === 'lap' ? null : style, `${style}: saved only when not the default`);
+    assert.equal(p.geometry.house.siding, style);
+    assert.deepEqual(await page.evaluate(() => window.AOSDeckStudioTest.openings()), before, `${style}: openings unchanged`);
+  }
+  await page.locator('#stepContent [data-path="siding"][data-value="brick"]').click();
+  await page.locator('#stepContent [data-path="houseColor"][data-value="Brick Red"]').click(); await page.waitForTimeout(250);
+  await page.locator('#stepContent [data-action="house-see-3d"]').click(); await page.waitForTimeout(500);
+  let p = await prop(page);
+  const walls = p.parts3d.filter(x => x.kind === 'house-wall');
+  assert.ok(walls.length > 4 && walls.every(w => w.color === '#9a4f3d' && w.siding === 'brick' && w.mat === 'siding'), '3D walls are red brick');
+  assert.ok(p.parts3d.some(x => x.kind === 'house-trim') && p.parts3d.some(x => x.kind === 'house-eave') && p.parts3d.some(x => x.kind === 'house-foundation'));
+  const sc = await scene3d(page);
+  assert.equal(sc.parts.filter(x => x.kind === 'door-slab').length, 1); assert.ok(sc.parts.filter(x => x.kind === 'opening-glass').length >= 3, 'doors/windows still drawn');
+  await glShot(page, 'b3-house-brick-red.png');
+  await page.locator('#mode2d').click();
+  await page.locator('#undoBtn').click(); await page.waitForTimeout(200);
+  p = await prop(page); assert.equal(p.houseColor, null); assert.equal(p.siding, 'brick', 'undo steps back one change');
+  await page.locator('#redoBtn').click(); await page.waitForTimeout(200);
+  assert.equal((await prop(page)).houseColor, 'Brick Red');
+  const { fresh, data } = await reopen(page, ctx);
+  assert.equal(data.design.siding, 'brick'); assert.equal(data.design.houseColor, 'Brick Red');
+  const fp = await prop(fresh.page); assert.equal(fp.siding, 'brick'); assert.equal(fp.houseColor, 'Brick Red');
+  assert.deepEqual(await fresh.page.evaluate(() => window.AOSDeckStudioTest.openings()), before, 'reopened openings unchanged');
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+test('B3: concrete patio and walkway — add, resize, turn, drag, refused into the house, delete, undo/redo, save/reopen, 3D at grade', async () => {
+  const { ctx, page, errors } = await openApp();
+  await openDeckFile(page, B3_DECK);
+  await toHouseTab(page, 'yard');
+  await page.locator('#stepContent [data-action="surface-add"][data-value="patio"]').click(); await page.waitForTimeout(300);
+  await page.locator('#stepContent [data-action="surface-add"][data-value="walkway"]').click(); await page.waitForTimeout(300);
+  let p = await prop(page);
+  assert.equal(p.surfaces.length, 2); assert.deepEqual(p.geometry.surfaces.map(s => s.status), ['ok', 'ok']);
+  assert.equal((await edgesOf(page)).length, 4, 'adding slabs does not touch the deck');
+  // The walkway starts at the foot of the stair (the lowest riser).
+  const walk = p.surfaces[1];
+  // Resize by typing, then turn.
+  const wf = page.locator('#stepContent input[data-surface-field="length"]'); await wf.fill('16'); await wf.dispatchEvent('change'); await page.waitForTimeout(250);
+  assert.equal((await prop(page)).surfaces[1].length, 16);
+  const bad = page.locator('#stepContent input[data-surface-field="width"]'); await bad.fill('20'); await bad.dispatchEvent('change'); await page.waitForTimeout(250);
+  assert.match(await toastText(page), /Walkway width must be from 2′ 0″ to 8′ 0″/); assert.equal((await prop(page)).surfaces[1].width, walk.width);
+  await page.locator('#stepContent [data-action="surface-rotate"][data-value="15"]').click(); await page.waitForTimeout(250);
+  assert.equal((await prop(page)).surfaces[1].angle, (walk.angle + 15) % 180);
+  // Select the patio and drag it 3 ft along x in 2D.
+  await page.locator('#stepContent [data-action="surface-prev"]').click();
+  let pat = (await prop(page)).surfaces[0];
+  const at = (x, z) => page.evaluate(([x, z]) => window.AOSDeckStudioTest.toScreen(x, z), [x, z]);
+  const grabZ = pat.z + pat.length / 2 - 1; // grab inside the patio, clear of the deck/stair picks
+  let [sx, sy] = await at(pat.x - 2, grabZ), [tx, ty] = await at(pat.x + 1, grabZ);
+  await page.mouse.move(sx, sy); await page.mouse.down(); await page.mouse.move(tx, ty, { steps: 8 }); await page.mouse.up(); await page.waitForTimeout(300);
+  let moved = (await prop(page)).surfaces[0];
+  assert.ok(Math.abs(moved.x - pat.x - 3) < .3 && Math.abs(moved.z - pat.z) < .3, `patio dragged ${moved.x - pat.x}, ${moved.z - pat.z}`);
+  // Resize with the corner handle: +2 ft each way (the far corner from the anchor).
+  const a = moved.angle * Math.PI / 180, c2 = [moved.x + Math.cos(a) * moved.width / 2 - Math.sin(a) * moved.length / 2, moved.z + Math.sin(a) * moved.width / 2 + Math.cos(a) * moved.length / 2];
+  [sx, sy] = await at(...c2); [tx, ty] = await at(c2[0] + Math.cos(a) * 2 - Math.sin(a) * 2, c2[1] + Math.sin(a) * 2 + Math.cos(a) * 2);
+  await page.mouse.move(sx, sy); await page.mouse.down(); await page.mouse.move(tx, ty, { steps: 8 }); await page.mouse.up(); await page.waitForTimeout(300);
+  const grown = (await prop(page)).surfaces[0];
+  assert.ok(Math.abs(grown.width - moved.width - 2) < .3 && Math.abs(grown.length - moved.length - 2) < .3, `resized to ${grown.width} x ${grown.length}`);
+  // Dragging it into the house is refused: it stays where it was. Grab a spot of the patio that
+  // the walkway does not cover (the walkway is drawn on top where they overlap).
+  const walkBefore = (await prop(page)).surfaces[1];
+  const ga = grown.angle * Math.PI / 180, gx = grown.x - Math.cos(ga) * (grown.width / 2 - 1), gz = grown.z - Math.sin(ga) * (grown.width / 2 - 1);
+  [sx, sy] = await at(gx, gz); [tx, ty] = await at(gx, -12);
+  await page.mouse.move(sx, sy); await page.mouse.down(); await page.mouse.move(tx, ty, { steps: 12 }); await page.mouse.up(); await page.waitForTimeout(300);
+  const after = (await prop(page)).surfaces[0];
+  assert.equal((await prop(page)).geometry.surfaces[0].status, 'ok', 'never placed in the house');
+  assert.ok(after.z - after.length / 2 > -0.2, 'stopped at the house face'); assert.ok(after.z < grown.z - 1, 'it did move toward the house, up to the wall');
+  assert.deepEqual((await prop(page)).surfaces[1], walkBefore, 'the walkway was not the one dragged');
+  // 3D: slabs at grade on the lawn; hidden in framing-only; the lawn is see-through there.
+  await page.locator('#mode3d').click(); await page.waitForTimeout(500);
+  p = await prop(page);
+  const slabs = p.parts3d.filter(x => x.kind === 'concrete-surface'), earth = p.parts3d.find(x => x.kind === 'earth');
+  assert.equal(slabs.length, 2); assert.ok(Math.abs(earth.y + earth.h / 2) < 1e-9, 'lawn top at grade');
+  for (const s of slabs) { const top = s.y + s.h / 2; assert.ok(top > 0 && top < .05, `slab top ${top} just above the lawn`); assert.equal(s.group, 'site'); }
+  await glShot(page, 'b3-patio-walkway-3d.png');
+  await page.locator('#structureToggle').click(); await page.waitForTimeout(400);
+  p = await prop(page); assert.equal(p.parts3d.filter(x => x.kind === 'concrete-surface' || x.kind === 'earth').length, 0, 'framing-only: no slabs or opaque lawn');
+  assert.ok((await cam(page)).groundVertices > 0, 'see-through lawn drawn');
+  await glShot(page, 'b3-framing-see-through-lawn.png');
+  await page.locator('#structureToggle').click(); await page.locator('#mode2d').click();
+  // Delete, undo, redo.
+  await page.locator('#stepContent [data-action="surface-remove"]').click(); await page.waitForTimeout(250);
+  assert.equal((await prop(page)).surfaces.length, 1);
+  await page.locator('#undoBtn').click(); await page.waitForTimeout(250); assert.equal((await prop(page)).surfaces.length, 2);
+  await page.locator('#redoBtn').click(); await page.waitForTimeout(250); assert.equal((await prop(page)).surfaces.length, 1);
+  await page.locator('#undoBtn').click(); await page.waitForTimeout(250);
+  const saved = (await prop(page)).surfaces;
+  const { fresh, data } = await reopen(page, ctx);
+  assert.deepEqual(data.design.surfaces, saved); assert.deepEqual((await prop(fresh.page)).surfaces, saved, 'reopened');
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+for (const H of [1, 14]) test(`B3: 3D camera at a ${H} ft deck — Fit, orbit to the limit, pan, zoom, Move, Under, Finished/Framing switching (mouse)`, async () => {
+  const { ctx, page, errors } = await openApp();
+  await openDeckFile(page, { ...B3_DECK, height: H, staircases: H < 6 ? [{ id: 'a', edge: 2, width: 4, offset: 3, rails: { left: true, right: true } }] : B3_DECK.staircases, surfaces: [{ type: 'patio', x: -3, z: 21, width: 14, length: 10 }] });
+  await page.locator('#mode3d').click(); await page.waitForTimeout(400); await page.locator('#fitBtn').click(); await page.waitForTimeout(200);
+  let c = await cam(page);
+  assert.ok(c.deckOnScreen.every(Boolean), 'Fit: whole deck on screen'); assert.ok(c.eye[1] >= .65);
+  assert.equal(c.shadowVertices, 0, 'lite look (software WebGL): no shadow pass');
+  await glShot(page, `b3-camera-${H}ft-fit.png`);
+  await dragGL(page, -260, 40); c = await cam(page); assert.ok(c.deckOnScreen.some(Boolean)); await glShot(page, `b3-camera-${H}ft-orbit.png`);
+  await dragGL(page, 0, -900); c = await cam(page); assert.ok(c.eye[1] >= .65 - 1e-9, `dragging far down keeps the eye above ground (${c.eye[1]})`);
+  await dragGL(page, 0, 900); c = await cam(page); assert.ok(c.el <= 1.35 + 1e-9);
+  await page.locator('#fitBtn').click(); await page.waitForTimeout(150);
+  const t0 = (await cam(page)).target;
+  await dragGL(page, 120, 0, 'right'); let t1 = (await cam(page)).target; assert.ok(Math.hypot(t1[0] - t0[0], t1[2] - t0[2]) > .5, 'right-drag pans');
+  await page.locator('#cameraMoveBtn').click(); await dragGL(page, -120, 60); const t2 = (await cam(page)).target; assert.ok(Math.hypot(t2[0] - t1[0], t2[2] - t1[2]) > .5, 'Move mode pans');
+  assert.equal((await cam(page)).panMode, true); await page.locator('#cameraRotateBtn').click(); assert.equal((await cam(page)).panMode, false);
+  const r0 = (await cam(page)).radius; const b = await page.locator('#glCanvas').boundingBox(); await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
+  for (let k = 0; k < 4; k++) await page.mouse.wheel(0, -200); await page.waitForTimeout(150);
+  assert.ok((await cam(page)).radius < r0, 'wheel zooms in'); for (let k = 0; k < 60; k++) await page.mouse.wheel(0, 400); await page.waitForTimeout(150);
+  c = await cam(page); assert.ok(c.radius <= 160 && c.eye[1] >= .65 - 1e-9, 'zoomed out to the limit, still above ground');
+  await page.locator('#zoomIn').click(); await page.locator('#zoomOut').click();
+  await page.locator('#cameraUnderBtn').click(); await page.waitForTimeout(150);
+  c = await cam(page); assert.ok(c.eye[1] >= .65 - 1e-9, 'Under: eye above the lawn');
+  if (H >= 6) { assert.ok(c.eye[1] < H, 'Under: below the deck surface'); assert.ok(c.deckOnScreen.some(Boolean), 'Under: deck in view'); }
+  await glShot(page, `b3-camera-${H}ft-under.png`);
+  for (const s of [true, false]) {
+    const before = await cam(page);
+    await page.locator('#structureToggle').click(); await page.waitForTimeout(300);
+    const now = await cam(page);
+    assert.equal(now.showStructure, s); assert.deepEqual([now.az, now.el, now.radius, now.target], [before.az, before.el, before.radius, before.target], 'switching keeps the camera');
+    if (s) await glShot(page, `b3-camera-${H}ft-under-framing.png`);
+  }
+  await page.locator('#structureToggle').click(); await page.locator('#fitBtn').click(); await page.waitForTimeout(150);
+  c = await cam(page); assert.ok(c.deckOnScreen.every(Boolean), 'Fit in framing-only'); await glShot(page, `b3-camera-${H}ft-framing-fit.png`);
+  await page.locator('#structureToggle').click();
+  // Back to 2D and 3D again: the deck is still in view.
+  await page.locator('#mode2d').click(); await page.locator('#mode3d').click(); await page.waitForTimeout(300);
+  assert.ok((await cam(page)).deckOnScreen.some(Boolean));
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('B3: touchscreen — one finger rotates, two fingers pinch-zoom and move; Under and framing toggle fit on a phone', async () => {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
+  const page = await ctx.newPage(), errors = []; page.on('pageerror', e => errors.push(String(e)));
+  await page.goto(APP); await page.waitForFunction(() => window.DeckCore && window.Deck3D);
+  { const f = path.join(os.tmpdir(), `aos-b3-phone-${Date.now()}.json`); fs.writeFileSync(f, JSON.stringify({ design: { ...B3_DECK, siding: 'board-batten', houseColor: 'Coastal Blue', surfaces: [{ type: 'patio', x: -3, z: 21, width: 14, length: 10 }] } }));
+    await page.locator('#fileInput').setInputFiles(f); await page.waitForFunction(() => window.AOSDeckStudioTest?.framingStatus() === 'current'); } // Projects is in the phone menu
+  await page.locator('#mode3d').click(); await page.waitForTimeout(400); await page.locator('#fitBtn').click(); await page.waitForTimeout(200);
+  assert.ok((await cam(page)).deckOnScreen.every(Boolean), 'phone Fit shows the whole deck');
+  for (const id of ['#cameraRotateBtn', '#cameraMoveBtn', '#cameraUnderBtn', '#structureToggle']) assert.ok(await page.locator(id).isVisible(), `${id} visible`);
+  const boxes = await Promise.all(['#cameraUnderBtn', '#structureToggle'].map(id => page.locator(id).boundingBox()));
+  assert.ok(boxes[0].x + boxes[0].width <= boxes[1].x, 'camera buttons do not overlap the framing toggle');
+  const cdp = await ctx.newCDPSession(page), b = await page.locator('#glCanvas').boundingBox(), cx = b.x + b.width / 2, cy = b.y + b.height / 2;
+  const touch = (type, pts) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts.map(([x, y], i) => ({ x, y, id: i + 1 })) });
+  let c0 = await cam(page);
+  await touch('touchStart', [[cx, cy]]); for (let k = 1; k <= 8; k++) await touch('touchMove', [[cx - 15 * k, cy]]); await touch('touchEnd', []);
+  await page.waitForTimeout(150); let c1 = await cam(page); assert.ok(Math.abs(c1.az - c0.az) > .3, 'one finger rotates');
+  await touch('touchStart', [[cx - 40, cy], [cx + 40, cy]]); for (let k = 1; k <= 8; k++) await touch('touchMove', [[cx - 40 - 12 * k, cy], [cx + 40 + 12 * k, cy]]); await touch('touchEnd', []);
+  await page.waitForTimeout(150); let c2 = await cam(page); assert.ok(c2.radius < c1.radius * .8, 'pinch out zooms in'); assert.ok(c2.eye[1] >= .65 - 1e-9);
+  await touch('touchStart', [[cx - 40, cy], [cx + 40, cy]]); for (let k = 1; k <= 8; k++) await touch('touchMove', [[cx - 40 + 10 * k, cy + 10 * k], [cx + 40 + 10 * k, cy + 10 * k]]); await touch('touchEnd', []);
+  await page.waitForTimeout(150); const c3 = await cam(page); assert.ok(Math.hypot(c3.target[0] - c2.target[0], c3.target[2] - c2.target[2]) > .2, 'two fingers move the view'); assert.ok(Math.abs(c3.az - c2.az) < 1e-9, 'two fingers do not rotate');
+  await page.locator('#fitBtn').click(); await page.waitForTimeout(200); await glShot(page, 'b3-phone-board-batten-blue.png');
+  await page.locator('#cameraUnderBtn').click(); await page.waitForTimeout(200); assert.ok((await cam(page)).eye[1] >= .65 - 1e-9); await glShot(page, 'b3-phone-under.png');
+  // House step tabs on a phone.
+  await page.locator('#mode2d').click(); await toHouseTab(page, 'look');
+  for (const t of ['walls', 'look', 'yard']) assert.ok(await page.locator(`#stepContent [data-path="houseTab"][data-value="${t}"]`).isVisible());
+  await page.screenshot({ path: path.join(SHOTS, 'b3-phone-house-look.png') });
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('B3: an older (B2 Fix 1) project opens unchanged and saves without the new keys; finished 3D from several angles', async () => {
+  const { ctx, page, errors } = await openApp();
+  // This test browser renders WebGL in software, so the lighter look is chosen automatically;
+  // ?quality=full forces the full look (sun shadow, textured lawn) used for these screenshots.
+  assert.equal((await cam(page)).lite, true, 'software WebGL detected: lite look');
+  await page.goto(APP + '?quality=full'); await page.waitForFunction(() => window.DeckCore && window.Deck3D);
+  const old = { ...B3_DECK }; await openDeckFile(page, old);
+  let p = await prop(page);
+  assert.equal(p.siding, null); assert.equal(p.houseColor, null); assert.equal(p.surfaces, null);
+  assert.deepEqual(p.geometry.house, { siding: 'lap', color: '#d9dbd7', colorName: 'Light Gray' }, 'pre-B3 wall look');
+  const { fresh, data } = await reopen(page, ctx);
+  for (const k of ['siding', 'houseColor', 'surfaces']) assert.equal(k in data.design, false, `${k} not written for an older project`);
+  assert.deepEqual(data.design.openings.map(o => o.id), ['d', 'p', 'w'], 'openings saved as before');
+  await fresh.ctx.close();
+  // Finished 3D at several camera angles (sales presentation), with a patio and walkway.
+  await openDeckFile(page, { ...B3_DECK, siding: 'shake', houseColor: 'Sandstone', surfaces: [{ type: 'patio', x: -3, z: 21, width: 14, length: 10 }, { type: 'walkway', x: 9, z: 30, width: 4, length: 12 }] });
+  await page.locator('#mode3d').click(); await page.waitForTimeout(400); await page.locator('#fitBtn').click();
+  const full = await cam(page); assert.equal(full.lite, false); assert.ok(full.shadowVertices > 0, 'sun shadow drawn in the full look');
+  await glShot(page, 'b3-angle-1-front.png');
+  await dragGL(page, -300, 0); await glShot(page, 'b3-angle-2-side.png');
+  await dragGL(page, -300, -60); await glShot(page, 'b3-angle-3-back.png');
+  await dragGL(page, 0, 300); await glShot(page, 'b3-angle-4-high.png');
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});

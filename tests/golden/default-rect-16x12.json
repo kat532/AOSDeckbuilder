@@ -139,7 +139,7 @@
     }
   },
   "model": {
-    "partCount": 349,
+    "partCount": 337,
     "partsByKind": {
       "baluster": 102,
       "bottom-rail": 9,
@@ -148,6 +148,10 @@
       "fascia": 3,
       "field-board": 156,
       "footing-concept": 3,
+      "house-eave": 1,
+      "house-foundation": 1,
+      "house-roof": 1,
+      "house-trim": 2,
       "house-wall": 1,
       "joist": 11,
       "ledger": 1,
@@ -158,7 +162,6 @@
       "post-cap": 10,
       "railing-post": 10,
       "rim-joist": 3,
-      "siding-course": 17,
       "top-rail": 9
     },
     "counts": {
@@ -195,7 +198,7 @@
       "staircaseCount": 0,
       "boardWidth": 0.4467,
       "boardGap": 0.0156,
-      "partCount": 349,
+      "partCount": 337,
       "maxBoardRun": 15.0754,
       "requiredDividers": 0,
       "dividerRowCount": 0,

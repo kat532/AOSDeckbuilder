@@ -228,6 +228,7 @@
 .stair-options button{min-height:40px}
 .openings-panel .seg button,.openings-panel .editor-actions button,.openings-panel .stair-picker button{min-height:36px}.openings-panel select{width:100%;border:1px solid #d9e0e5;border-radius:7px;padding:7px 8px;background:#fff;font-size:12px;font-weight:700;color:#233243;min-height:36px}.opening-warn{font-size:10.5px;color:#9a5a06;background:#fdf1dc;border-radius:7px;padding:6px 8px;line-height:1.35}
 .deckline-seg button{flex:1 1 45%!important;min-height:38px}
+.siding-seg button{flex:1 1 45%!important;min-height:38px}.house-swatches .swatch{min-height:44px}.surfaces-panel .editor-actions button,.house-look-panel .editor-actions button,.surfaces-panel .stair-picker button{min-height:38px}.surface-turn{align-items:center}.surface-turn .surface-angle{flex:0 0 auto;min-width:38px;text-align:center;font-size:12px;color:#344757}.surfaces-panel input{min-height:36px}
 .seg.wrap{flex-wrap:wrap}.seg.wrap button{flex:1 1 30%;min-height:36px}.seg.turns button{min-height:36px}.landing-sub{margin-top:2px}
 .framing-pending{font-size:12.5px;line-height:1.45;padding:10px 12px;border-radius:9px;background:#fdf1dc;color:#6b4705;margin-bottom:8px}.framing-pending button{margin-left:6px;min-height:34px;padding:6px 10px;border-radius:8px;border:1px solid #d9a441;background:#fff;font-weight:800;font-size:11.5px}
 @media (max-width:760px){.framingstatus{display:none}}
@@ -258,6 +259,7 @@
       <div class="camera-tools" id="cameraTools" role="group" aria-label="3D camera controls" hidden>
         <button class="camera-tool active" id="cameraRotateBtn" type="button" aria-pressed="true" title="Drag with one finger to rotate the 3D deck"><span class="camera-symbol" aria-hidden="true">↻</span> Rotate</button>
         <button class="camera-tool" id="cameraMoveBtn" type="button" aria-pressed="false" title="Drag with one finger to move around the 3D deck"><span class="camera-symbol" aria-hidden="true">✥</span> Move</button>
+        <button class="camera-tool" id="cameraUnderBtn" type="button" title="Look up at the framing from under the deck"><span class="camera-symbol" aria-hidden="true">⤒</span> Under</button>
       </div>
       <button class="structure-toggle" id="structureToggle" type="button" aria-pressed="false" hidden>⌗ Show framing</button>
       <canvas id="planCanvas" class="viewport-canvas visible" aria-label="2D deck plan; drag deck edges to resize"></canvas>
@@ -1095,6 +1097,25 @@ function openingProblem(q,es,o,others){const e=es[o.edge];if(!e)return 'no-wall'
  for(const x of others||[])if(x.id!==o.id&&x.edge===o.edge&&Math.abs(x.offset-o.offset)<(x.width+o.width)/2+OPENING_GAP-1e-9)return 'overlap';
  return null;}
 const openingTop=o=>o.type==='window'?o.sill+o.height:o.height,openingBottom=o=>o.type==='window'?o.sill:0;
+// V5.2 B3: house appearance (presentation only). The style drives a lightweight procedural
+// pattern in the 3D renderer; the color is the wall color. Light Gray lap siding is the
+// pre-B3 look, so older projects open unchanged and save without these keys.
+const SIDING_STYLES={lap:{label:'Lap siding'},'board-batten':{label:'Board & batten'},shake:{label:'Shake'},brick:{label:'Brick'}};
+const HOUSE_COLORS={'Light Gray':'#d9dbd7','Classic White':'#eeece6','Sandstone':'#d6c9ad','Sage':'#a7b39b','Coastal Blue':'#8fa4b6','Charcoal':'#5d6268','Brick Red':'#9a4f3d'};
+const DEFAULT_SIDING='lap',DEFAULT_HOUSE_COLOR='Light Gray',HOUSE_TRIM='#f3f1ea';
+// V5.2 B3: concrete patio and walkway surfaces (presentation only, never footings, pads,
+// stair landings or supports). Stored in plan feet as a centre, width, length and angle.
+const SURFACE_TYPES={patio:{label:'Patio',w:[4,40],l:[4,40],dw:12,dl:10},walkway:{label:'Walkway',w:[2,8],l:[2,60],dw:4,dl:12}};
+const MAX_SURFACES=12,SURFACE_TOP=.03,SURFACE_THICK=4/12,HOUSE_ZONE_DEPTH=40,SURFACE_SITE_LIMIT=120;
+function surfaceCorners(s){const a=(Number(s.angle)||0)*Math.PI/180,u=[Math.cos(a),Math.sin(a)],v=[-Math.sin(a),Math.cos(a)],hw=s.width/2,hl=s.length/2;
+ return [[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>[s.x+u[0]*i*hw+v[0]*j*hl,s.z+u[1]*i*hw+v[1]*j*hl]);}
+// Separating-axis test for two convex quads; true only for a real overlap (touching is fine).
+function quadsOverlap(A,B,tol=.01){for(const P of [A,B])for(let i=0;i<P.length;i++){const a=P[i],b=P[(i+1)%P.length],ax=[-(b[1]-a[1]),b[0]-a[0]],l=Math.hypot(...ax)||1,n=[ax[0]/l,ax[1]/l];
+   const pa=A.map(p=>p[0]*n[0]+p[1]*n[1]),pb=B.map(p=>p[0]*n[0]+p[1]*n[1]);if(Math.min(Math.max(...pa),Math.max(...pb))-Math.max(Math.min(...pa),Math.min(...pb))<=tol)return false;}
+ return true;}
+// The house behind each house wall: from the siding face back into the house.
+function houseZones(q,es){return (q.houseEdges||[]).map(i=>es[i]).filter(Boolean).map(e=>{const at=(p,d)=>[p[0]+e.n[0]*d,p[1]+e.n[1]*d];return [at(e.a,.115),at(e.b,.115),at(e.b,HOUSE_ZONE_DEPTH),at(e.a,HOUSE_ZONE_DEPTH)];});}
+function surfaceProblem(q,es,s){if(houseZones(q,es).some(z=>quadsOverlap(surfaceCorners(s),z)))return 'in-house';return null;}
 const LANDING_TURNS=['straight','left','right'],LANDING_DECK_LINES=['match','horizontal','vertical','diagonal-left','diagonal-right'],MAX_TURN_WIDTH=12;
 function turnSign(e,turn){if(turn!=='left'&&turn!=='right')return 0;const left=[e.n[1],-e.n[0]],k=Math.sign(left[0]*e.t[0]+left[1]*e.t[1])||1;return turn==='left'?k:-k;}
 // The stair's plan footprint as a list of rectangles (world x,z corners). A plain stair or a straight
@@ -1229,6 +1250,17 @@ function sanitize(s){const b=baseIntent(),x=s||{};const q={...b,...x,stairs:{...
        if(r.sill+r.height>OPENING_MAX_TOP)r.sill=+(OPENING_MAX_TOP-r.height).toFixed(4);}
      return r;});
  }else delete q.openings;
+ // V5.2 B3: house look (written only when not the pre-B3 default) and concrete surfaces
+ // (written only when the project has the list, like openings).
+ if(Object.hasOwn(SIDING_STYLES,x.siding)&&x.siding!==DEFAULT_SIDING)q.siding=x.siding;else delete q.siding;
+ if(Object.hasOwn(HOUSE_COLORS,x.houseColor)&&x.houseColor!==DEFAULT_HOUSE_COLOR)q.houseColor=x.houseColor;else delete q.houseColor;
+ if(Array.isArray(x.surfaces)){const seen=new Set();
+   q.surfaces=x.surfaces.filter(s=>s&&SURFACE_TYPES[s.type]).slice(0,MAX_SURFACES).map((s,i)=>{const T=SURFACE_TYPES[s.type],num=(v,d)=>Number.isFinite(Number(v))?Number(v):d;
+     let id=String(s.id||('surface-'+(i+1)));while(seen.has(id))id+='b';seen.add(id);
+     const ang=((num(s.angle,0)%180)+180)%180;
+     return {id,type:s.type,x:+clamp(num(s.x,0),-SURFACE_SITE_LIMIT,SURFACE_SITE_LIMIT).toFixed(4),z:+clamp(num(s.z,0),-SURFACE_SITE_LIMIT,SURFACE_SITE_LIMIT).toFixed(4),
+       width:+clamp(num(s.width,T.dw),T.w[0],T.w[1]).toFixed(4),length:+clamp(num(s.length,T.dl),T.l[0],T.l[1]).toFixed(4),angle:+ang.toFixed(3)};});
+ }else delete q.surfaces;
  q.schemaVersion=SCHEMA_VERSION;q.perimeter=derivePerimeter(q,es);return q;
 }
 // One segment per deck edge, derived from houseEdges, railEdges, the global railing
@@ -1308,22 +1340,42 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  };
  const H=q.height,top=H-.5*FT,fieldColor=PALETTES[q.decking],accent=PALETTES[q.border],railCol=RAILS[q.railColor];
  const minX=Math.min(...poly.map(p=>p[0])),maxX=Math.max(...poly.map(p=>p[0])),minZ=Math.min(...poly.map(p=>p[1])),maxZ=Math.max(...poly.map(p=>p[1]));
- add('earth','site',(minX+maxX)/2,-.24,(minZ+maxZ)/2,Math.max(68,q.width+25),.4,Math.max(66,q.depth+25),'#9aab92',{mat:'ground'});
+ // V5.2 B3: lawn. Its top is grade (y = 0), the datum stairs, posts and footings are built
+ // from; it is wide enough that its edge is not seen at normal zoom. Presentation only.
+ add('earth','site',(minX+maxX)/2,-.2,(minZ+maxZ)/2,240,.4,240,'#8fa37f',{mat:'ground',label:'lawn at grade (visual only)'});
+ const houseColor=HOUSE_COLORS[q.houseColor]||HOUSE_COLORS[DEFAULT_HOUSE_COLOR],siding=SIDING_STYLES[q.siding]?q.siding:DEFAULT_SIDING;
+ const wallOpts=(i,yaw)=>({mat:'siding',yaw,connect:`house-edge-${i}`,label:`house wall · ${SIDING_STYLES[siding].label.toLowerCase()} · ${q.houseColor||DEFAULT_HOUSE_COLOR} (visual only)`});
+ const tagWall=p=>{if(p)p.siding=siding;return p;};
+ // V5.2 B3: the visible house face around each house wall: corner boards, a foundation band at
+ // grade and a simple eave at the top. All visual only; the wall pieces themselves are unchanged.
+ function dressHouseWall(e,i,yaw,top){
+   const L=Math.max(.3,e.len-.07),P=(s,d)=>[e.mid[0]+e.t[0]*s+e.n[0]*d,e.mid[1]+e.t[1]*s+e.n[1]*d];
+   const box=(kind,s0,s1,y0,y1,d0,d1,color,mat,label)=>{const c=P((s0+s1)/2,(d0+d1)/2);return add(kind,'context',c[0],(y0+y1)/2,c[1],s1-s0,y1-y0,d1-d0,color,{mat,yaw,connect:`house-edge-${i}`,label});};
+   const fh=Math.min(.67,Math.max(.25,H*.5)),CB=5/12;
+   box('house-foundation',-L/2,L/2,0,fh,.07,.12,'#aaa69d','concrete','foundation at grade (visual only)');
+   // A corner board stops short of any door/window trim near that end (and is left off if less
+   // than about 1 in. would fit), so it never covers an opening.
+   const ops=(q.openings||[]).filter(o=>o.edge===i&&!openingProblem(q,es,o,[])),TW=3.5/12;
+   for(const s of [-1,1]){const room=Math.min(CB,...ops.map(o=>s<0?(o.offset-o.width/2-TW)-(-L/2):(L/2)-(o.offset+o.width/2+TW)));
+     if(room>=.09)box('house-trim',s>0?L/2-room:-L/2,s>0?L/2:-L/2+room,fh,top,.055,.12,HOUSE_TRIM,'paint','corner board (visual only)');}
+   box('house-eave',-L/2-.4,L/2+.4,top,top+.75,-.95,.465,HOUSE_TRIM,'paint','eave and soffit (visual only)');
+   box('house-roof',-L/2-.5,L/2+.5,top+.75,top+.92,-1.05,.465,'#4b4f55','paint','roof edge (visual only)');
+ }
  // V5.2 B1: a house wall with doors/windows is built AROUND them: full-height piers between
  // openings, wall below each window and above each opening. The wall grows taller only when an
  // opening needs it (walls without openings are unchanged). Openings sit in the deck-facing face.
  function buildOpeningWall(e,i,list,ctr,yaw){
    const L=Math.max(.3,e.len-.07),top=H+Math.max(7,Math.max(...list.map(openingTop))+1),P=(s,d,y)=>[e.mid[0]+e.t[0]*s+e.n[0]*d,y,e.mid[1]+e.t[1]*s+e.n[1]*d];
-   const wall=(s0,s1,y0,y1)=>{if(s1-s0<.01||y1-y0<.01)return;const c=P((s0+s1)/2,.29,0);add('house-wall','context',c[0],(y0+y1)/2,c[2],s1-s0,y1-y0,.35,'#d9dbd7',{mat:'siding',yaw,connect:`house-edge-${i}`});};
+   const wall=(s0,s1,y0,y1)=>{if(s1-s0<.01||y1-y0<.01)return;const c=P((s0+s1)/2,.29,0);tagWall(add('house-wall','context',c[0],(y0+y1)/2,c[2],s1-s0,y1-y0,.35,houseColor,wallOpts(i,yaw)));};
    let s=-L/2;
    for(const o of list){const a=o.offset-o.width/2,b=o.offset+o.width/2;wall(s,a,0,top);wall(a,b,0,H+openingBottom(o));wall(a,b,H+openingTop(o),top);s=b;}
    wall(s,L/2,0,top);
-   // Siding courses (house side of the wall), interrupted where an opening passes through.
-   const cv=[ctr[0]+e.n[0]*.185,ctr[1]+e.n[1]*.185],Lc=Math.max(.3,e.len-.12);
-   for(let y=.3;y<top-.2;y+=.65){let at=-Lc/2;
-     for(const o of list){if(y<H+openingBottom(o)||y>H+openingTop(o))continue;const a=o.offset-o.width/2,b=o.offset+o.width/2;
-       if(a-at>.05){const m=[cv[0]+e.t[0]*(at+a)/2,cv[1]+e.t[1]*(at+a)/2];add('siding-course','context',m[0],y,m[1],a-at,.024,.025,'#bac2c1',{mat:'metal',yaw});}at=b;}
-     if(Lc/2-at>.05){const m=[cv[0]+e.t[0]*(at+Lc/2)/2,cv[1]+e.t[1]*(at+Lc/2)/2];add('siding-course','context',m[0],y,m[1],Lc/2-at,.024,.025,'#bac2c1',{mat:'metal',yaw});}}
+   // V5.2 B3: the siding is drawn on the wall faces by the 3D renderer (style + color), so the
+   // old thin metal course strips (which sat on the far side of the wall) are no longer added.
+   dressHouseWall(e,i,yaw,top);
+   // V5.2 B3: a thin panel closes the back of the wall, so from behind the house the openings do
+   // not look like holes straight through it. Visual only.
+   {const c=P(0,.4775,0);tagWall(add('house-back','context',c[0],top/2,c[2],L,top,.025,houseColor,{mat:'siding',yaw,connect:`house-edge-${i}`,label:'back of house wall (visual only)'}));}
    const face=.29-.175,TRIM='#f3f1ea',TW=3.5/12,FR=.12;
    const box=(kind,s0,s1,y0,y1,d,depth,color,mat,o)=>{if(s1-s0<.005||y1-y0<.005)return null;const c=P((s0+s1)/2,d,0);
      const part=add(kind,'context',c[0],(y0+y1)/2,c[2],s1-s0,y1-y0,depth,color,{mat,yaw,connect:`opening-${o.id}`,label:`${OPENING_TYPES[o.type].label.toLowerCase()} ${Math.round(o.width*12)}×${Math.round(o.height*12)} in. (visual only)`});
@@ -1373,11 +1425,19 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    const e=es[i],out=.29,ctr=[e.mid[0]+e.n[0]*out,e.mid[1]+e.n[1]*out],yaw=-Math.atan2(e.t[1],e.t[0]);
    const here=okOpenings.filter(o=>o.edge===i).sort((a,b)=>a.offset-b.offset);
    if(here.length){buildOpeningWall(e,i,here,ctr,yaw);continue;}
-   add('house-wall','context',ctr[0],(H+7)/2,ctr[1],Math.max(.3,e.len-.07),H+7,.35,'#d9dbd7',{mat:'siding',yaw,connect:`house-edge-${i}`});
-   // Courses use the edge normal in BOTH world axes; previously side walls drew across the deck.
-   for(let y=.3;y<H+6.8;y+=.65){const v=[ctr[0]+e.n[0]*.185,ctr[1]+e.n[1]*.185];
-      add('siding-course','context',v[0],y,v[1],Math.max(.3,e.len-.12),.024,.025,'#bac2c1',{mat:'metal',yaw});}
+   tagWall(add('house-wall','context',ctr[0],(H+7)/2,ctr[1],Math.max(.3,e.len-.07),H+7,.35,houseColor,wallOpts(i,yaw)));
+   dressHouseWall(e,i,yaw,H+7);
  }
+ // V5.2 B3: concrete patio/walkway slabs. Top 3/8 in. above the lawn, 4 in. thick; nothing
+ // structural reads them (they are not footings, pads or landings). A slab that would run into
+ // the house is kept in the project but hidden, with a warning, like a misplaced opening.
+ const surfaceModels=[];let surfaceLayer=0;
+ for(const sf of q.surfaces||[]){const problem=surfaceProblem(q,es,sf),T=SURFACE_TYPES[sf.type];
+   const rec={...sf,corners:surfaceCorners(sf),status:problem||'ok'};surfaceModels.push(rec);
+   if(problem){alerts.push({level:'warning',message:`${T.label} ${surfaceModels.length} (${fmtFt(sf.width)} × ${fmtFt(sf.length)}) is hidden because it runs into the house. Move or resize it in House & Height → Patio & walkway.`});continue;}
+   const topY=SURFACE_TOP+(surfaceLayer++)*.003;rec.top=topY;
+   const part=add('concrete-surface','site',sf.x,topY-SURFACE_THICK/2,sf.z,sf.width,SURFACE_THICK,sf.length,'#c9c5bc',{mat:'concrete',yaw:-sf.angle*Math.PI/180,connect:`surface-${sf.id}`,label:`concrete ${T.label.toLowerCase()} ${fmtFt(sf.width)} × ${fmtFt(sf.length)} (visual only; not a footing, pad or support)`});
+   if(part){part.surface=sf.id;part.surfaceType=sf.type;}}
  // V4.5: user-selected board orientation is relative to the chosen house wall.
  // Board direction ACROSS the house -> joists project OUT from that wall.
  // Boards OUTWARD (perpendicular to house) -> joists run PARALLEL to wall.
@@ -2296,9 +2356,9 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    supplementalBlocking:{fieldEndBlocks,lf:+fieldEndBlockLF.toFixed(2)}};
  if(openingModels.length){counts.doors=okOpenings.filter(o=>o.type==='door').length;counts.patioDoors=okOpenings.filter(o=>o.type==='patio').length;counts.windows=okOpenings.filter(o=>o.type==='window').length;
    stats.openings=openingModels.map(({a,b,...r})=>r);}
- return {intent:q,parts,counts,alerts,stats,materials,geometry:{deckLineResolved,dividerAdjust,openings:openingModels,poly,edges:es,inside,beams,joists:joistSegs,boardAxis:d,dividerRows,dividerFractions,dividerSpanFt:umax-umin,dividerStart:umin,joistAxis:joistD,stair:firstStair,stairs:stairModels}};
+ return {intent:q,parts,counts,alerts,stats,materials,geometry:{deckLineResolved,dividerAdjust,openings:openingModels,surfaces:surfaceModels,house:{siding,color:houseColor,colorName:q.houseColor||DEFAULT_HOUSE_COLOR},poly,edges:es,inside,beams,joists:joistSegs,boardAxis:d,dividerRows,dividerFractions,dividerSpanFt:umax-umin,dividerStart:umin,joistAxis:joistD,stair:firstStair,stairs:stairModels}};
 }
-global.DeckCore={OPENING_TYPES,OPENING_END_CLEAR,OPENING_GAP,OPENING_MAX_TOP,MAX_OPENINGS,openingProblem,openingTop,openingBottom,stairPlan,LANDING_MIN_HEIGHT,LANDING_TURNS,LANDING_DECK_LINES,MAX_TURN_WIDTH,turnSign,stairFootprints,stairHitsDeck,SCHEMA_VERSION,RAIL_PRODUCTS,railFinish,derivePerimeter,migrate,baseIntent,sanitize,make,stairOverlap,resolveDividerFractions,MAX_DIVIDER_ROWS,MAX_FIELD_SECTION_FT,MIN_DIVIDER_SPACING_FT,PALETTES,RAILS,SHAPES,BW,GAP,PITCH,polygon,edges,validPolygon,lineIntervals,offsetPolygon};
+global.DeckCore={SIDING_STYLES,HOUSE_COLORS,DEFAULT_SIDING,DEFAULT_HOUSE_COLOR,SURFACE_TYPES,MAX_SURFACES,SURFACE_TOP,SURFACE_THICK,surfaceCorners,surfaceProblem,quadsOverlap,houseZones,OPENING_TYPES,OPENING_END_CLEAR,OPENING_GAP,OPENING_MAX_TOP,MAX_OPENINGS,openingProblem,openingTop,openingBottom,stairPlan,LANDING_MIN_HEIGHT,LANDING_TURNS,LANDING_DECK_LINES,MAX_TURN_WIDTH,turnSign,stairFootprints,stairHitsDeck,SCHEMA_VERSION,RAIL_PRODUCTS,railFinish,derivePerimeter,migrate,baseIntent,sanitize,make,stairOverlap,resolveDividerFractions,MAX_DIVIDER_ROWS,MAX_FIELD_SECTION_FT,MIN_DIVIDER_SPACING_FT,PALETTES,RAILS,SHAPES,BW,GAP,PITCH,polygon,edges,validPolygon,lineIntervals,offsetPolygon};
 })(window);
 
 </script><script>
@@ -2311,29 +2371,72 @@ global.DeckCore={OPENING_TYPES,OPENING_END_CLEAR,OPENING_GAP,OPENING_MAX_TOP,MAX
 (function(global){
 'use strict';
 const VERT=`attribute vec3 a_pos; attribute vec3 a_normal; attribute vec3 a_color; attribute vec2 a_uv; attribute float a_mat;
-uniform mat4 u_matrix; varying vec3 v_normal; varying vec3 v_color; varying vec2 v_uv; varying float v_mat; varying vec3 v_pos;
-void main(){v_normal=a_normal;v_color=a_color;v_uv=a_uv;v_mat=a_mat;v_pos=a_pos;gl_Position=u_matrix*vec4(a_pos,1.0);}`;
-const FRAG=`precision mediump float;
-varying vec3 v_normal; varying vec3 v_color; varying vec2 v_uv; varying float v_mat; varying vec3 v_pos; uniform vec3 u_eye;
+uniform mat4 u_matrix; uniform float u_shadowV; varying vec3 v_normal; varying vec3 v_color; varying vec2 v_uv; varying float v_mat; varying vec3 v_pos;
+void main(){v_normal=a_normal;v_color=a_color;v_uv=a_uv;v_mat=a_mat;vec3 p=a_pos;
+ // V5.2 B3: flattened sun shadow on the lawn (the same sun direction the lighting uses).
+ if(u_shadowV>0.5){float h=max(p.y,0.0);p=vec3(p.x+0.586*h,0.035,p.z-0.586*h);}
+ v_pos=p;gl_Position=u_matrix*vec4(p,1.0);}`;
+// V5.2 B3: lighting is a soft sky/ground ambient plus one sun, with a little specular on metal
+// and glass. Siding, lawn and concrete get small procedural patterns that fade with distance,
+// so there are no texture downloads and nothing shimmers when the camera moves.
+// Three small fragment programs instead of one large one: each material group is drawn with only
+// the code it needs (GPUs, and especially software WebGL, pay for every branch on every pixel).
+//   main   — wood, metal, paint, glass, and the flattened sun shadow
+//   ground — lawn and concrete (slabs, footings, foundation band)
+//   siding — the house siding patterns
+const FRAG_HEAD=`#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+varying vec3 v_normal; varying vec3 v_color; varying vec2 v_uv; varying float v_mat; varying vec3 v_pos; uniform vec3 u_eye; uniform float u_shadowF; uniform float u_alphaF; uniform sampler2D u_noise; uniform float u_lite;
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
-void main(){
-vec3 n=normalize(v_normal); float light= max(dot(n,normalize(vec3(-0.48,0.82,0.48))),0.0);
-float diff=0.69+0.31*light; vec3 color=v_color;
-if(v_mat<0.5){
+`;
+const FRAG_LIGHT=`vec3 n=normalize(v_normal); vec3 L=vec3(-0.4509,0.7703,0.4509);
+float dist=length(u_eye-v_pos); float detail=clamp(1.0-(dist-28.0)/70.0,0.0,1.0);
+float sun=max(dot(n,L),0.0); float diff=mix(0.55,0.70,n.y*0.5+0.5)+0.34*sun; vec3 color=v_color; float spec=0.0;
+`;
+const FRAG_TAIL=`color=pow(max(color*diff+spec,vec3(0.01)),vec3(.92));
+color=mix(color,vec3(.91,.93,.93),clamp((dist-60.0)/220.0,0.0,0.55));
+gl_FragColor=vec4(color,u_alphaF);}`;
+const FRAG_BODY={
+ main:`if(u_shadowF>0.5){gl_FragColor=vec4(0.10,0.13,0.09,0.24);return;}
+`+FRAG_LIGHT+`if(v_mat<0.5){
  float grain=sin(v_uv.y*18.0 + sin(v_uv.x*1.7)*0.72 + sin(v_uv.x*7.1)*0.23);
  float fiber=sin(v_uv.y*57.0 + sin(v_uv.x*3.4)*1.0);
  float knots=hash(floor(v_uv*vec2(2.2,1.7)))*0.04;
  color *= 0.965+grain*0.026+fiber*0.012+knots;
+}else if(v_mat<1.5){vec3 V=normalize(u_eye-v_pos);spec=0.22*pow(max(dot(n,normalize(L+V)),0.0),36.0);
+}else if(v_mat>8.5){vec3 V=normalize(u_eye-v_pos);
+ float fres=pow(1.0-max(dot(n,V),0.0),2.0);
+ color=mix(color*0.75,vec3(0.80,0.88,0.94),0.25+0.45*fres+0.18*(n.y*0.5+0.5));
+ spec=0.45*pow(max(dot(n,normalize(L+V)),0.0),60.0); diff=0.85+0.15*sun;
 }
-if(v_mat>1.5&&v_mat<2.5){float turf=hash(floor(v_pos.xz*3.0));color*=0.92+turf*.085;}
-if(v_mat>3.5){color*=.96+sin(v_pos.x*.7)*.012;}
-color=pow(max(color*diff,vec3(0.01)),vec3(.92));
-float fog=clamp((length(u_eye-v_pos)-35.0)/100.0,0.0,.17);
-color=mix(color,vec3(.85,.87,.84),fog);
-gl_FragColor=vec4(color,1.0);
-}`;
+`,
+ ground:FRAG_LIGHT+`if(v_mat<2.5){
+ if(u_lite<0.5){vec2 g=v_pos.xz; vec4 a=texture2D(u_noise,g*0.021), f=texture2D(u_noise,g*0.83);
+ color*=0.85+a.r*0.17+a.g*0.06+(f.b-0.5)*0.10; color.g*=0.985+a.b*0.04;}
+}else{
+ if(u_lite<0.5)color*=0.955+texture2D(u_noise,v_pos.xz*0.31+v_pos.y*0.1).g*0.05+(texture2D(u_noise,v_pos.xz*3.7).b-0.5)*0.04;
+ if(n.y>0.9){vec2 j=abs(fract(v_uv/5.0+0.5)-0.5)*5.0;float line=1.0-smoothstep(0.015,0.045,min(j.x,j.y));color*=1.0-0.16*line*detail;}
+}
+`,
+ siding:FRAG_LIGHT+`if(abs(n.y)<0.5){
+ float along=dot(v_pos.xz,vec2(-n.z,n.x)); float y=v_pos.y; float k=1.0;
+ if(v_mat<5.5){float f=fract(y/0.5);k=f<0.06?0.80:0.93+0.09*f;}
+ else if(v_mat<6.5){float x=fract(along/1.333)*1.333;k=x<0.208?1.03:(x<0.245?0.80:0.95);}
+ else if(v_mat<7.5){float row=floor(y/0.58),fy=fract(y/0.58),bx=along/0.5+hash(vec2(row,3.0))*7.0;
+   k=(0.90+hash(vec2(floor(bx),row))*0.14)*(fract(bx)<0.07?0.74:1.0)*(fy<0.08?0.78:0.97+0.04*fy);}
+ else {float row=floor(y/0.2222),fy=fract(y/0.2222),bx=along/0.667+mod(row,2.0)*0.5;
+   if(fy<0.13||fract(bx)<0.045){color=mix(color,vec3(0.80,0.78,0.74),0.85*detail);k=1.0;}
+   else k=0.86+hash(vec2(floor(bx),row))*0.20;}
+ color*=mix(0.95,k,detail);
+}
+`};
 function shader(gl,type,src){const v=gl.createShader(type);gl.shaderSource(v,src);gl.compileShader(v);if(!gl.getShaderParameter(v,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(v));return v;}
-function program(gl){let p=gl.createProgram();gl.attachShader(p,shader(gl,gl.VERTEX_SHADER,VERT));gl.attachShader(p,shader(gl,gl.FRAGMENT_SHADER,FRAG));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(p));return p;}
+function program(gl,kind='main'){let p=gl.createProgram();gl.attachShader(p,shader(gl,gl.VERTEX_SHADER,VERT));gl.attachShader(p,shader(gl,gl.FRAGMENT_SHADER,FRAG_HEAD+'void main(){\n'+FRAG_BODY[kind]+FRAG_TAIL));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(p));return p;}
+// Which program draws a part (by its shader material id).
+const progOf=m=>m===2||m===3?'ground':m>=5&&m<=8?'siding':'main';
 function perspective(fov,aspect,near,far){let f=1/Math.tan(fov/2),v=1/(near-far);return [f/aspect,0,0,0,0,f,0,0,0,0,(far+near)*v,-1,0,0,2*far*near*v,0];}
 function normalize(x){let l=Math.hypot(...x)||1;return x.map(v=>v/l);}
 function cross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];}
@@ -2372,6 +2475,15 @@ function buildSeamGeometry(seams){const data=[];
  }
  return new Float32Array(data);
 }
+// Shader material ids: 0 wood, 1 metal, 2 lawn, 3 concrete, 4 paint/other,
+// 5-8 siding (lap, board & batten, shake, brick; V5.2 B3), 9 glass (V5.2 B3).
+const SIDING_CODE={lap:5,'board-batten':6,shake:7,brick:8};
+function matCode(p){if(p.kind==='opening-glass')return 9;if(p.mat==='siding')return SIDING_CODE[p.siding]??5;
+ return p.mat==='wood'?0:p.mat==='metal'?1:p.mat==='ground'?2:p.mat==='concrete'?3:4;}
+const SHADOW_KINDS=/^(post-6x6|landing-post|railing-post|post-cap|top-rail|bottom-rail|baluster|stair-(tread|riser|stringer|skirt|rail-post|top-rail|bottom-rail|baluster)|landing-(board|frame|fascia))$/;
+function buildShadowGeometry(model,parts){const poly=model.geometry?.poly||[],H=model.intent?.height||0,out=[];
+ if(poly.length>=3&&global.AOSGeometry)for(const tri of global.AOSGeometry.triangulate(poly))for(const v of tri)out.push(v[0],H,v[1],0,1,0,0,0,0,0,0,0);
+ const rest=buildGeometry(parts.filter(p=>SHADOW_KINDS.test(p.kind)));const all=new Float32Array(out.length+rest.length);all.set(out,0);all.set(rest,out.length);return all;}
 function buildGeometry(parts){
 const out=[];
 const faces=[
@@ -2403,7 +2515,7 @@ for(let p of parts){
   // True cut-end topology: each board and picture-frame member is an extruded contour.
   let outline=p.footprint.slice(),signed=outline.reduce((a,v,i)=>{const n=outline[(i+1)%outline.length];return a+v[0]*n[1]-n[0]*v[1];},0);
   if(signed<0)outline.reverse();
-  const yy0=p.y-p.h/2,yy1=p.y+p.h/2,color=rgb(p.color),mat=p.mat==='wood'?0:p.mat==='metal'?1:p.mat==='ground'?2:p.mat==='concrete'?3:4;
+  const yy0=p.y-p.h/2,yy1=p.y+p.h/2,color=rgb(p.color),mat=matCode(p);
   function emit(pt,n){out.push(pt[0],pt[1],pt[2],...n,...color,pt[0],pt[2],mat);}
   // Convex quadrilaterals from the shape-aware board cutter. Top triangles face +Y.
   const N=outline.length;
@@ -2423,7 +2535,7 @@ for(let p of parts){
  const cosx=Math.cos(p.rx||0),sinx=Math.sin(p.rx||0),cosy=Math.cos(p.yaw||0),siny=Math.sin(p.yaw||0),cosz=Math.cos(p.rz||0),sinz=Math.sin(p.rz||0);
  function rot(t){const xx=t[0]*cosz-t[1]*sinz,yy0=t[0]*sinz+t[1]*cosz;const yy=yy0*cosx-t[2]*sinx,zz=yy0*sinx+t[2]*cosx;return [xx*cosy+zz*siny,yy,-xx*siny+zz*cosy];}
  const transformed=v.map(t=>{let a=rot(t);return [a[0]+p.x,a[1]+p.y,a[2]+p.z];});
- let color=rgb(p.color),mat=p.mat==='wood'?0:p.mat==='metal'?1:p.mat==='ground'?2:p.mat==='concrete'?3:4;
+ let color=rgb(p.color),mat=matCode(p);
  for(const face of faces){
   const norm=rot(face.n);
   // Keep all object dimensions in ft; per-part UV creates real variation rather than one painted slab.
@@ -2438,31 +2550,51 @@ return new Float32Array(out);
 }
 class Renderer3D{
  constructor(canvas){
-  this.canvas=canvas;this.gl=canvas.getContext('webgl',{alpha:true,antialias:true,depth:true,preserveDrawingBuffer:true});
+  this.canvas=canvas;this.gl=canvas.getContext('webgl',{alpha:true,antialias:true,depth:true,stencil:true,preserveDrawingBuffer:true});
   this.model=null;this.showStructure=false;this.panMode=false;this.radius=29;this.az=.56;this.el=.48;this.pointerMap=new Map();this.target=[0,2.4,6];
   if(!this.gl){this.soft=true;this.ctx=canvas.getContext('2d');this.installEvents();return;}
-  const gl=this.gl;this.prog=program(gl);this.buffer=gl.createBuffer();this.seamBuffer=gl.createBuffer();gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);
-  this.loc={pos:gl.getAttribLocation(this.prog,'a_pos'),norm:gl.getAttribLocation(this.prog,'a_normal'),color:gl.getAttribLocation(this.prog,'a_color'),uv:gl.getAttribLocation(this.prog,'a_uv'),mat:gl.getAttribLocation(this.prog,'a_mat'),matrix:gl.getUniformLocation(this.prog,'u_matrix'),eye:gl.getUniformLocation(this.prog,'u_eye')};
+  const gl=this.gl;this.progs={main:program(gl,'main'),ground:program(gl,'ground'),siding:program(gl,'siding')};this.prog=this.progs.main;this.buffers={main:gl.createBuffer(),ground:gl.createBuffer(),siding:gl.createBuffer()};this.counts={main:0,ground:0,siding:0};this.buffer=this.buffers.main;this.seamBuffer=gl.createBuffer();this.shadowBuffer=gl.createBuffer();this.groundBuffer=gl.createBuffer();this.hasStencil=(gl.getParameter(gl.STENCIL_BITS)||0)>0;
+  // V5.2 B3: one small (128 x 128) tiling noise texture made here in code, with mipmaps so distant
+  // lawn and concrete stay smooth. Three independent noise scales in R, G and B. No download.
+  {const N=128,data=new Uint8Array(N*N*4),seed=(i,j,k)=>{const v=Math.sin((i%N)*127.1+(j%N)*311.7+k*74.7)*43758.5453;return v-Math.floor(v);};
+   const vn=(x,y,cells,k)=>{const sx=x*cells/N,sy=y*cells/N,i=Math.floor(sx),j=Math.floor(sy),fx=sx-i,fy=sy-j,u=fx*fx*(3-2*fx),w=fy*fy*(3-2*fy),h=(a,b)=>seed(((a%cells)+cells)%cells,((b%cells)+cells)%cells,k);
+     return (h(i,j)*(1-u)+h(i+1,j)*u)*(1-w)+(h(i,j+1)*(1-u)+h(i+1,j+1)*u)*w;};
+   for(let y=0;y<N;y++)for(let x=0;x<N;x++){const o=(y*N+x)*4;data[o]=255*(.6*vn(x,y,8,1)+.4*vn(x,y,16,2));data[o+1]=255*(.6*vn(x,y,16,3)+.4*vn(x,y,32,4));data[o+2]=255*(.5*vn(x,y,32,5)+.5*vn(x,y,64,6));data[o+3]=255;}
+   this.noise=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,this.noise);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,N,N,0,gl.RGBA,gl.UNSIGNED_BYTE,data);
+   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.REPEAT);gl.generateMipmap(gl.TEXTURE_2D);
+   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);}gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);
+  const locsOf=pr=>({pos:gl.getAttribLocation(pr,'a_pos'),norm:gl.getAttribLocation(pr,'a_normal'),color:gl.getAttribLocation(pr,'a_color'),uv:gl.getAttribLocation(pr,'a_uv'),mat:gl.getAttribLocation(pr,'a_mat'),matrix:gl.getUniformLocation(pr,'u_matrix'),eye:gl.getUniformLocation(pr,'u_eye'),shadowV:gl.getUniformLocation(pr,'u_shadowV'),shadowF:gl.getUniformLocation(pr,'u_shadowF'),alpha:gl.getUniformLocation(pr,'u_alphaF'),noise:gl.getUniformLocation(pr,'u_noise'),lite:gl.getUniformLocation(pr,'u_lite')});
+  this.locs={main:locsOf(this.progs.main),ground:locsOf(this.progs.ground),siding:locsOf(this.progs.siding)};this.loc=this.locs.main;
+  // V5.2 B3: on a computer whose browser has no graphics acceleration (WebGL runs in software),
+  // use a lighter look so rotating stays smooth: no sun shadow, a plain lawn, and a lower drawing
+  // resolution while a finger or the mouse is moving the view. ?quality=full or ?quality=lite
+  // in the address overrides the automatic choice.
+  {let soft=false;try{const ext=gl.getExtension('WEBGL_debug_renderer_info'),name=String(ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER));soft=/swiftshader|llvmpipe|softpipe|software|basic render/i.test(name);this.rendererName=name;}catch(e){}
+   const want=(()=>{try{return new URLSearchParams(global.location?.search||'').get('quality');}catch(e){return null;}})();
+   this.lite=want==='lite'?true:want==='full'?false:soft;}
   this.installEvents();
  }
  // Keep the orbit target within the actual deck work area. Include stairs
  // because they extend beyond the deck outline. Ground/house visual backdrop
  // must NOT expand these limits into empty space.
- cameraWorkBounds(){
-  if(!this.model?.intent)return null;
-  const q=this.model.intent,pts=[...(this.model.geometry?.poly||[])];
-  const stair=this.model.geometry?.stair;
-  if(stair?.enabled&&stair.base&&stair.tt&&stair.nn){
-   for(const u of [-stair.width/2,stair.width/2])for(const v of [0,stair.run+1]){
-    pts.push([stair.base[0]+stair.tt[0]*u+stair.nn[0]*v,
-              stair.base[1]+stair.tt[1]*u+stair.nn[1]*v]);
-   }
+ // V5.2 B3: the work area is everything the customer is shown around the deck: the deck, every
+ // staircase and landing, and the concrete patio/walkway slabs. The lawn and house backdrop
+ // never widen it. Computed once per model (it is used on every pointer move).
+ cameraWorkBounds(withSurfaces=true){
+  if(!this.model?.intent)return null;const key=withSurfaces?'_bounds':'_fitBounds';
+  if(this[key]&&this[key+'Model']===this.model)return this[key];
+  const q=this.model.intent,g=this.model.geometry||{},pts=[...(g.poly||[])];
+  for(const p of this.model.parts||[]){
+   if(!/^(stair-|landing-)/.test(p.kind)&&!(withSurfaces&&p.kind==='concrete-surface'))continue;
+   const c=Math.cos(-(p.yaw||0)),sn=Math.sin(-(p.yaw||0)),hw=p.w/2,hd=p.d/2;
+   if(p.footprint)for(const v of p.footprint)pts.push(v);
+   else for(const [a,b] of [[-hw,-hd],[hw,-hd],[hw,hd],[-hw,hd]])pts.push([p.x+a*c-b*sn,p.z+a*sn+b*c]);
   }
-  if(!pts.length)return {xmin:-q.width/2-2,xmax:q.width/2+2,zmin:-2,zmax:q.depth+2,ymin:.25,ymax:q.height+2.5};
-  const x=pts.map(p=>p[0]),z=pts.map(p=>p[1]),pad=2; // 2-ft margin permits close-up orbiting of edges
-  return {xmin:Math.min(...x)-pad,xmax:Math.max(...x)+pad,
-          zmin:Math.min(...z)-pad,zmax:Math.max(...z)+pad,
-          ymin:.25,ymax:q.height+2.5};
+  let out;
+  if(!pts.length)out={xmin:-q.width/2-2,xmax:q.width/2+2,zmin:-2,zmax:q.depth+2,ymin:.25,ymax:q.height+2.5};
+  else{const x=pts.map(p=>p[0]),z=pts.map(p=>p[1]),pad=2; // 2-ft margin permits close-up orbiting of edges
+   out={xmin:Math.min(...x)-pad,xmax:Math.max(...x)+pad,zmin:Math.min(...z)-pad,zmax:Math.max(...z)+pad,ymin:.25,ymax:q.height+2.5};}
+  this[key]=out;this[key+'Model']=this.model;return out;
  }
  clampTargetToWorkArea(){
   const b=this.cameraWorkBounds();if(!b)return;
@@ -2519,12 +2651,14 @@ class Renderer3D{
     this.pan(nextX-prevX,nextY-prevY);
     this.limitCameraAboveGrade();
    }
-   this.draw();
+   this.requestDraw();
   });
-  const done=e=>{this.pointerMap.delete(e.pointerId);};
+  const done=e=>{const had=this.pointerMap.delete(e.pointerId);if(had&&this.lite&&!this.pointerMap.size)this.requestDraw();};
   ['pointerup','pointercancel','lostpointercapture'].forEach(n=>canvas.addEventListener(n,done));
-  canvas.addEventListener('wheel',e=>{e.preventDefault();this.zoom(e.deltaY>0?1.10:.9);},{passive:false});
+  canvas.addEventListener('wheel',e=>{e.preventDefault();this.radius=Math.max(7,Math.min(160,this.radius*(e.deltaY>0?1.10:.9)));this.limitCameraAboveGrade();this.requestDraw();},{passive:false});
  }
+ // V5.2 B3: input events can arrive faster than the screen refreshes; draw at most once a frame.
+ requestDraw(){if(this._frame)return;const go=()=>{this._frame=0;this.draw();};this._frame=typeof requestAnimationFrame==='function'?requestAnimationFrame(go):setTimeout(go,16);}
  limitCameraAboveGrade(){
   // Camera eye, not just camera pitch, must stay above grade. With a large
   // mobile Fit radius, an arbitrary negative elevation puts the eye underground.
@@ -2538,32 +2672,74 @@ class Renderer3D{
  setModel(model){this.model=model; if(!model)return;this.clampTargetToWorkArea();this.visibleParts=model.parts.filter(p=>!this.showStructure || (!['finish','stair','rail','site'].includes(p.group)&&p.kind!=='earth'));
   this.finishSeams=this.showStructure?[]:buildFinishSeams(this.visibleParts);
   if(!this.gl){this.draw();return;}
-  const gl=this.gl;this.data=buildGeometry(this.visibleParts);this.vertices=this.data.length/12;
-  gl.bindBuffer(gl.ARRAY_BUFFER,this.buffer);gl.bufferData(gl.ARRAY_BUFFER,this.data,gl.STATIC_DRAW);
+  const gl=this.gl,bucket={main:[],ground:[],siding:[]};
+  for(const p of this.visibleParts)bucket[p.profile2d?'main':progOf(matCode(p))].push(p);
+  this.vertices=0;for(const k of Object.keys(bucket)){const data=buildGeometry(bucket[k]);this.counts[k]=data.length/12;this.vertices+=this.counts[k];
+   gl.bindBuffer(gl.ARRAY_BUFFER,this.buffers[k]);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);}
   this.seamData=buildSeamGeometry(this.finishSeams);this.seamVertices=this.seamData.length/12;
   gl.bindBuffer(gl.ARRAY_BUFFER,this.seamBuffer);gl.bufferData(gl.ARRAY_BUFFER,this.seamData,gl.STATIC_DRAW);
+  // V5.2 B3: finished view only — what casts a sun shadow on the lawn: the deck, its framing,
+  // stairs and railings (not the house, footings, slabs or lawn themselves).
+  // The deck surface casts its shadow as ONE outline (not hundreds of boards and joists), plus the
+  // posts, railings and stairs that stand out from it; this keeps the extra pass cheap.
+  const sh=this.showStructure||this.lite?new Float32Array(0):buildShadowGeometry(model,this.visibleParts);this.shadowVertices=sh.length/12;
+  gl.bindBuffer(gl.ARRAY_BUFFER,this.shadowBuffer);gl.bufferData(gl.ARRAY_BUFFER,sh,gl.STATIC_DRAW);
+  // Framing-only: a see-through lawn at grade, so the frame is not floating in space and the
+  // below-grade footings still show through it. Same lawn part, drawn last with transparency.
+  const earth=this.showStructure?model.parts.filter(p=>p.kind==='earth'):[];
+  const gd=buildGeometry(earth.map(p=>({...p,y:-.001-.0005,h:.001})));this.groundVertices=gd.length/12;
+  gl.bindBuffer(gl.ARRAY_BUFFER,this.groundBuffer);gl.bufferData(gl.ARRAY_BUFFER,gd,gl.STATIC_DRAW);
   this.draw();
  }
- fit(){if(!this.model||!this.model.intent)return;const q=this.model.intent;const aspect=Math.max(.4,this.canvas.clientWidth/Math.max(1,this.canvas.clientHeight));this.radius=Math.max(15,Math.max(q.width,q.depth)*(aspect<1?2.65:1.8)+q.height*.4);this.az=.56;this.el=this.showStructure?.18:.48;const poly=this.model.geometry?.poly||[],cx=poly.length?(Math.min(...poly.map(v=>v[0]))+Math.max(...poly.map(v=>v[0])))/2:0,cz=poly.length?(Math.min(...poly.map(v=>v[1]))+Math.max(...poly.map(v=>v[1])))/2:q.depth/2;this.target=[cx,q.height/2+(this.showStructure?0:1),cz];this.limitCameraAboveGrade();this.draw();}
+ // V5.2 B3: Fit frames the deck, its stairs and landings and any patio/walkway slabs, using both
+ // the vertical and horizontal field of view, so tall, wide and phone-portrait views all fit.
+ fit(){if(!this.model||!this.model.intent)return;const q=this.model.intent,b=this.cameraWorkBounds(false);
+  const aspect=Math.max(.35,this.canvas.clientWidth/Math.max(1,this.canvas.clientHeight)),pad=1.6;
+  const cx=(b.xmin+b.xmax)/2,cz=(b.zmin+b.zmax)/2,hx=(b.xmax-b.xmin)/2-pad,hz=(b.zmax-b.zmin)/2-pad,hy=(q.height+3.5)/2;
+  const r=Math.max(4,Math.hypot(hx,hz,hy)),half=Math.PI/8,halfH=Math.atan(Math.tan(half)*aspect);
+  this.radius=Math.max(15,Math.min(160,r/Math.sin(Math.min(half,halfH))*.9));
+  this.az=.56;this.el=this.showStructure?.18:.48;this.target=[cx,Math.min(q.height/2+(this.showStructure?0:1),q.height+2.5),cz];this.clampTargetToWorkArea();this.limitCameraAboveGrade();this.draw();}
+ // V5.2 B3: one tap to look up at the framing from just above the ground beside the deck.
+ lookUnder(){if(!this.model||!this.model.intent)return;const q=this.model.intent,b=this.cameraWorkBounds(),poly=this.model.geometry?.poly||[];
+  const cx=poly.length?(Math.min(...poly.map(v=>v[0]))+Math.max(...poly.map(v=>v[0])))/2:(b.xmin+b.xmax)/2,cz=poly.length?(Math.min(...poly.map(v=>v[1]))+Math.max(...poly.map(v=>v[1])))/2:(b.zmin+b.zmax)/2;
+  const span=Math.max(b.xmax-b.xmin,b.zmax-b.zmin);this.target=[cx,Math.max(.25,Math.min(q.height*.55,q.height-.6)),cz];this.radius=Math.max(12,Math.min(60,span*.75));
+  this.el=-1;this.clampTargetToWorkArea();this.limitCameraAboveGrade();this.draw();}
  zoom(factor){this.radius=Math.max(7,Math.min(160,this.radius*factor));this.limitCameraAboveGrade();this.draw();}
+ // Screen position (0..1 across, 0..1 down) of a world point for the current camera; null if behind it.
+ project(pt){const w=Math.max(1,this.canvas.clientWidth),h=Math.max(1,this.canvas.clientHeight),m=mul(perspective(Math.PI/4,w/h,.1,350),lookAt(this.eye(),this.target)),v=[pt[0],pt[1],pt[2],1],c=[0,1,2,3].map(r=>m[r]*v[0]+m[4+r]*v[1]+m[8+r]*v[2]+m[12+r]*v[3]);if(c[3]<=.01)return null;return [(c[0]/c[3]+1)/2,(1-c[1]/c[3])/2,c[2]/c[3]];}
+ eye(){return [this.target[0]+this.radius*Math.cos(this.el)*Math.sin(this.az),this.target[1]+this.radius*Math.sin(this.el),this.target[2]+this.radius*Math.cos(this.el)*Math.cos(this.az)];}
  draw(){
+  if(this._frame){if(typeof cancelAnimationFrame==='function')cancelAnimationFrame(this._frame);clearTimeout(this._frame);this._frame=0;}
   if(!this.model)return; if(!this.gl){this.drawSoftware();return;}const gl=this.gl;
-  const width=Math.max(1,Math.round(this.canvas.clientWidth*Math.min(devicePixelRatio||1,2))),height=Math.max(1,Math.round(this.canvas.clientHeight*Math.min(devicePixelRatio||1,2)));
+  const moving=this.lite&&this.pointerMap.size>0,ratio=moving?Math.min(devicePixelRatio||1,1)*.75:Math.min(devicePixelRatio||1,2);
+  const width=Math.max(1,Math.round(this.canvas.clientWidth*ratio)),height=Math.max(1,Math.round(this.canvas.clientHeight*ratio));
   if(this.canvas.width!==width||this.canvas.height!==height){this.canvas.width=width;this.canvas.height=height;}
-  gl.viewport(0,0,width,height);gl.clearColor(.91,.94,.96,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-  gl.useProgram(this.prog);gl.bindBuffer(gl.ARRAY_BUFFER,this.buffer);
-  const stride=12*4;
+  gl.viewport(0,0,width,height);gl.clearColor(.91,.94,.96,0);gl.clearStencil(0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT|gl.STENCIL_BUFFER_BIT);
+  const stride=12*4,eye=this.eye();
+  const proj=perspective(Math.PI/4,width/height,.1,350),view=lookAt(eye,this.target),matrix=new Float32Array(mul(proj,view));
+  let loc=this.loc;
+  const use=k=>{gl.useProgram(this.progs[k]);loc=this.locs[k];gl.uniformMatrix4fv(loc.matrix,false,matrix);gl.uniform3fv(loc.eye,new Float32Array(eye));
+   gl.uniform1f(loc.shadowV,0);gl.uniform1f(loc.shadowF,0);gl.uniform1f(loc.alpha,1);gl.uniform1f(loc.lite,this.lite?1:0);gl.uniform1i(loc.noise,0);};
   const vertexPointers=()=>{for(const [a,size,off] of [['pos',3,0],['norm',3,3],['color',3,6],['uv',2,9],['mat',1,11]]){
-   const idx=this.loc[a];gl.enableVertexAttribArray(idx);gl.vertexAttribPointer(idx,size,gl.FLOAT,false,stride,off*4);
+   const idx=loc[a];if(idx<0)continue;gl.enableVertexAttribArray(idx);gl.vertexAttribPointer(idx,size,gl.FLOAT,false,stride,off*4);
   }};
-  vertexPointers();
-  const eye=[this.target[0]+this.radius*Math.cos(this.el)*Math.sin(this.az),this.target[1]+this.radius*Math.sin(this.el),this.target[2]+this.radius*Math.cos(this.el)*Math.cos(this.az)];
-  const proj=perspective(Math.PI/4,width/height,.1,350),view=lookAt(eye,this.target);
-  gl.uniformMatrix4fv(this.loc.matrix,false,new Float32Array(mul(proj,view)));gl.uniform3fv(this.loc.eye,new Float32Array(eye));
-  gl.drawArrays(gl.TRIANGLES,0,this.vertices);
+  gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.noise);
+  for(const k of ['ground','siding','main']){if(!this.counts[k])continue;use(k);gl.bindBuffer(gl.ARRAY_BUFFER,this.buffers[k]);vertexPointers();gl.drawArrays(gl.TRIANGLES,0,this.counts[k]);}
+  use('main');
   // Depth-tested dark seam lines sit just above the actual finished surfaces;
   // rail posts and other 3D geometry still occlude them in normal WebGL views.
   if(this.seamVertices){gl.bindBuffer(gl.ARRAY_BUFFER,this.seamBuffer);vertexPointers();gl.drawArrays(gl.LINES,0,this.seamVertices);}
+  // Sun shadow: every caster flattened onto the lawn, blended ONCE per pixel (stencil), so
+  // overlapping pieces do not stack into darker blotches. It never writes depth.
+  if(this.shadowVertices){gl.bindBuffer(gl.ARRAY_BUFFER,this.shadowBuffer);vertexPointers();
+   gl.uniform1f(loc.shadowV,1);gl.uniform1f(loc.shadowF,1);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE);gl.depthMask(false);
+   if(this.hasStencil){gl.enable(gl.STENCIL_TEST);gl.stencilFunc(gl.EQUAL,0,0xff);gl.stencilOp(gl.KEEP,gl.KEEP,gl.INCR);}
+   gl.drawArrays(gl.TRIANGLES,0,this.shadowVertices);
+   if(this.hasStencil)gl.disable(gl.STENCIL_TEST);gl.depthMask(true);gl.disable(gl.BLEND);gl.enable(gl.CULL_FACE);gl.uniform1f(loc.shadowV,0);gl.uniform1f(loc.shadowF,0);}
+  if(this.groundVertices){use('ground');gl.bindBuffer(gl.ARRAY_BUFFER,this.groundBuffer);vertexPointers();
+   // Half lawn, half whatever is behind it (sky color, or a footing below grade); the result is
+   // opaque so the page background never shows through.
+   gl.enable(gl.BLEND);gl.blendColor(0,0,0,.45);gl.blendFuncSeparate(gl.CONSTANT_ALPHA,gl.ONE_MINUS_CONSTANT_ALPHA,gl.ONE,gl.ZERO);gl.depthMask(false);gl.drawArrays(gl.TRIANGLES,0,this.groundVertices);gl.depthMask(true);gl.disable(gl.BLEND);}
  }
  drawSoftware(){
   if(!this.model||!this.ctx)return;
@@ -2642,8 +2818,9 @@ class Renderer3D{
    if(!a||!b)continue;
    polys.push({points:[a,b],depth:(a[2]+b[2])/2,kind:'finish-seam',group:'finish-outline',color:'rgb('+rgb(seam.color).map(v=>Math.round(Math.max(8,v*255*.41))).join(',')+')'});
   }
-  const level={context:0,foundation:1,framing:2,'stair-framing':2,finish:3,'finish-top-union':3.25,'finish-outline':3.5,stair:4,rail:5};
-  for(let p of polys)p.layer=level[p.group]??3;
+  const level={site:-1,context:0,foundation:1,framing:2,'stair-framing':2,finish:3,'finish-top-union':3.25,'finish-outline':3.5,stair:4,rail:5};
+  // V5.2 B3: within the house, the back panel goes first and doors, windows and trim after the wall.
+  for(let p of polys)p.layer=p.kind==='house-back'?-.5:/^(opening-|door-|house-trim|house-foundation)/.test(p.kind||'')?.5:(level[p.group]??3);
   polys.sort((a,b)=>a.layer-b.layer||b.depth-a.depth);
   for(let p of polys){
     if(p.kind==='finish-top-union'){
@@ -2982,7 +3159,7 @@ const nextStep=id=>STEP_FLOW[Math.min(STEP_FLOW.length-1,flowPosition(id)+1)];
 const previousStep=id=>STEP_FLOW[Math.max(0,flowPosition(id)-1)];
 const titles=['Shape & Size','House & Height','Stairs','Decking Layout','Decking Selection','Railings','Framing & Ledger','Review & Present'];
 const hints=['Choose and shape','Tap house edges','Tap an edge to add','Choose board pattern','Choose finish colors','Tap to add/remove','Choose beams and support early','Finished and framing'];
-const state={dimensionLabels:[],intent:null,model:null,step:0,view:'2d',layoutTab:'direction',finishTab:'field',railTab:'locations',railTarget:'all',dividerSelected:0,stairSelected:0,selectedCorner:null,previewPoly:null,cornerPreview:null,cornerPreviewError:'',cornerKey:null,cornerSize:1,cornerAngle:45,cornerOrientation:'first',shapeTool:null,featureDraft:{kind:'bump',width:4,depth:2,fraction:.5},featureSelected:null,shapePicker:false,freeDraw:false,freePts:[],freeHover:null,freeRedo:[],measure:'all',drawSnap:true,drawMode:'auto',selectedEdge:null,framingDetails:false,history:[null],historyAt:0,plan:{scale:18,panX:0,panY:0,targetZ:6,pointers:new Map(),drag:null,tap:null},toastTimeout:0};
+const state={dimensionLabels:[],intent:null,model:null,step:0,view:'2d',houseTab:'walls',surfaceSelected:null,layoutTab:'direction',finishTab:'field',railTab:'locations',railTarget:'all',dividerSelected:0,stairSelected:0,selectedCorner:null,previewPoly:null,cornerPreview:null,cornerPreviewError:'',cornerKey:null,cornerSize:1,cornerAngle:45,cornerOrientation:'first',shapeTool:null,featureDraft:{kind:'bump',width:4,depth:2,fraction:.5},featureSelected:null,shapePicker:false,freeDraw:false,freePts:[],freeHover:null,freeRedo:[],measure:'all',drawSnap:true,drawMode:'auto',selectedEdge:null,framingDetails:false,history:[null],historyAt:0,plan:{scale:18,panX:0,panY:0,targetZ:6,pointers:new Map(),drag:null,tap:null},toastTimeout:0};
 const planCanvas=$('planCanvas'),ctx=planCanvas.getContext('2d'),glCanvas=$('glCanvas'),renderer3d=new window.Deck3D(glCanvas);
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 // Construction-style lengths (display only; geometry keeps its exact values): 21.25 -> 21′ 3″, 16 -> 16′ 0″.
@@ -3254,7 +3431,7 @@ const stepShort=['Shape','House','Stairs','Layout','Decking','Railings','Framing
 function stepAttention(){const out=new Set(),m=state.model;if(!state.intent||!m)return out;
  if(m.stats?.invalidGeometry)out.add(0);
  for(const a of m.alerts||[]){if(a.level!=='warning')continue;const t=a.message;
-   if(/outline|footprint|triangulat/i.test(t))out.add(0);else if(/stair/i.test(t))out.add(2);else if(/divider|border|picture/i.test(t))out.add(3);
+   if(/outline|footprint|triangulat/i.test(t))out.add(0);else if(/House & Height/.test(t))out.add(1);else if(/stair/i.test(t))out.add(2);else if(/divider|border|picture/i.test(t))out.add(3);
    else if(/rail|guard/i.test(t))out.add(5);else out.add(6);}
  return out;}
 function stepTo(i){state.cornerPreview=null;if(!state.intent&&i>0){toast('Choose a shape first.');return;}
@@ -3274,7 +3451,7 @@ function updateHeader(){
  }
  $('planCanvas').classList.toggle('visible',state.view==='2d');$('glCanvas').classList.toggle('visible',state.view==='3d');
  const tips=['Tap a measurement to edit exact length · drag edges or corners','Tap deck edges to add or remove house walls','Add & select multiple stairs · drag to reposition','Choose layout; drag dividers to position','Select decking and accent finishes','Tap deck edges or stair sides for railings','STEP 3 · Choose dropped/flush beams and ledger/freestanding support','Orbit to inspect; frame stays under the decking'];
- $('viewTip').textContent=state.freeDraw?'90° Locked by default · Finish Shape or green dot':state.view==='3d'?(renderer3d.panMode?'MOVE selected · drag to shift view · pinch to zoom':'ROTATE selected · drag to orbit · two fingers to move/zoom'):state.intent?(state.step===5&&state.railTab==='finish'?'Tap a railed edge to give it its own finish':tips[state.step]):'Select a shape to begin';
+ $('viewTip').textContent=state.freeDraw?'90° Locked by default · Finish Shape or green dot':state.view==='3d'?(renderer3d.panMode?'MOVE selected · drag to shift view · pinch to zoom':'ROTATE selected · drag to orbit · two fingers to move/zoom'):state.intent?(state.step===5&&state.railTab==='finish'?'Tap a railed edge to give it its own finish':state.step===1&&state.houseTab==='yard'?'Drag a patio or walkway to move it · drag its round handle to resize':state.step===1&&state.houseTab==='look'?'Siding and color show in the 3D view':tips[state.step]):'Select a shape to begin';
  if(state.view==='3d')renderer3d.draw();else planDraw();
 }
 const seg=(path,opts,cur)=>`<div class="seg">${opts.map(([v,t])=>`<button type="button" data-path="${path}" data-value="${v}" class="${String(v)===String(cur)?'selected':''}">${t}</button>`).join('')}</div>`;
@@ -3602,6 +3779,52 @@ function renderOpeningsPanel(q){
  else html+=`<div class="editor-tip">Doors and patio doors sit on the deck surface; windows sit at a sill height above it. Tap one in 2D to select it.</div>`;
  return html+`</div>`;
 }
+// V5.2 B3: house look — a siding style and an exterior color, shown on the house walls in the
+// finished 3D view. Presentation only; nothing else in the design depends on it.
+function renderHouseLookPanel(q){
+ const style=q.siding||core.DEFAULT_SIDING,color=q.houseColor||core.DEFAULT_HOUSE_COLOR;
+ let html=`<div class="editor-panel house-look-panel"><div class="editor-head">HOUSE LOOK<span>${core.SIDING_STYLES[style].label} · ${color}</span></div>`;
+ if(!q.houseEdges.length)html+=`<div class="editor-tip">This deck is freestanding. Add a house wall on Walls &amp; doors to show the house.</div>`;
+ html+=`<p class="group-title">Siding</p><div class="seg wrap siding-seg">${Object.entries(core.SIDING_STYLES).map(([v,t])=>`<button type="button" data-path="siding" data-value="${v}" class="${style===v?'selected':''}" aria-pressed="${style===v}">${t.label}</button>`).join('')}</div>
+ <p class="group-title">Exterior color</p><div class="house-swatches">${swatches('houseColor',core.HOUSE_COLORS,color)}</div>
+ <div class="editor-actions"><button data-action="house-see-3d">See it in 3D</button></div>
+ <div class="editor-tip">Doors, windows and trim stay as placed. Shown in the finished 3D view for presentation only.</div></div>`;
+ return html;}
+// V5.2 B3: concrete patio and walkway slabs. Presentation only: they are not footings, pads or
+// stair landings and are not part of the framing, structural checks or materials list.
+function surfaceSel(){const list=state.intent?.surfaces||[];if(!list.length){state.surfaceSelected=null;return null;}if(!list.some(x=>x.id===state.surfaceSelected))state.surfaceSelected=list.at(-1).id;return list.find(x=>x.id===state.surfaceSelected);}
+function renderSurfacesPanel(q){
+ const list=q.surfaces||[],sel=surfaceSel(),geo=state.model.geometry.surfaces||[],k=sel?list.indexOf(sel):-1,T=sel?core.SURFACE_TYPES[sel.type]:null,g=sel?geo.find(x=>x.id===sel.id):null;
+ const nameOf=x=>`${core.SURFACE_TYPES[x.type].label} ${list.filter(y=>y.type===x.type).indexOf(x)+1}`;
+ let html=`<div class="editor-panel surfaces-panel"><div class="editor-head">CONCRETE SURFACES<span>${list.length?`${list.length} on the property`:'none yet'}</span></div>
+ <div class="editor-actions"><button data-action="surface-add" data-value="patio">+ Patio</button><button data-action="surface-add" data-value="walkway">+ Walkway</button></div>`;
+ if(sel){html+=`<div class="stair-picker"><button data-action="surface-prev" ${k<1?'disabled':''} aria-label="Previous surface">‹</button><strong>${nameOf(sel)} of ${list.length} · ${fmt(sel.width)} × ${fmt(sel.length)}</strong><button data-action="surface-next" ${k>=list.length-1?'disabled':''} aria-label="Next surface">›</button></div>
+   ${g&&g.status!=='ok'?`<div class="opening-warn">⚠ Hidden: it runs into the house. Drag it away from the house or make it smaller.</div>`:''}
+   <div class="editor-fields"><label>Width<input data-surface-field="width" value="${fmt(sel.width)}"></label><label>Length<input data-surface-field="length" value="${fmt(sel.length)}"></label></div>
+   <div class="editor-actions surface-turn"><button data-action="surface-rotate" data-value="-15" aria-label="Turn 15 degrees left">⟲ 15°</button><strong class="surface-angle">${Math.round(sel.angle)}°</strong><button data-action="surface-rotate" data-value="15" aria-label="Turn 15 degrees right">⟳ 15°</button><button data-action="surface-rotate" data-value="90">Turn 90°</button></div>
+   <div class="editor-actions"><button data-action="surface-remove" class="danger">Delete ${T.label.toLowerCase()}</button></div>
+   <div class="editor-tip">Drag it in 2D to move it; drag the round corner handle to resize. For presentation only: not a footing, pad or stair landing, and not part of the framing or materials list.</div>`;}
+ else html+=`<div class="editor-tip">Add a concrete patio or walkway to show the yard around the deck. Drag them in 2D. For presentation only.</div>`;
+ return html+`</div>`;}
+// First free place for a new slab: patio beyond the deck side away from the house; walkway out from
+// the foot of the first stair (else beside the patio). Kept out of the house.
+function placeSurface(q,type){const T=core.SURFACE_TYPES[type],es=core.edges(core.polygon(q)),poly=core.polygon(q);
+ const ref=es[q.houseEdges[0]]||es[0],out=q.houseEdges.length?[-ref.n[0],-ref.n[1]]:[ref.n[0],ref.n[1]],side=[-out[1],out[0]];
+ const c=poly.reduce((a,p)=>[a[0]+p[0]/poly.length,a[1]+p[1]/poly.length],[0,0]),far=Math.max(...poly.map(p=>p[0]*out[0]+p[1]*out[1]))-(c[0]*out[0]+c[1]*out[1]);
+ const angleFor=dir=>((Math.atan2(-dir[0],dir[1])*180/Math.PI)%180+180)%180;let s;
+ if(type==='walkway'){const m=state.model,risers=(m.parts||[]).filter(p=>p.kind==='stair-riser'),treads=(m.parts||[]).filter(p=>p.kind==='stair-tread');
+   if(risers.length){const r=risers.reduce((a,b)=>a.y<b.y?a:b),t=treads.length?treads.reduce((a,b)=>Math.hypot(a.x-r.x,a.z-r.z)<Math.hypot(b.x-r.x,b.z-r.z)?a:b):null;
+     let dir=t?[r.x-t.x,r.z-t.z]:out;const n=[Math.sin(r.yaw),Math.cos(r.yaw)],dd=dir[0]*n[0]+dir[1]*n[1];dir=dd<0?[-n[0],-n[1]]:n;
+     const w=clamp(Math.round(r.w),T.w[0],T.w[1]);s={x:r.x+dir[0]*(T.dl/2+.05),z:r.z+dir[1]*(T.dl/2+.05),width:w,length:T.dl,angle:angleFor(dir)};}
+   else s={x:c[0]+out[0]*(far+T.dl/2+.5)+side[0]*(T.dw*1.5),z:c[1]+out[1]*(far+T.dl/2+.5)+side[1]*(T.dw*1.5),width:T.dw,length:T.dl,angle:angleFor(out)};}
+ else s={x:c[0]+out[0]*(far+T.dl/2+.5),z:c[1]+out[1]*(far+T.dl/2+.5),width:T.dw,length:T.dl,angle:angleFor(out)};
+ s={id:'surface-'+Date.now().toString(36)+'-'+(q.surfaces||[]).length,type,...s};
+ for(let k=0;k<12;k++){const t={...s,x:+(s.x+out[0]*2*k).toFixed(3),z:+(s.z+out[1]*2*k).toFixed(3)};if(!core.surfaceProblem(q,es,t))return t;}
+ return null;}
+function changeSurface(update,msg){const q=structuredClone(state.intent),sf=(q.surfaces||[]).find(x=>x.id===state.surfaceSelected);if(!sf)return false;
+ const next={...sf,...update},T=core.SURFACE_TYPES[next.type];
+ if(core.surfaceProblem(q,core.edges(core.polygon(q)),next)&&!core.surfaceProblem(q,core.edges(core.polygon(q)),sf)){toast(`That would run the ${T.label.toLowerCase()} into the house.`);renderPanel();return false;}
+ Object.assign(sf,next);setProject(q);if(msg)toast(msg);return true;}
 function inchSize(w,h){const f=x=>{const t=Math.round(x*12);return `${t}″`;};return `${f(w)} × ${f(h)} (${fmt(w)} × ${fmt(h)})`;}
 // First free spot for an opening of this width on wall i (center first, then outward).
 function freeOpeningSpot(q,i,width,ignoreId){const e=core.edges(core.polygon(q))[i];if(!e)return null;const max=e.len/2-core.OPENING_END_CLEAR-width/2;if(max<-1e-9)return null;
@@ -3648,7 +3871,7 @@ function renderPanel(){if(panelRendering){panelRenderAgain=true;return;}panelRen
  try{renderPanelNow();}finally{panelRendering=false;}
  if(panelRenderAgain){panelRenderAgain=false;renderPanel();}}
 function renderPanelNow(){const s=state.step,q=state.intent;const inspector=document.querySelector('.inspector');inspector.classList.toggle('divider-editing',s===3&&state.layoutTab==='border');
- inspector.classList.toggle('shape-edit',s===0);inspector.classList.toggle('corner-active',s===0&&state.selectedCorner!==null);inspector.classList.toggle('stair-edit',s===2||s===1&&Boolean(state.intent?.houseEdges?.length));
+ inspector.classList.toggle('shape-edit',s===0);inspector.classList.toggle('corner-active',s===0&&state.selectedCorner!==null);inspector.classList.toggle('stair-edit',s===2||s===1);
  // V5.1: clickable steps. Jumping never changes the design; it only opens another panel.
  state.visited=state.visited||new Set([0]);state.visited.add(s);
  const locked=!state.intent||state.freeDraw||state.model?.stats?.invalidGeometry,attention=stepAttention();
@@ -3660,7 +3883,10 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
  $('stepNumber').textContent=`STEP ${String(flowPosition(s)+1).padStart(2,'0')}`;$('stepTitle').textContent=titles[s];$('stepHint').textContent=hints[s];$('progressText').textContent=`Step ${flowPosition(s)+1} of 8`;
  let html='';
  if(s===0)html=renderShapePanel(q);
- if(s===1&&q){html=`<div class="compact-intro">Tap any deck edge to add/remove a house wall. Multiple sides are allowed.</div><div class="field-row">${input('height','DECK HEIGHT',q.height,.5,16,.25)}<div class="summary-card"><strong>${q.houseEdges.length} house side${q.houseEdges.length===1?'':'s'}</strong><span>${q.houseEdges.length?'Attached concept':'Freestanding'}</span></div></div><div class="compact-status">Red edges = house · Tap an edge again to remove</div>${renderOpeningsPanel(q)}`;}
+ if(s===1&&q){html=`${seg('houseTab',[['walls','Walls & doors'],['look','Siding & color'],['yard','Patio & walkway']],state.houseTab)}`;
+   if(state.houseTab==='look')html+=renderHouseLookPanel(q);
+   else if(state.houseTab==='yard')html+=renderSurfacesPanel(q);
+   else html+=`<div class="compact-intro">Tap any deck edge to add/remove a house wall. Multiple sides are allowed.</div><div class="field-row">${input('height','DECK HEIGHT',q.height,.5,16,.25)}<div class="summary-card"><strong>${q.houseEdges.length} house side${q.houseEdges.length===1?'':'s'}</strong><span>${q.houseEdges.length?'Attached concept':'Freestanding'}</span></div></div><div class="compact-status">Red edges = house · Tap an edge again to remove</div>${renderOpeningsPanel(q)}`;}
  if(s===2&&q)html=renderStairPanel(q);
  if(s===3&&q){html=`${seg('layoutTab',[['direction','Board direction'],['border','Border & dividers']],state.layoutTab)}`;
    if(state.layoutTab==='direction'){const cur=state.model.geometry.deckLineResolved||q.deckLine,DL={horizontal:'Horizontal',vertical:'Vertical','diagonal-left':'Diagonal left','diagonal-right':'Diagonal right'};
@@ -3709,7 +3935,7 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
 // space in this preview's database (follows them to any device that opens the same link;
 // nobody else, the owner included, can read it). Anywhere else (the HTML file opened in a
 // browser), in this browser's local storage on this device. The UI always says which.
-const APP_VERSION='5.2-group-b-b2-fix1',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
+const APP_VERSION='5.2-group-b-b3',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
 const localProjects={kind:'browser',
  read(){try{const v=JSON.parse(localStorage.getItem(LOCAL_PROJECTS)||'{}');return v&&typeof v==='object'?v:{};}catch(e){return null;}},
  write(m){localStorage.setItem(LOCAL_PROJECTS,JSON.stringify(m));},
@@ -3821,6 +4047,14 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
  if(act==='toggle-snap'){state.drawMode=state.drawMode==='orthogonal'?'free':'orthogonal';renderPanel();return;}
  if(act==='cancel-draw'){state.freeDraw=false;state.freePts=[];showOverlay();renderPanel();planDraw();return;}
  if(act==='stair-add'){addIndependentStair();return;}
+ if(act==='house-see-3d'){changeView('3d');return;}
+ if(act==='surface-add'){const t=b.dataset.value,T=core.SURFACE_TYPES[t],q=structuredClone(state.intent);
+   if((q.surfaces||[]).length>=core.MAX_SURFACES){toast(`Up to ${core.MAX_SURFACES} concrete surfaces.`);return;}
+   const sf=placeSurface(q,t);if(!sf){toast(`No clear spot found for a ${T.label.toLowerCase()}. Add it, then drag it where you want it.`);return;}
+   q.surfaces=[...(q.surfaces||[]),sf];state.surfaceSelected=sf.id;setProject(q);toast(`${T.label} added (${fmt(sf.width)} × ${fmt(sf.length)}). Drag it in 2D to move it.`);return;}
+ if(act==='surface-prev'||act==='surface-next'){const list=state.intent.surfaces||[],k=list.findIndex(x=>x.id===state.surfaceSelected)+(act==='surface-prev'?-1:1);if(list[k]){state.surfaceSelected=list[k].id;renderPanel();planDraw();}return;}
+ if(act==='surface-remove'){const q=structuredClone(state.intent),sf=(q.surfaces||[]).find(x=>x.id===state.surfaceSelected);if(!sf)return;q.surfaces=q.surfaces.filter(x=>x.id!==sf.id);state.surfaceSelected=null;setProject(q);toast(`${core.SURFACE_TYPES[sf.type].label} deleted. Undo restores it.`);return;}
+ if(act==='surface-rotate'){const sf=surfaceSel();if(!sf)return;const a=((sf.angle+Number(b.dataset.value))%180+180)%180;changeSurface({angle:+a.toFixed(3)});return;}
  if(act==='opening-wall'){state.openingWall=Number(b.dataset.value);renderPanel();return;}
  if(act==='opening-add'){const t=b.dataset.value,T=core.OPENING_TYPES[t],q=structuredClone(state.intent),i=q.houseEdges.includes(state.openingWall)?state.openingWall:q.houseEdges[0];
    if(i===undefined){toast('Add a house wall first.');return;}
@@ -3956,7 +4190,7 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
    }
    return;
  }
- if(['layoutTab','finishTab','railTab'].includes(path)){state[path]=b.dataset.value;renderPanel();return;}
+ if(['layoutTab','finishTab','railTab','houseTab'].includes(path)){state[path]=b.dataset.value;renderPanel();planDraw();return;}
  if(path==='supportMode'){
    const q=structuredClone(state.intent);q.supportMode=b.dataset.value;
    q.ledgerEdges=q.supportMode==='ledger'?[...q.houseEdges]:[];
@@ -4026,6 +4260,11 @@ $('stepContent').addEventListener('change',e=>{const slider=e.target.closest('in
    if(lim&&(val<lim[0]-1e-9||val>lim[1]+1e-9)){toast(`${T.label} ${key==='sill'?'sill height':key} must be from ${fmt(lim[0])} to ${fmt(lim[1])}.`);renderPanel();return;}
    if(o.type==='window'&&(key==='height'?o.sill+val:key==='sill'?val+o.height:0)>core.OPENING_MAX_TOP+1e-9){toast(`The top of a window can be at most ${fmt(core.OPENING_MAX_TOP)} above the deck.`);renderPanel();return;}
    changeOpening({[key]:val});return;}
+ const sfi=e.target.closest('input[data-surface-field]');if(sfi){const sf=surfaceSel();if(!sf)return;const key=sfi.dataset.surfaceField,v=parseFeet(sfi.value),T=core.SURFACE_TYPES[sf.type];
+   if(!Number.isFinite(v)){toast('Enter a measurement like 12′ 0″, 12 0 or 12.');renderPanel();return;}
+   const lim=key==='width'?T.w:T.l,val=Math.round(v*12)/12;
+   if(val<lim[0]-1e-9||val>lim[1]+1e-9){toast(`${T.label} ${key} must be from ${fmt(lim[0])} to ${fmt(lim[1])}.`);renderPanel();return;}
+   changeSurface({[key]:val});return;}
  const ps=e.target.closest('select[data-opening-preset]');if(ps){if(!ps.value)return;const [w,h]=ps.value.split('x').map(Number),o=openingSel();if(!o)return;
    const up={width:w/12,height:h/12};if(o.type==='window'&&o.sill+h/12>core.OPENING_MAX_TOP)up.sill=core.OPENING_MAX_TOP-h/12;changeOpening(up,`${core.OPENING_TYPES[o.type].label} set to ${inchSize(w/12,h/12)}.`);return;}
  const ss=e.target.closest('input[data-stair-field]');if(ss){
@@ -4091,6 +4330,7 @@ $('fitBtn').onclick=()=>state.view==='2d'?fit2d():renderer3d.fit(); // 3D Fit al
 $('structureToggle').onclick=()=>{renderer3d.setStructureVisible(!renderer3d.showStructure);updateHeader();};
 $('cameraRotateBtn').onclick=()=>{renderer3d.setPanMode(false);updateHeader();};
 $('cameraMoveBtn').onclick=()=>{renderer3d.setPanMode(true);updateHeader();};
+$('cameraUnderBtn').onclick=()=>{renderer3d.lookUnder();};
 window.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA/.test(document.activeElement?.tagName||''))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undo(e.shiftKey);}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();undo(true);}});
 // 2D plan is an exact projection of the SAME component records as WebGL.
 function canvasSize(){const dpr=Math.min(window.devicePixelRatio||1,2),w=Math.max(1,planCanvas.clientWidth),h=Math.max(1,planCanvas.clientHeight);if(planCanvas.width!==Math.round(w*dpr)||planCanvas.height!==Math.round(h*dpr)){planCanvas.width=Math.round(w*dpr);planCanvas.height=Math.round(h*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);return {w,h};}
@@ -4101,6 +4341,7 @@ function fit2d(){
  const p=state.model.geometry.poly,all=[...p];
  for(const g of state.model.geometry.stairs||[])for(const side of [-1,1])for(const v of [0,g.run])
    all.push([g.base[0]+g.tt[0]*side*g.width/2+g.nn[0]*v,g.base[1]+g.tt[1]*side*g.width/2+g.nn[1]*v]);
+ for(const sf of state.intent.surfaces||[])all.push(...core.surfaceCorners(sf));
  const xs=all.map(x=>x[0]),zs=all.map(x=>x[1]),minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);
  const w=Math.max(200,planCanvas.clientWidth),h=Math.max(180,planCanvas.clientHeight);
  state.plan.scale=clamp(Math.min((w-90)/(maxX-minX+3),(h-90)/(maxZ-minZ+3)),3.5,48);
@@ -4233,6 +4474,21 @@ function drawMeasurementLayer(q,model,es,bounds,w,h,sc){
 }
 function openingSpan(o,es){const drag=state.plan.drag?.type==='opening'&&state.plan.drag.id===o.id?state.plan.drag:null,e=es[o.edge];if(!e)return null;const off=drag?drag.offset:o.offset;
  return {e,a:[e.mid[0]+e.t[0]*(off-o.width/2),e.mid[1]+e.t[1]*(off-o.width/2)],b:[e.mid[0]+e.t[0]*(off+o.width/2),e.mid[1]+e.t[1]*(off+o.width/2)]};}
+// V5.2 B3: concrete slabs in plan. Drawn under the deck (they may run beneath it); on the Patio &
+// walkway tab every slab is also outlined on top, with the selected one's resize handle.
+function surfaceDraft(sf){const d=state.plan.drag;return d&&d.id===sf.id&&d.next&&(d.type==='surface'||d.type==='surface-resize')?{...sf,...d.next}:sf;}
+function surfaceStatus(model,sf){return (model.geometry.surfaces||[]).find(g=>g.id===sf.id)?.status||'ok';}
+function drawSurfaces2d(model,over){const list=state.intent?.surfaces||[];if(!list.length)return;const yard=state.step===1&&state.houseTab==='yard';if(over&&!yard)return;
+ for(const sf0 of list){const sf=surfaceDraft(sf0),pts=core.surfaceCorners(sf).map(v=>xy(...v)),hidden=surfaceStatus(model,sf0)!=='ok'&&!(state.plan.drag?.id===sf0.id),sel=yard&&sf0.id===state.surfaceSelected;
+   ctx.save();ctx.beginPath();pts.forEach((v,i)=>i?ctx.lineTo(...v):ctx.moveTo(...v));ctx.closePath();
+   if(!over){if(hidden){ctx.setLineDash([5,4]);ctx.strokeStyle='#d98a12';ctx.lineWidth=2;ctx.stroke();}else{ctx.fillStyle='#dcd9d2';ctx.fill();ctx.strokeStyle='#a9a59c';ctx.lineWidth=1.2;ctx.stroke();}}
+   else{ctx.setLineDash(sel?[]:[6,4]);ctx.strokeStyle=sel?'#c32e3c':hidden?'#d98a12':'rgba(90,86,80,.75)';ctx.lineWidth=sel?2.5:1.4;ctx.stroke();
+     if(sel){const c=pts[2];ctx.setLineDash([]);ctx.beginPath();ctx.arc(c[0],c[1],window.innerWidth<801?11:8,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle='#c32e3c';ctx.lineWidth=2.5;ctx.stroke();}
+     const m=xy(sf.x,sf.z);if(state.plan.scale*Math.min(sf.width,sf.length)>34){ctx.fillStyle=sel?'#a91d2d':'#5a564f';ctx.font='700 11px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(`${core.SURFACE_TYPES[sf.type].label} ${fmt(sf.width)} × ${fmt(sf.length)}`,m[0],m[1]);}}
+   ctx.restore();}}
+function surfaceLocal(sf,pt){const a=sf.angle*Math.PI/180,d=[pt[0]-sf.x,pt[1]-sf.z];return [d[0]*Math.cos(a)+d[1]*Math.sin(a),-d[0]*Math.sin(a)+d[1]*Math.cos(a)];}
+function surfaceAt(pt){const list=state.intent?.surfaces||[];for(let i=list.length-1;i>=0;i--){const sf=list[i],l=surfaceLocal(sf,pt);if(Math.abs(l[0])<=sf.width/2&&Math.abs(l[1])<=sf.length/2)return sf;}return null;}
+function surfaceHandleAt(pt){const sf=surfaceSel();if(!sf)return null;const c=core.surfaceCorners(sf)[2],tol=(window.innerWidth<801?20:13)/state.plan.scale;return Math.hypot(pt[0]-c[0],pt[1]-c[1])<tol?sf:null;}
 function drawOpenings2d(model,es,sc){const list=state.intent?.openings||[];if(!list.length)return;const geo=model.geometry.openings||[];
  for(const o of list){const sp=openingSpan(o,es);if(!sp)continue;const st=geo.find(g=>g.id===o.id)?.status||'ok',sel=state.step===1&&o.id===state.openingSelected;
    const off=.12,A=xy(sp.a[0]+sp.e.n[0]*off,sp.a[1]+sp.e.n[1]*off),B=xy(sp.b[0]+sp.e.n[0]*off,sp.b[1]+sp.e.n[1]*off);
@@ -4252,6 +4508,7 @@ function planDraw(){const {w,h}=canvasSize(),sc=state.plan.scale;ctx.fillStyle='
  const grid=Math.max(8,sc),ox=xy(0,0);ctx.strokeStyle='#e1e9ed';ctx.lineWidth=.7;ctx.beginPath();for(let x=((ox[0]%grid)+grid)%grid;x<w;x+=grid){ctx.moveTo(x,0);ctx.lineTo(x,h);}for(let y=((ox[1]%grid)+grid)%grid;y<h;y+=grid){ctx.moveTo(0,y);ctx.lineTo(w,y);}ctx.stroke();
  if(state.freeDraw){freePlan();return;}if(!state.intent)return;
  const q=state.intent,model=state.model,p=model.geometry.poly,es=model.geometry.edges;
+ drawSurfaces2d(model,false);
  polygonPath(p);ctx.fillStyle='#625442';ctx.fill();
  if(model.preview){for(const st of q.staircases||[])for(const c of core.stairFootprints(es,q.height,st)){ctx.beginPath();c.forEach((v,i)=>{const pt=xy(...v);i?ctx.lineTo(...pt):ctx.moveTo(...pt);});ctx.closePath();ctx.fillStyle='#7a6250';ctx.fill();}
    if(state.step===6&&state.lastFull){ctx.save();ctx.globalAlpha=.3;for(let part of state.lastFull.parts)if(['ledger','joist','rim-joist','dropped-beam','post-6x6'].includes(part.kind))shapePart(part);ctx.restore();}}
@@ -4320,7 +4577,7 @@ function planDraw(){const {w,h}=canvasSize(),sc=state.plan.scale;ctx.fillStyle='
  }
  // V5.2 B1: doors and windows on the house walls (selected one bracketed; hidden ones dashed).
  if(state.step===1&&q.houseEdges.length>1&&es[state.openingWall]&&q.houseEdges.includes(state.openingWall)){const e=es[state.openingWall],a=xy(e.a[0]+e.n[0]*.55,e.a[1]+e.n[1]*.55),b=xy(e.b[0]+e.n[0]*.55,e.b[1]+e.n[1]*.55);ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle='rgba(180,45,60,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();ctx.restore();}
- drawOpenings2d(model,es,sc);
+ drawOpenings2d(model,es,sc);drawSurfaces2d(model,true);
  polygonPath(p);ctx.strokeStyle='#384b59';ctx.lineWidth=2;ctx.stroke();
  const bounds={xmin:Math.min(...p.map(z=>z[0])),xmax:Math.max(...p.map(z=>z[0])),zmin:Math.min(...p.map(z=>z[1])),zmax:Math.max(...p.map(z=>z[1]))};
  if(state.step===0&&state.selectedEdge!==null&&es[state.selectedEdge]){const e=es[state.selectedEdge],a=xy(...e.a),b=xy(...e.b);ctx.strokeStyle='#c32e3c';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();}
@@ -4377,7 +4634,9 @@ planCanvas.addEventListener('pointerdown',e=>{
  if(state.step===0){const dimension=hitDimensionLabel(l);if(dimension!==null){state.plan.dimensionTap=dimension;state.plan.drag=null;return;}const vertex=detectVertex(p);if(vertex>=0)state.plan.drag={type:'vertex',index:vertex,basePoly:core.polygon(state.intent),original:JSON.stringify(state.intent)};else{
    const nearest=nearestEdge(p);if(nearest)state.plan.drag={type:'resize-edge',edge:nearest,basePoly:core.polygon(state.intent),grab:p.slice(),original:JSON.stringify(state.intent)};
  }}
- if(state.step===1){const o=openingAt(p);if(o){const e=state.model.geometry.edges[o.edge];state.openingSelected=o.id;state.plan.drag={type:'opening',id:o.id,offset:o.offset,start:o.offset,grab:(p[0]-e.mid[0])*e.t[0]+(p[1]-e.mid[1])*e.t[1]-o.offset};renderPanel();planDraw();}}
+ if(state.step===1&&state.houseTab==='yard'){const h=surfaceHandleAt(p),sf=h||surfaceAt(p);
+   if(sf){state.surfaceSelected=sf.id;state.plan.drag=h?{type:'surface-resize',id:sf.id,anchor:core.surfaceCorners(sf)[0]}:{type:'surface',id:sf.id,grab:[p[0]-sf.x,p[1]-sf.z]};renderPanel();planDraw();}}
+ if(state.step===1&&state.houseTab==='walls'){const o=openingAt(p);if(o){const e=state.model.geometry.edges[o.edge];state.openingSelected=o.id;state.plan.drag={type:'opening',id:o.id,offset:o.offset,start:o.offset,grab:(p[0]-e.mid[0])*e.t[0]+(p[1]-e.mid[1])*e.t[1]-o.offset};renderPanel();planDraw();}}
  if(state.step===2){const inside=insideStairs(p);if(inside){state.stairSelected=inside.index;state.plan.drag={type:'stairs',index:inside.index,grab:inside.u,original:JSON.stringify(state.intent)};renderPanel();}}
  if(state.step===3&&state.layoutTab==='border'&&state.model.geometry.dividerRows?.length){
    const centers=dividerHandleCenters(state.model),radius=(window.innerWidth<801?21:16)/state.plan.scale;
@@ -4400,6 +4659,12 @@ planCanvas.addEventListener('pointermove',e=>{if(state.freeDraw&&!state.plan.poi
  if(state.plan.pointers.size===2){const after=[...state.plan.pointers.values()],a=Math.hypot(before[0].x-before[1].x,before[0].y-before[1].y),b=Math.hypot(after[0].x-after[1].x,after[0].y-after[1].y);if(a>6&&b>6)state.plan.scale=clamp(state.plan.scale*b/a,3,150);state.plan.panX+=(after[0].x+after[1].x-before[0].x-before[1].x)/2;state.plan.panY+=(after[0].y+after[1].y-before[0].y-before[1].y)/2;state.plan.tap=null;planDraw();return;}
  const drag=state.plan.drag;if(!drag||state.freeDraw||!state.intent)return;
  if(drag.type==='pan'){state.plan.panX+=l.x-prev.x;state.plan.panY+=l.y-prev.y;planDraw();return;}
+ if(drag.type==='surface'||drag.type==='surface-resize'){const ip=inv(l.x,l.y),sf=(state.intent.surfaces||[]).find(x=>x.id===drag.id);if(!sf)return;const snap=v=>Math.round(v*4)/4;let next;
+   if(drag.type==='surface')next={x:snap(ip[0]-drag.grab[0]),z:snap(ip[1]-drag.grab[1])};
+   else{const T=core.SURFACE_TYPES[sf.type],a=sf.angle*Math.PI/180,u=[Math.cos(a),Math.sin(a)],v=[-Math.sin(a),Math.cos(a)],d=[ip[0]-drag.anchor[0],ip[1]-drag.anchor[1]];
+     const w=clamp(snap(d[0]*u[0]+d[1]*u[1]),T.w[0],T.w[1]),len=clamp(snap(d[0]*v[0]+d[1]*v[1]),T.l[0],T.l[1]);
+     next={width:w,length:len,x:+(drag.anchor[0]+u[0]*w/2+v[0]*len/2).toFixed(4),z:+(drag.anchor[1]+u[1]*w/2+v[1]*len/2).toFixed(4)};}
+   if(!core.surfaceProblem(state.intent,state.model.geometry.edges,{...sf,...next}))drag.next=next;else drag.blocked=true;planDraw();return;}
  if(drag.type==='opening'){const ip=inv(l.x,l.y),o=(state.intent.openings||[]).find(x=>x.id===drag.id),e=o&&state.model.geometry.edges[o.edge];if(!e)return;
    const want=Math.round(((ip[0]-e.mid[0])*e.t[0]+(ip[1]-e.mid[1])*e.t[1]-drag.grab)*12)/12,max=e.len/2-core.OPENING_END_CLEAR-o.width/2,off=clamp(want,-max,max);
    const q={...state.intent,openings:state.intent.openings.map(x=>x.id===o.id?{...x,offset:off}:x)},others=q.openings.filter(x=>x.id!==o.id&&x.edge===o.edge);
@@ -4443,6 +4708,8 @@ function tapPlan(pt){if(state.freeDraw){if(nearFreeStart(pt)){finishFreeDraw();r
    selectionClear();renderPanel();planDraw();return;
  }
 
+ if(state.step===1&&state.houseTab==='yard'){const sf=surfaceAt(pt);if(sf){state.surfaceSelected=sf.id;renderPanel();planDraw();}return;}
+ if(state.step===1&&state.houseTab==='look')return;
  if(state.step===1&&edge){toggleEdge('house',edge.i);return;}
  if(state.step===6&&edge){
    if(!state.intent.houseEdges.includes(edge.i)){toast('Only house walls can have a ledger. Add this wall in step 2 first.');return;}
@@ -4484,6 +4751,7 @@ function planEnd(e){if(!state.plan.pointers.has(e.pointerId))return;const l=loca
  state.plan.drag=null;state.plan.tap=null;state.plan.dimensionTap=null;
  if(state.model?.preview&&drag&&JSON.stringify(state.intent)===drag.original){state.model=state.lastFull;setFramingStatus(state.model.stats?.invalidGeometry?'invalid':'current');planDraw();}
  if(dimensionTap!==null&&dimensionTap!==undefined){if(tap&&!tap.moved)selectDimension(dimensionTap);return;}
+ if(drag?.type==='surface'||drag?.type==='surface-resize'){state.surfaceSelected=drag.id;if(drag.next){const sf=(state.intent.surfaces||[]).find(x=>x.id===drag.id),T=sf&&core.SURFACE_TYPES[sf.type];const q=structuredClone(state.intent);Object.assign(q.surfaces.find(x=>x.id===drag.id),drag.next);setProject(q);toast(drag.type==='surface'?`${T.label} moved`:`${T.label} resized to ${fmt(drag.next.width)} × ${fmt(drag.next.length)}`);}else{if(drag.blocked)toast('Concrete surfaces cannot run into the house.');renderPanel();planDraw();}return;}
  if(drag?.type==='opening'){if(Math.abs(drag.offset-drag.start)>1e-9){state.openingSelected=drag.id;changeOpening({offset:drag.offset},'Opening moved');}else planDraw();return;}
  if(drag&&drag.type!=='pan'&&JSON.stringify(state.intent)!==drag.original){if(state.model.preview)scheduleFull();else renderer3d.setModel(state.model);saveHistory();renderPanel();toast(drag.type==='stairs'?'Stair position updated':drag.type==='divider'?'Divider position updated':'Outline updated');return;}
  if(drag&&tap?.moved&&state.lastShapeError&&['vertex','resize-edge'].includes(drag.type)){
@@ -4516,6 +4784,13 @@ window.AOSDeckStudioTest=Object.freeze({framingStatus:()=>state.framingStatus,is
    view3d:{direction:renderer3d.model?.geometry?.deckLineResolved,finish:(renderer3d.model?.parts||[]).filter(p=>p.group==='finish').length,blocks:(renderer3d.model?.parts||[]).filter(p=>p.kind==='field-end-blocking').length}})),
  // V5.2 B1 (read-only): doors/windows as the engine placed them, with their status.
  openings:()=>JSON.parse(JSON.stringify(state.model?.geometry?.openings||[])),
+ // V5.2 B3 (read-only): house look, concrete surfaces and the 3D parts drawn for them.
+ property:()=>JSON.parse(JSON.stringify({siding:state.intent?.siding??null,houseColor:state.intent?.houseColor??null,surfaces:state.intent?.surfaces??null,selected:state.surfaceSelected,houseTab:state.houseTab,
+   geometry:{surfaces:state.model?.geometry?.surfaces||[],house:state.model?.geometry?.house||null},
+   parts3d:(renderer3d.visibleParts||[]).filter(p=>/^(earth|house-|concrete-surface)/.test(p.kind)).map(({kind,group,connect,x,y,z,w,h,d,yaw,color,mat,siding,surface})=>({kind,group,connect,x,y,z,w,h,d,yaw,color,mat,siding,surface}))})),
+ // V5.2 B3 (read-only): the 3D camera, and where the deck corners land on screen.
+ camera:()=>{const r=renderer3d,H=r.model?.intent?.height??0,poly=r.model?.geometry?.poly||[];return JSON.parse(JSON.stringify({az:r.az,el:r.el,radius:r.radius,target:r.target,eye:r.eye(),showStructure:r.showStructure,panMode:r.panMode,
+   deckOnScreen:poly.map(p=>r.project([p[0],H,p[1]])).map(v=>v&&v[0]>=0&&v[0]<=1&&v[1]>=0&&v[1]<=1),shadowVertices:r.shadowVertices||0,groundVertices:r.groundVertices||0,lite:Boolean(r.lite),renderer:r.rendererName||null,vertices:r.vertices||0,view:state.view}));},
  framingCache:()=>({hits:window.AOSSharedSupport.choose?.hits??null,misses:window.AOSSharedSupport.choose?.misses??null})});
 renderPanel();fit2d();updateHeader();renderRecent();
 })();

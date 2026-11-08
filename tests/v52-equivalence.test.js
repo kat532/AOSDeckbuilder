@@ -24,8 +24,16 @@ const r = (v) => typeof v === 'number' ? Math.round(v * 1e6) / 1e6 : v;
 const FINISH = new Set(['field-board', 'picture-frame', 'divider-board', 'field-end-blocking']);
 const FRAGMENT_COUNTS = ['dividers', 'borderBoards'], FINISH_STATS = ['partCount', 'fieldBoardFragments'];
 const B2_ALERT = /supplemental blocks? \([\d.]+ LF\) added between joists under field-board ends/;
+// V5.2 Group B — B3 (owner-requested property & 3D presentation, 8 Nov 2026) changes ONLY visual
+// context: the lawn ('earth') is larger with its top at grade, the thin metal 'siding-course' strips
+// are replaced by siding drawn on the wall faces, and the house face gets visual-only corner
+// boards, foundation band, eave and roof edge (plus optional concrete slabs). Those kinds are
+// tested in tests/property-b3.test.js. House-wall pieces stay here and must keep the same position,
+// size, color and material; only their descriptive label and the new 'siding' style tag differ.
+const B3_CONTEXT = new Set(['earth', 'siding-course', 'house-foundation', 'house-trim', 'house-eave', 'house-roof', 'house-back', 'concrete-surface']);
 const model = (win, q) => {
   const m = win.DeckCore.make(q);
+  m.parts = m.parts.filter(p => !B3_CONTEXT.has(p.kind)).map(p => { if (p.kind !== 'house-wall') return p; const { label, siding, ...rest } = p; return rest; });
   const counts = { ...m.counts }, stats = { ...m.stats };
   for (const k of FRAGMENT_COUNTS) delete counts[k];
   for (const k of FINISH_STATS) delete stats[k];
