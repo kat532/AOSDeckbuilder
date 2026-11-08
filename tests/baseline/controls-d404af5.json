@@ -1,0 +1,1204 @@
+{
+  "recordedFrom": {
+    "commit": "d404af5b6593b68f009439bf9f7ba9df5df02214",
+    "indexHtmlSha256": "cb1d668932c5a01f49a0cac1458ad419a0a55ed8300660190b2b3026a2d30bb0"
+  },
+  "note": "Every control in the settings panel per step/tab/editing state of tests/ui-census.js CENSUS_DESIGN, plus the start screen and app chrome. V5.3 may move a control only with owner approval; C1 must keep all of them.",
+  "start": [
+    "shape=rectangle",
+    "shape=square",
+    "shape=L",
+    "shape=T",
+    "shape=U",
+    "shape=free",
+    "startFromCanvas"
+  ],
+  "chrome": [
+    "input #projectName",
+    "button #undoBtn text=↶",
+    "button #redoBtn text=↷",
+    "button #openBtn text=Projects",
+    "button #saveBtn text=Save project",
+    "input #fileInput text=",
+    "button data-step=0",
+    "button data-step=1",
+    "button data-step=6",
+    "button data-step=2",
+    "button data-step=3",
+    "button data-step=4",
+    "button data-step=5",
+    "button data-step=7",
+    "button #backBtn text=← Back",
+    "button #nextBtn text=Next House & Height →",
+    "button #mode2d text=◫ 2D PLAN",
+    "button #mode3d text=⬡ 3D DECK",
+    "button #measureBtn text=DIMS ALL",
+    "button #zoomOut text=−",
+    "button #zoomIn text=+",
+    "button #fitBtn text=⌗",
+    "button #cameraRotateBtn text=↻ Rotate",
+    "button #cameraMoveBtn text=✥ Move",
+    "button #cameraUnderBtn text=⤒ Under",
+    "button #structureToggle text=⌗ See framing"
+  ],
+  "states": {
+    "1 Shape & Size": [
+      {
+        "key": "button data-action=choose-shape",
+        "label": "Change Deck Shape",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-field=width data-max=48 data-min=4",
+        "label": "OVERALL WIDTH (feet and inches)",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-field=depth data-max=42 data-min=4",
+        "label": "OVERALL DEPTH (feet and inches)",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "1 Shape & Size · edge selected": [
+      {
+        "key": "input data-edge-field=length",
+        "label": "Exact edge length in feet and inches",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=apply-edge-length",
+        "label": "✓ Apply Length",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=done-edge",
+        "label": "Done",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=shape-feature data-value=bump",
+        "label": "+ Bump-out",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=shape-feature data-value=recess",
+        "label": "+ Recess",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=shape-split",
+        "label": "+ Point",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "1 Shape & Size · corner selected": [
+      {
+        "key": "button data-action=corner-angle data-value=45",
+        "label": "45°",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=corner-angle data-value=22.5",
+        "label": "22.5°",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input #cornerSizeInput data-shape-field=corner-size",
+        "label": "Exact corner cut size in feet and inches",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-corner-slider=",
+        "label": "Adjust corner cut size",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=apply-corner",
+        "label": "✓ Apply Cut",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=cancel-corner",
+        "label": "Done",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=delete-corner",
+        "label": "Remove this corner point",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "2 House & Height · Walls & doors": [
+      {
+        "key": "button data-path=houseTab data-value=walls",
+        "label": "Walls & doors",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=houseTab data-value=look",
+        "label": "Siding & color",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=houseTab data-value=yard",
+        "label": "Patio & walkway",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-field=height data-max=16 data-min=0.5",
+        "label": "DECK HEIGHT (feet and inches)",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=opening-add data-value=door",
+        "label": "+ Door",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=opening-add data-value=patio",
+        "label": "+ Patio door",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=opening-add data-value=window",
+        "label": "+ Window",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=opening-prev",
+        "label": "‹",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=opening-next",
+        "label": "›",
+        "disabled": true,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=opening-type data-value=door",
+        "label": "Door",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=opening-type data-value=patio",
+        "label": "Patio door",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=opening-type data-value=window",
+        "label": "Window",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "select data-opening-preset=",
+        "label": "Custom 36″ × 48″ (3′ 0″ × 4′ 0″) 24″ × 36″ (2′ 0″ ",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-opening-field=width",
+        "label": "Width",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-opening-field=height",
+        "label": "Height",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-opening-field=sill",
+        "label": "Sill above deck",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-opening-field=offset",
+        "label": "From wall center",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=opening-remove",
+        "label": "Delete window",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "2 House & Height · Siding & color": [
+      {
+        "key": "button data-path=houseTab data-value=walls",
+        "label": "Walls & doors",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=houseTab data-value=look",
+        "label": "Siding & color",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=houseTab data-value=yard",
+        "label": "Patio & walkway",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=siding data-value=lap",
+        "label": "Lap siding",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=siding data-value=board-batten",
+        "label": "Board & batten",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=siding data-value=shake",
+        "label": "Shake",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=siding data-value=brick",
+        "label": "Brick",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=houseColor data-value=Light Gray",
+        "label": "Light Gray",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=houseColor data-value=Classic White",
+        "label": "Classic White",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=houseColor data-value=Sandstone",
+        "label": "Sandstone",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=houseColor data-value=Sage",
+        "label": "Sage",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=houseColor data-value=Coastal Blue",
+        "label": "Coastal Blue",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=houseColor data-value=Charcoal",
+        "label": "Charcoal",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=houseColor data-value=Brick Red",
+        "label": "Brick Red",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=house-see-3d",
+        "label": "See it in 3D",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "2 House & Height · Patio & walkway": [
+      {
+        "key": "button data-path=houseTab data-value=walls",
+        "label": "Walls & doors",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=houseTab data-value=look",
+        "label": "Siding & color",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=houseTab data-value=yard",
+        "label": "Patio & walkway",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=surface-add data-value=patio",
+        "label": "+ Patio",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=surface-add data-value=walkway",
+        "label": "+ Walkway",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=surface-prev",
+        "label": "‹",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=surface-next",
+        "label": "›",
+        "disabled": true,
+        "hidden": false
+      },
+      {
+        "key": "input data-surface-field=width",
+        "label": "Width",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-surface-field=length",
+        "label": "Length",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=surface-rotate data-value=-15",
+        "label": "⟲ 15°",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=surface-rotate data-value=15",
+        "label": "⟳ 15°",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=surface-rotate data-value=90",
+        "label": "Turn 90°",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=surface-remove",
+        "label": "Delete walkway",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "3 Framing & Ledger": [
+      {
+        "key": "button data-path=supportMode data-value=ledger",
+        "label": "Wall ledgers",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=supportMode data-value=freestanding",
+        "label": "Freestanding",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=beamStyle data-value=dropped",
+        "label": "Dropped beam",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=beamStyle data-value=flush",
+        "label": "Flush beam*",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=framing-details",
+        "label": "View framing measurements →",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "3 Framing & Ledger · measurements": [
+      {
+        "key": "button data-action=framing-details",
+        "label": "← Back to framing choices",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "4 Stairs · stair with landing": [
+      {
+        "key": "button data-action=stair-prev",
+        "label": "‹",
+        "disabled": true,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-next",
+        "label": "›",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-add",
+        "label": "+ Add Stairs",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-full",
+        "label": "Full edge width +",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-landing",
+        "label": "Landing ✓",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-stair-field=width",
+        "label": "Stair width (ft / in)",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-stair-field=offset",
+        "label": "Position from edge center",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-stair-field=landingWidth",
+        "label": "Landing width",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-stair-field=landingDepth",
+        "label": "Landing depth",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-stair-field=landingElevation",
+        "label": "Landing height above grade",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-turn data-value=straight",
+        "label": "Straight",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-turn data-value=left",
+        "label": "↰ Turn left",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-turn data-value=right",
+        "label": "Turn right ↱",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=landing-deckline data-value=match",
+        "label": "Match main deck",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=landing-deckline data-value=horizontal",
+        "label": "↔ Horizontal",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=landing-deckline data-value=vertical",
+        "label": "↕ Vertical",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=landing-deckline data-value=diagonal-left",
+        "label": "⟍ Diagonal left",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=landing-deckline data-value=diagonal-right",
+        "label": "⟋ Diagonal right",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-rail data-side=left",
+        "label": "Left rail ✓",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-rail data-side=right",
+        "label": "Right rail ✓",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-remove",
+        "label": "Remove selected",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "4 Stairs · second stair": [
+      {
+        "key": "button data-action=stair-prev",
+        "label": "‹",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-next",
+        "label": "›",
+        "disabled": true,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-add",
+        "label": "+ Add Stairs",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-full",
+        "label": "Full edge width +",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-landing",
+        "label": "Landing +",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-stair-field=width",
+        "label": "Stair width (ft / in)",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-stair-field=offset",
+        "label": "Position from edge center",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-rail data-side=left",
+        "label": "Left rail ✓",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-rail data-side=right",
+        "label": "Right rail +",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-remove",
+        "label": "Remove selected",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "5 Decking Layout · Board direction": [
+      {
+        "key": "button data-path=layoutTab data-value=direction",
+        "label": "Board direction",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=layoutTab data-value=border",
+        "label": "Border & dividers",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=deckLine data-value=horizontal",
+        "label": "↔ Horizontal",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=deckLine data-value=vertical",
+        "label": "↕ Vertical",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=deckLine data-value=diagonal-left",
+        "label": "⟍ Diagonal left",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=deckLine data-value=diagonal-right",
+        "label": "⟋ Diagonal right",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "5 Decking Layout · Border & dividers": [
+      {
+        "key": "button data-path=layoutTab data-value=direction",
+        "label": "Board direction",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=layoutTab data-value=border",
+        "label": "Border & dividers",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=borderCount data-value=0",
+        "label": "None",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=borderCount data-value=1",
+        "label": "Single",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=borderCount data-value=2",
+        "label": "Double",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=frameHouseWalls data-value=false",
+        "label": "No frame (usual)",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=frameHouseWalls data-value=true",
+        "label": "Frame house walls too",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=dividerMode data-value=auto",
+        "label": "Automatic",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=dividerMode data-value=single",
+        "label": "Single",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=dividerMode data-value=double",
+        "label": "Double",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=divider-prev",
+        "label": "‹",
+        "disabled": true,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=divider-next",
+        "label": "›",
+        "disabled": true,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=divider-remove",
+        "label": "− Remove",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=divider-add",
+        "label": "+ Add",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "input data-divider-slider=",
+        "label": "Selected divider position",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=divider-remove-all",
+        "label": "Remove All",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=divider-reset",
+        "label": "↶ Reset to Default",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "6 Decking Selection · Main decking": [
+      {
+        "key": "button data-path=finishTab data-value=field",
+        "label": "Main decking",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=finishTab data-value=accent",
+        "label": "Border / stair accent",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=collection data-value=TimberTech Terrain",
+        "label": "Terrain",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=collection data-value=TimberTech Advanced PVC",
+        "label": "Advanced PVC",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=decking data-value=Brown Oak",
+        "label": "Brown Oak",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=decking data-value=Rustic Elm",
+        "label": "Rustic Elm",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=decking data-value=Sandy Birch",
+        "label": "Sandy Birch",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=decking data-value=Silver Maple",
+        "label": "Silver Maple",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=decking data-value=Stone Ash",
+        "label": "Stone Ash",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "6 Decking Selection · Border / stair accent": [
+      {
+        "key": "button data-path=finishTab data-value=field",
+        "label": "Main decking",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=finishTab data-value=accent",
+        "label": "Border / stair accent",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=border data-value=Brown Oak",
+        "label": "Brown Oak",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=border data-value=Rustic Elm",
+        "label": "Rustic Elm",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=border data-value=Sandy Birch",
+        "label": "Sandy Birch",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=border data-value=Silver Maple",
+        "label": "Silver Maple",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=border data-value=Stone Ash",
+        "label": "Stone Ash",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "7 Railings · locations": [
+      {
+        "key": "button data-path=railTab data-value=locations",
+        "label": "Railing locations",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=railTab data-value=finish",
+        "label": "Railing finish",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=rails-all",
+        "label": "Rail exposed edges",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=rails-none",
+        "label": "Remove deck rails",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-prev",
+        "label": "‹",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-next",
+        "label": "›",
+        "disabled": true,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-rail data-side=left",
+        "label": "Left stair rail ✓",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=stair-rail data-side=right",
+        "label": "Right stair rail +",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "7 Railings · finish, all edges": [
+      {
+        "key": "button data-path=railTab data-value=locations",
+        "label": "Railing locations",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=railTab data-value=finish",
+        "label": "Railing finish",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=rail-target data-edge=all",
+        "label": "All railed edges",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=rail-target data-edge=1",
+        "label": "Edge 2 · 14′ 0″",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=rail-target data-edge=2",
+        "label": "Edge 3 · 20′ 0″ CUSTOM",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=rail-target data-edge=3",
+        "label": "Edge 4 · 14′ 0″",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=railStyle data-value=Westbury Tuscany",
+        "label": "Westbury Tuscany",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=railStyle data-value=No rail product selected",
+        "label": "Unspecified",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=railColor data-value=Textured Black",
+        "label": "Textured Black",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=railColor data-value=Bronze",
+        "label": "Bronze",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=railColor data-value=White",
+        "label": "White",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "7 Railings · finish, custom edge": [
+      {
+        "key": "button data-path=railTab data-value=locations",
+        "label": "Railing locations",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=railTab data-value=finish",
+        "label": "Railing finish",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=rail-target data-edge=all",
+        "label": "All railed edges",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=rail-target data-edge=1",
+        "label": "Edge 2 · 14′ 0″",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=rail-target data-edge=2",
+        "label": "Edge 3 · 20′ 0″ CUSTOM",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=rail-target data-edge=3",
+        "label": "Edge 4 · 14′ 0″",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=railStyle data-value=Westbury Tuscany",
+        "label": "Westbury Tuscany",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=railStyle data-value=No rail product selected",
+        "label": "Unspecified",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=railColor data-value=Textured Black",
+        "label": "Textured Black",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=railColor data-value=Bronze",
+        "label": "Bronze",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-path=railColor data-value=White",
+        "label": "White",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=rail-match",
+        "label": "Match other edges",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=rail-everywhere",
+        "label": "Use on all edges",
+        "disabled": false,
+        "hidden": false
+      }
+    ],
+    "8 Review & Present": [
+      {
+        "key": "button data-action=download-json",
+        "label": "Save design + parts",
+        "disabled": false,
+        "hidden": false
+      },
+      {
+        "key": "button data-action=export-concept",
+        "label": "Customer concept ↗",
+        "disabled": false,
+        "hidden": false
+      }
+    ]
+  },
+  "reachabilityAtBaseline": {
+    "desktop 1440×900": {
+      "controls": 172,
+      "unreachable": 0,
+      "byState": {}
+    },
+    "laptop 1280×720": {
+      "controls": 172,
+      "unreachable": 10,
+      "byState": {
+        "5 Decking Layout · Border & dividers": [
+          "button data-action=divider-remove-all",
+          "button data-action=divider-reset"
+        ],
+        "7 Railings · finish, all edges": [
+          "button data-path=railColor data-value=Textured Black",
+          "button data-path=railColor data-value=Bronze",
+          "button data-path=railColor data-value=White"
+        ],
+        "7 Railings · finish, custom edge": [
+          "button data-path=railColor data-value=Textured Black",
+          "button data-path=railColor data-value=Bronze",
+          "button data-path=railColor data-value=White",
+          "button data-action=rail-match",
+          "button data-action=rail-everywhere"
+        ]
+      }
+    },
+    "tablet landscape 1180×820 (touch)": {
+      "controls": 172,
+      "unreachable": 0,
+      "byState": {}
+    },
+    "tablet portrait 820×1180 (touch)": {
+      "controls": 172,
+      "unreachable": 0,
+      "byState": {}
+    },
+    "phone 390×844 (touch)": {
+      "controls": 172,
+      "unreachable": 15,
+      "byState": {
+        "3 Framing & Ledger": [
+          "button data-action=framing-details"
+        ],
+        "5 Decking Layout · Border & dividers": [
+          "button data-action=divider-remove-all",
+          "button data-action=divider-reset"
+        ],
+        "7 Railings · finish, all edges": [
+          "button data-path=railStyle data-value=Westbury Tuscany",
+          "button data-path=railStyle data-value=No rail product selected",
+          "button data-path=railColor data-value=Textured Black",
+          "button data-path=railColor data-value=Bronze",
+          "button data-path=railColor data-value=White"
+        ],
+        "7 Railings · finish, custom edge": [
+          "button data-path=railStyle data-value=Westbury Tuscany",
+          "button data-path=railStyle data-value=No rail product selected",
+          "button data-path=railColor data-value=Textured Black",
+          "button data-path=railColor data-value=Bronze",
+          "button data-path=railColor data-value=White",
+          "button data-action=rail-match",
+          "button data-action=rail-everywhere"
+        ]
+      }
+    },
+    "short phone 375×667 (touch)": {
+      "controls": 172,
+      "unreachable": 12,
+      "byState": {
+        "7 Railings · finish, all edges": [
+          "button data-path=railStyle data-value=Westbury Tuscany",
+          "button data-path=railStyle data-value=No rail product selected",
+          "button data-path=railColor data-value=Textured Black",
+          "button data-path=railColor data-value=Bronze",
+          "button data-path=railColor data-value=White"
+        ],
+        "7 Railings · finish, custom edge": [
+          "button data-path=railStyle data-value=Westbury Tuscany",
+          "button data-path=railStyle data-value=No rail product selected",
+          "button data-path=railColor data-value=Textured Black",
+          "button data-path=railColor data-value=Bronze",
+          "button data-path=railColor data-value=White",
+          "button data-action=rail-match",
+          "button data-action=rail-everywhere"
+        ]
+      }
+    }
+  }
+}

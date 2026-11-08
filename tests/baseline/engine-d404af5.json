@@ -1,0 +1,183 @@
+{
+  "recordedFrom": {
+    "commit": "d404af5b6593b68f009439bf9f7ba9df5df02214",
+    "indexHtmlSha256": "cb1d668932c5a01f49a0cac1458ad419a0a55ed8300660190b2b3026a2d30bb0"
+  },
+  "designs": {
+    "small-rect-12x10": {
+      "sha256": "30d4405c8139558976c6ff037dc512b2d9159151feb6698dd375b536f41c7cbf",
+      "parts": 280,
+      "bytes": 180805
+    },
+    "default-rect-16x12": {
+      "sha256": "02dd4a8f83dc94e998504cd5bc528fada10fcdfe992e88dfc61e5e589b628433",
+      "parts": 337,
+      "bytes": 243130
+    },
+    "medium-rect-20x14-stair": {
+      "sha256": "26388a2334582237181c398ee950f9647f7b22c30acc1bd2925f0a45e06bf1cf",
+      "parts": 440,
+      "bytes": 336747
+    },
+    "square-14": {
+      "sha256": "2244dfa4556db6f829b3e9a6dd47ad72f97ba8a776dade187ea8d63a48697ff8",
+      "parts": 365,
+      "bytes": 230239
+    },
+    "L-24x18": {
+      "sha256": "2a16f24c5d2c1e849832712fce7f49141758f89d30a277a1480922ad61875074",
+      "parts": 708,
+      "bytes": 458997
+    },
+    "L-flipped-24x18": {
+      "sha256": "694b8c3fd619ee9fcfadba68351e9e339d46f3b4b8d82c7fd9bc5ef0b6db0739",
+      "parts": 699,
+      "bytes": 443487
+    },
+    "T-28x20": {
+      "sha256": "406b48a6d34098fd557ee4d1b0b6365a987b4f6b6206403b62dd48022dadcb9d",
+      "parts": 853,
+      "bytes": 537769
+    },
+    "U-32x22": {
+      "sha256": "da85608c609fa4b0c95fbf2aaf4d3a8b1e63186d5b7b1573ab093266f7b1490d",
+      "parts": 1020,
+      "bytes": 580852
+    },
+    "large-U-40x24-9ft-stair": {
+      "sha256": "986a2a172ab4f163ac642a7b83d04d5b429c01745da827adb3c1867c69b4eea6",
+      "parts": 1253,
+      "bytes": 785579
+    },
+    "free-hexagon": {
+      "sha256": "e62be251841fd15b06e9e825df5efc749a22598d12bd37e909e956897ac014c9",
+      "parts": 643,
+      "bytes": 434198
+    },
+    "diagonal-boards": {
+      "sha256": "a16bc537739da8055ecaf428700fc6ab04a60b6b346c853082c1209d2e62bdc4",
+      "parts": 408,
+      "bytes": 385177
+    },
+    "outward-boards": {
+      "sha256": "10a50fb6162fe706e32d33d2048ec904b3766cf6ca8b95459d3daabb91efd92d",
+      "parts": 402,
+      "bytes": 326912
+    },
+    "no-border": {
+      "sha256": "6439f0baa4969371a8d9d00c218002957910f8559091931d54ef5bd665ffb8ee",
+      "parts": 225,
+      "bytes": 168043
+    },
+    "double-border-dividers": {
+      "sha256": "5a9aced8070ffabb20eb5fe396892ab87913f8272b15af6a11867118cdcbc969",
+      "parts": 586,
+      "bytes": 842237
+    },
+    "freestanding": {
+      "sha256": "336ff4c97ef71d61f675c90c716adfe91e3ff5f8cc4dadacfaa32c08acaca15c",
+      "parts": 492,
+      "bytes": 416930
+    },
+    "two-house-walls": {
+      "sha256": "845361dfd81eb69558840279260081609c7a068ce96d98936a3e5c5a719594c0",
+      "parts": 621,
+      "bytes": 412898
+    },
+    "flush-beam": {
+      "sha256": "5cee953eee89db21841dfa66d7531d55b90d1c43f3571ec1427688fb1c4f0c7b",
+      "parts": 337,
+      "bytes": 136828
+    },
+    "multi-stair": {
+      "sha256": "02be94d12f5ead6da252f17494a97233796e390eb0d4d8d2804ed8cb377b3ef5",
+      "parts": 725,
+      "bytes": 631152
+    },
+    "mixed-rail-edges": {
+      "sha256": "8f2e50c5770422555f4acdfb3792aebf72b7b7c21c45824e7d90289e85d6a8a1",
+      "parts": 328,
+      "bytes": 200302
+    },
+    "pvc-white-rail": {
+      "sha256": "64d566469810cce71933de888fba8eb9f0d74ec1749c24016ba256ef7fd27511",
+      "parts": 337,
+      "bytes": 175250
+    },
+    "cut-corner": {
+      "sha256": "affe4e277923d751f50bf716592779b90c833da26ca230d6f28d5364d832d284",
+      "parts": 450,
+      "bytes": 190504
+    },
+    "bump-out": {
+      "sha256": "32c8b30c58e97fc5c2c3bd7c956be56be733e43c341492a58eeb028ba52f3730",
+      "parts": 917,
+      "bytes": 513594
+    },
+    "legacy-v4-single-stair": {
+      "sha256": "f2058bca34231af06a864f7d05cf038b7d922ed164d1d853006ad08b36a0cc13",
+      "parts": 367,
+      "bytes": 188446
+    },
+    "legacy-minimal-attached-false": {
+      "sha256": "e75d347e3cbbefe24609164d099c15d43174d88e4cb0938741f367d32ebeb7bc",
+      "parts": 425,
+      "bytes": 370974
+    },
+    "b3-showcase": {
+      "sha256": "f67d1a7864361f8c67ad86896918abb503e503a583f2bfae1fcdc95b615b11f1",
+      "parts": 597,
+      "bytes": 292429
+    },
+    "b2-diagonal-double-frame-dividers": {
+      "sha256": "f08e1364d75a71420a64cf65e49f1786197a0beb0fd1ca79da5be16cd937fa1f",
+      "parts": 1072,
+      "bytes": 707966
+    },
+    "b2-vertical-u": {
+      "sha256": "c771cd4236118e22cab75356c82eb0b77fa6e6bc1c163b690fe067dcf9a37fbb",
+      "parts": 1224,
+      "bytes": 1028471
+    },
+    "cp3-turn-right-wide": {
+      "sha256": "dab9ec6be78ae43b329064a3d7a63f1e24235ffc13fc75a1b2b993d83d807070",
+      "parts": 668,
+      "bytes": 522969
+    },
+    "b3c-inside-corner-door": {
+      "sha256": "70f23e73ea1a2bd118398fc3520b1a2f6de6dbad75cdd45cc0368861eaa114d8",
+      "parts": 321,
+      "bytes": 270004
+    },
+    "b3c-outside-corner": {
+      "sha256": "68f41621264c5b67c472c9672e403a0f165c3ba9b1f7125ffa3f78022ec0eb3d",
+      "parts": 737,
+      "bytes": 596119
+    },
+    "b3c-u-three-walls": {
+      "sha256": "458132ef94538cb5b661e783f5d44ee80eba7ea43db0ecd5ac21493c7d2c6f7c",
+      "parts": 962,
+      "bytes": 796833
+    },
+    "b3c-bevel-walls": {
+      "sha256": "260086d174a230b4bed0a651d40106c7db88ebf6e89c37dda5cd538a186d724f",
+      "parts": 403,
+      "bytes": 300332
+    },
+    "b3c-short-wall-window": {
+      "sha256": "c7fbce98ce9b735eaa22381188848bda7dbb001f99b14648c5dd4950c9687656",
+      "parts": 500,
+      "bytes": 299598
+    },
+    "rails-custom-finish": {
+      "sha256": "efa35a20ff43d157d90cea9b862742a1c7609fa107146973bac64af24822b95f",
+      "parts": 396,
+      "bytes": 280391
+    },
+    "freestanding-flush": {
+      "sha256": "3c498f5ac997a23823ce03f07ea3247c8716ba917c12216639516da538245258",
+      "parts": 492,
+      "bytes": 200759
+    }
+  }
+}
