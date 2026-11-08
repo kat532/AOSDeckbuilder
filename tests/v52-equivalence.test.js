@@ -31,9 +31,15 @@ const B2_ALERT = /supplemental blocks? \([\d.]+ LF\) added between joists under 
 // tested in tests/property-b3.test.js. House-wall pieces stay here and must keep the same position,
 // size, color and material; only their descriptive label and the new 'siding' style tag differ.
 const B3_CONTEXT = new Set(['earth', 'siding-course', 'house-foundation', 'house-trim', 'house-eave', 'house-roof', 'house-back', 'concrete-surface']);
+// V5.2 B3 corrections (owner request, 8 Nov 2026): house walls that share a deck corner are now
+// mitered into each other (no gap, no overlap, one roofline). Those JOINED walls are compared by the
+// corner tests in tests/property-b3.test.js; every house wall WITHOUT a neighbouring house wall is
+// still compared here and must be identical to V5.2.
+const joinedWall = (m, p) => { const i = Number(String(p.connect).replace('house-edge-', '')), n = m.geometry.edges.length, H = m.intent.houseEdges;
+  return p.kind === 'house-wall' && (H.includes((i + 1) % n) || H.includes((i - 1 + n) % n)); };
 const model = (win, q) => {
   const m = win.DeckCore.make(q);
-  m.parts = m.parts.filter(p => !B3_CONTEXT.has(p.kind)).map(p => { if (p.kind !== 'house-wall') return p; const { label, siding, ...rest } = p; return rest; });
+  m.parts = m.parts.filter(p => !B3_CONTEXT.has(p.kind) && !joinedWall(m, p)).map(p => { if (p.kind !== 'house-wall') return p; const { label, siding, ...rest } = p; return rest; });
   const counts = { ...m.counts }, stats = { ...m.stats };
   for (const k of FRAGMENT_COUNTS) delete counts[k];
   for (const k of FINISH_STATS) delete stats[k];

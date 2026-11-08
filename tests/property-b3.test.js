@@ -71,14 +71,17 @@ test('B3-3 house dress sits on the wall: foundation at grade, corner boards and 
   for (const [name, s] of Object.entries(SHAPES)) for (const H of [0.5, 4, 16]) {
     const m = build(deck({ ...s, height: H, houseEdges: name === 'rect' ? [0, 1] : [0] }));
     for (const i of m.intent.houseEdges) {
-      const e = m.geometry.edges[i], mine = m.parts.filter(p => p.connect === `house-edge-${i}`), L = local(e), len = Math.max(.3, e.len - .07);
+      const e = m.geometry.edges[i], mine = m.parts.filter(p => p.connect === `house-edge-${i}`), L = local(e);
       const walls = mine.filter(p => p.kind === 'house-wall'), top = Math.max(...walls.map(p => p.y + p.h / 2));
       const f = mine.filter(p => p.kind === 'house-foundation'); assert.equal(f.length, 1);
       assert.ok(Math.abs(f[0].y - f[0].h / 2) < 1e-9, 'foundation band starts at grade'); assert.ok(f[0].y + f[0].h / 2 < H, 'and stays below the deck');
-      assert.equal(mine.filter(p => p.kind === 'house-trim').length, 2);
-      for (const p of mine.filter(p => /^house-(trim|foundation)$/.test(p.kind))) { const c = L(p);
-        assert.ok(Math.abs(c.s) + p.w / 2 <= len / 2 + 1e-6, `${name} H=${H}: ${p.kind} within the wall`);
-        assert.ok(c.d - p.d / 2 < .115 && c.d + p.d / 2 >= .115 - 1e-6, `${name}: ${p.kind} against the siding face`); }
+      // B3 corrections: corner boards at free wall ends and at outside house corners (one per face), none at inside corners.
+      const nb = core.houseNeighbours(m.intent, m.geometry.edges, i), fr = core.wallEnds(m.intent, m.geometry.edges, i, core.WALL_FRONT), bk = core.wallEnds(m.intent, m.geometry.edges, i, core.WALL_BACK);
+      const want = (nb.start === null || fr[0] < bk[0] ? 1 : 0) + (nb.end === null || fr[1] > bk[1] ? 1 : 0);
+      assert.equal(mine.filter(p => p.kind === 'house-trim').length, want, `${name} wall ${i}: corner boards`);
+      for (const p of mine.filter(p => /^house-(trim|foundation)$/.test(p.kind))) { const c = L(p), half = p.footprint ? 0 : p.w / 2;
+        if (!p.footprint) assert.ok(c.s - half >= fr[0] - .06 - 1e-6 && c.s + half <= fr[1] + .06 + 1e-6, `${name} H=${H}: ${p.kind} within the wall face`);
+        if (!p.footprint) assert.ok(c.d - p.d / 2 < .115 && c.d + p.d / 2 >= .115 - 1e-6, `${name}: ${p.kind} against the siding face`); }
       const eave = mine.find(p => p.kind === 'house-eave'), roof = mine.find(p => p.kind === 'house-roof');
       assert.ok(Math.abs(eave.y - eave.h / 2 - top) < 1e-9, 'eave on the wall top');
       assert.ok(Math.abs(roof.y - roof.h / 2 - (eave.y + eave.h / 2)) < 1e-9, 'roof edge on the eave');
@@ -192,7 +195,9 @@ test('B3-9 camera: orbit, pan and zoom limits never put the eye underground or l
   }
   // The work area includes stairs, landings and patio/walkway slabs (so you can move the view to them).
   const r = camera(deck({ staircases: [LANDING], surfaces: [{ type: 'patio', x: 0, z: 40, width: 12, length: 10 }] })), b = r.cameraWorkBounds();
-  assert.ok(b.zmax >= 45 - 1e-6, 'patio reachable'); assert.ok(r.cameraWorkBounds(false).zmax < 40, 'but Fit frames the deck and stairs');
+  assert.ok(b.zmax >= 45 - 1e-6, 'patio reachable');
+  // B3 corrections (owner testing): Fit also frames patio/walkway slabs, so a slab in the 2D plan is in view in 3D.
+  r.fit(); for (const c of r.model.geometry.surfaces[0].corners) { const v = r.project([c[0], .03, c[1]]); assert.ok(v && v[0] >= 0 && v[0] <= 1 && v[1] >= 0 && v[1] <= 1, 'patio in the Fit view'); }
 });
 
 test('B3-10 camera: "Under" looks up at the framing from just above the lawn; Finished/Framing switching keeps the view', () => {

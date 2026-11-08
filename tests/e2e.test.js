@@ -2197,3 +2197,155 @@ test('B3: an older (B2 Fix 1) project opens unchanged and saves without the new 
   assert.deepEqual(errors, []);
   await ctx.close();
 });
+
+// ---------------- V5.2 Group B — B3 corrections: corners, joints, 2 ft walls, patio in 3D ----------------
+// Colour of the 3D canvas at a world point (alpha 0 = nothing drawn there: the page background shows through).
+async function pixelAt(page, x, y, z) {
+  return page.evaluate(([x, y, z]) => { const v = window.AOSDeckStudioTest.project3d(x, y, z); if (!v) return null;
+    const c = document.getElementById('glCanvas'), k = document.createElement('canvas'); k.width = c.width; k.height = c.height; const g = k.getContext('2d'); g.drawImage(c, 0, 0);
+    const px = Math.round(v[0] * c.width), py = Math.round(v[1] * c.height); if (px < 0 || py < 0 || px >= c.width || py >= c.height) return { off: true };
+    const d = g.getImageData(px, py, 1, 1).data; return { r: d[0], g: d[1], b: d[2], a: d[3] }; }, [x, y, z]);
+}
+const isConcrete = (p) => p && !p.off && p.a === 255 && Math.abs(p.r - p.g) < 16 && Math.abs(p.g - p.b) < 18 && p.r > 140;
+async function open3dDesign(page, design, query = '') {
+  if (query) { await page.goto(APP + query); await page.waitForFunction(() => window.DeckCore && window.Deck3D); }
+  await openDeckFile(page, design); await page.locator('#mode3d').click(); await page.waitForTimeout(400);
+  await page.locator('#fitBtn').click(); await page.waitForTimeout(150);
+  await page.evaluate(() => document.getElementById('toast').classList.remove('show'));
+}
+// Joint seams of a design, from the engine in the page: front and back corner points of each joint.
+const seamsOf = (page, design) => page.evaluate((d) => { const c = window.DeckCore, q = c.sanitize(d), es = c.edges(c.polygon(q)), n = es.length, out = [];
+  for (const i of q.houseEdges) { const j = (i + 1) % n; if (!q.houseEdges.includes(j)) continue; const e = es[i];
+    const P = (dd) => { const s = c.wallEnds(q, es, i, dd)[1]; return [e.mid[0] + e.t[0] * s + e.n[0] * dd, e.mid[1] + e.t[1] * s + e.n[1] * dd]; };
+    out.push({ i, j, f: P(c.WALL_FRONT), b: P(c.WALL_BACK) }); } return out; }, design);
+
+for (const [name, design] of Object.entries({
+  'inside corner + 8 ft patio door': { shape: 'rectangle', width: 20, depth: 14, height: 4, houseEdges: [0, 3], openings: [{ id: 'p', type: 'patio', edge: 0, offset: -4, width: 6, height: 8 }, { id: 'w', type: 'window', edge: 3, offset: 3, width: 3, height: 4, sill: 3 }] },
+  'outside corner (L notch)': { shape: 'L', width: 24, depth: 18, height: 4, houseEdges: [3, 4], openings: [{ id: 'd', type: 'door', edge: 4, offset: 0 }] },
+  'U notch, three walls': { shape: 'U', width: 32, depth: 22, height: 4, houseEdges: [3, 4, 5] },
+})) test(`B3c: ${name} — one wall height, joined eaves, and no see-through joint from grade to eave (finished 3D, pixel check)`, async () => {
+  const { ctx, page, errors } = await openApp();
+  await open3dDesign(page, design, '?quality=full');
+  const p = await prop(page), walls = p.parts3d.filter(x => x.kind === 'house-wall'), top = Math.max(...walls.map(w => w.y + w.h / 2));
+  for (const i of design.houseEdges) assert.ok(Math.abs(Math.max(...walls.filter(w => w.connect === `house-edge-${i}`).map(w => w.y + w.h / 2)) - top) < 1e-9, `wall ${i} reaches the house top`);
+  const eaves = p.parts3d.filter(x => x.kind === 'house-eave'); assert.ok(eaves.length === design.houseEdges.length && eaves.every(e => Math.abs(e.y - eaves[0].y) < 1e-9), 'one eave height');
+  const seams = await seamsOf(page, design); assert.ok(seams.length >= 1);
+  const tag = name.split(' ')[0];
+  for (const [k, sm] of seams.entries()) {
+    // Orbit (real mouse drags) until the seam faces the camera, then sample along it at many heights.
+    let checked = 0;
+    for (let turn = 0; turn < 8 && checked < 8; turn++) {
+      checked = 0;
+      for (let y = .2; y < top - .2; y += (top - .4) / 11) {
+        const pt = [sm.f[0] + (sm.b[0] - sm.f[0]) * .02, y, sm.f[1] + (sm.b[1] - sm.f[1]) * .02], px = await pixelAt(page, ...pt);
+        if (!px || px.off) continue; checked++;
+        assert.equal(px.a, 255, `${name} joint ${sm.i}/${sm.j}: opaque at y=${y.toFixed(2)} (no gap; a solid wall point always covers its pixel)`);
+      }
+      if (checked >= 8) break; await dragGL(page, 110, 0);
+    }
+    assert.ok(checked >= 8, `${name}: joint ${sm.i}/${sm.j} sampled at ${checked} heights`);
+    await glShot(page, `b3c-${tag}-joint-${k}.png`);
+  }
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test('B3c: a window on a 2′-0″ wall — added to fit and centred, presets limited, too-wide refused, drag limited, undo/redo, save/reopen, 2D and 3D', async () => {
+  const { ctx, page, errors } = await openApp();
+  const pts = [[0, 2], [9, 2], [9, 0], [11, 0], [11, 2], [20, 2], [20, 14], [0, 14]];
+  const design = { shape: 'free', width: 20, depth: 14, height: 4, houseEdges: [2, 1, 3, 0, 4], points: pts.map(([x, z]) => [x / 20, z / 14]), project: 'Short wall' };
+  await openDeckFile(page, design);
+  await stepBtn(page, 'House').click(); await page.waitForTimeout(200);
+  // Choose the 2 ft wall (the top one in the middle) in "Add to".
+  const es = await edgesOf(page), idx = es.findIndex(e => Math.abs(e.len - 2) < 1e-6 && Math.abs(e.mid[1]) < 1e-6);
+  await page.locator(`#stepContent [data-action="opening-wall"][data-value="${idx}"]`).click();
+  await page.locator('#stepContent [data-action="opening-add"][data-value="window"]').click(); await page.waitForTimeout(300);
+  assert.match(await toastText(page), /Window added .*\(1′ 6″ wide to fit\)/);
+  let o = (await openingsOf(page)).at(-1);
+  assert.equal(o.edge, idx); assert.equal(o.status, 'ok'); assert.ok(Math.abs(o.width - 1.5) < 1e-9 && Math.abs(o.offset) < 1e-9, 'as wide as fits, centred');
+  assert.match(await page.locator('#stepContent').innerText(), /Usable on this wall: up to 1′ 6″ wide/);
+  const opts = await page.locator('#stepContent select[data-opening-preset] option').evaluateAll(os => os.map(x => [x.textContent, x.disabled]));
+  assert.ok(opts.filter(([t]) => /too wide/.test(t)).every(([, d]) => d) && opts.some(([t]) => /too wide/.test(t)), 'presets wider than the wall are disabled');
+  const wf = page.locator('#stepContent input[data-opening-field="width"]'); await wf.fill('2'); await wf.dispatchEvent('change'); await page.waitForTimeout(250);
+  assert.match(await toastText(page), /at most 1′ 6″ wide/); assert.equal((await openingsOf(page)).at(-1).width, 1.5);
+  // Narrow it to 1 ft, then drag it along the wall: it stops 3 in. from the corners.
+  const wf2 = page.locator('#stepContent input[data-opening-field="width"]'); await wf2.fill('1'); await wf2.dispatchEvent('change'); await page.waitForTimeout(250);
+  o = (await openingsOf(page)).at(-1); assert.equal(o.width, 1);
+  const [sx, sy] = await openingScreen(page, o), [tx, ty] = await openingScreen(page, o, 3);
+  await page.mouse.move(sx, sy); await page.mouse.down(); await page.mouse.move(tx, ty, { steps: 8 }); await page.mouse.up(); await page.waitForTimeout(300);
+  o = (await openingsOf(page)).at(-1); assert.ok(Math.abs(o.offset - .25) < 1 / 12 + 1e-9 && o.status === 'ok', `dragged to the limit (${o.offset})`);
+  await page.screenshot({ path: path.join(SHOTS, 'b3c-short-wall-window-2d.png') });
+  await page.locator('#undoBtn').click(); await page.waitForTimeout(200); assert.ok(Math.abs((await openingsOf(page)).at(-1).offset) < 1e-9, 'undo the drag');
+  await page.locator('#redoBtn').click(); await page.waitForTimeout(200); assert.ok((await openingsOf(page)).at(-1).offset > .1, 'redo');
+  await page.locator('#mode3d').click(); await page.waitForTimeout(500);
+  const sc = await scene3d(page); assert.ok(sc.parts.some(x => x.kind === 'opening-glass' && /window 12×/.test(x.label)), 'window drawn in 3D');
+  await page.locator('#fitBtn').click(); await page.waitForTimeout(200); await glShot(page, 'b3c-short-wall-window-3d.png');
+  const saved = (await openingsOf(page)).at(-1);
+  const { fresh, data } = await reopen(page, ctx);
+  const back = data.design.openings.at(-1); assert.equal(back.width, 1); assert.ok(Math.abs(back.offset - saved.offset) < 1e-9);
+  assert.equal((await openingsOf(fresh.page)).at(-1).status, 'ok', 'reopened and still valid');
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});
+
+for (const quality of ['full', 'lite']) test(`B3c: patio and walkway are visible in 3D where they are in 2D, and follow move/resize/delete, undo/redo and save/reopen (${quality} look, pixel check)`, async () => {
+  const { ctx, page, errors } = await openApp();
+  await page.goto(APP + `?quality=${quality}`); await page.waitForFunction(() => window.DeckCore && window.Deck3D);
+  await openDeckFile(page, { ...B3_DECK, surfaces: [] });
+  await toHouseTab(page, 'yard');
+  await page.locator('#stepContent [data-action="surface-add"][data-value="patio"]').click(); await page.waitForTimeout(300);
+  let sf = (await prop(page)).surfaces[0];
+  const check3d = async (s, label) => {
+    await page.locator('#mode3d').click(); await page.waitForTimeout(400); await page.locator('#fitBtn').click(); await page.waitForTimeout(250);
+    const p = await prop(page), slab = p.parts3d.find(x => x.kind === 'concrete-surface' && x.surface === s.id);
+    assert.ok(slab, `${label}: slab in the 3D scene`);
+    assert.ok(Math.abs(slab.x - s.x) < 1e-9 && Math.abs(slab.z - s.z) < 1e-9 && Math.abs(slab.w - s.width) < 1e-9 && Math.abs(slab.d - s.length) < 1e-9, `${label}: same place and size as 2D`);
+    // Sample a grid over the slab: most points must show concrete (some may be behind stairs/posts).
+    let seen = 0, total = 0; const a = s.angle * Math.PI / 180;
+    for (const u of [-.35, 0, .35]) for (const v of [-.35, 0, .35]) { const x = s.x + Math.cos(a) * u * s.width - Math.sin(a) * v * s.length, z = s.z + Math.sin(a) * u * s.width + Math.cos(a) * v * s.length;
+      const px = await pixelAt(page, x, slab.y + slab.h / 2, z); if (!px || px.off) continue; total++; if (isConcrete(px)) seen++; }
+    assert.ok(total >= 5, `${label}: slab within the Fit view (${total} of 9 sample points on screen)`);
+    assert.ok(seen >= Math.ceil(total * .5), `${label}: concrete visible in 3D at ${seen} of ${total} points`);
+    await page.locator('#mode2d').click(); await page.waitForTimeout(150);
+    return seen;
+  };
+  await check3d(sf, 'added');
+  await glShot(page, `b3c-patio-3d-${quality}.png`);
+  // Move in 2D (drag), then the 3D slab is at the new place.
+  const at = (x, z) => page.evaluate(([x, z]) => window.AOSDeckStudioTest.toScreen(x, z), [x, z]);
+  await toHouseTab(page, 'yard');
+  let [sx, sy] = await at(sf.x - sf.width / 2 + 1, sf.z + sf.length / 2 - 1), [tx, ty] = await at(sf.x - sf.width / 2 - 7, sf.z + sf.length / 2 + 3);
+  await page.mouse.move(sx, sy); await page.mouse.down(); await page.mouse.move(tx, ty, { steps: 10 }); await page.mouse.up(); await page.waitForTimeout(300);
+  const moved = (await prop(page)).surfaces[0]; assert.ok(Math.abs(moved.x - sf.x + 8) < .3 && Math.abs(moved.z - sf.z - 4) < .3, 'moved in 2D');
+  await check3d(moved, 'moved');
+  // Resize by typing; 3D follows.
+  await toHouseTab(page, 'yard');
+  const lf = page.locator('#stepContent input[data-surface-field="length"]'); await lf.fill('16'); await lf.dispatchEvent('change'); await page.waitForTimeout(250);
+  const resized = (await prop(page)).surfaces[0]; assert.equal(resized.length, 16);
+  await check3d(resized, 'resized');
+  // Delete: gone from 3D; undo brings it back exactly; redo removes it again.
+  await toHouseTab(page, 'yard');
+  await page.locator('#stepContent [data-action="surface-remove"]').click(); await page.waitForTimeout(250);
+  await page.locator('#mode3d').click(); await page.waitForTimeout(300);
+  assert.equal((await prop(page)).parts3d.filter(x => x.kind === 'concrete-surface').length, 0, 'deleted: not in 3D');
+  const gone = await pixelAt(page, resized.x, .03, resized.z); assert.ok(!isConcrete(gone), 'deleted: no concrete drawn there');
+  await page.locator('#mode2d').click();
+  await page.locator('#undoBtn').click(); await page.waitForTimeout(250); assert.deepEqual((await prop(page)).surfaces, [resized], 'undo restores it');
+  await check3d(resized, 'undo');
+  await page.locator('#redoBtn').click(); await page.waitForTimeout(250); assert.equal((await prop(page)).surfaces.length, 0);
+  await page.locator('#undoBtn').click(); await page.waitForTimeout(250);
+  // A walkway too, then save/reopen: both shown in 3D after reopening.
+  await toHouseTab(page, 'yard'); await page.locator('#stepContent [data-action="surface-add"][data-value="walkway"]').click(); await page.waitForTimeout(300);
+  const both = (await prop(page)).surfaces; assert.equal(both.length, 2);
+  await page.screenshot({ path: path.join(SHOTS, `b3c-patio-walkway-2d-${quality}.png`) });
+  const { fresh, data } = await reopen(page, ctx);
+  assert.deepEqual(data.design.surfaces, both);
+  await fresh.page.goto(APP + `?quality=${quality}`); await fresh.page.waitForFunction(() => window.DeckCore);
+  await fresh.page.locator('#fileInput').setInputFiles((await saveFile(page)).file); await fresh.page.waitForFunction(hasArea);
+  await fresh.page.locator('#mode3d').click(); await fresh.page.waitForTimeout(400); await fresh.page.locator('#fitBtn').click(); await fresh.page.waitForTimeout(250);
+  const fp = await prop(fresh.page); assert.equal(fp.parts3d.filter(x => x.kind === 'concrete-surface').length, 2, 'reopened: both slabs in 3D');
+  await fresh.page.evaluate(() => document.getElementById('toast').classList.remove('show')); await page.waitForTimeout(200);
+  fs.writeFileSync(path.join(SHOTS, `b3c-patio-walkway-3d-reopened-${quality}.png`), await fresh.page.locator('#glCanvas').screenshot());
+  assert.deepEqual(errors, []); assert.deepEqual(fresh.errors, []);
+  await fresh.ctx.close(); await ctx.close();
+});

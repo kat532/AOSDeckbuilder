@@ -36,10 +36,16 @@ test('B1 an empty list changes nothing; walls without openings are built exactly
   const noId = (ps) => plain(ps).map(({ id, ...p }) => p); // part ids are a running number
   assert.deepEqual(plain(b.parts), plain(a.parts));
   assert.deepEqual(plain(b.counts), plain(a.counts));
-  // A deck with openings only on wall 0 builds its other house wall as before.
+  // A deck with openings only on wall 0 builds its other house wall as before, except that (V5.2 B3
+  // corrections, owner request 8 Nov 2026) every house wall now shares one height: the tallest
+  // door/window + 1 ft, at least 7 ft above the deck, so connected walls never step down at a corner.
   const two = build(deck({ houseEdges: [0, 1] })), withOne = build(deck({ houseEdges: [0, 1], openings: [door()] }));
   const onWall1 = (m) => m.parts.filter(p => p.connect === 'house-edge-1' || (p.kind === 'siding-course' && Math.abs(p.x - 10.475) < 0.2));
-  assert.deepEqual(noId(onWall1(withOne).filter(p => p.kind === 'house-wall')), noId(onWall1(two).filter(p => p.kind === 'house-wall')));
+  const plan = (ps) => noId(ps).map(({ y, h, ...p }) => p), tops = (m, i) => m.parts.filter(p => p.kind === 'house-wall' && p.connect === `house-edge-${i}`).map(p => p.y + p.h / 2);
+  assert.deepEqual(plan(onWall1(withOne).filter(p => p.kind === 'house-wall')), plan(onWall1(two).filter(p => p.kind === 'house-wall')), 'same footprint as before');
+  const H = withOne.intent.height, houseTop = H + Math.max(7, 80 / 12 + 1);
+  for (const t of [...tops(withOne, 0), ...tops(withOne, 1)].filter(t => t > H + 6.9)) assert.ok(Math.abs(t - houseTop) < 1e-3, 'one house height (door height is saved to 1/10000 ft)');
+  assert.ok(tops(two, 1).every(t => Math.abs(t - (H + 7)) < 1e-9), 'no openings anywhere: 7 ft above the deck, as before');
 });
 
 test('B1 the wall is built around each opening: no wall in the opening, wall everywhere else', () => {
