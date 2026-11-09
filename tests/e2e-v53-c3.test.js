@@ -175,7 +175,9 @@ for (const name of ['census (every feature)', 'b2-diagonal-double-frame-dividers
 for (const [vp, size] of VIEWPORTS) test(`C3 ${vp}: each of the eight Available Adjustments opens its existing editor; Return to Review restores step 9 in Customer mode`, async () => {
   const { ctx, page, errors, press } = await newPage(size);
   await openDesign(page, CENSUS_DESIGN); await step(page, 7);
-  const before = await saveFile(page);
+  // The design file from Review (identical to Projects › Download current; the Projects button is hidden on phones).
+  const reviewFile = async () => JSON.parse((await download(page, async () => { const b = page.locator('#stepContent [data-action="download-json"]'); await b.scrollIntoViewIfNeeded(); await press(b); })).text);
+  const before = await reviewFile();
   if (vp !== 'tablet') await page.screenshot({ path: path.join(SHOTS, `c3-${vp}-customer.png`) });
   for (const [id, label, editor] of ADJUST) {
     const btn = page.locator(`#stepContent [data-action="adjust"][data-adjust="${id}"]`);
@@ -195,7 +197,7 @@ for (const [vp, size] of VIEWPORTS) test(`C3 ${vp}: each of the eight Available 
     assert.equal(await page.locator('#stepContent [data-action="return-review"]').count(), 0);
   }
   // Opening an editor and returning changes nothing in the project.
-  const after = await saveFile(page);
+  const after = await reviewFile();
   for (const k of ['design', 'componentModel', 'counts', 'alerts']) assert.deepEqual(after[k], before[k], `no change: ${k}`);
   // From Internal mode too: switch, then open an editor from Customer again after returning.
   await press(page.locator('#stepContent [data-path="reviewMode"][data-value="internal"]')); await page.waitForTimeout(150); assert.equal(await mode(page), 'internal');
