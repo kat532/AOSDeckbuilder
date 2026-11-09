@@ -4779,7 +4779,9 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
    if(applyOutline(shapeOps.removeFeature(core.polygon(state.intent),f),{removeFeature:f})){state.shapeTool=null;renderPanel();toast('Section removed; original edge restored.');}return;
  }
  if(act==='rails-all'){const q=structuredClone(state.intent);q.railEdges=core.edges(core.polygon(q)).filter(x=>!q.houseEdges.includes(x.i)).map(x=>x.i);setProject(q);return;}
- if(act==='rails-none'){patch('railEdges',[]);return;}
+ if(act==='rails-none'){const n=state.intent.railEdges.length,c=Object.keys(state.intent.railOverrides||{}).map(Number).filter(k=>state.intent.railEdges.includes(k)).length;
+  if(!n){toast('No deck edges have railings to remove.');return;}
+  askDividerConfirmation('Remove all deck railings?',`This removes railings from all ${n} deck edge${n>1?'s':''}.${c?` Custom finishes on ${c} edge${c>1?'s':''} are cleared too.`:''} Stair railings and your railing product and color stay as they are.`,'Remove Railings',()=>patch('railEdges',[]),'Keep Railings');return;}
  if(act==='rail-target'){const v=b.dataset.edge;state.railTarget=v==='all'?'all':Number(v);renderPanel();planDraw();return;}
  if(act==='rail-match'){const t=state.railTarget;if(typeof t!=='number')return;const q=structuredClone(state.intent);if(q.railOverrides)delete q.railOverrides[t];setProject(q);toast(`Edge ${t+1} now matches the other edges.`);return;}
  if(act==='rail-everywhere'){const t=state.railTarget;if(typeof t!=='number')return;const q=structuredClone(state.intent),f=core.railFinish(q,t);q.railStyle=f.railStyle;q.railColor=f.railColor;q.railOverrides={};state.railTarget='all';setProject(q);toast(`${f.railColor} railing applied to all edges.`);return;}

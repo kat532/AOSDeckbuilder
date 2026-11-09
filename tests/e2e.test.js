@@ -276,6 +276,7 @@ test('railing finish: removing an edge railing drops its finish; save -> open re
   // Turn off the Edge 4 railing via the existing locations controls' data path.
   await fresh.page.locator('[data-path="railTab"][data-value="locations"]').click();
   await fresh.page.locator('[data-action="rails-none"]').click();
+  await fresh.page.locator('#dividerConfirmAccept').click(); // C6: removal now asks first
   await fresh.page.locator('[data-path="railTab"][data-value="finish"]').click();
   assert.equal(await fresh.page.locator('#stepContent [data-action="rail-target"]').count(), 0);
   assert.match(await fresh.page.locator('#stepContent').innerText(), /No deck edges have railings yet/);
