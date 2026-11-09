@@ -17,7 +17,8 @@ const SHOTS = path.join(__dirname, '..', 'test-results', 'screenshots');
 const BASE = JSON.parse(fs.readFileSync(path.join(__dirname, 'baseline', 'controls-d404af5.json'), 'utf8'));
 // V5.3 C2: the C0 inventory as the nine-step workflow must show it (tests/baseline/c2-expected.js lists
 // every allowed difference: Patio & Walkway moved from House & Height to its own step 8).
-const EXPECT = require('./baseline/c2-expected').expectedC2(BASE);
+// V5.3 C3: and with the Review & Present redesign (tests/baseline/c3-expected.js lists each allowed difference).
+const EXPECT = require('./baseline/c3-expected').expectedC3(BASE);
 let browser;
 test.before(async () => { browser = await chromium.launch({ executablePath: CHROME, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] }); fs.mkdirSync(SHOTS, { recursive: true }); });
 test.after(async () => { await browser?.close(); });

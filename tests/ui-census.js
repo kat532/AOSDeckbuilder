@@ -44,6 +44,12 @@ const STATES = [
   // V5.3 C2: patios and walkways have their own step (ID 8), shown before Review (now step 9).
   ['8 Patio & Walkway', (p) => seq(p, step(8))],
   ['9 Review & Present', (p) => seq(p, step(7))],
+  // V5.3 C3: Review's Internal view (Materials and Framing tabs).
+  ['9 Review & Present · Internal · Materials', (p) => seq(p, step(7), act('[data-path="reviewMode"][data-value="internal"]'), act('[data-path="reviewTab"][data-value="materials"]'))],
+  ['9 Review & Present · Internal · Framing', (p) => seq(p, step(7), act('[data-path="reviewMode"][data-value="internal"]'), act('[data-path="reviewTab"][data-value="framing"]'))],
+  // V5.3 C3: Shape & Size opened from Review's Available Adjustments shows Return to Review. Kept last:
+  // the way back stays on offer until Review is reached again.
+  ['1 Shape & Size · opened from Review', (p) => seq(p, step(7), act('[data-action="adjust"][data-adjust="0"]'))],
 ];
 
 // Stable identity of a control: tag + id + its data-* attributes (or its text when it has none).

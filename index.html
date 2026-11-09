@@ -232,6 +232,29 @@
 .seg.wrap{flex-wrap:wrap}.seg.wrap button{flex:1 1 30%;min-height:36px}.seg.turns button{min-height:36px}.landing-sub{margin-top:2px}
 .framing-pending{font-size:12.5px;line-height:1.45;padding:10px 12px;border-radius:9px;background:#fdf1dc;color:#6b4705;margin-bottom:8px}.framing-pending button{margin-left:6px;min-height:34px;padding:6px 10px;border-radius:8px;border:1px solid #d9a441;background:#fff;font-weight:800;font-size:11.5px}
 @media (max-width:760px){.framingstatus{display:none}}
+
+/* V5.3 C3: Review & Present — Customer and Internal views, quick adjustments. */
+.rv-switch{display:flex;align-items:center;gap:8px}.rv-switch-label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#4f5d6e}.rv-switch-seg{flex:1;min-width:0}
+.rv-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.rv-metric{border:1px solid #e4e8eb;border-radius:10px;padding:8px 5px;background:#f8fafb;min-width:0;text-align:center}
+.rv-metric b{display:block;font-size:17px;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
+.rv-metric span{display:block;font-size:10px;color:#6b7a87;margin-top:3px;line-height:1.2;font-weight:650}
+.rv-section{display:flex;flex-direction:column;gap:6px}.rv-section h3{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#4f5d6e;margin:0;font-weight:800}
+.rv-list{margin:0;border:1px solid #e4e8eb;border-radius:10px;background:#fff;overflow:hidden}
+.rv-row{display:grid;grid-template-columns:minmax(84px,38%) minmax(0,1fr);gap:8px;padding:7px 10px;border-top:1px solid #eef1f3;font-size:12px;line-height:1.35}.rv-row:first-child{border-top:0}
+.rv-row dt{color:#66757f;font-weight:700}.rv-row dd{margin:0;color:var(--ink);font-weight:650;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.rv-row dd small{display:block;color:#6b7a87;font-weight:600;font-size:11px;margin-top:1px}
+.rv-adjust-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.rv-adjust-grid button{display:flex;justify-content:space-between;align-items:center;gap:6px;text-align:left;border:1px solid #dfe5e8;background:#fff;border-radius:9px;padding:8px 10px;font-size:11.5px;line-height:1.2;font-weight:750;color:#263849;min-height:40px;cursor:pointer}
+.rv-adjust-grid button span{color:var(--red);font-size:16px;line-height:1}.rv-adjust-grid button:hover{border-color:#c9d2d8;background:#f8fafb}
+.rv-small{font-size:11px;color:#6b7a87;line-height:1.4;margin:0}
+.rv-banner{border-radius:10px;padding:9px 11px;font-size:11.5px;line-height:1.4}.rv-banner.estimate{background:#fff7e6;border:1px solid #efd398;color:#5b4413}
+.rv-status{display:flex;flex-direction:column;gap:3px;border-radius:10px;padding:9px 11px;background:var(--softred);border:1px solid #e8bcc2;color:#5f1a24;font-size:11.5px;line-height:1.4}.rv-status strong{font-size:12.5px}.rv-count{font-weight:800}
+.rv-issues{border:1px solid #e4e8eb;border-radius:10px;background:#fff;padding:8px 10px}.rv-issues+.rv-issues{margin-top:6px}.rv-issues h4{margin:0 0 4px;font-size:11.5px;color:#394957}.rv-issues.rv-warning{border-color:#efd398;background:#fffaf0}.rv-issues.rv-warning h4{color:#8a5a00}
+.rv-issues ul{margin:0;padding-left:17px;display:flex;flex-direction:column;gap:5px}.rv-issues li{font-size:11.5px;line-height:1.4;color:#33434f}
+.return-review{width:100%;border:1px solid #e6bdc2;background:var(--softred);color:var(--red-dark);font-weight:850;font-size:12.5px;padding:10px 12px;border-radius:10px;text-align:left;cursor:pointer}.return-review:hover{background:#fde4e7}
+.rv-section .review-buttons button{line-height:1.25;font-size:11.5px;padding:10px 6px}
+@media(max-width:800px){.rv-metric b{font-size:15px}.rv-metric span{font-size:9.5px}.rv-row{font-size:12px}.rv-adjust-grid button{min-height:42px}}
+@media(max-width:360px){.rv-metrics{grid-template-columns:1fr 1fr}}
 </style></head>
 <body><div class="shell">
 <header class="appbar">
@@ -3225,8 +3248,8 @@ const flowPosition=id=>STEP_FLOW.indexOf(id);
 const nextStep=id=>STEP_FLOW[Math.min(STEP_FLOW.length-1,flowPosition(id)+1)];
 const previousStep=id=>STEP_FLOW[Math.max(0,flowPosition(id)-1)];
 const titles=['Shape & Size','House & Height','Stairs & Landings','Decking Layout','Decking Selection','Railings','Framing & Ledger','Review & Present','Patio & Walkway'];
-const hints=['Choose and shape','Tap house edges','Tap an edge to add','Choose board pattern','Choose finish colors','Tap to add/remove','Choose beams and support early','Finished and framing','Concrete around the deck'];
-const state={dimensionLabels:[],intent:null,model:null,step:0,view:'2d',houseTab:'walls',surfaceSelected:null,layoutTab:'direction',finishTab:'field',railTab:'locations',railTarget:'all',dividerSelected:0,stairSelected:0,selectedCorner:null,previewPoly:null,cornerPreview:null,cornerPreviewError:'',cornerKey:null,cornerSize:1,cornerAngle:45,cornerOrientation:'first',shapeTool:null,featureDraft:{kind:'bump',width:4,depth:2,fraction:.5},featureSelected:null,shapePicker:false,freeDraw:false,freePts:[],freeHover:null,freeRedo:[],measure:'all',drawSnap:true,drawMode:'auto',selectedEdge:null,framingDetails:false,history:[null],historyAt:0,plan:{scale:18,panX:0,panY:0,targetZ:6,pointers:new Map(),drag:null,tap:null},toastTimeout:0};
+const hints=['Choose and shape','Tap house edges','Tap an edge to add','Choose board pattern','Choose finish colors','Tap to add/remove','Choose beams and support early','Present the design','Concrete around the deck'];
+const state={dimensionLabels:[],intent:null,model:null,step:0,view:'2d',houseTab:'walls',surfaceSelected:null,layoutTab:'direction',finishTab:'field',railTab:'locations',railTarget:'all',reviewMode:'customer',reviewTab:'materials',reviewReturn:false,dividerSelected:0,stairSelected:0,selectedCorner:null,previewPoly:null,cornerPreview:null,cornerPreviewError:'',cornerKey:null,cornerSize:1,cornerAngle:45,cornerOrientation:'first',shapeTool:null,featureDraft:{kind:'bump',width:4,depth:2,fraction:.5},featureSelected:null,shapePicker:false,freeDraw:false,freePts:[],freeHover:null,freeRedo:[],measure:'all',drawSnap:true,drawMode:'auto',selectedEdge:null,framingDetails:false,history:[null],historyAt:0,plan:{scale:18,panX:0,panY:0,targetZ:6,pointers:new Map(),drag:null,tap:null},toastTimeout:0};
 const planCanvas=$('planCanvas'),ctx=planCanvas.getContext('2d'),glCanvas=$('glCanvas'),renderer3d=new window.Deck3D(glCanvas);
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 // Construction-style lengths (display only; geometry keeps its exact values): 21.25 -> 21′ 3″, 16 -> 16′ 0″.
@@ -3503,7 +3526,9 @@ function stepAttention(){const out=new Set(),m=state.model;if(!state.intent||!m)
  return out;}
 function stepTo(i){state.cornerPreview=null;if(!state.intent&&i>0){toast('Choose a shape first.');return;}
  if(i>0&&state.freeDraw){toast('Finish or cancel the drawing first.');return;}
- if(i>0&&state.model?.stats?.invalidGeometry){toast('Fix the deck outline first: it has crossed or overlapping edges.');return;}state.step=STEP_FLOW.includes(i)?i:0;state.framingDetails=false;if([0,1,2,3,5,6,8].includes(state.step))state.view='2d';if([4,7].includes(state.step)&&state.intent)state.view='3d';if(state.step===LAST_STEP&&renderer3d.showStructure)renderer3d.setStructureVisible(false);renderPanel();updateHeader();}
+ if(i>0&&state.model?.stats?.invalidGeometry){toast('Fix the deck outline first: it has crossed or overlapping edges.');return;}const fromStep=state.step;state.step=STEP_FLOW.includes(i)?i:0;state.framingDetails=false;
+ if(state.step===7){if(fromStep!==7)state.reviewMode='customer';state.reviewReturn=false;} // V5.3 C3: Review opens in Customer mode
+ if([0,1,2,3,5,6,8].includes(state.step))state.view='2d';if([4,7].includes(state.step)&&state.intent)state.view='3d';if(state.step===LAST_STEP&&renderer3d.showStructure)renderer3d.setStructureVisible(false);renderPanel();updateHeader();}
 function changeView(v){if(!state.intent&&v==='3d'){toast('Choose a shape first.');return;}state.view=v;updateHeader();}
 function updateHeader(){
  $('undoBtn').disabled=state.historyAt===0;$('redoBtn').disabled=state.historyAt>=state.history.length-1;
@@ -3948,11 +3973,99 @@ let panelRendering=false,panelRenderAgain=false;
 function renderPanel(){if(panelRendering){panelRenderAgain=true;return;}panelRendering=true;
  try{renderPanelNow();}finally{panelRendering=false;}
  if(panelRenderAgain){panelRenderAgain=false;renderPanel();}}
+// ---- V5.3 C3: Review & Present (step 9, internal ID 7) ----
+// Customer mode (default) presents the design; Internal mode shows the planning quantities and the
+// framing/review items. Every figure is read from the existing model (state.model): nothing here
+// calculates quantities. The Customer/Internal switch is a display choice, not a permission.
+const REVIEW_ADJUST=[[0,'Deck Shape & Size'],[1,'House & Height'],[6,'Framing & Ledger'],[2,'Stairs & Landings'],[3,'Decking Layout'],[4,'Decking Materials & Colors'],[5,'Railings'],[8,'Patio & Walkway']];
+const SHAPE_NAMES={rectangle:'Rectangle',square:'Square',L:'L-shape',T:'T-shape',U:'U-shape',free:'Custom shape',custom:'Custom shape'};
+const BOARD_DIRECTIONS={horizontal:'Horizontal',vertical:'Vertical','diagonal-left':'Diagonal left','diagonal-right':'Diagonal right'};
+const rvRow=(key,label,value)=>`<div class="rv-row" data-row="${key}"><dt>${esc(label)}</dt><dd>${value}</dd></div>`;
+const rvSection=(key,title,rows,extra='')=>rows?`<section class="rv-section" data-section="${key}"><h3>${esc(title)}</h3>${rows.includes('rv-row')?`<dl class="rv-list">${rows}</dl>`:rows}${extra}</section>`:'';
+const plural=(n,one,many=one+'s')=>`${n} ${n===1?one:many}`;
+const stockText=x=>Object.entries(x.stockBoards).filter(([,n])=>n).map(([l,n])=>`${n}×${l}′`).join(' + ')||'—';
+function reviewRailing(q){const stairRails=q.staircases.some(s=>s.rails?.left||s.rails?.right);
+ if(!q.railEdges.length&&!stairRails)return 'None';
+ const where=[q.railEdges.length?plural(q.railEdges.length,'deck edge'):'',stairRails?'stairs':''].filter(Boolean).join(' + ');
+ const own=Object.keys(q.railOverrides||{}).map(Number).filter(k=>q.railEdges.includes(k)).sort((a,b)=>a-b).map(k=>{const f=core.railFinish(q,k);return `Edge ${k+1}: ${f.railStyle===q.railStyle?'':esc(f.railStyle)+' · '}${esc(f.railColor)}`;});
+ return `${esc(q.railStyle)} · ${esc(q.railColor)}${own.map(t=>`<small>${t}</small>`).join('')}<small>On ${where}</small>`;}
+function reviewSelections(q,m){const st=m.stats,c=m.counts,rows=[];
+ rows.push(rvRow('deck','Deck',`${esc(SHAPE_NAMES[q.shape]||q.shape)} · ${fmt(q.width)} × ${fmt(q.depth)}<small>${fmt(q.height)} above grade</small>`));
+ rows.push(rvRow('decking','Decking',`${esc(q.collection)} · ${esc(q.decking)}<small>${esc(BOARD_DIRECTIONS[m.geometry.deckLineResolved]||q.deckLine)} boards</small>`));
+ rows.push(rvRow('frame','Picture frame',q.borderCount?`${q.borderCount===2?'Double':'Single'} · ${esc(q.border)}${q.frameHouseWalls?'<small>including house walls</small>':''}`:'None'));
+ if(st.dividerRowCount)rows.push(rvRow('dividers','Divider boards',`${plural(st.dividerRowCount,'row')} · ${esc(q.border)}`));
+ rows.push(rvRow('railing','Railing',reviewRailing(q)));
+ if(q.staircases.length){const L=st.landings||[];
+   rows.push(rvRow('stairs','Stairs',`${plural(q.staircases.length,'staircase')} · ${q.staircases.map(s=>fmt(s.width)).join(', ')} wide${L.length?`<small>${L.map(l=>`Landing ${fmt(l.widthFt)} × ${fmt(l.depthFt)}${l.turn&&l.turn!=='straight'?`, turns ${esc(l.turn)}`:''}`).join('; ')}</small>`:''}`));}
+ if(q.houseEdges.length){const look=core.SIDING_STYLES[q.siding]?.label;const op=[c.doors?plural(c.doors,'door'):'',c.patioDoors?plural(c.patioDoors,'patio door'):'',c.windows?plural(c.windows,'window'):''].filter(Boolean).join(', ');
+   rows.push(rvRow('house','House',`${look?`${esc(look)} · `:''}${esc(q.houseColor||'')}${op?`<small>${op}</small>`:''}`));}
+ const shown=(q.surfaces||[]).filter(sf=>(m.geometry.surfaces||[]).find(g=>g.id===sf.id)?.status==='ok');
+ if(shown.length)rows.push(rvRow('surfaces','Patio & walkway',shown.map(sf=>`${esc(core.SURFACE_TYPES[sf.type].label)} ${fmt(sf.width)} × ${fmt(sf.length)}`).join('<br>')));
+ return rows.join('');}
+function reviewDownloads(){return `<section class="rv-section" data-section="downloads"><h3>Downloads</h3><div class="review-buttons"><button type="button" class="primary-small" data-action="export-concept">Download customer concept (.html)</button><button type="button" data-action="download-json">Download design file (.json)</button></div></section>`;}
+// Flat 2×6 support and blocking: framing that also has to be ordered, so both Internal tabs list it.
+function reviewBlocking(m){const c=m.counts,st=m.stats,B=m.materials?.supplementalBlocking;
+ return rvSection('blocking','Support blocking (flat 2×6)',[
+  rvRow('picture-flat','Picture-frame support',`${plural(c.pictureFlatBlocks,'run')} · ${st.pictureFrameFlatLF.toFixed(1)} LF`),
+  rvRow('divider-flat','Divider support',`${plural(c.dividerFlatBlocks,'piece')} · ${st.dividerFlatLF.toFixed(1)} LF`),
+  c.landingFlat2x6?rvRow('landing-flat','Landing support',`${plural(c.landingFlat2x6,'run')} · ${c.landingFlat2x6LF.toFixed(1)} LF`):'',
+  c.landingBlocking?rvRow('landing-blocks','Landing picture-frame blocks',`${c.landingBlocking} (concept)`):'',
+  B?.fieldEndBlocks?rvRow('field-end-blocks','Field-board end blocks',`${B.fieldEndBlocks} supplemental blocks (concept)`):''].join(''));}
+function reviewMaterials(q,m){const c=m.counts,st=m.stats,D=m.materials?.decking;let html=`<div class="rv-banner estimate" data-note="estimate"><strong>Planning estimates</strong> — not verified purchasing quantities. Confirm every quantity in AOS production review before ordering.</div>`;
+ if(D){const part=(k,label,x,extra='')=>x.pieces?rvRow(k,label,`${x.lf.toFixed(0)} LF · ${plural(x.pieces,'board')}${extra}<small>Stock: ${stockText(x)}</small><small>Order ${x.orderLF} LF with ${x.wastePct}% waste</small>`):'';
+  html+=rvSection('decking',`Decking boards · ${BOARD_DIRECTIONS[D.direction]||D.direction}`,[
+   part('field','Field',D.field),
+   part('picture-frame','Picture frame',D.pictureFrame,D.pictureFrame.courses?` · ${plural(D.pictureFrame.courses,'course')}`:''),
+   part('dividers','Dividers',D.dividers)].join(''),D.note?`<p class="rv-small">${esc(D.note)}</p>`:'');}
+ if(c.landings)html+=rvSection('landing-decking','Landing decking',[
+  rvRow('landing-field','Field',`${c.landingFieldLF.toFixed(1)} LF · ${plural(c.landingFieldBoards,'board')}<small>Order ${c.landingFieldOrderLF} LF with waste</small>`),
+  c.landingFrameBoards?rvRow('landing-frame','Picture frame',`${c.landingFrameLF.toFixed(1)} LF · ${plural(c.landingFrameBoards,'board')}<small>Order ${c.landingFrameOrderLF} LF with waste</small>`):''].join(''));
+ if(q.staircases.length)html+=rvSection('stairs','Stairs',[
+  rvRow('staircases','Staircases',`${q.staircases.length}`),rvRow('treads','Treads',`${c.treads}`),rvRow('risers','Risers',`${c.risers}`),rvRow('stringers','Stringers',`${c.stringers}`)].join(''));
+ html+=rvSection('railing','Railing',[
+  rvRow('rail-product','Product',esc(railSummary(q))),
+  rvRow('rail-deck','Deck railing',`${st.deckRailLF.toFixed(1)} LF`),rvRow('rail-stair','Stair railing',`${st.stairRailLF.toFixed(1)} LF`),rvRow('rail-total','Total railing',`${st.totalRailLF.toFixed(1)} LF`)].join(''));
+ return html+reviewBlocking(m);}
+function reviewFraming(q,m){const c=m.counts,st=m.stats,alerts=m.alerts||[],warn=alerts.filter(a=>a.level==='warning');
+ let html=`<div class="rv-status" data-note="structural-status"><strong>Structural status: preliminary concept</strong><span>Not engineered and not code-verified. AOS production review is required before construction.</span><span class="rv-count">${plural(alerts.length,'open review item')}${warn.length?` · ${warn.length} need${warn.length===1?'s':''} attention`:''}</span></div>`;
+ html+=rvSection('main-framing','Main deck framing',[
+  rvRow('support','Support',q.supportMode==='freestanding'?'Freestanding':'House ledger'),
+  rvRow('joists','Joists',`${c.joists} × ${st.joistNominal} at ${c.joistSpacingIn}″ on center`),
+  rvRow('beams','Beams',`${c.beams} · ${esc(st.beamProfile||'')} · ${q.beamStyle==='flush'?'flush':'dropped'}${st.beamLengthsFt?.length?`<small>${st.beamLengthsFt.map(v=>fmt(v)).join(', ')} long</small>`:''}`),
+  rvRow('ledgers','Ledgers',`${st.ledgerCount} preliminary${st.ledgerEdges.length?` · house edge${st.ledgerEdges.length>1?'s':''} ${st.ledgerEdges.map(i=>i+1).join(', ')}`:''}`),
+  rvRow('posts','Posts',`${c.posts}`),rvRow('footings','Footings',`${c.footings}`),
+  rvRow('picture-joists','Picture-frame support joists',`${c.pictureSupportJoists}`),
+  rvRow('divider-joists','Divider support joists',`${c.dividerSupportJoists}`)].join(''),`<p class="rv-small">Tip: ⌗ See framing above the 3D view shows the frame.</p>`);
+ if(q.staircases.length)html+=rvSection('stair-framing','Stairs & landings',[
+  rvRow('stringers','Stringers',`${c.stringers}`),
+  c.landings?rvRow('landings','Landings',`${c.landings}${c.turningStairs?` (${c.turningStairs} turning)`:''} · concept, not approved`):'',
+  c.landings?rvRow('landing-posts','Landing posts',`${c.landingPosts}`):'',c.landings?rvRow('landing-footings','Landing footings',`${c.landingFootings}`):'',
+  c.landings?rvRow('landing-framing','Landing framing members',`${c.landingFraming}`):'',
+  c.landingFrameSupportJoists?rvRow('landing-support-joists','Landing frame support joists',`${c.landingFrameSupportJoists}`):''].join(''));
+ html+=reviewBlocking(m);
+ const group=(lvl,title)=>{const list=alerts.filter(a=>a.level===lvl);return list.length?`<div class="rv-issues rv-${lvl}" data-level="${lvl}"><h4>${title} (${list.length})</h4><ul>${list.map(a=>`<li>${esc(a.message)}</li>`).join('')}</ul></div>`:'';};
+ const other=alerts.filter(a=>!['warning','review','info'].includes(a.level));
+ html+=rvSection('review-items','Review items',alerts.length?group('warning','Needs attention')+group('review','Production review required')+group('info','Notes')+(other.length?`<div class="rv-issues" data-level="other"><ul>${other.map(a=>`<li>${esc(a.message)}</li>`).join('')}</ul></div>`:''):'<p class="rv-small">No review items were reported for this design. Production review is still required.</p>');
+ return html;}
+function renderReviewPanel(q){const m=state.model,st=m.stats,mode=state.reviewMode==='internal'?'internal':'customer',tab=state.reviewTab==='framing'?'framing':'materials';
+ let html=`<div class="rv-switch"><span class="rv-switch-label" id="rvModeLabel">Showing</span><div class="rv-switch-seg" role="group" aria-labelledby="rvModeLabel">${seg('reviewMode',[['customer','Customer'],['internal','Internal']],mode)}</div></div>`;
+ if(mode==='customer'){
+  const metric=(k,v,label)=>`<div class="rv-metric" data-metric="${k}"><b>${v}</b><span>${label}</span></div>`;
+  html+=`<div class="rv-metrics" role="group" aria-label="Key measurements">${metric('deckArea',st.deckArea.toFixed(1),'Deck sq ft')}${metric('stairArea',st.stairArea.toFixed(1),'Stair sq ft')}${metric('totalArea',st.totalArea.toFixed(1),'Total sq ft')}${metric('totalRailLF',st.totalRailLF.toFixed(1),'Railing lin ft')}</div>`;
+  html+=rvSection('selections','Your design',reviewSelections(q,m));
+  html+=`<section class="rv-section" data-section="adjustments"><h3>Available adjustments</h3><div class="rv-adjust-grid">${REVIEW_ADJUST.map(([i,t])=>`<button type="button" data-action="adjust" data-adjust="${i}">${t}<span aria-hidden="true">›</span></button>`).join('')}</div></section>`;
+  html+=reviewDownloads()+`<p class="rv-small">Design concept for discussion. On-screen colors are approximate; AOS confirms final measurements and construction details before building.</p>`;
+ }else{
+  html+=`<p class="rv-small rv-internal-note">Internal view for AOS staff. This switch only changes what is shown on screen; it is not a password or permission.</p>`;
+  html+=`<div class="rv-tabs">${seg('reviewTab',[['materials','Materials'],['framing','Framing']],tab)}</div>`;
+  html+=tab==='framing'?reviewFraming(q,m):reviewMaterials(q,m);
+  html+=reviewDownloads();}
+ return html;}
 // V5.3 C1: the settings area (#stepContent) is the one scroll container for every step (CSS
 // .inspector-content). A re-render of the same panel keeps the reader where they were; a different
 // step, tab or editing mode starts at the top.
 let panelScrollKey=null;
-function panelKeyNow(){return [state.step,state.houseTab,state.layoutTab,state.finishTab,state.railTab,state.framingDetails?1:0,state.selectedEdge!==null?1:0,state.selectedCorner!==null?1:0,state.freeDraw?1:0,state.intent?1:0].join('|');}
+function panelKeyNow(){return [state.step,state.houseTab,state.layoutTab,state.finishTab,state.railTab,state.framingDetails?1:0,state.selectedEdge!==null?1:0,state.selectedCorner!==null?1:0,state.freeDraw?1:0,state.intent?1:0,state.reviewMode,state.reviewTab,state.reviewReturn?1:0].join('|');}
 function renderPanelNow(){const s=state.step,q=state.intent;const inspector=document.querySelector('.inspector');inspector.classList.toggle('divider-editing',s===3&&state.layoutTab==='border');
  inspector.classList.toggle('shape-edit',s===0);inspector.classList.toggle('corner-active',s===0&&state.selectedCorner!==null);inspector.classList.toggle('stair-edit',s===2||s===1);
  // V5.1: clickable steps. Jumping never changes the design; it only opens another panel.
@@ -4009,9 +4122,9 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
      html=`<div class="compact-intro">Step 3: Choose your framing support and beam style before stairs and finishes. Each house wall starts with a ledger; tap L/− on that wall to change it.</div><div class="control-group"><p class="group-title">Framing support</p>${seg('supportMode',[['ledger','Wall ledgers'],['freestanding','Freestanding']],q.supportMode)}</div><div class="control-group"><p class="group-title">Beam arrangement</p>${seg('beamStyle',[['dropped','Dropped beam'],['flush','Flush beam*']],q.beamStyle)}</div>${state.framingStatus&&state.framingStatus!=='current'?`<div class="framing-pending ${state.framingStatus}">${state.framingStatus==='invalid'?'Framing can’t be generated until the outline is fixed.':state.framingStatus==='calculating'?'Updating framing…':'The framing below is from before your last change.'}${state.framingStatus==='pending'?' <button type="button" data-action="framing-update">Update framing</button>':''}</div>`:''}<div class="framing-summary">${m.stats.joistNominal} @ ${m.stats.joistSpacingIn} in · ${m.counts.ledger} ledger(s) · ${m.counts.beams} beams · ${m.counts.posts} posts · ${m.stats.unresolvedJoistRuns?'⚠ Bearing review':'Preliminary · production review required'}</div><div class="action-row"><button data-action="framing-details">View framing measurements →</button></div>`;
    }
  }
- if(s===7&&q){const c=state.model.counts,m=state.model.stats;
-   html=`<div class="metrics metrics-four"><div class="metric"><b>${m.deckArea.toFixed(1)}</b><span>DECK SQ FT</span></div><div class="metric"><b>${m.stairArea.toFixed(1)}</b><span>STAIR SQ FT</span></div><div class="metric"><b>${m.totalArea.toFixed(1)}</b><span>DECK + STAIRS SQ FT</span></div><div class="metric"><b>${m.totalRailLF.toFixed(1)}</b><span>RAILING LF</span></div></div><div class="review-buttons"><button data-action="download-json">Save design + parts</button><button class="primary-small" data-action="export-concept">Customer concept ↗</button></div><p class="compact-review">Railing: ${m.deckRailLF.toFixed(1)} LF deck + ${m.stairRailLF.toFixed(1)} LF stair. Framing: ${c.joists} ${m.joistNominal} joist members, ${c.beams} beams, ${c.posts} posts. Continuous flat 2×6 support: ${c.pictureFlatBlocks} border run(s), ${m.pictureFrameFlatLF.toFixed(1)} LF + ${c.dividerFlatBlocks} divider piece(s), ${m.dividerFlatLF.toFixed(1)} LF.${q.staircases.length?` Stairs: ${q.staircases.length} staircase${q.staircases.length>1?'s':''}, ${c.treads} treads, ${c.risers} risers, ${c.stringers} stringers${c.landings?`; ${c.landings} landing${c.landings>1?'s':''}${c.turningStairs?` (${c.turningStairs} turning)`:''} with ${c.landingPosts} posts, ${c.landingFootings} footings and ${c.landingFraming} framing members (concept, not approved)${c.landingFlat2x6?`, plus ${c.landingFlat2x6} flat 2×6 runs (${c.landingFlat2x6LF.toFixed(1)} LF)`:''}${c.landingBlocking?`, plus ${c.landingBlocking} picture-frame blocks (concept)`:''}. Landing decking: ${c.landingFieldBoards} field boards, ${c.landingFieldLF.toFixed(1)} LF (order ${c.landingFieldOrderLF} LF with waste)${c.landingFrameBoards?` + ${c.landingFrameBoards} picture-frame boards, ${c.landingFrameLF.toFixed(1)} LF (order ${c.landingFrameOrderLF} LF)`:''}`:''}.`:''} ${(()=>{const D=state.model.materials?.decking,B=state.model.materials?.supplementalBlocking;if(!D)return '';const st=x=>Object.entries(x.stockBoards).filter(([,n])=>n).map(([l,n])=>`${n}×${l}′`).join(' + ')||'—';
-   return `Decking (${({horizontal:'horizontal',vertical:'vertical','diagonal-left':'diagonal left','diagonal-right':'diagonal right'})[D.direction]||D.direction}): field ${D.field.lf.toFixed(0)} LF in ${D.field.pieces} pieces (${st(D.field)}; order ${D.field.orderLF} LF with ${D.field.wastePct}% waste)${D.pictureFrame.pieces?`; picture frame ${D.pictureFrame.lf.toFixed(0)} LF, ${D.pictureFrame.pieces} boards (${st(D.pictureFrame)})`:''}${D.dividers.pieces?`; dividers ${D.dividers.lf.toFixed(0)} LF, ${D.dividers.pieces} boards (${st(D.dividers)})`:''}${B?.fieldEndBlocks?`; ${B.fieldEndBlocks} supplemental blocks under field-board ends (concept)`:''}.`;})()} Production review required.</p>`;}
+ if(s===7&&q)html=renderReviewPanel(q);
+ // V5.3 C3: after a quick adjustment from Review, every editor shows a way back.
+ if(state.reviewReturn&&s!==7&&q)html=`<button type="button" class="return-review" data-action="return-review">↩ Return to Review</button>`+html;
  {const sc=$('stepContent'),key=panelKeyNow(),keep=key===panelScrollKey?sc.scrollTop:0;sc.innerHTML=html;sc.scrollTop=keep;panelScrollKey=key;}updateHeader();
 }
 // ---- V5.1 projects: storage, autosave, recent projects, honest downloads ----
@@ -4019,7 +4132,7 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
 // space in this preview's database (follows them to any device that opens the same link;
 // nobody else, the owner included, can read it). Anywhere else (the HTML file opened in a
 // browser), in this browser's local storage on this device. The UI always says which.
-const APP_VERSION='5.3-c2',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
+const APP_VERSION='5.3-c3',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
 const localProjects={kind:'browser',
  read(){try{const v=JSON.parse(localStorage.getItem(LOCAL_PROJECTS)||'{}');return v&&typeof v==='object'?v:{};}catch(e){return null;}},
  write(m){localStorage.setItem(LOCAL_PROJECTS,JSON.stringify(m));},
@@ -4069,7 +4182,7 @@ async function listProjects(){const store=await projectStore.ready();let rows=[]
  return {store,rows:rows.filter(r=>r&&r.id&&r.design).sort((a,b)=>String(b.updated).localeCompare(String(a.updated)))};}
 const whenText=iso=>{const d=new Date(iso);if(isNaN(d))return '';const diff=(Date.now()-d)/60000;
  return diff<1?'just now':diff<60?`${Math.round(diff)} min ago`:diff<1440&&d.getDate()===new Date().getDate()?d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):d.toLocaleDateString([],{month:'short',day:'numeric',year:d.getFullYear()===new Date().getFullYear()?undefined:'numeric'});};
-function resetForProject(){state.freeDraw=false;state.freePts=[];state.shapePicker=false;state.selectedEdge=null;state.selectedCorner=null;state.railTarget='all';state.stairSelected=0;state.dividerSelected=0;state.featureSelected=null;state._fitted=false;}
+function resetForProject(){state.reviewReturn=false;state.freeDraw=false;state.freePts=[];state.shapePicker=false;state.selectedEdge=null;state.selectedCorner=null;state.railTarget='all';state.stairSelected=0;state.dividerSelected=0;state.featureSelected=null;state._fitted=false;}
 function loadDesign(design,{id=null,created=null,name}={}){resetForProject();
  const q=core.migrate({design}).intent;if(name)q.project=name;
  state.projectId=id;state.projectCreated=created;setProject(q,false);
@@ -4115,6 +4228,9 @@ $('fileInput').addEventListener('change',async e=>{const f=e.target.files?.[0];i
 $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;
  if(b.dataset.shape){selectShape(b.dataset.shape);return;}
  const act=b.dataset.action;if(act==='apply-edge-length'){const field=$('stepContent').querySelector('input[data-edge-field="length"]');if(field)updateEdgeDimension(field.value);return;}if(act==='done-edge'){selectionClear();renderPanel();planDraw();return;}if(act==='choose-shape'){state.shapePicker=true;showOverlay();return;}
+ // V5.3 C3: quick adjustments open the existing editor; Return to Review comes back to Step 9 (Customer).
+ if(act==='adjust'){const i=Number(b.dataset.adjust);if(STEP_FLOW.includes(i)&&i!==7){state.reviewReturn=true;stepTo(i);}return;}
+ if(act==='return-review'){stepTo(7);return;}
  if(act==='divider-add'){addDivider();return;}
  if(act==='divider-remove'){removeDivider();return;}
  if(act==='divider-remove-all'){removeAllDividers();return;}
@@ -4278,7 +4394,7 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
    }
    return;
  }
- if(['layoutTab','finishTab','railTab','houseTab'].includes(path)){state[path]=b.dataset.value;renderPanel();planDraw();return;}
+ if(['layoutTab','finishTab','railTab','houseTab','reviewMode','reviewTab'].includes(path)){state[path]=b.dataset.value;renderPanel();planDraw();return;}
  if(path==='supportMode'){
    const q=structuredClone(state.intent);q.supportMode=b.dataset.value;
    q.ledgerEdges=q.supportMode==='ledger'?[...q.houseEdges]:[];
@@ -4407,7 +4523,7 @@ $('stepContent').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.mat
 $('shapeOverlay').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.shape)selectShape(b.dataset.shape);else if(b.dataset.action==='close-shapes'){state.shapePicker=false;showOverlay();}});
 $('startFromCanvas').onclick=()=>{state.shapePicker=true;showOverlay();};
 $('backBtn').onclick=()=>stepTo(previousStep(state.step));
-$('stepdots').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b||b.disabled)return;const i=Number(b.dataset.step);if(i!==state.step)stepTo(i);});$('nextBtn').onclick=()=>state.step===LAST_STEP?toast('Save the design or export a concept.'):stepTo(nextStep(state.step));
+$('stepdots').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b||b.disabled)return;const i=Number(b.dataset.step);if(i!==state.step)stepTo(i);});$('nextBtn').onclick=()=>state.step===LAST_STEP?toast('Design complete. Use Save project, or the Downloads on this step for the customer concept or design file.'):stepTo(nextStep(state.step));
 $('mode2d').onclick=()=>changeView('2d');$('mode3d').onclick=()=>changeView('3d');
 $('undoBtn').onclick=()=>undo();$('redoBtn').onclick=()=>undo(true);$('saveBtn').onclick=()=>saveProject(true);$('openBtn').onclick=openProjects;
 $('projectName').addEventListener('change',e=>{if(state.intent)patch('project',e.target.value);});
