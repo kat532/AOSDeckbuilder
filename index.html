@@ -255,6 +255,21 @@
 .rv-section .review-buttons button{line-height:1.25;font-size:11.5px;padding:10px 6px}
 @media(max-width:800px){.rv-metric b{font-size:15px}.rv-metric span{font-size:9.5px}.rv-row{font-size:12px}.rv-adjust-grid button{min-height:42px}}
 @media(max-width:360px){.rv-metrics{grid-template-columns:1fr 1fr}}
+
+/* V5.3 C4: customer PDF preview. */
+.rv-pdf{width:100%;border:0;border-radius:10px;background:var(--red);color:#fff;font-weight:850;font-size:12.5px;padding:11px 12px;cursor:pointer}.rv-pdf:hover{background:var(--red-dark)}
+.pdf-preview{position:fixed;inset:0;z-index:60;background:rgba(14,20,28,.94);display:flex;flex-direction:column}.pdf-preview[hidden]{display:none}
+.pdf-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;background:#151c26;color:#fff;flex:0 0 auto}
+.pdf-heading{min-width:0}.pdf-heading h2{margin:0;font-size:15px;font-weight:800}.pdf-heading span{display:block;font-size:11px;color:#aab4bd;margin-top:2px}
+.pdf-actions{display:flex;gap:8px;flex:0 0 auto}.pdf-actions button{border-radius:9px;font-weight:800;font-size:12.5px;padding:10px 14px;cursor:pointer;min-height:40px}
+.pdf-zoom{background:transparent;color:#fff;border:1px solid #5b6672}.pdf-zoom[aria-pressed="true"]{background:#2b3846}
+.pdf-pages.zoomed{align-items:flex-start}.pdf-pages.zoomed .pdf-page{width:1100px;max-width:none;flex:0 0 auto}
+.pdf-download{background:var(--red);color:#fff;border:0}.pdf-download:disabled{opacity:.5;cursor:default}.pdf-close{background:#fff;color:#17212d;border:0}
+.pdf-pages{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:18px 16px 28px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.pdf-page{display:block;width:100%;max-width:1000px;height:auto;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.35);border-radius:2px}
+.pdf-problem{max-width:560px;background:#fff;border-radius:12px;padding:18px 20px;color:#17212d;font-size:13.5px;line-height:1.5}.pdf-problem ul{margin:8px 0;padding-left:20px}.pdf-problem p{margin:0;color:#5f6e7a}
+body.pdf-open{overflow:hidden}
+@media(max-width:600px){.pdf-bar{padding:8px 10px;flex-wrap:wrap}.pdf-actions{width:100%}.pdf-actions button{flex:1}.pdf-heading h2{font-size:13.5px}.pdf-actions button{padding:9px 11px;font-size:12px}.pdf-pages{padding:10px 8px 20px;gap:10px}}
 </style></head>
 <body><div class="shell">
 <header class="appbar">
@@ -300,6 +315,7 @@
   </section>
 </main>
 </div>
+<div class="pdf-preview" id="pdfPreview" role="dialog" aria-modal="true" aria-labelledby="pdfPreviewTitle" hidden><div class="pdf-bar"><div class="pdf-heading"><h2 id="pdfPreviewTitle">Customer PDF preview</h2><span id="pdfMeta"></span></div><div class="pdf-actions"><button type="button" id="pdfZoomBtn" class="pdf-zoom" aria-pressed="false">Zoom in</button><button type="button" id="pdfDownloadBtn" class="pdf-download">Download PDF</button><button type="button" id="pdfCloseBtn" class="pdf-close">Close</button></div></div><div class="pdf-pages" id="pdfPages"></div></div>
 <div class="aos-confirm" id="projectsDialog" role="dialog" aria-modal="true" aria-labelledby="projectsTitle" hidden>
   <div class="aos-confirm-panel projects-panel">
     <div class="projects-head"><h2 id="projectsTitle">Projects</h2><button type="button" class="projects-close" data-action="projects-close" aria-label="Close projects">✕</button></div>
@@ -2779,6 +2795,16 @@ class Renderer3D{
   const r=Math.max(4,Math.hypot(hx,hz,hy)),half=Math.PI/8,halfH=Math.atan(Math.tan(half)*aspect);
   this.radius=Math.max(15,Math.min(160,r/Math.sin(Math.min(half,halfH))*.9));
   this.az=.56;this.el=this.showStructure?.18:.48;this.target=[cx,Math.min(q.height/2+(this.showStructure?0:1),q.height+2.5),cz];this.clampTargetToWorkArea();this.limitCameraAboveGrade();this.draw();}
+ // V5.3 C4: the customer PDF's camera. Same framing rule as Fit (finished view), but always from the
+ // yard side: looking toward the first house wall, 0.56 rad (32°) to one side; 0.56 rad without a house.
+ presentationAz(){const q=this.model?.intent,g=this.model?.geometry,e=q&&g?.edges?.[q.houseEdges?.[0]];if(!e)return .56;const poly=g.poly||[];
+  let n=e.n;{const pr=[e.mid[0]+n[0]*.05,e.mid[1]+n[1]*.05];let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a[1]>pr[1])!==(b[1]>pr[1])&&pr[0]<(b[0]-a[0])*(pr[1]-a[1])/(b[1]-a[1])+a[0])c=!c;}if(c)n=[-n[0],-n[1]];}
+  return Math.atan2(-n[0],-n[1])+.56;}
+ presentationCamera(){if(!this.model||!this.model.intent)return;const q=this.model.intent,b=this.cameraWorkBounds(true),[W,H]=this._forceSize||[this.canvas.clientWidth,this.canvas.clientHeight];
+  const aspect=Math.max(.35,W/Math.max(1,H)),pad=1.6,cx=(b.xmin+b.xmax)/2,cz=(b.zmin+b.zmax)/2,hx=(b.xmax-b.xmin)/2-pad,hz=(b.zmax-b.zmin)/2-pad,hy=(q.height+3.5)/2;
+  const r=Math.max(4,Math.hypot(hx,hz,hy)),half=Math.PI/8,halfH=Math.atan(Math.tan(half)*aspect);
+  this.radius=Math.max(15,Math.min(160,r/Math.sin(Math.min(half,halfH))*1.08));this.az=this.presentationAz();this.el=.48;
+  this.target=[cx,Math.min(q.height/2+1,q.height+2.5),cz];this.clampTargetToWorkArea();this.limitCameraAboveGrade();}
  // V5.2 B3: one tap to look up at the framing from just above the ground beside the deck.
  lookUnder(){if(!this.model||!this.model.intent)return;const q=this.model.intent,b=this.cameraWorkBounds(),poly=this.model.geometry?.poly||[];
   const cx=poly.length?(Math.min(...poly.map(v=>v[0]))+Math.max(...poly.map(v=>v[0])))/2:(b.xmin+b.xmax)/2,cz=poly.length?(Math.min(...poly.map(v=>v[1]))+Math.max(...poly.map(v=>v[1])))/2:(b.zmin+b.zmax)/2;
@@ -2795,7 +2821,8 @@ class Renderer3D{
   if(this._frame){if(typeof cancelAnimationFrame==='function')cancelAnimationFrame(this._frame);clearTimeout(this._frame);this._frame=0;}
   if(!this.model)return; if(!this.gl){this.drawSoftware();return;}const gl=this.gl;
   const dpr=global.devicePixelRatio||1,moving=this.lite&&this.pointerMap.size>0,ratio=moving?Math.min(dpr,1)*.75:Math.min(dpr,2);
-  const width=Math.max(1,Math.round(this.canvas.clientWidth*ratio)),height=Math.max(1,Math.round(this.canvas.clientHeight*ratio));
+  // V5.3 C4: _forceSize renders at a fixed pixel size (customer PDF image); otherwise the on-screen size.
+  const width=this._forceSize?this._forceSize[0]:Math.max(1,Math.round(this.canvas.clientWidth*ratio)),height=this._forceSize?this._forceSize[1]:Math.max(1,Math.round(this.canvas.clientHeight*ratio));
   if(this.canvas.width!==width||this.canvas.height!==height){this.canvas.width=width;this.canvas.height=height;}
   gl.viewport(0,0,width,height);gl.clearColor(.91,.94,.96,0);gl.clearStencil(0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT|gl.STENCIL_BUFFER_BIT);
   const stride=12*4,eye=this.eye();
@@ -2831,7 +2858,7 @@ class Renderer3D{
  }
  drawSoftware(){
   if(!this.model||!this.ctx)return;
-  const canvas=this.canvas,ctx=this.ctx,w=Math.max(1,canvas.clientWidth),h=Math.max(1,canvas.clientHeight),ratio=Math.min(window.devicePixelRatio||1,2);
+  const canvas=this.canvas,ctx=this.ctx,w=this._forceSize?this._forceSize[0]:Math.max(1,canvas.clientWidth),h=this._forceSize?this._forceSize[1]:Math.max(1,canvas.clientHeight),ratio=this._forceSize?1:Math.min(window.devicePixelRatio||1,2);
   if(canvas.width!==Math.round(w*ratio)||canvas.height!==Math.round(h*ratio)){canvas.width=Math.round(w*ratio);canvas.height=Math.round(h*ratio);}
   ctx.setTransform(ratio,0,0,ratio,0,0);ctx.clearRect(0,0,w,h);
   const gradient=ctx.createLinearGradient(0,0,0,h);gradient.addColorStop(0,'#d8e4ed');gradient.addColorStop(.53,'#edf1ef');gradient.addColorStop(1,'#dce4d5');ctx.fillStyle=gradient;ctx.fillRect(0,0,w,h);
@@ -4001,12 +4028,12 @@ function reviewSelections(q,m){const st=m.stats,c=m.counts,rows=[];
  rows.push(rvRow('railing','Railing',reviewRailing(q)));
  if(q.staircases.length){const L=st.landings||[];
    rows.push(rvRow('stairs','Stairs',`${plural(q.staircases.length,'staircase')} · ${q.staircases.map(s=>fmt(s.width)).join(', ')} wide${L.length?`<small>${L.map(l=>`Landing ${fmt(l.widthFt)} × ${fmt(l.depthFt)}${l.turn&&l.turn!=='straight'?`, turns ${esc(l.turn)}`:''}`).join('; ')}</small>`:''}`));}
- if(q.houseEdges.length){const look=core.SIDING_STYLES[q.siding]?.label;const op=[c.doors?plural(c.doors,'door'):'',c.patioDoors?plural(c.patioDoors,'patio door'):'',c.windows?plural(c.windows,'window'):''].filter(Boolean).join(', ');
-   rows.push(rvRow('house','House',`${look?`${esc(look)} · `:''}${esc(q.houseColor||'')}${op?`<small>${op}</small>`:''}`));}
+ if(q.houseEdges.length){const hl=m.geometry.house||{},look=core.SIDING_STYLES[hl.siding||q.siding]?.label;const op=[c.doors?plural(c.doors,'door'):'',c.patioDoors?plural(c.patioDoors,'patio door'):'',c.windows?plural(c.windows,'window'):''].filter(Boolean).join(', ');
+   rows.push(rvRow('house','House',`${look?`${esc(look)} · `:''}${esc(hl.colorName||q.houseColor||'')}${op?`<small>${op}</small>`:''}`));} // C4: the house look as drawn (defaults included)
  const shown=(q.surfaces||[]).filter(sf=>(m.geometry.surfaces||[]).find(g=>g.id===sf.id)?.status==='ok');
  if(shown.length)rows.push(rvRow('surfaces','Patio & walkway',shown.map(sf=>`${esc(core.SURFACE_TYPES[sf.type].label)} ${fmt(sf.width)} × ${fmt(sf.length)}`).join('<br>')));
  return rows.join('');}
-function reviewDownloads(){return `<section class="rv-section" data-section="downloads"><h3>Downloads</h3><div class="review-buttons"><button type="button" class="primary-small" data-action="export-concept">Download customer concept (.html)</button><button type="button" data-action="download-json">Download design file (.json)</button></div></section>`;}
+function reviewDownloads(){return `<section class="rv-section" data-section="downloads"><h3>Downloads</h3><button type="button" class="rv-pdf" data-action="pdf-preview">Preview customer PDF</button><div class="review-buttons"><button type="button" class="primary-small" data-action="export-concept">Download customer concept (.html)</button><button type="button" data-action="download-json">Download design file (.json)</button></div></section>`;}
 // Flat 2×6 support and blocking: framing that also has to be ordered, so both Internal tabs list it.
 function reviewBlocking(m){const c=m.counts,st=m.stats,B=m.materials?.supplementalBlocking;
  return rvSection('blocking','Support blocking (flat 2×6)',[
@@ -4065,6 +4092,280 @@ function renderReviewPanel(q){const m=state.model,st=m.stats,mode=state.reviewMo
   html+=tab==='framing'?reviewFraming(q,m):reviewMaterials(q,m);
   html+=reviewDownloads();}
  return html;}
+// ---- V5.3 C4: customer PDF and in-app preview ----
+// One document description (pages of text, shapes, lines and images in points, US Letter landscape,
+// y down) is built from the current model. The in-app preview draws that description on canvases;
+// the PDF writer writes the same description as a PDF file. Nothing is fetched from the network: the
+// fonts are the PDF standard Helvetica pair (widths below), images are JPEGs made in this page.
+// Building the document never changes the project, the undo history or what the editor shows.
+const PDF_W={R:[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584,0,556,0,222,556,333,1000,556,556,333,1000,667,333,1000,0,611,0,0,222,222,333,333,350,556,1000,333,1000,500,333,944,0,500,667,278,333,556,556,556,556,260,556,333,737,370,556,584,333,737,552,400,549,333,333,333,576,537,333,333,333,365,556,834,834,834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,556,556,556,556,556,556,556,549,611,556,556,556,556,500,556,500],B:[278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584,0,556,0,278,556,500,1000,556,556,333,1000,667,333,1000,0,611,0,0,278,278,500,500,350,556,1000,333,1000,556,333,944,0,500,667,278,333,556,556,556,556,280,556,333,737,370,556,584,333,737,552,400,549,333,333,333,576,556,333,333,333,365,556,834,834,834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,611,611,611,611,611,611,611,549,611,611,611,611,611,556,611,556]};
+const PDF_PAGE={w:792,h:612},PDF_M=36;
+const PDF_SUBST={'′':"'",'″':'"','‘':"'",'’':"'",'“':'"','”':'"','→':'->','←':'<-','…':'...','↩':'','✓':'','✕':'x',' ':' ','−':'-','›':'>','‹':'<'};
+const PDF_WIN={0x20AC:0x80,0x201A:0x82,0x0192:0x83,0x201E:0x84,0x2026:0x85,0x2020:0x86,0x2021:0x87,0x02C6:0x88,0x2030:0x89,0x0160:0x8A,0x2039:0x8B,0x0152:0x8C,0x017D:0x8E,0x2018:0x91,0x2019:0x92,0x201C:0x93,0x201D:0x94,0x2022:0x95,0x2013:0x96,0x2014:0x97,0x02DC:0x98,0x2122:0x99,0x0161:0x9A,0x203A:0x9B,0x0153:0x9C,0x017E:0x9E,0x0178:0x9F};
+const pdfCode=ch=>{const u=ch.codePointAt(0);return (u>=32&&u<127)||(u>=160&&u<=255)?u:PDF_WIN[u]||63;};
+// Text exactly as both the preview and the PDF show it: characters the PDF fonts cannot show are
+// replaced (primes become ' and "), runs of spaces collapse.
+function pdfClean(t){let o='';for(const ch of String(t??'')){const s=PDF_SUBST[ch]??ch;for(const c of s){const k=pdfCode(c);o+=k===63&&c!=='?'?'?':c;}}return o.replace(/\s+/g,' ').trim();}
+const pdfTW=(t,font,size)=>{let w=0;for(const c of t){const k=pdfCode(c);w+=PDF_W[font][k-32]||556;}return w*size/1000;};
+function pdfWrap(t,font,size,maxW){const out=[];let line='';for(const word of pdfClean(t).split(' ')){const tryL=line?line+' '+word:word;
+  if(pdfTW(tryL,font,size)<=maxW){line=tryL;continue;}if(line)out.push(line);line='';
+  if(pdfTW(word,font,size)<=maxW){line=word;continue;}let part='';for(const c of word){if(pdfTW(part+c,font,size)>maxW){out.push(part);part='';}part+=c;}line=part;}
+ if(line)out.push(line);return out.length?out:[''];}
+const pdfFt=v=>pdfClean(fmt(v));
+
+// -- small geometry helpers (plan space and paper space) --
+function pdfInPoly(p,poly){let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a[1]>p[1])!==(b[1]>p[1])&&p[0]<(b[0]-a[0])*(p[1]-a[1])/(b[1]-a[1])+a[0])c=!c;}return c;}
+function pdfSegHit(a,b,c,d){const cr=(o,p,q)=>(p[0]-o[0])*(q[1]-o[1])-(p[1]-o[1])*(q[0]-o[0]);const d1=cr(c,d,a),d2=cr(c,d,b),d3=cr(a,b,c),d4=cr(a,b,d);return ((d1>0&&d2<0)||(d1<0&&d2>0))&&((d3>0&&d4<0)||(d3<0&&d4>0));}
+function pdfRectHitsPoly(r,poly){const R=[[r.x,r.y],[r.x+r.w,r.y],[r.x+r.w,r.y+r.h],[r.x,r.y+r.h]];
+ if(R.some(p=>pdfInPoly(p,poly)))return true;if(poly.some(p=>p[0]>r.x&&p[0]<r.x+r.w&&p[1]>r.y&&p[1]<r.y+r.h))return true;
+ for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length];for(let j=0;j<4;j++)if(pdfSegHit(a,b,R[j],R[(j+1)%4]))return true;}return false;}
+const pdfRectsHit=(a,b,pad=0)=>a.x<b.x+b.w+pad&&b.x<a.x+a.w+pad&&a.y<b.y+b.h+pad&&b.y<a.y+a.h+pad;
+function pdfHull(pts){const p=[...pts].sort((a,b)=>a[0]-b[0]||a[1]-b[1]);if(p.length<3)return p;const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);
+ const lo=[],up=[];for(const q of p){while(lo.length>=2&&cr(lo[lo.length-2],lo[lo.length-1],q)<=0)lo.pop();lo.push(q);}for(const q of p.slice().reverse()){while(up.length>=2&&cr(up[up.length-2],up[up.length-1],q)<=0)up.pop();up.push(q);}
+ return lo.slice(0,-1).concat(up.slice(0,-1));}
+// Outward unit normal of each deck edge (checked against the outline, whatever the engine's winding).
+function pdfOutward(es,poly){return es.map(e=>{const n=e.n,pr=[e.mid[0]+n[0]*.05,e.mid[1]+n[1]*.05];return pdfInPoly(pr,poly)?[-n[0],-n[1]]:[n[0],n[1]];});}
+const pdfPartCorners=p=>{const t=-(p.yaw||0),c=Math.cos(t),s=Math.sin(t);return [[-1,-1],[1,-1],[1,1],[-1,1]].map(([u,v])=>{const lx=u*p.w/2,lz=v*p.d/2;return [p.x+lx*c-lz*s,p.z+lx*s+lz*c];});};
+
+// -- document builder --
+function pdfPageNew(doc){const pg={items:[]};doc.pages.push(pg);return pg;}
+const pdfAdd=(pg,it)=>{pg.items.push(it);return it;};
+function pdfText(pg,x,y,t,{size=10,font='R',color='#17212d',align='left',angle=0}={}){const text=pdfClean(t);if(!text)return null;const w=pdfTW(text,font,size);
+ if(angle){const c=Math.cos(angle),s=Math.sin(angle),off=align==='center'?w/2:align==='right'?w:0;x-=c*off;y-=s*off;}else x-=align==='center'?w/2:align==='right'?w:0;
+ return pdfAdd(pg,{t:'text',x,y,size,font,color,text,angle,w});}
+function pdfLines(pg,x,y,lines,o){const lh=(o.size||10)*(o.lh||1.25);lines.forEach((l,i)=>pdfText(pg,x,y+i*lh,l,o));return lines.length*lh;}
+function pdfHeader(doc,pg,rightTitle){pdfAdd(pg,{t:'rect',x:0,y:0,w:PDF_PAGE.w,h:54,fill:'#151c26'});pdfAdd(pg,{t:'rect',x:0,y:54,w:PDF_PAGE.w,h:3,fill:'#c32e3c'});
+ if(doc.images.logo){const h=19,w=h*doc.images.logo.w/doc.images.logo.h;pdfAdd(pg,{t:'image',id:'logo',x:PDF_M,y:(54-h)/2,w,h});}
+ else pdfText(pg,PDF_M,33,'AOS HOME SOLUTIONS',{size:15,font:'B',color:'#ffffff'});
+ pdfText(pg,PDF_PAGE.w-PDF_M,27,rightTitle,{size:12,font:'B',color:'#ffffff',align:'right'});
+ pdfText(pg,PDF_PAGE.w-PDF_M,42,`Deck Studio V5.3 · ${doc.date}`,{size:8,color:'#aab4bd',align:'right'});}
+function pdfTitle(pg,project,sub){const lines=pdfWrap(project,'B',18,PDF_PAGE.w-2*PDF_M).slice(0,2);let y=84;lines.forEach((l,i)=>pdfText(pg,PDF_M,y+i*20,l,{size:18,font:'B'}));y+=(lines.length-1)*20+16;pdfText(pg,PDF_M,y,sub,{size:9.5,color:'#5f6e7a'});return y+12;}
+
+// Customer selections (the same facts as Review's Customer panel).
+function pdfSelections(q,m){const st=m.stats,c=m.counts,rows=[];
+ rows.push(['Deck',[`${SHAPE_NAMES[q.shape]||q.shape} · ${pdfFt(q.width)} × ${pdfFt(q.depth)}`],[`${pdfFt(q.height)} above grade`]]);
+ rows.push(['Decking',[`${q.collection} · ${q.decking}`],[`${BOARD_DIRECTIONS[m.geometry.deckLineResolved]||q.deckLine} boards`]]);
+ rows.push(['Picture frame',[q.borderCount?`${q.borderCount===2?'Double':'Single'} · ${q.border}`:'None'],q.borderCount&&q.frameHouseWalls?['Including house walls']:[]]);
+ if(st.dividerRowCount)rows.push(['Divider boards',[`${plural(st.dividerRowCount,'row')} · ${q.border}`],[]]);
+ const stairRails=q.staircases.some(s=>s.rails?.left||s.rails?.right);
+ if(!q.railEdges.length&&!stairRails)rows.push(['Railing',['None'],[]]);
+ else{const own=Object.keys(q.railOverrides||{}).map(Number).filter(k=>q.railEdges.includes(k)).sort((a,b)=>a-b).map(k=>{const f=core.railFinish(q,k);return `Edge ${k+1}: ${f.railStyle===q.railStyle?'':f.railStyle+' · '}${f.railColor}`;});
+   rows.push(['Railing',[`${q.railStyle} · ${q.railColor}`],[...own,`On ${[q.railEdges.length?plural(q.railEdges.length,'deck edge'):'',stairRails?'stairs':''].filter(Boolean).join(' + ')}`]]);}
+ if(q.staircases.length){const L=st.landings||[];rows.push(['Stairs',[`${plural(q.staircases.length,'staircase')} · ${q.staircases.map(s=>pdfFt(s.width)).join(', ')} wide`],L.map(l=>`Landing ${pdfFt(l.widthFt)} × ${pdfFt(l.depthFt)}${l.turn&&l.turn!=='straight'?`, turns ${l.turn}`:''}`)]);}
+ if(q.houseEdges.length){const hl=m.geometry.house||{},look=core.SIDING_STYLES[hl.siding||q.siding]?.label;const op=[c.doors?plural(c.doors,'door'):'',c.patioDoors?plural(c.patioDoors,'patio door'):'',c.windows?plural(c.windows,'window'):''].filter(Boolean).join(', ');
+   rows.push(['House',[`${look?look+' · ':''}${hl.colorName||q.houseColor||''}`],op?[op]:[]]);}
+ const shown=(q.surfaces||[]).filter(sf=>(m.geometry.surfaces||[]).find(g=>g.id===sf.id)?.status==='ok');
+ if(shown.length)rows.push(['Patio & walkway',shown.map(sf=>`${core.SURFACE_TYPES[sf.type].label} ${pdfFt(sf.width)} × ${pdfFt(sf.length)}`),[]]);
+ return rows;}
+
+// Lay blocks into regions (one after another); when the regions are full, continue on a new page.
+function pdfFlow(doc,blocks,regions,contTitle){let ri=0,y=regions[0].y;
+ for(const b of blocks){let r=regions[ri];
+  while(y+b.h>r.y+r.h+.01){ri++;if(ri>=regions.length){const pg=pdfPageNew(doc);pdfHeader(doc,pg,contTitle);const top=pdfTitle(pg,doc.project,`${contTitle} (continued)`);
+     regions.push({pg,x:PDF_M,y:top+8,w:PDF_PAGE.w-2*PDF_M,h:560-top});}r=regions[ri];y=r.y;}
+  b.draw(r.pg,r.x,y,r.w);y+=b.h;}}
+function pdfRowBlock(label,main,subs,w){const mainL=main.flatMap(t=>pdfWrap(t,'B',9.5,w)),subL=subs.flatMap(t=>pdfWrap(t,'R',8.5,w));
+ const h=11+mainL.length*12+subL.length*11+8;
+ return {h,draw:(pg,x,y,W)=>{pdfAdd(pg,{t:'line',pts:[[x,y],[x+W,y]],stroke:'#e1e6e9',lw:.6});pdfText(pg,x,y+11,label.toUpperCase(),{size:7.2,font:'B',color:'#6b7a87'});
+  let yy=y+11;for(const l of mainL){yy+=12;pdfText(pg,x,yy,l,{size:9.5,font:'B'});}for(const l of subL){yy+=11;pdfText(pg,x,yy,l,{size:8.5,color:'#5f6e7a'});}}};}
+
+// The dimensioned plan, drawn from the model (its own dimension settings: every deck edge).
+function pdfPlan(q,m,area,factor){const es=m.geometry.edges,poly=m.geometry.poly,out=pdfOutward(es,poly),house=new Set(q.houseEdges),BAND=1.1;
+ const bands=es.filter(e=>house.has(e.i)).map(e=>{const n=out[e.i];return {e,pts:[e.a,e.b,[e.b[0]+n[0]*BAND,e.b[1]+n[1]*BAND],[e.a[0]+n[0]*BAND,e.a[1]+n[1]*BAND]]};});
+ const stairs=q.staircases.map((st,k)=>{const fps=core.stairFootprints(es,q.height,st);let landing=null;
+   if(st.landing){if(fps.length===3)landing=fps[1];else{const pts=m.parts.filter(p=>/^landing-(board|frame)$/.test(p.kind)&&p.footprint).filter(p=>fps.some(f=>pdfInPoly([p.x,p.z],f))).flatMap(p=>p.footprint);if(pts.length>2)landing=pdfHull(pts);}}
+   return {k,st,fps,landing};});
+ const slabs=(q.surfaces||[]).filter(sf=>(m.geometry.surfaces||[]).find(g=>g.id===sf.id)?.status==='ok').map(sf=>({sf,pts:core.surfaceCorners(sf)}));
+ const all=[...poly,...bands.flatMap(b=>b.pts),...stairs.flatMap(s=>s.fps.flat()),...stairs.flatMap(s=>s.landing||[]),...slabs.flatMap(s=>s.pts)];
+ const minx=Math.min(...all.map(p=>p[0])),maxx=Math.max(...all.map(p=>p[0])),minz=Math.min(...all.map(p=>p[1])),maxz=Math.max(...all.map(p=>p[1]));
+ const MARG=46,sc=Math.min((area.w-2*MARG)/Math.max(1,maxx-minx),(area.h-2*MARG)/Math.max(1,maxz-minz))*factor;
+ const ox=area.x+(area.w-(maxx-minx)*sc)/2-minx*sc,oy=area.y+(area.h-(maxz-minz)*sc)/2-minz*sc,P=p=>[ox+p[0]*sc,oy+p[1]*sc];
+ const items=[],obst=[],labels=[],tags=[];
+ // drawing
+ for(const s of slabs){const pp=s.pts.map(P);items.push({t:'poly',polys:[pp],fill:'#e4e1db',stroke:'#aaa397',lw:.8});obst.push(pp);}
+ const fills=new Map();for(const part of m.parts){if(!['field-board','picture-frame','divider-board'].includes(part.kind)||!part.footprint)continue;if(!fills.has(part.color))fills.set(part.color,[]);fills.get(part.color).push(part.footprint.map(P));}
+ for(const [color,polys] of fills)items.push({t:'poly',polys,fill:color});
+ for(const s of stairs){for(const f of s.fps){const pp=f.map(P);items.push({t:'poly',polys:[pp],fill:'#c9c2b8',stroke:'#7c7166',lw:.7});obst.push(pp);}}
+ const lands=new Map();for(const part of m.parts)if(/^landing-(board|frame)$/.test(part.kind)&&part.footprint){if(!lands.has(part.color))lands.set(part.color,[]);lands.get(part.color).push(part.footprint.map(P));}
+ for(const [color,polys] of lands)items.push({t:'poly',polys,fill:color});
+ for(const s of stairs)if(s.landing){const pp=s.landing.map(P);items.push({t:'poly',polys:[pp],stroke:'#4b3d31',lw:.9});obst.push(pp);}
+ const treads=m.parts.filter(p=>p.kind==='stair-tread').map(p=>pdfPartCorners(p).map(P));if(treads.length)items.push({t:'poly',polys:treads,stroke:'#5d5147',lw:.45});
+ for(const b of bands){const pp=b.pts.map(P);items.push({t:'poly',polys:[pp],fill:'#8b949b'});obst.push(pp);
+   const A=P(b.e.a),B=P(b.e.b),n=out[b.e.i];let ang=Math.atan2(B[1]-A[1],B[0]-A[0]);if(ang>Math.PI/2+1e-6||ang<-Math.PI/2-1e-6)ang+=Math.PI;
+   const len=Math.hypot(B[0]-A[0],B[1]-A[1]),size=Math.min(7,BAND*sc*.6);
+   if(len>pdfTW('HOUSE','B',size)+6&&size>=4.5){const cx=(A[0]+B[0])/2+n[0]*BAND*sc/2,cy=(A[1]+B[1])/2+n[1]*BAND*sc/2;items.push({deferText:true,x:cx-Math.sin(ang)*size*.35,y:cy+Math.cos(ang)*size*.35,t:'HOUSE',size,font:'B',color:'#ffffff',angle:ang});}}
+ const deck=poly.map(P);items.push({t:'poly',polys:[deck],stroke:'#2b221b',lw:1.3});obst.push(deck);
+ // stair markers S1, S2 ... on the first flight
+ const marks=stairs.map(s=>{const f=(s.fps[0]||[]).map(P);if(!f.length)return null;const cx=f.reduce((a,p)=>a+p[0],0)/f.length,cy=f.reduce((a,p)=>a+p[1],0)/f.length;return {k:s.k,cx,cy};}).filter(Boolean);
+ // Dimensions: every deck edge. Each is placed outside the edge when its line, ticks and label fit
+ // inside the plan area clear of the house, stairs, landings, slabs and other dimensions; otherwise
+ // just inside the deck; only if neither fits is the edge numbered (its length is then listed).
+ const order=es.map(e=>e.i).sort((a,b)=>es[b].len-es[a].len),dims={},segs=[];
+ const inArea=p=>p[0]>=area.x+3&&p[1]>=area.y+3&&p[0]<=area.x+area.w-3&&p[1]<=area.y+area.h-3;
+ const boxIn=r=>inArea([r.x,r.y])&&inArea([r.x+r.w,r.y+r.h]);
+ const hitsMarks=r=>marks.some(mk=>pdfRectsHit(r,{x:mk.cx-8,y:mk.cy-8,w:16,h:16}));
+ const segHitsPoly=(a,b,pp)=>{if(pdfInPoly([(a[0]+b[0])/2,(a[1]+b[1])/2],pp)||pdfInPoly(a,pp)||pdfInPoly(b,pp))return true;for(let k=0;k<pp.length;k++)if(pdfSegHit(a,b,pp[k],pp[(k+1)%pp.length]))return true;return false;};
+ const rectHitsSeg=(r,a,b)=>pdfRectHitsPoly(r,[a,b,b,a])||[a,b].some(p=>p[0]>r.x&&p[0]<r.x+r.w&&p[1]>r.y&&p[1]<r.y+r.h)||[[r.x,r.y],[r.x+r.w,r.y],[r.x+r.w,r.y+r.h],[r.x,r.y+r.h]].some((p,k,R)=>pdfSegHit(a,b,p,R[(k+1)%4]));
+ const boxFree=(r,own)=>!labels.some(l=>pdfRectsHit(r,l.box,2))&&!hitsMarks(r)&&!segs.some(sg=>sg.edge!==own&&rectHitsSeg(r,sg.a,sg.b));
+ const lineFree=(a,b)=>!labels.some(l=>rectHitsSeg(l.box,a,b)); // lines may cross other dimension lines (as on any plan); never a label
+ const outsideObst=obst.filter(o=>o!==deck);
+ const boxInDeck=r=>[[r.x,r.y],[r.x+r.w,r.y],[r.x+r.w,r.y+r.h],[r.x,r.y+r.h]].every(p=>pdfInPoly(p,deck))&&!deck.some((p,k)=>{const q2=deck[(k+1)%deck.length];return [[r.x,r.y],[r.x+r.w,r.y],[r.x+r.w,r.y+r.h],[r.x,r.y+r.h]].some((c,m2,R)=>pdfSegHit(p,q2,c,R[(m2+1)%4]));});
+ const lineInDeck=(a,b)=>{for(let k=0;k<=12;k++){const t=k/12;if(!pdfInPoly([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t],deck))return false;}return !deck.some((p,k)=>{const q2=deck[(k+1)%deck.length];return pdfSegHit(a,b,p,q2);});};
+ for(const i of order){const e=es[i],n=out[i],A=P(e.a),B=P(e.b),text=pdfFt(e.len),size=8,w=pdfTW(text,'B',size)+8,h=12,hb=house.has(i)?BAND*sc+2:0,clr=(bw,bh)=>Math.abs(n[0])*bw/2+Math.abs(n[1])*bh/2+5;let placed=null;
+   const at=(o,t)=>[A[0]+(B[0]-A[0])*t+n[0]*o,A[1]+(B[1]-A[1])*t+n[1]*o];
+   // 1. outside
+   for(const extra of [0,10,22,36,52]){if(placed)break;const o=Math.max(14,clr(w,h))+hb+extra,a=at(o,0),b=at(o,1),ea=at(o+3,0),eb=at(o+3,1);
+     if(!inArea(a)||!inArea(b)||!inArea(ea)||!inArea(eb)||outsideObst.some(pp=>segHitsPoly(a,b,pp))||!lineFree(a,b,i))continue;
+     for(const t of [.5,.36,.64,.22,.78]){const c=at(o,t),box={x:c[0]-w/2,y:c[1]-h/2,w,h};if(boxIn(box)&&boxFree(box,i)&&!obst.some(pp=>pdfRectHitsPoly(box,pp))){placed={o,t,box,side:'outside'};break;}}}
+   // 2. inside the deck
+   const Lp=Math.hypot(B[0]-A[0],B[1]-A[1]),ins=Math.min(.2,3.5/Math.max(1,Lp));
+   if(!placed)for(const o of [-12,-20,-30,-42]){if(placed)break;const a=at(o,ins),b=at(o,1-ins);if(!lineInDeck(a,b)||!lineFree(a,b,i)||outsideObst.some(pp=>segHitsPoly(a,b,pp)))continue;
+     for(const t of [.5,.36,.64,.25,.75]){const c=at(o,t),box={x:c[0]-w/2,y:c[1]-h/2,w,h};if(boxInDeck(box)&&boxFree(box,i)){placed={o,t,box,side:'inside'};break;}}}
+   // 3. numbered tag
+   if(!placed){for(const extra of [0,10,20,32])for(const t of [.5,.3,.7]){if(placed)break;const o=Math.max(10,clr(16,14))+hb+extra,c=at(o,t),box={x:c[0]-8,y:c[1]-7,w:16,h:14};
+       if(boxIn(box)&&boxFree(box,i)&&!obst.some(pp=>pdfRectHitsPoly(box,pp)))placed={o,t,box,tag:true};}
+     if(!placed){for(const t of [.5,.3,.7]){if(placed)break;const c=at(-10,t),box={x:c[0]-8,y:c[1]-7,w:16,h:14};if(boxInDeck(box)&&boxFree(box,i))placed={o:-10,t,box,tag:true};}}
+     if(!placed){const c=at(Math.max(10,clr(16,14))+hb,.5);placed={o:0,t:.5,box:{x:c[0]-8,y:c[1]-7,w:16,h:14},tag:true,forced:true};}}
+   dims[i]={...placed,text,A,B,n};labels.push({edge:i,box:placed.box,tag:!!placed.tag,side:placed.side||'tag'});
+   if(placed.tag)tags.push(i);else segs.push({edge:i,a:at(placed.o,0),b:at(placed.o,1)});}
+ for(const i of es.map(e=>e.i)){const d=dims[i],{A,B,n,o}=d;if(d.tag)continue;const a=[A[0]+n[0]*o,A[1]+n[1]*o],b=[B[0]+n[0]*o,B[1]+n[1]*o],sg=Math.sign(o),gap=3*sg,ext=o+3*sg;
+   const exCol=d.side==='inside'?'#e9edf0':'#8796a3',lnCol=d.side==='inside'?'#ffffff':'#5b6b78',tkCol=d.side==='inside'?'#ffffff':'#2f3d48';
+   items.push({t:'line',pts:[[A[0]+n[0]*gap,A[1]+n[1]*gap],[A[0]+n[0]*ext,A[1]+n[1]*ext]],stroke:exCol,lw:.45});items.push({t:'line',pts:[[B[0]+n[0]*gap,B[1]+n[1]*gap],[B[0]+n[0]*ext,B[1]+n[1]*ext]],stroke:exCol,lw:.45});
+   items.push({t:'line',pts:[a,b],stroke:lnCol,lw:.7});const tx=(b[0]-a[0]),ty=(b[1]-a[1]),L=Math.hypot(tx,ty)||1,ux=tx/L,uy=ty/L,k=2.6;
+   for(const p of [a,b])items.push({t:'line',pts:[[p[0]-(ux+n[0])*k,p[1]-(uy+n[1])*k],[p[0]+(ux+n[0])*k,p[1]+(uy+n[1])*k]],stroke:tkCol,lw:.9});}
+ const texts=[];
+ for(const i of es.map(e=>e.i)){const d=dims[i],r=d.box;if(d.tag){texts.push({t:'rect',x:r.x,y:r.y,w:r.w,h:r.h,fill:'#ffffff',stroke:'#c32e3c',lw:.8});texts.push({tx:String(i+1),cx:r.x+r.w/2,y:r.y+r.h/2+2.9,size:8,font:'B',color:'#a91d2d'});}
+   else{texts.push({t:'rect',x:r.x,y:r.y,w:r.w,h:r.h,fill:'#ffffff',stroke:'#c6d0d7',lw:.5});texts.push({tx:d.text,cx:r.x+r.w/2,y:r.y+r.h/2+2.9,size:8,font:'B',color:'#22313d'});}}
+ for(const mk of marks){texts.push({t:'rect',x:mk.cx-7,y:mk.cy-7,w:14,h:14,fill:'#253746'});texts.push({tx:`S${mk.k+1}`,cx:mk.cx,y:mk.cy+2.8,size:7,font:'B',color:'#ffffff'});}
+ return {items,texts,labels,tags,dims,scale:sc,stairs,slabs,bands,deckBox:{minx:Math.min(...poly.map(p=>p[0])),maxx:Math.max(...poly.map(p=>p[0])),minz:Math.min(...poly.map(p=>p[1])),maxz:Math.max(...poly.map(p=>p[1]))}};}
+
+function pdfBuildDoc({q,m,view3d,logo,date}){const doc={pages:[],images:{},project:pdfClean(q.project||'Untitled deck')||'Untitled deck',date,checks:{}};
+ if(logo)doc.images.logo=logo;doc.images.view3d=view3d;const st=m.stats;
+ // Page 1: design overview.
+ const p1=pdfPageNew(doc);pdfHeader(doc,p1,'Deck Design Concept');const top=pdfTitle(p1,doc.project,`Design overview · prepared by AOS Home Solutions on ${date}`);
+ const imgY=Math.max(112,top+8),IW=464,IH=290;pdfAdd(p1,{t:'image',id:'view3d',x:PDF_M,y:imgY,w:IW,h:IH});pdfAdd(p1,{t:'rect',x:PDF_M,y:imgY,w:IW,h:IH,stroke:'#d3dadf',lw:.75});
+ pdfText(p1,PDF_M,imgY+IH+13,'Finished 3D view of the proposed deck. Screen and print colors are approximate.',{size:8,color:'#5f6e7a'});
+ const RX=PDF_M+IW+20,RW=PDF_PAGE.w-PDF_M-RX,tw=(RW-10)/2;
+ [['deckArea','Deck sq ft'],['stairArea','Stair sq ft'],['totalArea','Total sq ft'],['totalRailLF','Railing linear ft']].forEach(([k,label],i)=>{const x=RX+(i%2)*(tw+10),y=imgY+Math.floor(i/2)*60;
+   pdfAdd(p1,{t:'rect',x,y,w:tw,h:52,fill:'#f4f6f7',stroke:'#dde3e7',lw:.6});pdfText(p1,x+10,y+24,st[k].toFixed(1),{size:17,font:'B'});pdfText(p1,x+10,y+40,label,{size:8,color:'#5f6e7a'});});
+ pdfText(p1,RX,imgY+136,'YOUR SELECTIONS',{size:8,font:'B',color:'#c32e3c'});
+ const rows=pdfSelections(q,m);
+ const regions=[{pg:p1,x:RX,y:imgY+142,w:RW,h:532-(imgY+142)},{pg:p1,x:PDF_M,y:imgY+IH+24,w:IW,h:532-(imgY+IH+24)}];
+ pdfFlow(doc,rows.map(([l,a,b])=>({...pdfRowBlock(l,a,b,RW),w:RW})).map(b=>b),regions,'Deck Design Concept');
+ const disc='Preliminary design concept for discussion only. This is not a construction drawing, an engineered plan or a price quote. Colors and textures are approximate. AOS Home Solutions will verify site measurements, framing, footings, railing anchorage, stair details and code requirements before construction.';
+ const dl=pdfWrap(disc,'R',7.8,PDF_PAGE.w-2*PDF_M-20);pdfAdd(p1,{t:'rect',x:PDF_M,y:544,w:PDF_PAGE.w-2*PDF_M,h:12+dl.length*10,fill:'#f7f4ec',stroke:'#e8dcc0',lw:.6});pdfLines(p1,PDF_M+10,554,dl,{size:7.8,color:'#594a2b',lh:1.28});
+ // Page 2: dimensioned plan.
+ const p2=pdfPageNew(doc);pdfHeader(doc,p2,'Dimensioned Deck Plan');const top2=pdfTitle(p2,doc.project,'Plan view · all deck edges dimensioned in feet and inches');
+ const area={x:PDF_M,y:Math.max(110,top2+8),w:540,h:0};area.h=574-area.y;pdfAdd(p2,{t:'rect',x:area.x,y:area.y,w:area.w,h:area.h,fill:'#fbfcfc',stroke:'#dde3e7',lw:.6});
+ let plan=null;for(const f of [1,.92,.85,.78,.7,.62]){const r=pdfPlan(q,m,area,f);if(!plan||r.tags.length<plan.tags.length)plan=r;if(!r.tags.length)break;}
+ for(const it of plan.items)if(it.deferText)pdfText(p2,it.x,it.y,it.t,{size:it.size,font:it.font,color:it.color,angle:it.angle,align:'center'});else pdfAdd(p2,it);
+ for(const it of plan.texts)if(it.tx!==undefined)pdfText(p2,it.cx,it.y,it.tx,{size:it.size,font:it.font,color:it.color,align:'center'});else pdfAdd(p2,it);
+ const SX=area.x+area.w+16,SW=PDF_PAGE.w-PDF_M-SX,side=[];
+ const head=t=>({h:16,draw:(pg,x,y)=>pdfText(pg,x,y+10,t,{size:8,font:'B',color:'#c32e3c'})});
+ const para=(t,size=8.3,color='#33434f',font='R')=>{const L=pdfWrap(t,font,size,SW);return {h:L.length*size*1.3+5,draw:(pg,x,y)=>pdfLines(pg,x,y+size,L,{size,color,font,lh:1.3})};};
+ const swatch=(fill,stroke,label)=>({h:15,draw:(pg,x,y)=>{pdfAdd(pg,{t:'rect',x,y:y+2,w:16,h:9,fill,stroke,lw:.6});pdfText(pg,x+22,y+10,label,{size:8.2,color:'#33434f'});}});
+ side.push(head('PLAN KEY'),swatch((m.parts.find(p=>p.kind==='field-board')||{}).color||'#86674c','#2b221b','Deck (decking as selected)'));
+ if(plan.bands.length)side.push(swatch('#8b949b',null,'House wall'));if(plan.stairs.length)side.push(swatch('#c9c2b8','#7c7166','Stairs (S1, S2 …)'));
+ if(plan.stairs.some(s=>s.landing))side.push(swatch('#ffffff','#4b3d31','Landing outline'));if(plan.slabs.length)side.push(swatch('#e4e1db','#aaa397','Patio / walkway'));
+ side.push(swatch('#ffffff','#c6d0d7','Edge length'),{h:6,draw:()=>{}});
+ const bx=plan.deckBox;side.push(head('OVERALL DECK SIZE'),para(`${pdfFt(bx.maxx-bx.minx)} × ${pdfFt(bx.maxz-bx.minz)} (outside edges)`),para(`${es0(m)} deck edges, each dimensioned on the plan.`));
+ if(plan.stairs.length){side.push(head('STAIRS'));for(const s of plan.stairs){const L=(st.landings||[]).find(l=>l.stair===s.st.id);
+   side.push(para(`S${s.k+1}: ${pdfFt(s.st.width)} wide on edge ${s.st.edge+1}${L?`; landing ${pdfFt(L.widthFt)} × ${pdfFt(L.depthFt)}${L.turn&&L.turn!=='straight'?`, turns ${L.turn}`:''}`:''}`));}}
+ if(plan.slabs.length){side.push(head('PATIO & WALKWAY'));for(const s of plan.slabs)side.push(para(`${core.SURFACE_TYPES[s.sf.type].label}: ${pdfFt(s.sf.width)} × ${pdfFt(s.sf.length)}`));}
+ if(plan.tags.length){side.push(head('NUMBERED EDGES'),para('Where a full label would overlap other details, the edge is numbered on the plan and its length is listed here.',7.6,'#7a3a12'));
+   for(const i of [...plan.tags].sort((a,b)=>a-b))side.push(para(`Edge ${i+1}: ${pdfFt(m.geometry.edges[i].len)}`,8.3,'#17212d','B'));}
+ side.push({h:6,draw:()=>{}},head('PLEASE NOTE'),para('Final site measurements and construction details must be verified by AOS Home Solutions before construction. The plan is drawn to scale for illustration; written dimensions govern.',7.8,'#594a2b'));
+ pdfFlow(doc,side,[{pg:p2,x:SX,y:area.y,w:SW,h:area.h}],'Dimensioned Deck Plan');
+ doc.checks={edges:m.geometry.edges.length,labelled:m.geometry.edges.length-plan.tags.length,tags:[...plan.tags],planScale:plan.scale,
+   overlaps:plan.labels.filter((l,i)=>plan.labels.some((o,j)=>j!==i&&pdfRectsHit(l.box,o.box))).length,
+   outside:plan.labels.filter(l=>!(l.box.x>=area.x&&l.box.y>=area.y&&l.box.x+l.box.w<=area.x+area.w&&l.box.y+l.box.h<=area.y+area.h)).length,
+   labels:plan.labels.map(l=>({edge:l.edge,tag:l.tag,box:l.box,text:l.tag?String(l.edge+1):plan.dims[l.edge].text}))};
+ // Footers with page numbers.
+ doc.pages.forEach((pg,i)=>{pdfAdd(pg,{t:'line',pts:[[PDF_M,586],[PDF_PAGE.w-PDF_M,586]],stroke:'#dde3e7',lw:.6});
+   pdfText(pg,PDF_M,598,`AOS Home Solutions · ${doc.project}`,{size:7.8,color:'#6b7a87'});pdfText(pg,PDF_PAGE.w-PDF_M,598,`Page ${i+1} of ${doc.pages.length}`,{size:7.8,color:'#6b7a87',align:'right'});});
+ return doc;}
+const es0=m=>m.geometry.edges.length;
+
+// -- PDF writer (PDF 1.4: standard Helvetica fonts, JPEG images, uncompressed page content) --
+function pdfB64(dataUrl){const b=atob(dataUrl.split(',')[1]);const u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u;}
+function pdfWrite(doc){const chunks=[],offs=[];let len=0;const put=x=>{const b=typeof x==='string'?pdfLatin(x):x;chunks.push(b);len+=b.length;};
+ const n2=v=>(Math.round(v*100)/100).toString(),col=h=>{const v=parseInt(String(h).replace('#','').padEnd(6,'0').slice(0,6),16);return [(v>>16&255)/255,(v>>8&255)/255,(v&255)/255].map(x=>n2(x)).join(' ');};
+ const pdfStr=t=>{let o='(';for(const c of t){const k=pdfCode(c);o+=k===40||k===41||k===92?'\\'+String.fromCharCode(k):String.fromCharCode(k);}return o+')';};
+ const imgIds=Object.keys(doc.images),imgObj={},nObj=5+imgIds.length+doc.pages.length*2;let next=6;
+ for(const id of imgIds)imgObj[id]=next++;const pageObj=doc.pages.map(()=>{const p=next;next+=2;return p;});
+ const obj=(n,body)=>{offs[n]=len;put(`${n} 0 obj\n`);if(typeof body==='function')body();else put(body);put('\nendobj\n');};
+ put('%PDF-1.4\n');put(new Uint8Array([37,226,227,207,211,10]));
+ obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
+ obj(2,`<< /Type /Pages /Kids [${pageObj.map(p=>`${p} 0 R`).join(' ')}] /Count ${doc.pages.length} >>`);
+ obj(3,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
+ obj(4,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
+ const d=new Date(),pd=`D:${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}${String(d.getSeconds()).padStart(2,'0')}`;
+ obj(5,`<< /Title ${pdfStr(`${doc.project} - AOS deck design concept`)} /Author (AOS Home Solutions) /Creator (AOS Deck Studio V5.3) /Producer (AOS Deck Studio V5.3 built-in PDF writer) /CreationDate (${pd}) >>`);
+ for(const id of imgIds){const im=doc.images[id],bytes=im.bytes||pdfB64(im.url);obj(imgObj[id],()=>{put(`<< /Type /XObject /Subtype /Image /Width ${im.w} /Height ${im.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${bytes.length} >>\nstream\n`);put(bytes);put('\nendstream');});}
+ doc.pages.forEach((pg,pi)=>{const c=[],Y=y=>n2(PDF_PAGE.h-y);
+   for(const it of pg.items){
+    if(it.t==='rect'){if(it.fill)c.push(`${col(it.fill)} rg`);if(it.stroke)c.push(`${col(it.stroke)} RG ${n2(it.lw||1)} w`);c.push(`${n2(it.x)} ${Y(it.y+it.h)} ${n2(it.w)} ${n2(it.h)} re ${it.fill&&it.stroke?'B':it.fill?'f':'S'}`);}
+    else if(it.t==='line'){c.push(`${col(it.stroke)} RG ${n2(it.lw||1)} w [${(it.dash||[]).join(' ')}] 0 d ${it.pts.map((p,i)=>`${n2(p[0])} ${Y(p[1])} ${i?'l':'m'}`).join(' ')} S [] 0 d`);}
+    else if(it.t==='poly'){if(it.fill)c.push(`${col(it.fill)} rg`);if(it.stroke)c.push(`${col(it.stroke)} RG ${n2(it.lw||1)} w 1 j`);c.push(it.polys.map(pp=>pp.map((p,i)=>`${n2(p[0])} ${Y(p[1])} ${i?'l':'m'}`).join(' ')+' h').join(' ')+(it.fill&&it.stroke?' B':it.fill?' f':' S'));}
+    else if(it.t==='text'){const a=-(it.angle||0),co=n2(Math.cos(a)),si=n2(Math.sin(a));c.push(`BT /${it.font==='B'?'F2':'F1'} ${n2(it.size)} Tf ${col(it.color)} rg ${co} ${si} ${n2(-Math.sin(a))} ${co} ${n2(it.x)} ${Y(it.y)} Tm ${pdfStr(it.text)} Tj ET`);}
+    else if(it.t==='image')c.push(`q ${n2(it.w)} 0 0 ${n2(it.h)} ${n2(it.x)} ${Y(it.y+it.h)} cm /Im${imgIds.indexOf(it.id)+1} Do Q`);}
+   const body=pdfLatin(c.join('\n'));
+   obj(pageObj[pi],`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PDF_PAGE.w} ${PDF_PAGE.h}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> /XObject << ${imgIds.map((id,i)=>`/Im${i+1} ${imgObj[id]} 0 R`).join(' ')} >> >> /Contents ${pageObj[pi]+1} 0 R >>`);
+   obj(pageObj[pi]+1,()=>{put(`<< /Length ${body.length} >>\nstream\n`);put(body);put('\nendstream');});});
+ const size=next,xref=len;put(`xref\n0 ${size}\n0000000000 65535 f \n`);for(let i=1;i<size;i++)put(`${String(offs[i]).padStart(10,'0')} 00000 n \n`);
+ const id=Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,'0')).join('');
+ put(`trailer\n<< /Size ${size} /Root 1 0 R /Info 5 0 R /ID [<${id}> <${id}>] >>\nstartxref\n${xref}\n%%EOF\n`);
+ const out=new Uint8Array(len);let o=0;for(const ch of chunks){out.set(ch,o);o+=ch.length;}return out;}
+function pdfLatin(s){const u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i)&255;return u;}
+
+// -- preview: the same description drawn on canvases --
+async function pdfLoadImages(doc){const out={};await Promise.all(Object.entries(doc.images).map(([id,im])=>new Promise(res=>{const img=new Image();img.onload=()=>{out[id]=img;res();};img.onerror=()=>res();img.src=im.url;})));return out;}
+function pdfRenderPage(canvas,pg,imgs,k){canvas.width=Math.round(PDF_PAGE.w*k);canvas.height=Math.round(PDF_PAGE.h*k);const g=canvas.getContext('2d');g.setTransform(k,0,0,k,0,0);g.fillStyle='#ffffff';g.fillRect(0,0,PDF_PAGE.w,PDF_PAGE.h);g.lineJoin='round';
+ for(const it of pg.items){g.save();
+  if(it.t==='rect'){if(it.fill){g.fillStyle=it.fill;g.fillRect(it.x,it.y,it.w,it.h);}if(it.stroke){g.strokeStyle=it.stroke;g.lineWidth=it.lw||1;g.strokeRect(it.x,it.y,it.w,it.h);}}
+  else if(it.t==='line'){g.strokeStyle=it.stroke;g.lineWidth=it.lw||1;g.setLineDash(it.dash||[]);g.beginPath();it.pts.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();}
+  else if(it.t==='poly'){g.beginPath();for(const pp of it.polys){pp.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath();}if(it.fill){g.fillStyle=it.fill;g.fill();}if(it.stroke){g.strokeStyle=it.stroke;g.lineWidth=it.lw||1;g.stroke();}}
+  else if(it.t==='text'){g.font=`${it.font==='B'?'bold ':''}${it.size}px Helvetica, Arial, "Liberation Sans", sans-serif`;g.fillStyle=it.color;g.textBaseline='alphabetic';g.translate(it.x,it.y);if(it.angle)g.rotate(it.angle);g.fillText(it.text,0,0);}
+  else if(it.t==='image'&&imgs[it.id])g.drawImage(imgs[it.id],it.x,it.y,it.w,it.h);
+  g.restore();}}
+
+// -- independent captures (the editor's camera, view, dimensions setting and selection are restored) --
+function pdfCapture3d(W=1600,H=1000){const r=renderer3d;if(!state.model||!r)return null;
+ const keep={az:r.az,el:r.el,radius:r.radius,target:[...r.target],structure:r.showStructure};let url=null;
+ try{if(r.model!==state.model)r.setModel(state.model);if(keep.structure)r.setStructureVisible(false);r._forceSize=[W,H];r.presentationCamera();r.draw();
+  const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d'),gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,'#e8eff5');gr.addColorStop(.62,'#f4f6f7');gr.addColorStop(1,'#f7f8f7');g.fillStyle=gr;g.fillRect(0,0,W,H);
+  if(r.canvas.width===W&&r.canvas.height===H){g.drawImage(r.canvas,0,0,W,H);url=c.toDataURL('image/jpeg',.9);}}
+ catch(e){url=null;}
+ finally{r._forceSize=null;if(keep.structure)r.setStructureVisible(true);r.az=keep.az;r.el=keep.el;r.radius=keep.radius;r.target=keep.target;r.draw();}
+ return url?{url,w:W,h:H,camera:{az:r.presentationAz(),el:.48}}:null;}
+let pdfLogoCache=null;
+async function pdfLogo(){if(pdfLogoCache)return pdfLogoCache;const img=document.querySelector('.aos-brand-wide');if(!img)return null;try{if(!img.complete)await img.decode();}catch(e){return null;}
+ const w=img.naturalWidth,h=img.naturalHeight;if(!w||!h)return null;const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.fillStyle='#151c26';g.fillRect(0,0,w,h);g.drawImage(img,0,0,w,h);
+ pdfLogoCache={url:c.toDataURL('image/jpeg',.95),w,h};return pdfLogoCache;}
+
+// -- validation, preview dialog, download, Finish --
+function pdfProblems(){const p=[];if(!state.intent)return ['Choose a deck shape first.'];
+ if(state.freeDraw)p.push('Finish or cancel the deck drawing first.');if(state.model?.stats?.invalidGeometry)p.push('The deck outline has crossed or overlapping edges. Fix the outline in Shape & Size.');
+ if(!state.model||state.model.preview||state.framingStatus!=='current')p.push('The design is still updating. Try again in a moment.');return p;}
+const pdfState={doc:null,bytes:null,opener:null};
+async function pdfPrepare(){const problems=pdfProblems();if(problems.length)return {problems};
+ const logo=await pdfLogo(),view3d=pdfCapture3d();if(!view3d)return {problems:['The finished 3D view could not be drawn in this browser, so the PDF cannot include it.']};
+ const date=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+ const doc=pdfBuildDoc({q:state.intent,m:state.model,view3d,logo,date});
+ const c=doc.checks;if(c.labelled+c.tags.length!==c.edges||c.overlaps||c.outside)return {problems:['The plan dimensions could not be laid out clearly for this deck shape.'],doc};
+ return {doc};}
+async function openPdfPreview(){const box=$('pdfPreview'),pages=$('pdfPages');pdfState.opener=document.activeElement;
+ box.hidden=false;document.body.classList.add('pdf-open');$('pdfPages').classList.remove('zoomed');$('pdfZoomBtn').setAttribute('aria-pressed','false');$('pdfZoomBtn').textContent='Zoom in';$('pdfPreviewTitle').textContent='Customer PDF preview';$('pdfMeta').textContent='Preparing…';$('pdfDownloadBtn').disabled=true;pages.innerHTML='';$('pdfCloseBtn').focus();
+ const r=await pdfPrepare();
+ if(r.problems){pdfState.doc=null;$('pdfPreviewTitle').textContent='Customer PDF not available';$('pdfMeta').textContent='';pages.innerHTML=`<div class="pdf-problem" role="alert"><strong>The customer PDF cannot be created yet:</strong><ul>${r.problems.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><p>Close this window to return to the design.</p></div>`;return false;}
+ pdfState.doc=r.doc;pdfState.bytes=null;const imgs=await pdfLoadImages(r.doc);
+ r.doc.pages.forEach((pg,i)=>{const c=document.createElement('canvas');c.className='pdf-page';c.setAttribute('role','img');c.setAttribute('aria-label',`Page ${i+1} of ${r.doc.pages.length}`);pdfRenderPage(c,pg,imgs,2);pages.appendChild(c);});
+ $('pdfMeta').textContent=`${r.doc.pages.length} pages · US Letter landscape`;$('pdfDownloadBtn').disabled=false;return true;}
+function closePdfPreview(){const box=$('pdfPreview');if(box.hidden)return;box.hidden=true;document.body.classList.remove('pdf-open');$('pdfPages').innerHTML='';pdfState.doc=null;pdfState.bytes=null;
+ const o=pdfState.opener;pdfState.opener=null;if(o&&document.contains(o)&&typeof o.focus==='function')o.focus();}
+function downloadPdf(){if(!pdfState.doc)return;pdfState.bytes=pdfWrite(pdfState.doc);offerFile(`${filename()}_AOS_Deck_Concept.pdf`,pdfState.bytes,'application/pdf');}
+// Finish opens the preview; when the PDF cannot be made, the same window explains why.
+function finishReview(){openPdfPreview();}
 // V5.3 C1: the settings area (#stepContent) is the one scroll container for every step (CSS
 // .inspector-content). A re-render of the same panel keeps the reader where they were; a different
 // step, tab or editing mode starts at the top.
@@ -4136,7 +4437,7 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
 // space in this preview's database (follows them to any device that opens the same link;
 // nobody else, the owner included, can read it). Anywhere else (the HTML file opened in a
 // browser), in this browser's local storage on this device. The UI always says which.
-const APP_VERSION='5.3-c3r1',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
+const APP_VERSION='5.3-c4',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
 const localProjects={kind:'browser',
  read(){try{const v=JSON.parse(localStorage.getItem(LOCAL_PROJECTS)||'{}');return v&&typeof v==='object'?v:{};}catch(e){return null;}},
  write(m){localStorage.setItem(LOCAL_PROJECTS,JSON.stringify(m));},
@@ -4235,6 +4536,7 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
  // V5.3 C3: quick adjustments open the existing editor; Return to Review comes back to Step 9 (Customer).
  if(act==='adjust'){const i=Number(b.dataset.adjust);if(STEP_FLOW.includes(i)&&i!==7){state.reviewReturn=true;if(i===0)selectionClear();stepTo(i);}return;} // C3 cleanup: the Shape & Size shortcut closes a left-open edge/corner editor (as Done/Cancel do); geometry is untouched
  if(act==='return-review'){stepTo(7);return;}
+ if(act==='pdf-preview'){openPdfPreview();return;} // V5.3 C4
  if(act==='divider-add'){addDivider();return;}
  if(act==='divider-remove'){removeDivider();return;}
  if(act==='divider-remove-all'){removeAllDividers();return;}
@@ -4527,7 +4829,8 @@ $('stepContent').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.mat
 $('shapeOverlay').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.shape)selectShape(b.dataset.shape);else if(b.dataset.action==='close-shapes'){state.shapePicker=false;showOverlay();}});
 $('startFromCanvas').onclick=()=>{state.shapePicker=true;showOverlay();};
 $('backBtn').onclick=()=>stepTo(previousStep(state.step));
-$('stepdots').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b||b.disabled)return;const i=Number(b.dataset.step);if(i!==state.step)stepTo(i);});$('nextBtn').onclick=()=>state.step===LAST_STEP?toast('Design complete. Use Save project, or the Downloads on this step for the customer concept or design file.'):stepTo(nextStep(state.step));
+$('pdfCloseBtn').onclick=closePdfPreview;$('pdfZoomBtn').onclick=()=>{const z=$('pdfPages').classList.toggle('zoomed');$('pdfZoomBtn').setAttribute('aria-pressed',String(z));$('pdfZoomBtn').textContent=z?'Fit to screen':'Zoom in';};$('pdfDownloadBtn').onclick=downloadPdf;$('pdfPreview').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();closePdfPreview();}}); // V5.3 C4
+$('stepdots').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b||b.disabled)return;const i=Number(b.dataset.step);if(i!==state.step)stepTo(i);});$('nextBtn').onclick=()=>state.step===LAST_STEP?finishReview():stepTo(nextStep(state.step));
 $('mode2d').onclick=()=>changeView('2d');$('mode3d').onclick=()=>changeView('3d');
 $('undoBtn').onclick=()=>undo();$('redoBtn').onclick=()=>undo(true);$('saveBtn').onclick=()=>saveProject(true);$('openBtn').onclick=openProjects;
 $('projectName').addEventListener('change',e=>{if(state.intent)patch('project',e.target.value);});
@@ -4996,6 +5299,8 @@ window.AOSDeckStudioTest=Object.freeze({framingStatus:()=>state.framingStatus,is
  property:()=>JSON.parse(JSON.stringify({siding:state.intent?.siding??null,houseColor:state.intent?.houseColor??null,surfaces:state.intent?.surfaces??null,selected:state.surfaceSelected,houseTab:state.houseTab,
    geometry:{surfaces:state.model?.geometry?.surfaces||[],house:state.model?.geometry?.house||null},
    parts3d:(renderer3d.visibleParts||[]).filter(p=>/^(earth|house-|concrete-surface)/.test(p.kind)).map(({kind,group,connect,x,y,z,w,h,d,yaw,color,mat,siding,surface})=>({kind,group,connect,x,y,z,w,h,d,yaw,color,mat,siding,surface}))})),
+ // V5.3 C4 (read-only): the customer PDF document shown in the preview (texts per page, images, plan checks).
+ pdf:()=>{const d=pdfState.doc;if(!d)return {open:!$('pdfPreview').hidden,doc:null};return JSON.parse(JSON.stringify({open:!$('pdfPreview').hidden,doc:{project:d.project,date:d.date,checks:d.checks,pages:d.pages.map(pg=>({texts:pg.items.filter(i=>i.t==='text').map(i=>i.text),images:pg.items.filter(i=>i.t==='image').map(i=>({id:i.id,x:i.x,y:i.y,w:i.w,h:i.h})),items:pg.items.length})),images:Object.fromEntries(Object.entries(d.images).map(([k,v])=>[k,{w:v.w,h:v.h,url:v.url,camera:v.camera||null}]))}}));},
  // V5.2 B3 corrections (read-only): where a 3D point lands on the 3D canvas (0..1 across/down), for pixel checks.
  project3d:(x,y,z)=>renderer3d.project([x,y,z]),
  // V5.2 B3 (read-only): the 3D camera, and where the deck corners land on screen.
