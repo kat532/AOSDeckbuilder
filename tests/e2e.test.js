@@ -1773,7 +1773,9 @@ test('B1: several house walls (L-shape): choose the wall, move an opening betwee
   assert.deepEqual(o.map(x => [x.type, x.edge, x.status]), [['door', 0, 'ok'], ['patio', 3, 'ok']]);
   await page.locator('#stepContent [data-action="opening-prev"]').click(); // the door, now on the top wall
   // Position typed past the end of the wall is refused.
-  await openingField(page, 'offset', `11' 0"`);
+  // V5.3 C5: positions are now typed as the distance from the Left/Right end of the wall to the closest edge
+  // of the opening (the centre field was replaced); 23′ 0″ from the left end of the 24 ft wall is past its end.
+  await openingField(page, 'edge', `23' 0"`);
   assert.match(await toastText(page), /doesn't fit: the top wall is 24′ 0″ long/);
   await page.locator('#mode3d').click(); await page.waitForTimeout(600);
   fs.writeFileSync(path.join(SHOTS, 'b1-L-two-walls.png'), await page.locator('#glCanvas').screenshot());
