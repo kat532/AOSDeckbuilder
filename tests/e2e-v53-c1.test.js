@@ -18,7 +18,8 @@ const BASE = JSON.parse(fs.readFileSync(path.join(__dirname, 'baseline', 'contro
 // V5.3 C2: the C0 inventory as the nine-step workflow must show it (tests/baseline/c2-expected.js lists
 // every allowed difference: Patio & Walkway moved from House & Height to its own step 8).
 // V5.3 C3: and with the Review & Present redesign (tests/baseline/c3-expected.js lists each allowed difference).
-const EXPECT = require('./baseline/c3-expected').expectedC3(BASE);
+// V5.3 C4: plus the Preview customer PDF button in Review (tests/baseline/c4-expected.js).
+const EXPECT = require('./baseline/c4-expected').expectedC4(BASE);
 let browser;
 test.before(async () => { browser = await chromium.launch({ executablePath: CHROME, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] }); fs.mkdirSync(SHOTS, { recursive: true }); });
 test.after(async () => { await browser?.close(); });

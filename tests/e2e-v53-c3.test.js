@@ -295,12 +295,14 @@ test('C3 existing buttons and exports: customer concept (.html), design file (.j
   let downloaded = false; page.on('download', () => { downloaded = true; });
   await page.locator('#saveBtn').click(); await page.waitForTimeout(400);
   assert.match(await page.locator('#toast').innerText(), /saved/i);
-  // Finish: stays on Review, starts no download, says what to do; no claim of a PDF or proposal.
+  // Finish: stays on Review and starts no download.
   await step(page, 3); await step(page, 7); await clearToast(page);
   assert.equal((await page.locator('#nextBtn').innerText()).replace(/\s+/g, ' ').trim(), 'Finish ✓');
-  await page.locator('#nextBtn').click(); await page.waitForTimeout(300);
-  const t = await page.locator('#toast').innerText();
-  assert.match(t, /Design complete/); assert.doesNotMatch(t, /pdf|proposal/i);
+  // V5.3 C4 (owner requirement): Finish now opens the customer PDF preview. It still starts no
+  // download by itself and leaves Review underneath; the preview is tested in e2e-v53-c4.test.js.
+  await page.locator('#nextBtn').click(); await page.waitForFunction(() => !document.getElementById('pdfDownloadBtn').disabled || !!document.querySelector('.pdf-problem'), null, { timeout: 60000 });
+  assert.equal(await page.locator('#pdfPreview').isVisible(), true); assert.equal(await page.locator('#pdfPreviewTitle').innerText(), 'Customer PDF preview');
+  await page.locator('#pdfCloseBtn').click();
   assert.equal(await title(page), 'Review & Present'); assert.equal(downloaded, false, 'Finish and Save project start no download');
   assert.deepEqual(errors, []); await ctx.close();
 });

@@ -4100,18 +4100,18 @@ function renderReviewPanel(q){const m=state.model,st=m.stats,mode=state.reviewMo
 // Building the document never changes the project, the undo history or what the editor shows.
 const PDF_W={R:[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584,0,556,0,222,556,333,1000,556,556,333,1000,667,333,1000,0,611,0,0,222,222,333,333,350,556,1000,333,1000,500,333,944,0,500,667,278,333,556,556,556,556,260,556,333,737,370,556,584,333,737,552,400,549,333,333,333,576,537,333,333,333,365,556,834,834,834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,556,556,556,556,556,556,556,549,611,556,556,556,556,500,556,500],B:[278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584,0,556,0,278,556,500,1000,556,556,333,1000,667,333,1000,0,611,0,0,278,278,500,500,350,556,1000,333,1000,556,333,944,0,500,667,278,333,556,556,556,556,280,556,333,737,370,556,584,333,737,552,400,549,333,333,333,576,556,333,333,333,365,556,834,834,834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,611,611,611,611,611,611,611,549,611,611,611,611,611,556,611,556]};
 const PDF_PAGE={w:792,h:612},PDF_M=36;
-const PDF_SUBST={'′':"'",'″':'"','‘':"'",'’':"'",'“':'"','”':'"','→':'->','←':'<-','…':'...','↩':'','✓':'','✕':'x',' ':' ','−':'-','›':'>','‹':'<'};
+const PDF_SUBST={'′':"'",'″':'"','‘':"'",'’':"'",'“':'"','”':'"','→':'->','←':'<-','…':'...','↩':'','✓':'','✕':'x','−':'-','›':'>','‹':'<'};
 const PDF_WIN={0x20AC:0x80,0x201A:0x82,0x0192:0x83,0x201E:0x84,0x2026:0x85,0x2020:0x86,0x2021:0x87,0x02C6:0x88,0x2030:0x89,0x0160:0x8A,0x2039:0x8B,0x0152:0x8C,0x017D:0x8E,0x2018:0x91,0x2019:0x92,0x201C:0x93,0x201D:0x94,0x2022:0x95,0x2013:0x96,0x2014:0x97,0x02DC:0x98,0x2122:0x99,0x0161:0x9A,0x203A:0x9B,0x0153:0x9C,0x017E:0x9E,0x0178:0x9F};
 const pdfCode=ch=>{const u=ch.codePointAt(0);return (u>=32&&u<127)||(u>=160&&u<=255)?u:PDF_WIN[u]||63;};
 // Text exactly as both the preview and the PDF show it: characters the PDF fonts cannot show are
 // replaced (primes become ' and "), runs of spaces collapse.
-function pdfClean(t){let o='';for(const ch of String(t??'')){const s=PDF_SUBST[ch]??ch;for(const c of s){const k=pdfCode(c);o+=k===63&&c!=='?'?'?':c;}}return o.replace(/\s+/g,' ').trim();}
+function pdfClean(t){let o='';for(const ch of String(t??'')){const s=PDF_SUBST[ch]??ch;for(const c of s){const k=pdfCode(c);o+=k===63&&c!=='?'?'?':c;}}return o.replace(/[ \t\r\n]+/g,' ').trim();} // a no-break space (between feet and inches) is kept
 const pdfTW=(t,font,size)=>{let w=0;for(const c of t){const k=pdfCode(c);w+=PDF_W[font][k-32]||556;}return w*size/1000;};
 function pdfWrap(t,font,size,maxW){const out=[];let line='';for(const word of pdfClean(t).split(' ')){const tryL=line?line+' '+word:word;
   if(pdfTW(tryL,font,size)<=maxW){line=tryL;continue;}if(line)out.push(line);line='';
   if(pdfTW(word,font,size)<=maxW){line=word;continue;}let part='';for(const c of word){if(pdfTW(part+c,font,size)>maxW){out.push(part);part='';}part+=c;}line=part;}
  if(line)out.push(line);return out.length?out:[''];}
-const pdfFt=v=>pdfClean(fmt(v));
+const pdfFt=v=>pdfClean(fmt(v)).replace(/' /g,"'\u00a0"); // 12' 6" never splits across lines
 
 // -- small geometry helpers (plan space and paper space) --
 function pdfInPoly(p,poly){let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a[1]>p[1])!==(b[1]>p[1])&&p[0]<(b[0]-a[0])*(p[1]-a[1])/(b[1]-a[1])+a[0])c=!c;}return c;}
@@ -4258,7 +4258,8 @@ function pdfBuildDoc({q,m,view3d,logo,date}){const doc={pages:[],images:{},proje
  const p2=pdfPageNew(doc);pdfHeader(doc,p2,'Dimensioned Deck Plan');const top2=pdfTitle(p2,doc.project,'Plan view · all deck edges dimensioned in feet and inches');
  const area={x:PDF_M,y:Math.max(110,top2+8),w:540,h:0};area.h=574-area.y;pdfAdd(p2,{t:'rect',x:area.x,y:area.y,w:area.w,h:area.h,fill:'#fbfcfc',stroke:'#dde3e7',lw:.6});
  let plan=null;for(const f of [1,.92,.85,.78,.7,.62]){const r=pdfPlan(q,m,area,f);if(!plan||r.tags.length<plan.tags.length)plan=r;if(!r.tags.length)break;}
- for(const it of plan.items)if(it.deferText)pdfText(p2,it.x,it.y,it.t,{size:it.size,font:it.font,color:it.color,angle:it.angle,align:'center'});else pdfAdd(p2,it);
+ for(const it of plan.items)if(!it.deferText)pdfAdd(p2,it);
+ for(const it of plan.items)if(it.deferText)pdfText(p2,it.x,it.y,it.t,{size:it.size,font:it.font,color:it.color,angle:it.angle,align:'center'}); // house-wall names on top of every band
  for(const it of plan.texts)if(it.tx!==undefined)pdfText(p2,it.cx,it.y,it.tx,{size:it.size,font:it.font,color:it.color,align:'center'});else pdfAdd(p2,it);
  const SX=area.x+area.w+16,SW=PDF_PAGE.w-PDF_M-SX,side=[];
  const head=t=>({h:16,draw:(pg,x,y)=>pdfText(pg,x,y+10,t,{size:8,font:'B',color:'#c32e3c'})});
@@ -4279,7 +4280,7 @@ function pdfBuildDoc({q,m,view3d,logo,date}){const doc={pages:[],images:{},proje
  doc.checks={edges:m.geometry.edges.length,labelled:m.geometry.edges.length-plan.tags.length,tags:[...plan.tags],planScale:plan.scale,
    overlaps:plan.labels.filter((l,i)=>plan.labels.some((o,j)=>j!==i&&pdfRectsHit(l.box,o.box))).length,
    outside:plan.labels.filter(l=>!(l.box.x>=area.x&&l.box.y>=area.y&&l.box.x+l.box.w<=area.x+area.w&&l.box.y+l.box.h<=area.y+area.h)).length,
-   labels:plan.labels.map(l=>({edge:l.edge,tag:l.tag,box:l.box,text:l.tag?String(l.edge+1):plan.dims[l.edge].text}))};
+   labels:plan.labels.map(l=>({edge:l.edge,tag:l.tag,side:l.side,box:l.box,text:l.tag?String(l.edge+1):plan.dims[l.edge].text}))};
  // Footers with page numbers.
  doc.pages.forEach((pg,i)=>{pdfAdd(pg,{t:'line',pts:[[PDF_M,586],[PDF_PAGE.w-PDF_M,586]],stroke:'#dde3e7',lw:.6});
    pdfText(pg,PDF_M,598,`AOS Home Solutions · ${doc.project}`,{size:7.8,color:'#6b7a87'});pdfText(pg,PDF_PAGE.w-PDF_M,598,`Page ${i+1} of ${doc.pages.length}`,{size:7.8,color:'#6b7a87',align:'right'});});
