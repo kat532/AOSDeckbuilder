@@ -160,7 +160,8 @@ for (const name of ['census (every feature)', 'b2-diagonal-double-frame-dividers
     if (c.landings) { await has('landings', c.landings, 'concept, not approved'); if (c.turningStairs) await has('landings', `${c.turningStairs} turning`); await has('landing-posts', c.landingPosts); await has('landing-footings', c.landingFootings); await has('landing-framing', c.landingFraming); }
     await blocking();
     for (const lvl of ['warning', 'review', 'info']) {
-      const want = alerts.filter(a => a.level === lvl).map(a => a.message);
+      // C3 cleanup: the screen names the current step for the patio alert; every other word is the engine's.
+      const want = alerts.filter(a => a.level === lvl).map(a => a.message.split('House & Height → Patio & walkway').join('Step 8 — Patio & Walkway'));
       const got = await page.locator(`#stepContent .rv-issues[data-level="${lvl}"] li`).allInnerTexts();
       assert.deepEqual(got, want, `${name}: every ${lvl} alert listed, in order, word for word`);
     }
