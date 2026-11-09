@@ -270,6 +270,21 @@
 .pdf-problem{max-width:560px;background:#fff;border-radius:12px;padding:18px 20px;color:#17212d;font-size:13.5px;line-height:1.5}.pdf-problem ul{margin:8px 0;padding-left:20px}.pdf-problem p{margin:0;color:#5f6e7a}
 body.pdf-open{overflow:hidden}
 @media(max-width:600px){.pdf-bar{padding:8px 10px;flex-wrap:wrap}.pdf-actions{width:100%}.pdf-actions button{flex:1}.pdf-heading h2{font-size:13.5px}.pdf-actions button{padding:9px 11px;font-size:12px}.pdf-pages{padding:10px 8px 20px;gap:10px}}
+
+/* V5.3 C5: Steps 1-4 usability. */
+.field-error{background:#fff1f2;border:1px solid #f0b7bf;color:#8e1b2a;border-radius:8px;padding:7px 9px;font-size:11.5px;line-height:1.35;font-weight:650}
+.selected-item{border-color:#e6a9b1;box-shadow:0 0 0 2px #fde4e7}.selected-item .editor-head{color:#a91d2d}
+.overall-tip{margin-top:-4px}
+.pos-block{display:flex;flex-direction:column;gap:6px;border:1px solid #e2e6ea;background:#fff;border-radius:10px;padding:8px 9px}
+.pos-ref{font-size:11px;color:#4f5d6e;line-height:1.35}.pos-ref b{color:#17212d}
+.pos-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:end}.pos-row label{display:flex;flex-direction:column;gap:3px;font-size:10.5px;font-weight:750;color:#4f5d6e;min-width:0}
+.pos-row input{min-height:38px;font-size:14px}.pos-apply{min-height:38px;padding:0 14px;border-radius:9px;border:1px solid #253746;background:#253746;color:#fff;font-weight:800}
+.pos-both{font-size:11px;color:#5f6e7a}.pos-both b{color:#17212d}
+.ledger-list{display:flex;flex-direction:column;gap:5px}.ledger-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid #e2e6ea;border-radius:9px;padding:6px 8px;background:#fff;font-size:11.5px}
+.ledger-row .ledger-name{min-width:0}.ledger-row .ledger-name b{display:block;color:#17212d}.ledger-row .ledger-name span{color:#5f6e7a;font-size:10.5px}
+.ledger-row.on{border-color:#9ccfb5;background:#f3fbf6}.ledger-row button{min-height:36px;padding:0 10px;border-radius:8px;border:1px solid #c9d2d8;background:#fff;font-weight:780;font-size:11px;white-space:nowrap}
+.support-explain{font-size:11px;color:#4f5d6e;line-height:1.4;margin:0}
+.framing-status{border-radius:9px;padding:7px 9px;font-size:11px;line-height:1.4;background:#fff7e6;border:1px solid #efd398;color:#5b4413}.framing-status b{display:block;font-size:11.5px}
 </style></head>
 <body><div class="shell">
 <header class="appbar">
@@ -3276,7 +3291,7 @@ const nextStep=id=>STEP_FLOW[Math.min(STEP_FLOW.length-1,flowPosition(id)+1)];
 const previousStep=id=>STEP_FLOW[Math.max(0,flowPosition(id)-1)];
 const titles=['Shape & Size','House & Height','Stairs & Landings','Decking Layout','Decking Selection','Railings','Framing & Ledger','Review & Present','Patio & Walkway'];
 const hints=['Choose and shape','Tap house edges','Tap an edge to add','Choose board pattern','Choose finish colors','Tap to add/remove','Choose beams and support early','Present the design','Concrete around the deck'];
-const state={dimensionLabels:[],intent:null,model:null,step:0,view:'2d',houseTab:'walls',surfaceSelected:null,layoutTab:'direction',finishTab:'field',railTab:'locations',railTarget:'all',reviewMode:'customer',reviewTab:'materials',reviewReturn:false,dividerSelected:0,stairSelected:0,selectedCorner:null,previewPoly:null,cornerPreview:null,cornerPreviewError:'',cornerKey:null,cornerSize:1,cornerAngle:45,cornerOrientation:'first',shapeTool:null,featureDraft:{kind:'bump',width:4,depth:2,fraction:.5},featureSelected:null,shapePicker:false,freeDraw:false,freePts:[],freeHover:null,freeRedo:[],measure:'all',drawSnap:true,drawMode:'auto',selectedEdge:null,framingDetails:false,history:[null],historyAt:0,plan:{scale:18,panX:0,panY:0,targetZ:6,pointers:new Map(),drag:null,tap:null},toastTimeout:0};
+const state={dimensionLabels:[],intent:null,model:null,step:0,view:'2d',houseTab:'walls',surfaceSelected:null,layoutTab:'direction',finishTab:'field',railTab:'locations',railTarget:'all',reviewMode:'customer',reviewTab:'materials',reviewReturn:false,openingRef:'left',stairRef:'left',posError:null,edgeError:null,dividerSelected:0,stairSelected:0,selectedCorner:null,previewPoly:null,cornerPreview:null,cornerPreviewError:'',cornerKey:null,cornerSize:1,cornerAngle:45,cornerOrientation:'first',shapeTool:null,featureDraft:{kind:'bump',width:4,depth:2,fraction:.5},featureSelected:null,shapePicker:false,freeDraw:false,freePts:[],freeHover:null,freeRedo:[],measure:'all',drawSnap:true,drawMode:'auto',selectedEdge:null,framingDetails:false,history:[null],historyAt:0,plan:{scale:18,panX:0,panY:0,targetZ:6,pointers:new Map(),drag:null,tap:null},toastTimeout:0};
 const planCanvas=$('planCanvas'),ctx=planCanvas.getContext('2d'),glCanvas=$('glCanvas'),renderer3d=new window.Deck3D(glCanvas);
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 // Construction-style lengths (display only; geometry keeps its exact values): 21.25 -> 21′ 3″, 16 -> 16′ 0″.
@@ -3553,7 +3568,7 @@ function stepAttention(){const out=new Set(),m=state.model;if(!state.intent||!m)
  return out;}
 function stepTo(i){state.cornerPreview=null;if(!state.intent&&i>0){toast('Choose a shape first.');return;}
  if(i>0&&state.freeDraw){toast('Finish or cancel the drawing first.');return;}
- if(i>0&&state.model?.stats?.invalidGeometry){toast('Fix the deck outline first: it has crossed or overlapping edges.');return;}const fromStep=state.step;state.step=STEP_FLOW.includes(i)?i:0;state.framingDetails=false;
+ if(i>0&&state.model?.stats?.invalidGeometry){toast('Fix the deck outline first: it has crossed or overlapping edges.');return;}const fromStep=state.step;state.step=STEP_FLOW.includes(i)?i:0;state.framingDetails=false;state.posError=null;
  if(state.step===7){if(fromStep!==7)state.reviewMode='customer';state.reviewReturn=false;} // V5.3 C3: Review opens in Customer mode
  if([0,1,2,3,5,6,8].includes(state.step))state.view='2d';if([4,7].includes(state.step)&&state.intent)state.view='3d';if(state.step===LAST_STEP&&renderer3d.showStructure)renderer3d.setStructureVisible(false);renderPanel();updateHeader();}
 function changeView(v){if(!state.intent&&v==='3d'){toast('Choose a shape first.');return;}state.view=v;updateHeader();}
@@ -3657,26 +3672,29 @@ function parseExactEdgeLength(raw){
  return NaN;
 }
 function updateEdgeDimension(value){
- if(state.selectedEdge===null||!state.intent)return;
+ if(state.selectedEdge===null||!state.intent)return;state.edgeError=null;
+ const say=m=>{state.edgeError=m;toast(m);renderPanel();}; // V5.3 C5: the reason also stays in the panel
  const i=state.selectedEdge,p=core.polygon(state.intent),old=core.edges(p)[i],requested=parseExactEdgeLength(value);
  // V5.2 A1 (D3): say WHY a length is refused, not only how to type it.
- if(!Number.isFinite(requested)){toast('Enter feet and inches, e.g. 4′ 0″ or 4-0.');return;}
- if(requested<7.25/12){toast(`Edge ${i+1} must be at least 0′ 7¼″. ${fmt(requested)} is too short; no change made.`);return;}
+ if(!Number.isFinite(requested)){say('Enter feet and inches, e.g. 4′ 0″ or 4-0.');return;}
+ if(requested<7.25/12){say(`Edge ${i+1} must be at least 0′ 7¼″. ${fmt(requested)} is too short; no change made.`);return;}
  const op=shapeOps.lengthenEdge(p,i,requested);
- if(op.error){toast(`Edge ${i+1} can't be ${fmt(requested)}: ${op.error} No change made.`);return;}
- if(Math.abs(core.edges(op.points)[i].len-requested)>1e-7){toast('The exact dimension could not be maintained; no change made.');return;}
+ if(op.error){say(`Edge ${i+1} can't be ${fmt(requested)}: ${op.error} No change made.`);return;}
+ if(Math.abs(core.edges(op.points)[i].len-requested)>1e-7){say(`Edge ${i+1} can't be exactly ${exactEdgeLabel(requested)} with this shape; no change made.`);return;}
  if(!applyOutline(op)){renderPanel();return;}
  const actual=core.edges(core.polygon(state.intent))[i].len;
- if(Math.abs(actual-requested)>1e-6){toast('Could not preserve the exact requested measurement.');return;}
+ if(Math.abs(actual-requested)>1e-6){say('Could not preserve the exact requested measurement.');return;}
  state.edgeEditOpen=true;renderPanel();planDraw();
  toast(`Edge ${i+1}: ${exactEdgeLabel(actual)} applied.`);
 }
 function selectDimension(index,focus=true){
  if(!state.intent||state.step!==0)return;
- state.selectedEdge=index;state.selectedCorner=null;state.shapeTool='edge';state.cornerPreview=null;state.previewPoly=null;state.edgeEditOpen=true;
+ state.selectedEdge=index;state.selectedCorner=null;state.edgeError=null;state.shapeTool='edge';state.cornerPreview=null;state.previewPoly=null;state.edgeEditOpen=true;
  renderPanel();planDraw();
  if(focus){const input=$('stepContent').querySelector('[data-edge-field="length"]');if(input){input.focus({preventScroll:true});input.select();}}
 }
+function hitOverallLabel(pt){return (state.overallLabels||[]).find(x=>pt.x>=x.box.l-4&&pt.x<=x.box.r+4&&pt.y>=x.box.t-4&&pt.y<=x.box.b+4)?.field??null;}
+function openOverallField(field){selectionClear();state.edgeError=null;renderPanel();planDraw();const f=$('stepContent').querySelector(`input[data-field="${field}"]`);if(f){f.focus({preventScroll:false});f.select();}}
 function hitDimensionLabel(pt){
  return (state.dimensionLabels||[]).find(x=>pt.x>=x.box.l-6&&pt.x<=x.box.r+6&&pt.y>=x.box.t-7&&pt.y<=x.box.b+7)?.edgeIndex??null;
 }
@@ -3729,7 +3747,7 @@ function completeOrthoFootprint(points){
  return [...pp,candidate];
 }
 
-function selectionClear(){state.selectedEdge=null;state.selectedCorner=null;state.previewPoly=null;state.pendingShapeResult=null;state.cornerPreview=null;state.cornerKey=null;state.shapeTool=null;}
+function selectionClear(){state.edgeError=null;state.selectedEdge=null;state.selectedCorner=null;state.previewPoly=null;state.pendingShapeResult=null;state.cornerPreview=null;state.cornerKey=null;state.shapeTool=null;}
 const selectedFeature=()=>state.intent?.features?.find(f=>f.id===state.featureSelected)||null;
 // A selected corner previews its cut immediately; no separate Preview button.
 function selectedBevel(){
@@ -3829,7 +3847,7 @@ function renderShapePanel(q){
  if(state.freeDraw)return `<div class="shape-help"><strong>Draw your deck</strong><p>Tap each corner. Edges snap to square, 45° and 22.5° directions on their own, and the corner angle and edge length show as you move. Tap near the green start pin to close.</p></div><div class="action-row"><button data-action="undo-point">↶ Undo point</button><button data-action="finish-draw" ${state.freePts.length<3?'disabled':''}>✓ Finish & Confirm</button><button data-action="cancel-draw">Cancel</button></div><span class="compact-status">${state.freePts.length} corners · ${state.freePts.length>=3?'tap near the green start pin to close. Close is good enough: the last edge is lined up for you.':'tap the plan to place corners.'}</span>`;
  if(!q)return `<div class="shape-grid">${core.SHAPES.map(sh=>`<button data-shape="${sh}">${shapeSvg(sh)}<span>${sh==='free'?'Free Draw':sh==='rectangle'?'Rectangle':sh==='square'?'Square':sh+'-Shape'}</span></button>`).join('')}</div>`;
  const es=state.model.geometry.edges,corner=state.selectedCorner,edge=state.selectedEdge,poly=state.model.geometry.poly;
- let html=corner!==null||edge!==null?'':`<div class="shape-inline"><span><b>${q.shape==='free'?'Custom':q.shape==='rectangle'?'Rectangle':q.shape==='square'?'Square':q.shape+'-Shape'}</b> · ${poly.length} corners</span><button data-action="choose-shape" class="change-shape">Change Deck Shape</button></div><div class="field-row">${input('width','OVERALL WIDTH',q.width,4,48)}${input('depth','OVERALL DEPTH',q.depth,4,42)}</div>`;
+ let html=corner!==null||edge!==null?'':`<div class="shape-inline"><span><b>${q.shape==='free'?'Custom':q.shape==='rectangle'?'Rectangle':q.shape==='square'?'Square':q.shape+'-Shape'}</b> · ${poly.length} corners</span><button data-action="choose-shape" class="change-shape">Change Deck Shape</button></div><div class="field-row">${input('width','OVERALL WIDTH',q.width,4,48)}${input('depth','OVERALL DEPTH',q.depth,4,42)}</div><div class="editor-tip overall-tip">Overall = the outside size of the whole deck${poly.length>4?' (dark labels on the plan)':''}. To set one side, tap its measurement ✎ on the plan.</div>`;
  if(corner===null&&edge===null&&(q.startShape||q.shape)==='L'){
    html+=`<div class="editor-actions"><button data-action="flip-l">⇄ Flip L left / right</button></div>`;
    if(q.shape==='L'){
@@ -3847,7 +3865,7 @@ function renderShapePanel(q){
    const inside=bevel?Boolean(bevel.inside):cross([p[0]-pr[0],p[1]-pr[1]],[nx[0]-p[0],nx[1]-p[1]])<0;
    const limit=cornerSizeLimit(poly,corner,state.cornerAngle,state.cornerOrientation,bevel);
    const size=state.cornerSize;
-   html+=`<div class="editor-panel corner-simple"><div class="editor-head">${bevel?'EDIT ANGLED CORNER':'CORNER '+(corner+1)}<span>${inside?'Inside · fills notch':'Outside · trims corner'}</span></div>
+   html+=`<div class="editor-panel corner-simple selected-item"><div class="editor-head">SELECTED · ${bevel?'ANGLED CORNER':'CORNER '+(corner+1)}<span>${inside?'Inside · fills notch':'Outside · trims corner'}</span></div>
    <div class="corner-hint">${bevel?'Adjust the size below, or restore the original corner.':'Choose an angle and size. The dashed line shows the result before you apply it.'}</div>
    ${bevel?'':`<div class="editor-actions corner-choice"><button data-action="corner-angle" data-value="45" class="${state.cornerAngle===45?'selected':''}">45°</button><button data-action="corner-angle" data-value="22.5" class="${state.cornerAngle===22.5?'selected':''}">22.5°</button></div>`}
    ${!bevel&&state.cornerAngle===22.5?'<button class="corner-flip" data-action="corner-flip">⇄ Flip cut direction</button>':''}
@@ -3858,12 +3876,12 @@ function renderShapePanel(q){
    ${bevel?'<button class="corner-secondary" data-action="remove-bevel">↶ Restore original corner</button>':'<button class="corner-secondary" data-action="delete-corner">Remove this corner point</button>'}</div>`;
  }else if(edge!==null&&es[edge]){
    const e=es[edge];
-   html+=`<div class="editor-panel edge-length-panel"><div class="editor-head">EDGE ${edge+1}<span>${exactEdgeLabel(e.len)}</span></div><label class="edge-length-input">Set exact length (feet / inches)<input data-edge-field="length" value="${exactEdgeLabel(e.len)}" inputmode="text" aria-label="Exact edge length in feet and inches" placeholder="4′ 0″"></label><div class="editor-actions edge-actions-row"><button type="button" class="edge-apply" data-action="apply-edge-length">✓ Apply Length</button><button type="button" class="edge-done" data-action="done-edge">Done</button></div><div class="editor-tip">Tap a measurement on the drawing to edit it. The surrounding edges keep their angles.</div><div class="editor-actions"><button data-action="shape-feature" data-value="bump">+ Bump-out</button><button data-action="shape-feature" data-value="recess">+ Recess</button><button data-action="shape-split">+ Point</button></div></div>`;
+   html+=`<div class="editor-panel edge-length-panel selected-item"><div class="editor-head">SELECTED · EDGE ${edge+1}<span>now ${exactEdgeLabel(e.len)}</span></div><label class="edge-length-input">Set exact length of this edge (feet / inches)<input data-edge-field="length" value="${exactEdgeLabel(e.len)}" inputmode="text" aria-label="Exact edge length in feet and inches" placeholder="4′ 0″"></label>${state.edgeError?`<div class="field-error" role="alert">${esc(state.edgeError)}</div>`:''}<div class="editor-actions edge-actions-row"><button type="button" class="edge-apply" data-action="apply-edge-length">✓ Apply Length</button><button type="button" class="edge-done" data-action="done-edge">Done</button></div><div class="editor-tip">Tap a measurement on the drawing to edit it. The surrounding edges keep their angles.</div><div class="editor-actions"><button data-action="shape-feature" data-value="bump">+ Bump-out</button><button data-action="shape-feature" data-value="recess">+ Recess</button><button data-action="shape-split">+ Point</button></div></div>`;
    if(state.shapeTool==='bump'||state.shapeTool==='recess'){
      const f=state.featureDraft;
      html+=`<div class="editor-panel"><div class="editor-head">${state.shapeTool==='bump'?'BUMP-OUT':'RECESS'}</div><div class="editor-fields"><label>Width<input data-shape-field="feature-width" value="${fmt(f.width)}"></label><label>Depth<input data-shape-field="feature-depth" value="${fmt(f.depth)}"></label><label>Position from edge start (%)<input type="number" min="5" max="95" data-shape-field="feature-position" value="${Math.round(f.fraction*100)}"></label></div><div class="editor-actions"><button data-action="preview-feature">Preview</button><button class="primary" data-action="apply-feature">Apply to deck</button><button data-action="cancel-preview">Cancel</button></div></div>`;
    }
- }else html+=`<div class="shape-help"><strong>Edit your deck shape</strong><p>Tap a dimension to enter an exact measurement. Drag an edge or corner to reshape your deck. Tap a corner to add an angled cut.</p></div>`;
+ }else html+=`<div class="shape-help"><strong>Edit your deck shape</strong><p>Tap an edge measurement ✎ to type an exact length. Drag an edge or corner to reshape the deck. Tap a corner to add an angled cut.</p></div>`;
  if(corner===null&&q.features?.length){
    const f=selectedFeature()||q.features.at(-1),editing=state.shapeTool==='feature-edit';
    html+=`<div class="editor-panel"><div class="editor-head">ADDED SECTIONS <span>${q.features.length}</span></div><div class="editor-fields"><label>Choose section<select data-feature-select>${q.features.map((x,i)=>`<option value="${x.id}" ${x.id===f.id?'selected':''}>${i+1}. ${x.kind==='bump'?'Bump-out':'Recess'}</option>`).join('')}</select></label></div><div class="editor-actions"><button data-action="feature-edit">Edit selected</button><button data-action="feature-remove" class="danger">Remove selected</button></div>${editing?`<div class="editor-fields"><label>Width<input data-shape-field="feature-width" value="${fmt(f.width)}"></label><label>Depth<input data-shape-field="feature-depth" value="${fmt(f.depth)}"></label><label>Position (%)<input type="number" data-shape-field="feature-position" min="5" max="95" value="${Math.round(f.fraction*100)}"></label></div><div class="editor-actions"><button data-action="preview-feature-edit">Preview change</button><button class="primary" data-action="apply-feature-edit">Update section</button></div>`:''}</div>`;
@@ -3872,6 +3890,69 @@ function renderShapePanel(q){
  return html;
 }
 function inchText(ft){const t=Math.round(ft*12*8)/8,w=Math.floor(t+1e-9),f=Math.round((t-w)*8);return `${w}${['','⅛','¼','⅜','½','⅝','¾','⅞'][f]} in.`;}
+
+// ---- V5.3 C5: positions measured to the closest edge, Left / Right as a person sees them ----
+// The project keeps its centre offset along the edge (o.offset / stair.offset); these helpers only
+// convert between that offset and what is shown: the distance from the Left or Right END of the edge
+// to the NEAREST side of the opening or staircase.
+//   House-wall openings: standing on the deck, looking toward the house.
+//   Staircases: standing outside the deck, looking at the edge the stair is attached to.
+function sideFrame(q,edgeIdx,viewer){const poly=core.polygon(q),es=core.edges(poly),e=es[edgeIdx];if(!e)return null;
+ let n=e.n;{const pr=[e.mid[0]+n[0]*.05,e.mid[1]+n[1]*.05];if(pdfInPoly(pr,poly))n=[-n[0],-n[1]];} // outward
+ const d=viewer==='house'?n:[-n[0],-n[1]],left=[d[1],-d[0]],leftIsB=e.t[0]*left[0]+e.t[1]*left[1]>0;
+ return {e,n,len:e.len,leftIsB,leftEnd:leftIsB?e.b:e.a,rightEnd:leftIsB?e.a:e.b};}
+const sideDist=(f,offset,w,side)=>{const l=f.leftIsB?f.len/2-(offset+w/2):offset-w/2+f.len/2;return side==='right'?f.len-w-l:l;};
+const sideOffset=(f,D,w,side)=>{const l=side==='right'?f.len-w-D:D;return f.leftIsB?f.len/2-l-w/2:l+w/2-f.len/2;};
+const sideWord=s=>s==='right'?'Right':'Left';
+// Inward rounding to 1/16 in. for stated limits.
+const sixteenth=(ft,up)=>(up?Math.ceil(ft*192-1e-6):Math.floor(ft*192+1e-6))/192;
+function posBlock({kind,ref,frame,offset,width,label,what,disabled}){const side=ref==='right'?'right':'left',D=sideDist(frame,offset,width,side),other=sideDist(frame,offset,width,side==='left'?'right':'left');
+ return `<div class="pos-block" data-pos="${kind}"><div class="pos-ref">${label}</div>
+  <div class="seg" role="group" aria-label="Measure from">${['left','right'].map(v=>`<button type="button" data-action="pos-side" data-target="${kind}" data-value="${v}" class="${side===v?'selected':''}" aria-pressed="${side===v}" ${disabled?'disabled':''}>From ${sideWord(v)} end</button>`).join('')}</div>
+  <div class="pos-row"><label>${sideWord(side)} end → nearest side of ${what}<input data-${kind}-field="edge" value="${exactEdgeLabel(Math.max(0,D))}" inputmode="text" aria-label="Distance from the ${side} end to the nearest side of the ${what}, feet and inches" ${disabled?'disabled':''}></label><button type="button" class="pos-apply" data-action="pos-apply" data-target="${kind}" ${disabled?'disabled':''}>Apply</button></div>
+  <div class="pos-both">Left end → ${what}: <b>${exactEdgeLabel(Math.max(0,side==='left'?D:other))}</b> · Right end → ${what}: <b>${exactEdgeLabel(Math.max(0,side==='right'?D:other))}</b></div>
+  ${state.posError?.kind===kind&&state.posError.id===(kind==='opening'?state.openingSelected:currentStair()?.id)?`<div class="field-error" role="alert">${esc(state.posError.text)}</div>`:''}</div>`;}
+
+// V5.3 C5: apply a Left / Right closest-edge distance. The value is converted to the existing centre
+// offset exactly; a value outside the allowed range is refused with the range, nothing is moved.
+function posFail(kind,text){state.posError={kind,text,id:kind==='opening'?state.openingSelected:currentStair()?.id};toast(text);renderPanel();planDraw();}
+function applyOpeningSide(o,raw){const q=state.intent,v=parseExactEdgeLength(raw),what=core.OPENING_TYPES[o.type].label.toLowerCase(),side=state.openingRef==='right'?'right':'left';
+ if(!Number.isFinite(v)){posFail('opening','Enter feet and inches, e.g. 3′ 0″ or 3-0.');return false;}
+ const es=core.edges(core.polygon(q)),f=sideFrame(q,o.edge,'house'),w=o.width,R=core.openingRange(q,es,o.edge),wn=wallName(es,o.edge).toLowerCase();
+ const a=sideDist(f,R[0]+w/2,w,side),b=sideDist(f,R[1]-w/2,w,side),lo=Math.min(a,b),hi=Math.max(a,b);
+ if(R[1]-R[0]<w-1e-9){posFail('opening',`That doesn't fit: the ${wn} is ${fmt(f.len)} long and has room for an opening up to ${fmt(Math.max(0,R[1]-R[0]))} wide. No change made.`);return false;}
+ if(v<lo-1e-6||v>hi+1e-6){posFail('opening',`That doesn't fit: the ${wn} is ${fmt(f.len)} long. This ${fmt(w)} ${what} can be from ${exactEdgeLabel(sixteenth(lo,true))} to ${exactEdgeLabel(sixteenth(hi,false))} from the ${side} end. No change made.`);return false;}
+ const off=+clamp(sideOffset(f,v,w,side),R[0]+w/2,R[1]-w/2).toFixed(4),ok=changeOpening({offset:off});
+ if(!ok){state.posError={kind:'opening',text:$('toast').textContent,id:o.id};renderPanel();return false;}
+ state.posError=null;renderPanel();planDraw();toast(`${core.OPENING_TYPES[o.type].label}: ${exactEdgeLabel(v)} from the ${side} end of the ${wn}.`);return true;}
+function applyStairSide(raw){const q=state.intent,st=currentStair();if(!st||st.fullWidth)return false;const v=parseExactEdgeLength(raw),side=state.stairRef==='right'?'right':'left';
+ if(!Number.isFinite(v)){posFail('stair','Enter feet and inches, e.g. 2′ 0″ or 2-0.');return false;}
+ const f=sideFrame(q,st.edge,'stair'),w=st.width,lo=.08,hi=f.len-w-.08; // the engine keeps a stair 0.08 ft (about 1 in.) from each end of its edge
+ if(hi<lo){posFail('stair',`Edge ${st.edge+1} (${fmt(f.len)}) is too short for a ${fmt(w)} wide stair. No change made.`);return false;}
+ if(v<lo-1e-9||v>hi+1e-9){posFail('stair',`That doesn't fit: edge ${st.edge+1} is ${fmt(f.len)} long. A ${fmt(w)} wide stair can be from ${exactEdgeLabel(sixteenth(lo,true))} to ${exactEdgeLabel(sixteenth(hi,false))} from the ${side} end. No change made.`);return false;}
+ const reach=(f.len-w)/2-.08,off=+clamp(sideOffset(f,v,w,side),-reach,reach).toFixed(4),before=JSON.stringify(state.intent.staircases);
+ changeSelectedStair({offset:off});
+ if(JSON.stringify(state.intent.staircases)===before&&Math.abs(st.offset-off)>1e-9){state.posError={kind:'stair',text:$('toast').textContent,id:st.id};renderPanel();return false;}
+ state.posError=null;renderPanel();planDraw();toast(`Stairs: ${exactEdgeLabel(v)} from the ${side} end of edge ${st.edge+1}.`);return true;}
+// Plan guide: L and R at the ends of the wall / edge being measured, and the measured distance.
+function drawPositionGuide(q){let kind=null,edge,offset,w,viewer;const sc=state.plan.scale;
+ if(state.step===1&&state.houseTab==='walls'){const o=openingSel();if(!o||!q.houseEdges.includes(o.edge))return;kind='opening';edge=o.edge;offset=o.offset;w=o.width;viewer='house';}
+ else if(state.step===2){const st=currentStair();if(!st||st.fullWidth)return;kind='stair';edge=st.edge;offset=st.offset;w=st.width;viewer='stair';}else return;
+ const f=sideFrame(q,edge,viewer);if(!f)return;const side=(kind==='opening'?state.openingRef:state.stairRef)==='right'?'right':'left',inn=[-f.n[0],-f.n[1]];
+ const P=(p,d,k)=>[p[0]+d[0]*k,p[1]+d[1]*k],deep=Math.max(.7,20/sc),ln=Math.max(.9,26/sc);
+ ctx.save();ctx.font='800 10px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+ for(const [end,t] of [[f.leftEnd,'L'],[f.rightEnd,'R']]){const c=xy(...P(end,inn,deep)),on=t===side[0].toUpperCase();ctx.beginPath();ctx.arc(c[0],c[1],10,0,Math.PI*2);ctx.fillStyle=on?'#c32e3c':'#ffffff';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#c32e3c';ctx.stroke();ctx.fillStyle=on?'#ffffff':'#c32e3c';ctx.fillText(t,c[0],c[1]+.5);}
+ if(kind==='opening'){const D=sideDist(f,offset,w,side),end=side==='left'?f.leftEnd:f.rightEnd,other=side==='left'?f.rightEnd:f.leftEnd,u=[(other[0]-end[0])/f.len,(other[1]-end[1])/f.len];
+   const a=xy(...P(end,inn,ln)),b=xy(...P(P(end,u,D),inn,ln));ctx.strokeStyle='#c32e3c';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();
+   for(const p of [a,b]){ctx.beginPath();ctx.arc(p[0],p[1],2.6,0,Math.PI*2);ctx.fillStyle='#c32e3c';ctx.fill();}
+   if(D>.2){const m=xy(...P(P(end,u,D/2),inn,ln+Math.max(.5,14/sc)));ctx.restore();dimLabel(`${side==='left'?'L':'R'} ${exactEdgeLabel(D)}`,m[0],m[1]);return;}}
+ ctx.restore();}
+// The plan's L / − tap and the Framing panel's per-wall buttons share one action (V5.3 C5 moved it here unchanged).
+function toggleLedger(i){
+ if(!state.intent.houseEdges.includes(i)){toast('Only house walls can have a ledger. Add this wall in step 2 first.');return;}
+ const q=structuredClone(state.intent),enabled=q.supportMode==='ledger'&&q.ledgerEdges.includes(i);
+ q.supportMode='ledger';q.ledgerEdges=enabled?q.ledgerEdges.filter(x=>x!==i):[...q.ledgerEdges,i];
+ setProject(q);toast(`House edge ${i+1}: ledger ${enabled?'removed':'added'}`);}
 // ---- V5.2 B1: house doors and windows ----
 const OPENING_ICON={door:'🚪',patio:'▥',window:'▦'};
 function openingSel(){const list=state.intent?.openings||[];if(!list.length){state.openingSelected=null;return null;}if(!list.some(o=>o.id===state.openingSelected))state.openingSelected=list.at(-1).id;return list.find(o=>o.id===state.openingSelected);}
@@ -3893,7 +3974,9 @@ function renderOpeningsPanel(q){
    <label class="editor-tip">Common size<select data-opening-preset><option value="">Custom ${inchSize(sel.width,sel.height)}</option>${T.presets.map(([w,h])=>{const wide=w/12>maxW+1e-9;return `<option value="${w}x${h}" ${wide?'disabled':''} ${Math.abs(sel.width*12-w)<.01&&Math.abs(sel.height*12-h)<.01?'selected':''}>${inchSize(w/12,h/12)}${wide?' — too wide for this wall':''}</option>`;}).join('')}</select></label>
    <div class="editor-tip opening-room">Usable on this wall: up to ${fmt(Math.max(0,maxW))} wide.</div>
    <div class="editor-fields"><label>Width<input data-opening-field="width" value="${fmt(sel.width)}"></label><label>Height<input data-opening-field="height" value="${fmt(sel.height)}"></label>
-   ${sel.type==='window'?`<label>Sill above deck<input data-opening-field="sill" value="${fmt(sel.sill)}"></label>`:''}<label>From wall center<input data-opening-field="offset" value="${fmt(sel.offset)}"></label></div>
+   ${sel.type==='window'?`<label>Sill above deck<input data-opening-field="sill" value="${fmt(sel.sill)}"></label>`:''}</div>
+   ${q.houseEdges.includes(sel.edge)?(()=>{const fr=sideFrame(q,sel.edge,'house'),what=T.label.toLowerCase();return fr?posBlock({kind:'opening',ref:state.openingRef,frame:fr,offset:sel.offset,width:sel.width,what,
+     label:`Wall: <b>${wallName(es,sel.edge)}</b> · edge ${sel.edge+1} · ${fmt(fr.len)} long.<br>Left / Right as seen <b>standing on the deck, facing the house</b>. Measured to the <b>closest edge of the ${what}</b>, not its center.`}):'';})():''}
    ${q.houseEdges.length>1||!q.houseEdges.includes(sel.edge)?`<p class="group-title">On wall</p><div class="seg">${q.houseEdges.map(i=>`<button type="button" data-action="opening-move-wall" data-value="${i}" class="${i===sel.edge?'selected':''}" aria-pressed="${i===sel.edge}">${wallName(es,i)}</button>`).join('')}</div>`:''}
    <div class="editor-actions"><button data-action="opening-remove" class="danger">Delete ${T.label.toLowerCase()}</button></div>
    <div class="editor-tip">Drag it along the wall in 2D, or type a position. ${sel.type==='window'?'The sill is measured from the deck surface.':'Doors sit on the deck surface.'} Shown for visualization only.</div>`;}
@@ -3981,7 +4064,9 @@ function renderStairPanel(q){
    const full=Boolean(stair.fullWidth),L=stair.landing,gl=g?.landing,canLand=q.height>=core.LANDING_MIN_HEIGHT-1e-9;
    html+=`<div class="editor-panel"><div class="editor-head">STAIR ${state.stairSelected+1} · EDGE ${stair.edge+1}<span>${g?.risers||'—'} risers${gl?` · ${gl.upperRisers} + ${gl.lowerRisers}`:''}</span></div>
    <div class="editor-actions stair-options"><button data-action="stair-full" class="${full?'selected':''}" aria-pressed="${full}">Full edge width ${full?'✓':'+'}</button><button data-action="stair-landing" class="${L?'selected':''}" aria-pressed="${Boolean(L)}" ${!canLand&&!L?'disabled':''}>Landing ${L?'✓':'+'}</button></div>
-   <div class="editor-fields"><label>Stair width (ft / in)<input data-stair-field="width" value="${fmt(stair.width)}" ${full?'disabled':''}></label><label>Position from edge center<input data-stair-field="offset" value="${fmt(stair.offset)}" ${full?'disabled':''}></label></div>
+   <div class="editor-fields"><label>Stair width (ft / in)<input data-stair-field="width" value="${fmt(stair.width)}" ${full?'disabled':''}></label></div>
+   ${(()=>{const fr=sideFrame(q,stair.edge,'stair');return fr?posBlock({kind:'stair',ref:state.stairRef,frame:fr,offset:full?0:stair.offset,width:full?fr.len:stair.width,what:'stairs',disabled:full,
+     label:`Attached to <b>deck edge ${stair.edge+1}</b> · ${fmt(fr.len)} long (highlighted on the plan).<br>Left / Right as seen <b>standing outside the deck, facing this edge</b>. Measured to the <b>closest side of the stairs</b>, not their center.${full?' A full-width stair fills the whole edge.':''}`}):'';})()}
    ${full?`<div class="editor-tip">Spans the whole ${fmt(e?.len||stair.width)} edge and follows it if the edge changes length.</div>`:''}
    ${L?`<div class="editor-head landing-head">LANDING<span>${gl?`${fmt(gl.elevation)} above grade`:''}</span></div><div class="editor-fields landing-fields"><label>Landing width<input data-stair-field="landingWidth" value="${fmt(L.width)}" inputmode="text"></label><label>Landing depth<input data-stair-field="landingDepth" value="${fmt(L.depth)}" inputmode="text"></label><label>Landing height above grade<input data-stair-field="landingElevation" value="${fmt(L.elevation)}" inputmode="text"></label></div>
    <p class="group-title landing-sub">Lower flight</p><div class="seg turns" data-stair-turns>${[['straight','Straight'],['left','↰ Turn left'],['right','Turn right ↱']].map(([v,t])=>`<button type="button" data-action="stair-turn" data-value="${v}" class="${(L.turn||'straight')===v?'selected':''}" aria-pressed="${(L.turn||'straight')===v}" ${v!=='straight'&&stair.width>core.MAX_TURN_WIDTH?'disabled':''}>${t}</button>`).join('')}</div>
@@ -4425,7 +4510,15 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
    if(state.framingDetails){
      html=`<div class="action-row"><button data-action="framing-details">← Back to framing choices</button></div><div class="framing-summary"><b>Proposed framing measurements</b><br>${m.stats.joistNominal} @ ${m.stats.joistSpacingIn} in OC · ${m.counts.beams} beam segments · ${m.counts.posts} posts<br>Ledgers: ${ledgerCount} (${m.stats.ledgerEdges.map(i=>i+1).join(', ')||'none'}) · Joist overhang ${fmt(m.stats.maxFrontCantFt)} · Beam-end ${fmt(m.stats.maxBeamCantFt)}<br>${warning}</div>`;
    }else{
-     html=`<div class="compact-intro">Step 3: Choose your framing support and beam style before stairs and finishes. Each house wall starts with a ledger; tap L/− on that wall to change it.</div><div class="control-group"><p class="group-title">Framing support</p>${seg('supportMode',[['ledger','Wall ledgers'],['freestanding','Freestanding']],q.supportMode)}</div><div class="control-group"><p class="group-title">Beam arrangement</p>${seg('beamStyle',[['dropped','Dropped beam'],['flush','Flush beam*']],q.beamStyle)}</div>${state.framingStatus&&state.framingStatus!=='current'?`<div class="framing-pending ${state.framingStatus}">${state.framingStatus==='invalid'?'Framing can’t be generated until the outline is fixed.':state.framingStatus==='calculating'?'Updating framing…':'The framing below is from before your last change.'}${state.framingStatus==='pending'?' <button type="button" data-action="framing-update">Update framing</button>':''}</div>`:''}<div class="framing-summary">${m.stats.joistNominal} @ ${m.stats.joistSpacingIn} in · ${m.counts.ledger} ledger(s) · ${m.counts.beams} beams · ${m.counts.posts} posts · ${m.stats.unresolvedJoistRuns?'⚠ Bearing review':'Preliminary · production review required'}</div><div class="action-row"><button data-action="framing-details">View framing measurements →</button></div>`;
+     // V5.3 C5: the same choices and figures, laid out to read clearly (presentation only).
+     const es=m.geometry.edges,ledgerMode=q.supportMode==='ledger',ja=m.geometry.joistAxis||[0,1],unresolved=m.stats.unresolvedJoistRuns;
+     html=`<div class="control-group"><p class="group-title">How the deck is supported</p>${seg('supportMode',[['ledger','Attached to house (ledger)'],['freestanding','Freestanding']],q.supportMode)}<p class="support-explain">${ledgerMode?'A ledger board fastened to the house carries that side of the deck. Every house wall gets a ledger unless you turn it off below.':'Nothing is fastened to the house; extra posts and a beam carry the house side.'}</p></div>`
+      +(q.houseEdges.length?`<div class="control-group"><p class="group-title">House walls</p><div class="ledger-list">${q.houseEdges.map(i=>{const e=es[i],on=ledgerMode&&q.ledgerEdges.includes(i);return `<div class="ledger-row ${on?'on':''}" data-ledger-edge="${i}"><div class="ledger-name"><b>${wallName(es,i)} · edge ${i+1}</b><span>${e?fmt(e.len):''} · ${on?'Ledger ✓':ledgerMode?'No ledger':'No ledger (freestanding)'}</span></div><button type="button" data-action="ledger-toggle" data-edge="${i}">${on?'Remove ledger':'Add ledger'}</button></div>`;}).join('')}</div><p class="support-explain">You can also tap L / − on a house wall in the plan.</p></div>`:`<p class="support-explain">No house walls are set, so the deck is freestanding.</p>`)
+      +`<div class="control-group"><p class="group-title">Beam arrangement</p>${seg('beamStyle',[['dropped','Dropped beam'],['flush','Flush beam*']],q.beamStyle)}</div>`
+      +`${state.framingStatus&&state.framingStatus!=='current'?`<div class="framing-pending ${state.framingStatus}">${state.framingStatus==='invalid'?'Framing can’t be generated until the outline is fixed.':state.framingStatus==='calculating'?'Updating framing…':'The framing below is from before your last change.'}${state.framingStatus==='pending'?' <button type="button" data-action="framing-update">Update framing</button>':''}</div>`:''}`
+      +`<div class="framing-summary">Joists ${m.stats.joistNominal} at ${m.stats.joistSpacingIn} in. on center, running ${Math.abs(ja[0])>=Math.abs(ja[1])?'left–right':'top–bottom'} on the plan · ${m.counts.ledger} ledger${m.counts.ledger===1?'':'s'} · ${m.counts.beams} beam${m.counts.beams===1?'':'s'} · ${m.counts.posts} posts</div>`
+      +`<div class="framing-status" data-note="framing-status"><b>${unresolved?`⚠ ${unresolved} joist bearing${unresolved===1?'':'s'} not yet verified`:'Preliminary framing concept'}</b>Not engineered or code-approved. AOS production review is required before construction.</div>`
+      +`<div class="action-row"><button data-action="framing-details">View framing measurements →</button></div>`;
    }
  }
  if(s===7&&q)html=renderReviewPanel(q);
@@ -4438,7 +4531,7 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
 // space in this preview's database (follows them to any device that opens the same link;
 // nobody else, the owner included, can read it). Anywhere else (the HTML file opened in a
 // browser), in this browser's local storage on this device. The UI always says which.
-const APP_VERSION='5.3-c4',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
+const APP_VERSION='5.3-c5',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
 const localProjects={kind:'browser',
  read(){try{const v=JSON.parse(localStorage.getItem(LOCAL_PROJECTS)||'{}');return v&&typeof v==='object'?v:{};}catch(e){return null;}},
  write(m){localStorage.setItem(LOCAL_PROJECTS,JSON.stringify(m));},
@@ -4488,7 +4581,7 @@ async function listProjects(){const store=await projectStore.ready();let rows=[]
  return {store,rows:rows.filter(r=>r&&r.id&&r.design).sort((a,b)=>String(b.updated).localeCompare(String(a.updated)))};}
 const whenText=iso=>{const d=new Date(iso);if(isNaN(d))return '';const diff=(Date.now()-d)/60000;
  return diff<1?'just now':diff<60?`${Math.round(diff)} min ago`:diff<1440&&d.getDate()===new Date().getDate()?d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):d.toLocaleDateString([],{month:'short',day:'numeric',year:d.getFullYear()===new Date().getFullYear()?undefined:'numeric'});};
-function resetForProject(){state.reviewReturn=false;state.freeDraw=false;state.freePts=[];state.shapePicker=false;state.selectedEdge=null;state.selectedCorner=null;state.railTarget='all';state.stairSelected=0;state.dividerSelected=0;state.featureSelected=null;state._fitted=false;}
+function resetForProject(){state.reviewReturn=false;state.posError=null;state.edgeError=null;state.freeDraw=false;state.freePts=[];state.shapePicker=false;state.selectedEdge=null;state.selectedCorner=null;state.railTarget='all';state.stairSelected=0;state.dividerSelected=0;state.featureSelected=null;state._fitted=false;}
 function loadDesign(design,{id=null,created=null,name}={}){resetForProject();
  const q=core.migrate({design}).intent;if(name)q.project=name;
  state.projectId=id;state.projectCreated=created;setProject(q,false);
@@ -4538,6 +4631,9 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
  if(act==='adjust'){const i=Number(b.dataset.adjust);if(STEP_FLOW.includes(i)&&i!==7){state.reviewReturn=true;if(i===0)selectionClear();stepTo(i);}return;} // C3 cleanup: the Shape & Size shortcut closes a left-open edge/corner editor (as Done/Cancel do); geometry is untouched
  if(act==='return-review'){stepTo(7);return;}
  if(act==='pdf-preview'){openPdfPreview();return;} // V5.3 C4
+ if(act==='pos-side'){state[b.dataset.target==='stair'?'stairRef':'openingRef']=b.dataset.value==='right'?'right':'left';state.posError=null;renderPanel();planDraw();return;} // V5.3 C5
+ if(act==='ledger-toggle'){toggleLedger(Number(b.dataset.edge));return;} // V5.3 C5
+ if(act==='pos-apply'){const f=$('stepContent').querySelector(`input[data-${b.dataset.target}-field="edge"]`);if(f)f.dispatchEvent(new Event('change',{bubbles:true}));return;}
  if(act==='divider-add'){addDivider();return;}
  if(act==='divider-remove'){removeDivider();return;}
  if(act==='divider-remove-all'){removeAllDividers();return;}
@@ -4764,7 +4860,8 @@ $('stepContent').addEventListener('change',e=>{const slider=e.target.closest('in
    }else if(f==='feature-position')state.featureDraft.fraction=clamp(Number(val)/100,.05,.95);
    state.previewPoly=null;state.pendingShapeResult=null;renderPanel();planDraw();return;
  }
- const of=e.target.closest('input[data-opening-field]');if(of){const o=openingSel();if(!o)return;const key=of.dataset.openingField,v=parseFeet(of.value);
+ const of=e.target.closest('input[data-opening-field]');if(of&&of.dataset.openingField==='edge'){const o=openingSel();if(!o)return;applyOpeningSide(o,of.value);return;} // V5.3 C5
+ if(of){const o=openingSel();if(!o)return;const key=of.dataset.openingField,v=parseFeet(of.value);
    if(!Number.isFinite(v)){toast('Enter a measurement like 3′ 0″, 3 0 or 3.');renderPanel();return;}
    const T=core.OPENING_TYPES[o.type],val=key==='offset'?Math.round(v*48)/48:Math.round(v*48)/48;
    const lim=key==='width'?T.w:key==='height'?T.h:key==='sill'?T.sill:null;
@@ -4778,7 +4875,8 @@ $('stepContent').addEventListener('change',e=>{const slider=e.target.closest('in
    changeSurface({[key]:val});return;}
  const ps=e.target.closest('select[data-opening-preset]');if(ps){if(!ps.value)return;const [w,h]=ps.value.split('x').map(Number),o=openingSel();if(!o)return;
    const up={width:w/12,height:h/12};if(o.type==='window'&&o.sill+h/12>core.OPENING_MAX_TOP)up.sill=core.OPENING_MAX_TOP-h/12;changeOpening(up,`${core.OPENING_TYPES[o.type].label} set to ${inchSize(w/12,h/12)}.`);return;}
- const ss=e.target.closest('input[data-stair-field]');if(ss){
+ const ss=e.target.closest('input[data-stair-field]');if(ss&&ss.dataset.stairField==='edge'){applyStairSide(ss.value);return;} // V5.3 C5
+ if(ss){
    const val=ss.dataset.stairField,number=parseFeet(ss.value);
    if(!Number.isFinite(number)){toast('Enter a valid measurement.');renderPanel();return;}
    const stair=currentStair();if(!stair)return;
@@ -4861,7 +4959,12 @@ function fit2d(){
 }
 function polygonPath(p){ctx.beginPath();p.forEach((v,i)=>{const t=xy(v[0],v[1]);i?ctx.lineTo(...t):ctx.moveTo(...t);});ctx.closePath();}
 function shapePart(p){if(p.footprint){ctx.save();ctx.beginPath();p.footprint.forEach((pt,i)=>{let v=xy(pt[0],pt[1]);i?ctx.lineTo(...v):ctx.moveTo(...v);});ctx.closePath();ctx.fillStyle=p.color;ctx.fill();/* Seal antialias hairlines between clipped triangles using their own fill color; do not draw dark triangulation edges. */ctx.strokeStyle=p.color;ctx.lineWidth=1.2;ctx.stroke();ctx.restore();return;}const [x,y]=xy(p.x,p.z),sc=state.plan.scale;ctx.save();ctx.translate(x,y);ctx.rotate(-(p.yaw||0));ctx.fillStyle=p.color;ctx.fillRect(-p.w*sc/2,-p.d*sc/2,p.w*sc,p.d*sc);if(['field-board','picture-frame','divider-board','stair-tread'].includes(p.kind)){ctx.strokeStyle='rgba(50,37,28,.3)';ctx.lineWidth=.65;ctx.strokeRect(-p.w*sc/2,-p.d*sc/2,p.w*sc,p.d*sc);}ctx.restore();}
-function dimLabel(t,x,y,vertical=false,editable=false){ctx.save();ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';if(vertical){const a=typeof vertical==='number'?vertical:Math.PI/2;ctx.translate(x,y);ctx.rotate((a>Math.PI/2&&a<3*Math.PI/2)?a-Math.PI:a);x=0;y=0;}const w=ctx.measureText(t).width+16;ctx.fillStyle='rgba(255,255,255,.96)';ctx.strokeStyle=editable?'rgba(195,46,60,.56)':'#d8e1e5';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(x-w/2,y-12,w,24,5);ctx.fill();ctx.stroke();ctx.fillStyle='#354554';ctx.fillText(t,x,y);ctx.restore();}
+// V5.3 C5: on Shape & Size every measurement is a tap target: edge lengths show a pencil (red when that
+// edge is selected); overall sizes are dark labels that open the Overall width / depth fields.
+const dimText=(t)=>state.step===0&&!state.freeDraw?`${t}  ✎`:t;
+function dimLabel(t,x,y,vertical=false,editable=false,selected=false){ctx.save();ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';if(vertical){const a=typeof vertical==='number'?vertical:Math.PI/2;ctx.translate(x,y);ctx.rotate((a>Math.PI/2&&a<3*Math.PI/2)?a-Math.PI:a);x=0;y=0;}
+ const overall=/ overall$/.test(t);if(overall&&state.step===0)editable=true;const label=editable?dimText(t):t,w=ctx.measureText(label).width+16;
+ ctx.fillStyle=selected?'#c32e3c':overall?'#253746':'rgba(255,255,255,.96)';ctx.strokeStyle=selected?'#c32e3c':overall?'#253746':editable?'#c32e3c':'#d8e1e5';ctx.lineWidth=editable&&!overall?1.4:1;ctx.beginPath();ctx.roundRect(x-w/2,y-12,w,24,5);ctx.fill();ctx.stroke();ctx.fillStyle=selected||overall?'#ffffff':'#354554';ctx.fillText(label,x,y);ctx.restore();}
 function freePlan(){ctx.save();
  const raw=state.freePts,res=raw.length>=3?closeFreeOutline(raw):null,closed=res&&!res.error?res.points:null;
  const hover=state.freeHover,closing=hover&&nearFreeStart(hover);
@@ -4889,7 +4992,7 @@ function freePlan(){ctx.save();
 function smartDimensions(es,w,h,sc,placed=[]){
  const ordered=[...es].sort((a,b)=>(a.i===state.selectedEdge?-1:0)-(b.i===state.selectedEdge?-1:0)||b.len-a.len);
  ctx.save();ctx.font='700 10px system-ui';
- for(const e of ordered){const t=fmt(e.len),tw=ctx.measureText(t).width+18;let choice=null;
+ for(const e of ordered){const t=fmt(e.len),tw=ctx.measureText(dimText(t)).width+18;let choice=null;
   for(const offset of [Math.max(.85,21/sc),Math.max(1.2,35/sc),Math.max(1.8,52/sc),Math.max(2.3,68/sc),-Math.max(.85,24/sc),-Math.max(1.4,42/sc)]){
    const pt=xy(e.mid[0]+e.n[0]*offset,e.mid[1]+e.n[1]*offset),box={l:pt[0]-tw/2,r:pt[0]+tw/2,t:pt[1]-12,b:pt[1]+12};
    if(box.l<4||box.r>w-4||box.t<4||box.b>h-4)continue;
@@ -4897,7 +5000,7 @@ function smartDimensions(es,w,h,sc,placed=[]){
    choice={pt,box};break;
   }
   if(!choice){if(e.i===state.selectedEdge){const pt=xy(...e.mid);choice={pt,box:{l:pt[0]-tw/2,r:pt[0]+tw/2,t:pt[1]-12,b:pt[1]+12}};}else continue;}
-  dimLabel(t,choice.pt[0],choice.pt[1],false,state.step===0);placed.push(choice.box);(state.measureTexts||[]).push(t);if(state.step===0)state.dimensionLabels.push({edgeIndex:e.i,box:choice.box});
+  dimLabel(t,choice.pt[0],choice.pt[1],false,state.step===0,state.step===0&&e.i===state.selectedEdge);placed.push(choice.box);(state.measureTexts||[]).push(t);if(state.step===0)state.dimensionLabels.push({edgeIndex:e.i,box:choice.box});
  }
  ctx.restore();}
 // A divider may be cut into many render polygons; handles belong to physical divider rows,
@@ -4930,13 +5033,14 @@ function measureTarget(){const q=state.intent;if(!q)return null;
  if(state.step===5&&state.railTab==='finish'&&typeof state.railTarget==='number')return {type:'edge',i:state.railTarget};
  return null;}
 // Place a label without covering another one; try a few nudges, else skip (unless forced).
-function placeMeasure(t,x,y,placed,force=false,vertical=false){ctx.save();ctx.font='700 10px system-ui';const tw=ctx.measureText(t).width+18;ctx.restore();
+function placeMeasure(t,x,y,placed,force=false,vertical=false){ctx.save();ctx.font='700 10px system-ui';const ov=/ overall$/.test(t),tw=ctx.measureText(ov?dimText(t):t).width+18;ctx.restore();
+ const hit=b=>{if(ov&&state.step===0)(state.overallLabels||(state.overallLabels=[])).push({field:vertical?'depth':'width',box:b});};
  const {w,h}=canvasSize();
  for(const dy of [0,-18,18,-36,36]){const box=vertical?{l:x-12,r:x+12,t:y+dy-tw/2,b:y+dy+tw/2}:{l:x-tw/2,r:x+tw/2,t:y+dy-12,b:y+dy+12};
    if(box.l<2||box.r>w-2||box.t<2||box.b>h-2)continue;
    if(placed.some(q=>!(q.r+3<box.l||box.r+3<q.l||q.b+3<box.t||box.b+3<q.t)))continue;
-   placed.push(box);dimLabel(t,x,y+dy,vertical);(state.measureTexts||[]).push(t);return true;}
- if(force){dimLabel(t,x,y,vertical);(state.measureTexts||[]).push(t);return true;}return false;}
+   placed.push(box);hit(box);dimLabel(t,x,y+dy,vertical);(state.measureTexts||[]).push(t);return true;}
+ if(force){hit(vertical?{l:x-12,r:x+12,t:y-tw/2,b:y+tw/2}:{l:x-tw/2,r:x+tw/2,t:y-12,b:y+12});dimLabel(t,x,y,vertical);(state.measureTexts||[]).push(t);return true;}return false;}
 function measureLine(a,b){const pa=xy(...a),pb=xy(...b);ctx.save();ctx.strokeStyle='#52677a';ctx.lineWidth=1.1;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(...pa);ctx.lineTo(...pb);ctx.stroke();ctx.setLineDash([]);
  const d=[pb[0]-pa[0],pb[1]-pa[1]],L=Math.hypot(...d)||1,n=[-d[1]/L*5,d[0]/L*5];for(const p of [pa,pb]){ctx.beginPath();ctx.moveTo(p[0]-n[0],p[1]-n[1]);ctx.lineTo(p[0]+n[0],p[1]+n[1]);ctx.stroke();}ctx.restore();}
 function drawMeasurements(q,model,es,bounds,w,h,sc){
@@ -4944,7 +5048,7 @@ function drawMeasurements(q,model,es,bounds,w,h,sc){
    // The plan announces its visible dimensions (screen readers; also read by tests).
    planCanvas.setAttribute('aria-label',state.measure==='none'?'2D plan. Dimensions hidden.':`2D plan. Dimensions: ${state.measureTexts.join(', ')||'none shown'}.`);}}
 function drawMeasurementLayer(q,model,es,bounds,w,h,sc){
- const mode=state.measure||'all';state.dimensionLabels=[];if(mode==='none')return;
+ const mode=state.measure||'all';state.dimensionLabels=[];state.overallLabels=[];if(mode==='none')return;
  const placed=[],sel=mode==='selected'?measureTarget():null,all=mode==='all';
  const P=(a,t,v)=>[a[0]+t[0]*v,a[1]+t[1]*v];
  for(const g of model.geometry.stairs||[]){const c=[P(P(g.base,g.tt,-g.width/2),g.nn,0),P(P(g.base,g.tt,g.width/2),g.nn,0),P(P(g.base,g.tt,g.width/2),g.nn,g.run),P(P(g.base,g.tt,-g.width/2),g.nn,g.run)].map(v=>xy(...v));
@@ -5126,6 +5230,7 @@ function planDraw(){const {w,h}=canvasSize(),sc=state.plan.scale;ctx.fillStyle='
    }
  }
 
+ drawPositionGuide(q); // V5.3 C5: on top of everything else
 }
 function nearestEdge(pt){const es=state.model.geometry.edges,threshold=(window.innerWidth<801?32:23)/state.plan.scale;let match=null,dist=threshold;
  for(let e of es){const diff=[pt[0]-e.a[0],pt[1]-e.a[1]],u=clamp(diff[0]*e.t[0]+diff[1]*e.t[1],0,e.len),x=e.a[0]+u*e.t[0],z=e.a[1]+u*e.t[1],d=Math.hypot(pt[0]-x,pt[1]-z);if(d<dist){match=e;dist=d;}}return match;}
@@ -5143,7 +5248,7 @@ const local=e=>{let b=planCanvas.getBoundingClientRect();return {x:e.clientX-b.l
 planCanvas.addEventListener('pointerdown',e=>{
  planCanvas.setPointerCapture(e.pointerId);const l=local(e);state.plan.pointers.set(e.pointerId,l);state.plan.tap={x:l.x,y:l.y,moved:false};if(state.plan.pointers.size>1){state.plan.drag=null;state.plan.tap=null;return;}
  if(state.freeDraw||!state.intent)return;state.lastShapeError='';const p=inv(l.x,l.y);
- if(state.step===0){const dimension=hitDimensionLabel(l);if(dimension!==null){state.plan.dimensionTap=dimension;state.plan.drag=null;return;}const vertex=detectVertex(p);if(vertex>=0)state.plan.drag={type:'vertex',index:vertex,basePoly:core.polygon(state.intent),original:JSON.stringify(state.intent)};else{
+ if(state.step===0){const ov=hitOverallLabel(l);if(ov){state.plan.overallTap=ov;state.plan.drag=null;return;}const dimension=hitDimensionLabel(l);if(dimension!==null){state.plan.dimensionTap=dimension;state.plan.drag=null;return;}const vertex=detectVertex(p);if(vertex>=0)state.plan.drag={type:'vertex',index:vertex,basePoly:core.polygon(state.intent),original:JSON.stringify(state.intent)};else{
    const nearest=nearestEdge(p);if(nearest)state.plan.drag={type:'resize-edge',edge:nearest,basePoly:core.polygon(state.intent),grab:p.slice(),original:JSON.stringify(state.intent)};
  }}
  if(state.step===8){const h=surfaceHandleAt(p),sf=h||surfaceAt(p);
@@ -5166,6 +5271,7 @@ planCanvas.addEventListener('pointerdown',e=>{
  }
  if(!state.plan.drag&&e.pointerType==='mouse'&&!([1,2,5].includes(state.step)))state.plan.drag={type:'pan',px:l.x,py:l.y};
 });
+planCanvas.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&!e.buttons){const l=local(e);planCanvas.style.cursor=state.step===0&&!state.freeDraw&&(hitOverallLabel(l)||hitDimensionLabel(l)!==null)?'pointer':'';}}); // V5.3 C5
 planCanvas.addEventListener('pointermove',e=>{if(state.freeDraw&&!state.plan.pointers.has(e.pointerId)){const l=local(e);state.freeHover=inv(l.x,l.y);planDraw();return;}if(!state.plan.pointers.has(e.pointerId))return;const l=local(e),prev=state.plan.pointers.get(e.pointerId),before=[...state.plan.pointers.values()];state.plan.pointers.set(e.pointerId,l);
  if(state.plan.tap&&Math.hypot(l.x-state.plan.tap.x,l.y-state.plan.tap.y)>7)state.plan.tap.moved=true;
  if(state.plan.pointers.size===2){const after=[...state.plan.pointers.values()],a=Math.hypot(before[0].x-before[1].x,before[0].y-before[1].y),b=Math.hypot(after[0].x-after[1].x,after[0].y-after[1].y);if(a>6&&b>6)state.plan.scale=clamp(state.plan.scale*b/a,3,150);state.plan.panX+=(after[0].x+after[1].x-before[0].x-before[1].x)/2;state.plan.panY+=(after[0].y+after[1].y-before[0].y-before[1].y)/2;state.plan.tap=null;planDraw();return;}
@@ -5223,11 +5329,7 @@ function tapPlan(pt){if(state.freeDraw){if(nearFreeStart(pt)){finishFreeDraw();r
  if(state.step===8){const sf=surfaceAt(pt);if(sf){state.surfaceSelected=sf.id;renderPanel();planDraw();}return;}
  if(state.step===1&&state.houseTab==='look')return;
  if(state.step===1&&edge){toggleEdge('house',edge.i);return;}
- if(state.step===6&&edge){
-   if(!state.intent.houseEdges.includes(edge.i)){toast('Only house walls can have a ledger. Add this wall in step 2 first.');return;}
-   const q=structuredClone(state.intent),enabled=q.supportMode==='ledger'&&q.ledgerEdges.includes(edge.i);
-   q.supportMode='ledger';q.ledgerEdges=enabled?q.ledgerEdges.filter(i=>i!==edge.i):[...q.ledgerEdges,edge.i];
-   setProject(q);toast(`House edge ${edge.i+1}: ledger ${enabled?'removed':'added'}`);return;}
+ if(state.step===6&&edge){toggleLedger(edge.i);return;}
  if(state.step===2){
    const hit=insideStairs(pt);if(hit){selectStair(hit.index);return;}
    if(!edge)return;
@@ -5258,10 +5360,11 @@ function tapPlan(pt){if(state.freeDraw){if(nearFreeStart(pt)){finishFreeDraw();r
  }
 
 }
-function planEnd(e){if(!state.plan.pointers.has(e.pointerId))return;const l=local(e),tap=state.plan.tap,drag=state.plan.drag,dimensionTap=state.plan.dimensionTap;
+function planEnd(e){if(!state.plan.pointers.has(e.pointerId))return;const l=local(e),tap=state.plan.tap,drag=state.plan.drag,dimensionTap=state.plan.dimensionTap,overallTap=state.plan.overallTap;state.plan.overallTap=null;
  state.plan.pointers.delete(e.pointerId);if(state.plan.pointers.size) return;
  state.plan.drag=null;state.plan.tap=null;state.plan.dimensionTap=null;
  if(state.model?.preview&&drag&&JSON.stringify(state.intent)===drag.original){state.model=state.lastFull;setFramingStatus(state.model.stats?.invalidGeometry?'invalid':'current');planDraw();}
+ if(overallTap){if(tap&&!tap.moved)openOverallField(overallTap);return;}
  if(dimensionTap!==null&&dimensionTap!==undefined){if(tap&&!tap.moved)selectDimension(dimensionTap);return;}
  if(drag?.type==='surface'||drag?.type==='surface-resize'){state.surfaceSelected=drag.id;if(drag.next){const sf=(state.intent.surfaces||[]).find(x=>x.id===drag.id),T=sf&&core.SURFACE_TYPES[sf.type];const q=structuredClone(state.intent);Object.assign(q.surfaces.find(x=>x.id===drag.id),drag.next);setProject(q);toast(drag.type==='surface'?`${T.label} moved`:`${T.label} resized to ${fmt(drag.next.width)} × ${fmt(drag.next.length)}`);}else{if(drag.blocked)toast('Concrete surfaces cannot run into the house.');renderPanel();planDraw();}return;}
  if(drag?.type==='opening'){if(Math.abs(drag.offset-drag.start)>1e-9){state.openingSelected=drag.id;changeOpening({offset:drag.offset},'Opening moved');}else planDraw();return;}
