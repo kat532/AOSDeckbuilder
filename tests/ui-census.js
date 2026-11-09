@@ -22,6 +22,8 @@ const tapPlan = (fn) => async (page) => { const p = await page.evaluate(fn); awa
 const edgeMid = (i) => `(() => { const e = window.AOSDeckStudioTest.edges()[${i}]; return window.AOSDeckStudioTest.toScreen(e.mid[0], e.mid[1]); })()`;
 const vertex = (i) => `(() => { const e = window.AOSDeckStudioTest.edges()[${i}]; return window.AOSDeckStudioTest.toScreen(e.a[0], e.a[1]); })()`;
 async function seq(page, ...fns) { for (const f of fns) await f(page); }
+// Shape & Size keeps an edge or corner selection across steps; close it so the plain panel shows.
+async function clearShapeSelection(page) { for (const a of ['cancel-corner', 'done-edge']) { const b = page.locator(`#stepContent [data-action="${a}"]`); if (await b.count()) { await b.first().click(); await page.waitForTimeout(150); } } }
 
 // Each state starts from Shape & Size with the census design loaded.
 const STATES = [
@@ -49,7 +51,7 @@ const STATES = [
   ['9 Review & Present · Internal · Framing', (p) => seq(p, step(7), act('[data-path="reviewMode"][data-value="internal"]'), act('[data-path="reviewTab"][data-value="framing"]'))],
   // V5.3 C3: Shape & Size opened from Review's Available Adjustments shows Return to Review. Kept last:
   // the way back stays on offer until Review is reached again.
-  ['1 Shape & Size · opened from Review', (p) => seq(p, step(7), act('[data-action="adjust"][data-adjust="0"]'))],
+  ['1 Shape & Size · opened from Review', (p) => seq(p, step(0), clearShapeSelection, step(7), act('[data-action="adjust"][data-adjust="0"]'))],
 ];
 
 // Stable identity of a control: tag + id + its data-* attributes (or its text when it has none).

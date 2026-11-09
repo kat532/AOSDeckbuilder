@@ -429,6 +429,14 @@ test('free draw: hovering near the start shows the closing preview (screenshot)'
 
 // ---- V5.1 clickable steps ----
 const stepBtn = (page, name) => page.locator(`#stepdots [data-step]`, { hasText: name });
+// V5.3 C3: Review's quantities moved from one paragraph into rows of the Internal view (Materials and
+// Framing tabs). reviewRow opens Review › Internal › <tab> and returns one row's value text.
+async function reviewRow(page, tab, key) {
+  if ((await page.locator('#stepTitle').innerText()).trim() !== 'Review & Present') { await stepBtn(page, 'Review').click(); await page.waitForTimeout(200); }
+  await page.locator('#stepContent [data-path="reviewMode"][data-value="internal"]').click();
+  await page.locator(`#stepContent [data-path="reviewTab"][data-value="${tab}"]`).click(); await page.waitForTimeout(100);
+  return (await page.locator(`#stepContent [data-row="${key}"] dd`).innerText()).trim();
+}
 
 test('steps: locked until a shape exists, then every step can be opened directly', async () => {
   const { ctx, page, errors } = await openApp();
@@ -1326,8 +1334,10 @@ test('A3: landing with width, depth and height; riser-snapped height; 2D/3D/fram
   assert.match(await page.locator('#planCanvas').getAttribute('aria-label'), /Landing 6′ 0″ × 5′ 0″ · 3′ 0″ high/);
   await views(page);
   // Framing step lists the landing separately and keeps the review flag.
-  await stepBtn(page, 'Review').click();
-  assert.match(await page.locator('#stepContent').innerText(), /1 landing with 4 posts, 4 footings and \d+ framing members \(concept, not approved\)/);
+  // V5.3 C3: same facts, now in Review › Internal › Framing rows.
+  assert.match(await reviewRow(page, 'framing', 'landings'), /^1 · concept, not approved$/);
+  assert.equal(await reviewRow(page, 'framing', 'landing-posts'), '4'); assert.equal(await reviewRow(page, 'framing', 'landing-footings'), '4');
+  assert.match(await reviewRow(page, 'framing', 'landing-framing'), /^\d+$/);
   const { fresh, data } = await reopen(page, ctx);
   assert.deepEqual(data.design.staircases[0].landing, { width: 6, depth: 5, elevation: 3 });
   await stepBtn(fresh.page, 'Stairs').click();
@@ -1498,8 +1508,11 @@ test('CP3: left and right turns from the staircase editor; depth and collision l
   await stairField(page, 'width', `13' 0"`);
   assert.match(await toastText(page), /Turning stairs can be up to 12′ 0″ wide/);
   await views(page);
-  await stepBtn(page, 'Review').click();
-  assert.match(await page.locator('#stepContent').innerText(), /1 landing \(1 turning\) with \d+ posts.*Landing decking: \d+ field boards, [\d.]+ LF \(order \d+ LF with waste\) \+ 4 picture-frame boards/);
+  // V5.3 C3: same facts, now in Review › Internal rows (Framing: landings and posts; Materials: landing decking).
+  assert.match(await reviewRow(page, 'framing', 'landings'), /^1 \(1 turning\) · concept, not approved$/);
+  assert.match(await reviewRow(page, 'framing', 'landing-posts'), /^\d+$/);
+  assert.match(await reviewRow(page, 'materials', 'landing-field'), /^[\d.]+ LF · \d+ boards\nOrder \d+ LF with waste$/);
+  assert.match(await reviewRow(page, 'materials', 'landing-frame'), /^[\d.]+ LF · 4 boards\n/);
   let { data } = await saveFile(page);
   assert.equal(data.design.staircases[0].landing.turn, good);
   assert.equal(data.design.staircases.length, 2);
@@ -1651,8 +1664,9 @@ test('CP3 fix: framing-only 3D shows the landing picture-frame support; it follo
   await stepBtn(page, 'Stairs').click();
   await page.locator('#stepContent [data-action="landing-deckline"][data-value="horizontal"]').click(); await page.waitForTimeout(400);
   assert.equal(count(await scene3d(page)).fieldEnd, 0);
-  await stepBtn(page, 'Review').click();
-  assert.match(await page.locator('#stepContent').innerText(), /framing members \(concept, not approved\), plus \d+ flat 2×6 runs \([\d.]+ LF\)/);
+  // V5.3 C3: same facts, now in Review › Internal › Framing rows.
+  assert.match(await reviewRow(page, 'framing', 'landings'), /concept, not approved/); assert.match(await reviewRow(page, 'framing', 'landing-framing'), /^\d+$/);
+  assert.match(await reviewRow(page, 'framing', 'landing-flat'), /^\d+ runs? · [\d.]+ LF$/);
   const { fresh } = await reopen(page, ctx);
   await fresh.page.locator('#mode3d').click(); await fresh.page.waitForTimeout(400);
   assert.deepEqual(count(await scene3d(fresh.page)), count(await scene3d(page)), 'reopened with the same landing framing');
@@ -1908,8 +1922,11 @@ test('B2: picture frame none/single/double, house walls excluded unless switched
   assert.ok((await deckingOf(page)).view3d.blocks > 0, 'blocking drawn in framing-only 3D');
   fs.writeFileSync(path.join(SHOTS, 'b2-blocking-framing.png'), await page.locator('#glCanvas').screenshot());
   await page.locator('#structureToggle').click(); await page.locator('#mode2d').click();
-  await stepBtn(page, 'Review').click();
-  assert.match(await page.locator('#stepContent').innerText(), /Decking \(diagonal left\): field \d+ LF in \d+ pieces .*order \d+ LF with 15% waste\); picture frame \d+ LF, 8 boards .*supplemental blocks under field-board ends \(concept\)/);
+  // V5.3 C3: same facts, now in Review › Internal › Materials (decking section and rows).
+  assert.match(await reviewRow(page, 'materials', 'field'), /^\d+ LF · \d+ boards\nStock: .+\nOrder \d+ LF with 15% waste$/);
+  assert.match(await page.locator('#stepContent [data-section="decking"] h3').innerText(), /diagonal left/i);
+  assert.match(await reviewRow(page, 'materials', 'picture-frame'), /^\d+ LF · 8 boards/);
+  assert.match(await reviewRow(page, 'materials', 'field-end-blocks'), /^\d+ supplemental blocks \(concept\)$/);
   const { fresh, data } = await reopen(page, ctx);
   assert.equal(data.design.frameHouseWalls, true); assert.equal(data.design.borderCount, 2);
   assert.equal((await deckingOf(fresh.page)).plan.materials.decking.pictureFrame.pieces, 8);
@@ -1983,8 +2000,9 @@ test('B2 fix: framing-only 3D draws the landing flat 2x6 runs; they follow the f
   assert.equal((await flats()).length, 0, 'no frame: none');
   await page.locator('#undoBtn').click(); await page.waitForTimeout(400);
   assert.equal((await flats()).length, 4, 'Undo');
-  await stepBtn(page, 'Review').click();
-  assert.match(await page.locator('#stepContent').innerText(), /framing members \(concept, not approved\), plus 4 flat 2×6 runs \([\d.]+ LF\)/);
+  // V5.3 C3: same facts, now in Review › Internal › Framing rows.
+  assert.match(await reviewRow(page, 'framing', 'landings'), /concept, not approved/); assert.match(await reviewRow(page, 'framing', 'landing-framing'), /^\d+$/);
+  assert.match(await reviewRow(page, 'framing', 'landing-flat'), /^4 runs · [\d.]+ LF$/);
   const { fresh } = await reopen(page, ctx);
   await fresh.page.locator('#mode3d').click(); await fresh.page.waitForTimeout(400);
   assert.equal((await scene3d(fresh.page)).parts.filter(p => p.kind === 'landing-flat-2x6').length, 4, 'reopened');
