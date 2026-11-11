@@ -306,7 +306,7 @@ body.pdf-open{overflow:hidden}
     <div class="workspace-top">
       <div class="mode-switch" role="group" aria-label="View mode"><button id="mode2d" class="viewmode active" aria-pressed="true">◫ <span>2D PLAN</span></button><button id="mode3d" class="viewmode" aria-pressed="false">⬡ <span>3D DECK</span></button></div>
       <div class="workspace-extras"><span id="modelBadge" class="countbadge">READY TO DESIGN</span><span id="framingStatus" class="framingstatus" role="status" aria-live="polite" hidden></span><span id="squareFeet" class="sqft"></span></div>
-      <div class="viewbuttons"><button id="measureBtn" class="measurebtn" type="button" title="Dimensions: All, Selected or Off" aria-label="Dimensions: All. Tap to change.">Dims <b>All</b></button><button id="zoomOut" class="iconbtn" title="Zoom out" aria-label="Zoom out">−</button><button id="zoomIn" class="iconbtn" title="Zoom in" aria-label="Zoom in">+</button><button id="fitBtn" class="iconbtn fit" title="Fit drawing to screen" aria-label="Fit view">⌗</button></div>
+      <div class="viewbuttons"><button id="measureBtn" class="measurebtn" type="button" title="Dimensions on the plan: All, only the Selected item, or Off. Tap to change." aria-label="Dimensions: All. Tap to change.">Dims <b>All</b></button><button id="zoomOut" class="iconbtn" title="Zoom out" aria-label="Zoom out">−</button><button id="zoomIn" class="iconbtn" title="Zoom in" aria-label="Zoom in">+</button><button id="fitBtn" class="iconbtn fit" title="Fit drawing to screen" aria-label="Fit view">⌗</button></div>
     </div>
     <div class="viewport" id="viewport">
       <div class="camera-tools" id="cameraTools" role="group" aria-label="3D camera controls" hidden>
@@ -3983,6 +3983,17 @@ function drawPositionGuide(q){let kind=null,edge,offset,w,viewer;const sc=state.
    for(const p of [a,b]){ctx.beginPath();ctx.arc(p[0],p[1],2.6,0,Math.PI*2);ctx.fillStyle='#c32e3c';ctx.fill();}
    if(D>.2){const m=xy(...P(P(end,u,D/2),inn,ln+Math.max(.5,14/sc)));ctx.restore();dimLabel(`${side==='left'?'L':'R'} ${exactEdgeLabel(D)}`,m[0],m[1]);return;}}
  ctx.restore();}
+// V5.3 R1: the screen boxes drawPositionGuide will use (same geometry), so measurements keep clear of them.
+function positionGuideMarks(q){let kind=null,edge,offset,w,viewer;const sc=state.plan.scale,out=[];
+ if(state.step===1&&state.houseTab==='walls'){const o=openingSel();if(!o||!q.houseEdges.includes(o.edge))return out;kind='opening';edge=o.edge;offset=o.offset;w=o.width;viewer='house';}
+ else if(state.step===2){const st=currentStair();if(!st||st.fullWidth)return out;kind='stair';edge=st.edge;offset=st.offset;w=st.width;viewer='stair';}else return out;
+ const f=sideFrame(q,edge,viewer);if(!f)return out;const side=(kind==='opening'?state.openingRef:state.stairRef)==='right'?'right':'left',inn=[-f.n[0],-f.n[1]];
+ const P=(p,d,k)=>[p[0]+d[0]*k,p[1]+d[1]*k],deep=Math.max(.7,20/sc),ln=Math.max(.9,26/sc);
+ for(const end of [f.leftEnd,f.rightEnd]){const c=xy(...P(end,inn,deep));out.push({l:c[0]-13,r:c[0]+13,t:c[1]-13,b:c[1]+13,mark:true});}
+ if(kind==='opening'){const D=sideDist(f,offset,w,side),end=side==='left'?f.leftEnd:f.rightEnd,other=side==='left'?f.rightEnd:f.leftEnd,u=[(other[0]-end[0])/f.len,(other[1]-end[1])/f.len];
+   const a=xy(...P(end,inn,ln)),b=xy(...P(P(end,u,D),inn,ln));out.push({l:Math.min(a[0],b[0])-3,r:Math.max(a[0],b[0])+3,t:Math.min(a[1],b[1])-3,b:Math.max(a[1],b[1])+3,mark:true});
+   if(D>.2){const m=xy(...P(P(end,u,D/2),inn,ln+Math.max(.5,14/sc)));ctx.save();ctx.font='700 10px system-ui';const tw=ctx.measureText(`${side==='left'?'L':'R'} ${exactEdgeLabel(D)}`).width+16;ctx.restore();out.push({l:m[0]-tw/2,r:m[0]+tw/2,t:m[1]-12,b:m[1]+12,mark:true});}}
+ return out;}
 // The plan's L / − tap and the Framing panel's per-wall buttons share one action (V5.3 C5 moved it here unchanged).
 function toggleLedger(i){
  if(!state.intent.houseEdges.includes(i)){toast('Only house walls can have a ledger. Add this wall in step 2 first.');return;}
@@ -5024,7 +5035,7 @@ $('projectName').addEventListener('change',e=>{const v=e.target.value.trim().sli
  if(!state.intent){$('newPlanName').value=v;return;}
  if(!v){e.target.value=state.intent.project;toast('A plan needs a name. Type a new name to rename it.');return;}
  if(v!==state.intent.project)patch('project',v);});
-$('measureBtn').onclick=()=>setMeasureMode(MEASURE_MODES[(MEASURE_MODES.indexOf(state.measure||'all')+1)%MEASURE_MODES.length]);
+$('measureBtn').onclick=()=>{const v=MEASURE_MODES[(MEASURE_MODES.indexOf(state.measure||'all')+1)%MEASURE_MODES.length];setMeasureMode(v);toast(v==='all'?'Dimensions: All · every measurement on the plan':v==='selected'?'Dimensions: Selected · only the edge, stair or divider you select':'Dimensions: Off · no measurements on the plan');};
 $('zoomIn').onclick=()=>state.view==='2d'?(state.plan.scale*=1.18,planDraw()):renderer3d.zoom(.85);
 $('zoomOut').onclick=()=>state.view==='2d'?(state.plan.scale/=1.18,planDraw()):renderer3d.zoom(1.18);
 $('fitBtn').onclick=()=>state.view==='2d'?fit2d():renderer3d.fit(); // 3D Fit also recenters the movable orbit target.
@@ -5053,8 +5064,9 @@ function shapePart(p){if(p.footprint){ctx.save();ctx.beginPath();p.footprint.for
 // V5.3 C5: on Shape & Size every measurement is a tap target: edge lengths show a pencil (red when that
 // edge is selected); overall sizes are dark labels that open the Overall width / depth fields.
 const dimText=(t)=>state.step===0&&!state.freeDraw?`${t}  ✎`:t;
-function dimLabel(t,x,y,vertical=false,editable=false,selected=false){ctx.save();ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';if(vertical){const a=typeof vertical==='number'?vertical:Math.PI/2;ctx.translate(x,y);ctx.rotate((a>Math.PI/2&&a<3*Math.PI/2)?a-Math.PI:a);x=0;y=0;}
+function dimLabel(t,x,y,vertical=false,editable=false,selected=false){const X0=x,Y0=y;ctx.save();ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';if(vertical){const a=typeof vertical==='number'?vertical:Math.PI/2;ctx.translate(x,y);ctx.rotate((a>Math.PI/2&&a<3*Math.PI/2)?a-Math.PI:a);x=0;y=0;}
  const overall=/ overall$/.test(t);if(overall&&state.step===0)editable=true;const label=editable?dimText(t):t,w=ctx.measureText(label).width+16;
+ if(state.planLabelBoxes)state.planLabelBoxes.push(vertical?{text:label,l:X0-12,r:X0+12,t:Y0-w/2,b:Y0+w/2}:{text:label,l:X0-w/2,r:X0+w/2,t:Y0-12,b:Y0+12}); // V5.3 R1 (read-only test record)
  ctx.fillStyle=selected?'#c32e3c':overall?'#253746':'rgba(255,255,255,.96)';ctx.strokeStyle=selected?'#c32e3c':overall?'#253746':editable?'#c32e3c':'#d8e1e5';ctx.lineWidth=editable&&!overall?1.4:1;ctx.beginPath();ctx.roundRect(x-w/2,y-12,w,24,5);ctx.fill();ctx.stroke();ctx.fillStyle=selected||overall?'#ffffff':'#354554';ctx.fillText(label,x,y);ctx.restore();}
 function freePlan(){ctx.save();
  const raw=state.freePts,res=raw.length>=3?closeFreeOutline(raw):null,closed=res&&!res.error?res.points:null;
@@ -5084,8 +5096,12 @@ function smartDimensions(es,w,h,sc,placed=[]){
  const ordered=[...es].sort((a,b)=>(a.i===state.selectedEdge?-1:0)-(b.i===state.selectedEdge?-1:0)||b.len-a.len);
  ctx.save();ctx.font='700 10px system-ui';
  for(const e of ordered){const t=fmt(e.len),tw=ctx.measureText(dimText(t)).width+18;let choice=null;
-  for(const offset of [Math.max(.85,21/sc),Math.max(1.2,35/sc),Math.max(1.8,52/sc),Math.max(2.3,68/sc),-Math.max(.85,24/sc),-Math.max(1.4,42/sc)]){
-   const pt=xy(e.mid[0]+e.n[0]*offset,e.mid[1]+e.n[1]*offset),box={l:pt[0]-tw/2,r:pt[0]+tw/2,t:pt[1]-12,b:pt[1]+12};
+  // V5.3 R1: outside the outline first (further out, then slid along the edge), inside only as a last resort.
+  const along=[0,.28,-.28,.4,-.4].map(f=>f*e.len).filter(v=>Math.abs(v)<=Math.max(0,e.len/2-tw/2/sc));
+  const tries=[];for(const offset of [Math.max(.85,21/sc),Math.max(1.2,35/sc),Math.max(1.8,52/sc),Math.max(2.3,68/sc),Math.max(2.9,86/sc),Math.max(3.5,104/sc)])for(const a of along)tries.push([offset,a]);
+  for(const offset of [-Math.max(.85,24/sc),-Math.max(1.4,42/sc),-Math.max(2,60/sc)])for(const a of along)tries.push([offset,a]);
+  for(const [offset,a] of tries){
+   const pt=xy(e.mid[0]+e.n[0]*offset+e.t[0]*a,e.mid[1]+e.n[1]*offset+e.t[1]*a),box={l:pt[0]-tw/2,r:pt[0]+tw/2,t:pt[1]-12,b:pt[1]+12};
    if(box.l<4||box.r>w-4||box.t<4||box.b>h-4)continue;
    if(placed.some(q=>!(q.r+4<box.l||box.r+4<q.l||q.b+4<box.t||box.b+4<q.t)))continue;
    choice={pt,box};break;
@@ -5109,6 +5125,22 @@ function dividerHandleCenters(model){
  }
  return centers;
 }
+// V5.3 R1: screen boxes of the plan markers and labels that measurements must not cover.
+function reservedPlanMarks(q,model,es){const out=[],box=(x,y,r)=>out.push({l:x-r,r:x+r,t:y-r,b:y+r,mark:true}),sc=state.plan.scale;
+ if([1,2,5,6].includes(state.step))for(const e of es){const c=xy(e.mid[0],e.mid[1]);box(c[0],c[1],state.step===5&&state.railTab==='finish'&&q.railEdges.includes(e.i)?17:15);}
+ if(state.step===0)for(const v of model.geometry.poly){const c=xy(...v);box(c[0],c[1],13);}
+ for(const [k,g] of (model.geometry.stairs||[]).entries()){
+   if(state.step===2){const c=xy(g.base[0]+g.nn[0]*g.run*.55,g.base[1]+g.nn[1]*g.run*.55);box(c[0],c[1],16);}
+   if(state.step===5)for(const side of [-1,1]){const t=xy(g.base[0]+g.tt[0]*(side*g.width/2)+g.nn[0]*g.run/2,g.base[1]+g.tt[1]*(side*g.width/2)+g.nn[1]*g.run/2);box(t[0],t[1],14);}}
+ if(state.step===3&&state.layoutTab==='border')for(const c of dividerHandleCenters(model)){if(!c)continue;const t=xy(...c);box(t[0],t[1],15);}
+ for(const o of q.openings||[]){const sp=openingSpan(o,es);if(!sp)continue;const A=xy(sp.a[0]+sp.e.n[0]*.12,sp.a[1]+sp.e.n[1]*.12),B=xy(sp.b[0]+sp.e.n[0]*.12,sp.b[1]+sp.e.n[1]*.12),r=Math.max(5,sc*.28);
+   out.push({l:Math.min(A[0],B[0])-r,r:Math.max(A[0],B[0])+r,t:Math.min(A[1],B[1])-r,b:Math.max(A[1],B[1])+r,mark:true});}
+ out.push(...positionGuideMarks(q));
+ const geo=model.geometry.surfaces||[];
+ for(const sf of q.surfaces||[]){if((geo.find(g=>g.id===sf.id)?.status||'ok')!=='ok'||sc*Math.min(sf.width,sf.length)<=34)continue;
+   ctx.save();ctx.font='700 11px system-ui';const t=`${core.SURFACE_TYPES[sf.type].label} ${fmt(sf.width)} × ${fmt(sf.length)}`,w=ctx.measureText(t).width/2+4;ctx.restore();
+   const m=xy(sf.x,sf.z);out.push({l:m[0]-w,r:m[0]+w,t:m[1]-9,b:m[1]+9,mark:true});}
+ return out;}
 // ---- V5.1 measurements: All / Selected / Off, drawn from the live model ----
 const MEASURE_MODES=['all','selected','none'],MEASURE_LABEL={all:'All',selected:'Selected',none:'Off'};
 function loadMeasureMode(){try{const v=localStorage.getItem('aosDeckStudio.measure');return MEASURE_MODES.includes(v)?v:'all';}catch(e){return 'all';}}
@@ -5127,10 +5159,13 @@ function measureTarget(){const q=state.intent;if(!q)return null;
 function placeMeasure(t,x,y,placed,force=false,vertical=false){ctx.save();ctx.font='700 10px system-ui';const ov=/ overall$/.test(t),tw=ctx.measureText(ov?dimText(t):t).width+18;ctx.restore();
  const hit=b=>{if(ov&&state.step===0)(state.overallLabels||(state.overallLabels=[])).push({field:vertical?'depth':'width',box:b});};
  const {w,h}=canvasSize();
- for(const dy of [0,-18,18,-36,36]){const box=vertical?{l:x-12,r:x+12,t:y+dy-tw/2,b:y+dy+tw/2}:{l:x-tw/2,r:x+tw/2,t:y+dy-12,b:y+dy+12};
+ // V5.3 R1: also try sideways nudges, so a label moves around a badge or handle instead of disappearing.
+ // The first five tries are the C6 ones, in the same order, so labels that fitted before stay put.
+ const nudges=[];for(const dx of [0,-.6,.6,-1.1,1.1])for(const dy of [0,-18,18,-36,36,-54,54])nudges.push([dx*(vertical?24:tw),dy]);
+ for(const [ox,oy] of nudges){const box=vertical?{l:x+ox-12,r:x+ox+12,t:y+oy-tw/2,b:y+oy+tw/2}:{l:x+ox-tw/2,r:x+ox+tw/2,t:y+oy-12,b:y+oy+12};
    if(box.l<2||box.r>w-2||box.t<2||box.b>h-2)continue;
    if(placed.some(q=>!(q.r+3<box.l||box.r+3<q.l||q.b+3<box.t||box.b+3<q.t)))continue;
-   placed.push(box);hit(box);dimLabel(t,x,y+dy,vertical);(state.measureTexts||[]).push(t);return true;}
+   placed.push(box);hit(box);dimLabel(t,x+ox,y+oy,vertical);(state.measureTexts||[]).push(t);return true;}
  if(force){hit(vertical?{l:x-12,r:x+12,t:y-tw/2,b:y+tw/2}:{l:x-tw/2,r:x+tw/2,t:y-12,b:y+12});dimLabel(t,x,y,vertical);(state.measureTexts||[]).push(t);return true;}return false;}
 function measureLine(a,b){const pa=xy(...a),pb=xy(...b);ctx.save();ctx.strokeStyle='#52677a';ctx.lineWidth=1.1;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(...pa);ctx.lineTo(...pb);ctx.stroke();ctx.setLineDash([]);
  const d=[pb[0]-pa[0],pb[1]-pa[1]],L=Math.hypot(...d)||1,n=[-d[1]/L*5,d[0]/L*5];for(const p of [pa,pb]){ctx.beginPath();ctx.moveTo(p[0]-n[0],p[1]-n[1]);ctx.lineTo(p[0]+n[0],p[1]+n[1]);ctx.stroke();}ctx.restore();}
@@ -5140,26 +5175,26 @@ function drawMeasurements(q,model,es,bounds,w,h,sc){
    planCanvas.setAttribute('aria-label',state.measure==='none'?'2D plan. Dimensions hidden.':`2D plan. Dimensions: ${state.measureTexts.join(', ')||'none shown'}.`);}}
 function drawMeasurementLayer(q,model,es,bounds,w,h,sc){
  const mode=state.measure||'all';state.dimensionLabels=[];state.overallLabels=[];if(mode==='none')return;
- const placed=[],sel=mode==='selected'?measureTarget():null,all=mode==='all';
+ // V5.3 R1: measurements keep clear of everything else drawn on the plan (edge badges, stair and divider
+ // handles, stair-rail toggles, corner handles, door/window lines and patio labels), not only of each other.
+ const placed=reservedPlanMarks(q,model,es),sel=mode==='selected'?measureTarget():null,all=mode==='all';
+ state.planReservedBoxes=placed.map(b=>({l:b.l,r:b.r,t:b.t,b:b.b}));
  const P=(a,t,v)=>[a[0]+t[0]*v,a[1]+t[1]*v];
  for(const g of model.geometry.stairs||[]){const c=[P(P(g.base,g.tt,-g.width/2),g.nn,0),P(P(g.base,g.tt,g.width/2),g.nn,0),P(P(g.base,g.tt,g.width/2),g.nn,g.run),P(P(g.base,g.tt,-g.width/2),g.nn,g.run)].map(v=>xy(...v));
    placed.push({l:Math.min(...c.map(v=>v[0])),r:Math.max(...c.map(v=>v[0])),t:Math.min(...c.map(v=>v[1])),b:Math.max(...c.map(v=>v[1]))});
    for(const f of g.turnSign?g.footprints||[]:[]){const cc=f.map(v=>xy(...v));placed.push({l:Math.min(...cc.map(v=>v[0])),r:Math.max(...cc.map(v=>v[0])),t:Math.min(...cc.map(v=>v[1])),b:Math.max(...cc.map(v=>v[1]))});}}
- // Edge lengths.
- const edges=all?es:sel?.type==='edge'?es.filter(e=>e.i===sel.i):[];
- if(edges.length)smartDimensions(edges,w,h,sc,placed);
+ // V5.3 R1: the overall sizes go first so the edge lengths are placed around them.
  // Overall size: when edges alone do not show it, or when nothing is selected.
  if((all&&es.length>4)||(mode==='selected'&&!sel)){const top=xy((bounds.xmin+bounds.xmax)/2,bounds.zmin),right=xy(bounds.xmax,(bounds.zmax+bounds.zmin)/2);
    const left=xy(bounds.xmin,(bounds.zmax+bounds.zmin)/2),gap=es.length>4?56:30;
    placeMeasure(`${fmt(q.width)} overall`,top[0],top[1]-(es.length>4?58:30),placed,true);
    if(!placeMeasure(`${fmt(q.depth)} overall`,left[0]-gap,left[1],placed,false,true))placeMeasure(`${fmt(q.depth)} overall`,right[0]+gap,right[1],placed,true,true);}
+ // Edge lengths.
+ const edges=all?es:sel?.type==='edge'?es.filter(e=>e.i===sel.i):[];
+ if(edges.length)smartDimensions(edges,w,h,sc,placed);
  // Stairs: width at the outer end, distance from each corner of the edge to the stair sides.
  (model.geometry.stairs||[]).forEach((g,k)=>{if(!(all||sel?.type==='stair'&&sel.k===k))return;const e=es[g.edge];if(!e)return;
-   const end=P(g.base,g.nn,g.run+Math.max(.9,44/sc)),c=xy(...end);placeMeasure(`${fmt(g.width)} wide`,c[0],c[1],placed,!!sel);
-   const s0=(g.base[0]-e.a[0])*e.t[0]+(g.base[1]-e.a[1])*e.t[1]-g.width/2,s1=e.len-s0-g.width,inset=Math.max(1.1,30/sc);
-   const A=P(e.a,e.n,-inset);
-   if(s0>.3){const a=A,b=P(A,e.t,s0);measureLine(a,b);const m=xy(...P(a,e.t,s0/2));placeMeasure(fmt(s0),m[0],m[1],placed,!!sel);}
-   if(s1>.3){const a=P(A,e.t,s0+g.width),b=P(A,e.t,e.len);measureLine(a,b);const m=xy(...P(a,e.t,s1/2));placeMeasure(fmt(s1),m[0],m[1],placed,!!sel);}
+   // V5.3 R1: the landing label is placed first (it may be forced), so this stair's other measurements avoid it.
    // V5.2 A3: landing size and height, beside the landing.
    if(g.landing){const L=g.landing,mid=P(g.base,g.nn,(L.v0+L.v1)/2),label=`Landing ${fmt(L.width)} × ${fmt(L.depth)} · ${fmt(L.elevation)} high${g.turnSign?` · turns ${g.turn}`:''}`;
      ctx.save();ctx.font='700 10px system-ui';const half=(ctx.measureText(label).width+18)/2;ctx.restore();
@@ -5169,6 +5204,11 @@ function drawMeasurementLayer(q,model,es,bounds,w,h,sc){
      const away=-(g.turnSign||0)||1,side=g.turnSign?[xy(...P(mid,g.tt,away*off))]:[xy(...P(mid,g.tt,off)),xy(...P(mid,g.tt,-off))];
      const spots=[...side,xy(...P(g.base,g.nn,g.run+(30/sc)))].filter(([x,y])=>x-half>2&&x+half<cw-2&&y>14&&y<ch-64); // clear of the hint bar along the bottom
      if(!spots.some(([x,y])=>placeMeasure(label,x,y,placed,false))){const f=spots[0]||xy(...P(g.base,g.nn,g.run+(30/sc)));placeMeasure(label,clamp(f[0],half+4,cw-half-4),Math.min(f[1],ch-64),placed,true);}}
+   const end=P(g.base,g.nn,g.run+Math.max(.9,44/sc)),c=xy(...end);placeMeasure(`${fmt(g.width)} wide`,c[0],c[1],placed,!!sel);
+   const s0=(g.base[0]-e.a[0])*e.t[0]+(g.base[1]-e.a[1])*e.t[1]-g.width/2,s1=e.len-s0-g.width,inset=Math.max(1.1,30/sc);
+   const A=P(e.a,e.n,-inset);
+   if(s0>.3){const a=A,b=P(A,e.t,s0);measureLine(a,b);const m=xy(...P(a,e.t,s0/2));placeMeasure(fmt(s0),m[0],m[1],placed,!!sel);}
+   if(s1>.3){const a=P(A,e.t,s0+g.width),b=P(A,e.t,e.len);measureLine(a,b);const m=xy(...P(a,e.t,s1/2));placeMeasure(fmt(s1),m[0],m[1],placed,!!sel);}
  });
  // Dividers: distance from the house wall (or the deck edge) measured along the boards.
  if(state.step!==6){const centers=dividerHandleCenters(model),d=model.geometry.boardAxis;
@@ -5211,7 +5251,7 @@ function openingAt(pt){const list=state.intent?.openings||[],es=state.model?.geo
  for(const o of list){const sp=openingSpan(o,es);if(!sp)continue;const d=[sp.b[0]-sp.a[0],sp.b[1]-sp.a[1]],l2=d[0]*d[0]+d[1]*d[1]||1,c=[sp.a[0]+sp.e.n[0]*.12,sp.a[1]+sp.e.n[1]*.12];
    const t=clamp(((pt[0]-c[0])*d[0]+(pt[1]-c[1])*d[1])/l2,0,1),dist=Math.hypot(pt[0]-c[0]-t*d[0],pt[1]-c[1]-t*d[1]);if(dist<bd){bd=dist;best=o;}}
  return best;}
-function planDraw(){const {w,h}=canvasSize(),sc=state.plan.scale;ctx.fillStyle='#f5f7f8';ctx.fillRect(0,0,w,h);
+function planDraw(){state.planLabelBoxes=[];const {w,h}=canvasSize(),sc=state.plan.scale;ctx.fillStyle='#f5f7f8';ctx.fillRect(0,0,w,h);
  const grid=Math.max(8,sc),ox=xy(0,0);ctx.strokeStyle='#e1e9ed';ctx.lineWidth=.7;ctx.beginPath();for(let x=((ox[0]%grid)+grid)%grid;x<w;x+=grid){ctx.moveTo(x,0);ctx.lineTo(x,h);}for(let y=((ox[1]%grid)+grid)%grid;y<h;y+=grid){ctx.moveTo(0,y);ctx.lineTo(w,y);}ctx.stroke();
  if(state.freeDraw){freePlan();return;}if(!state.intent)return;
  const q=state.intent,model=state.model,p=model.geometry.poly,es=model.geometry.edges;
@@ -5496,7 +5536,7 @@ addEventListener('beforeunload',e=>{const st=state.saveState?.status;if(st==='pe
 // V5.3 C6 (read-only): the current design, and the colors each finish/railing part kind is drawn with in 2D and 3D.
 const C6_COLOR_KINDS=['concrete-surface','field-board','picture-frame','divider-board','fascia','landing-board','landing-frame','stair-tread','stair-riser','railing-post','post-cap','top-rail','bottom-rail','baluster','stair-rail-post','stair-top-rail','stair-bottom-rail','stair-baluster'];
 function c6Colors(m){const out={};for(const p of m?.parts||[]){if(!C6_COLOR_KINDS.includes(p.kind))continue;const o=out[p.kind]||(out[p.kind]={count:0,colors:[]});o.count++;if(!o.colors.includes(p.color))o.colors.push(p.color);}for(const o of Object.values(out))o.colors.sort();return out;}
-window.AOSDeckStudioTest=Object.freeze({framingStatus:()=>state.framingStatus,intent:()=>JSON.parse(JSON.stringify(state.intent)),planHighlight:()=>({...(state.planHighlight||{frame:0,divider:0})}),colors:()=>JSON.parse(JSON.stringify({plan:c6Colors(state.model),view3d:c6Colors(renderer3d.model),same:renderer3d.model===state.model})),isPreview:()=>Boolean(state.model?.preview),
+window.AOSDeckStudioTest=Object.freeze({framingStatus:()=>state.framingStatus,intent:()=>JSON.parse(JSON.stringify(state.intent)),planHighlight:()=>({...(state.planHighlight||{frame:0,divider:0})}),planLabels:()=>JSON.parse(JSON.stringify({labels:state.planLabelBoxes||[],reserved:state.planReservedBoxes||[]})),colors:()=>JSON.parse(JSON.stringify({plan:c6Colors(state.model),view3d:c6Colors(renderer3d.model),same:renderer3d.model===state.model})),isPreview:()=>Boolean(state.model?.preview),
  toScreen:(x,z)=>{const r=planCanvas.getBoundingClientRect(),p=xy(x,z);return [r.left+p[0],r.top+p[1]];},edges:()=>JSON.parse(JSON.stringify(state.model?.geometry?.edges||[])),
  // Checkpoint 3 correction (read-only): the stair, railing and landing-framing parts the 3D view is drawing.
  scene3d:()=>JSON.parse(JSON.stringify({showStructure:renderer3d.showStructure,stairs:renderer3d.model?.geometry?.stairs||[],parts:(renderer3d.model?.parts||[]).filter(p=>/^(stair-|landing-|opening-|door-|house-wall)/.test(p.kind)).map(({kind,group,connect,role,x,y,z,w,h,d,yaw,rz,label,color})=>({kind,group,connect,role,x,y,z,w,h,d,yaw,rz,label,color}))})),
