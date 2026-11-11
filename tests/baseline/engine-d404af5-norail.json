@@ -1,0 +1,110 @@
+{
+ "source": "d404af5:index.html (protected), railing outputs removed by tests/rail-inset.js withoutRailInset()",
+ "designs": {
+  "small-rect-12x10": {
+   "sha256": "f8e36f4eccd957ed361ceb382de8c91c5d046d9a380ab03cd48a6e94b0d88426"
+  },
+  "default-rect-16x12": {
+   "sha256": "cafb81b3d964ef097f556a7cf54ebfdb1af199a9a22e146edec6a4ef00a1b8d5"
+  },
+  "medium-rect-20x14-stair": {
+   "sha256": "aa6633e00cbe5907c68ae653f1db5f5faf654ea842f531a9e75524d5297f388e"
+  },
+  "square-14": {
+   "sha256": "d99f27374b8a264b9c5fe398e4b23007a6f6fd0ca533ace24409179635b429b4"
+  },
+  "L-24x18": {
+   "sha256": "64adfb3332b8f1fc3d6ab81c8e8b0a4ac125337e0bfddc54e7c4353d708b16e8"
+  },
+  "L-flipped-24x18": {
+   "sha256": "5c5934564651eed651d4a580c0b7b5fe5dd5999c726865fd7fa5a2ff2fd63463"
+  },
+  "T-28x20": {
+   "sha256": "dc2fe9f4d2178fc0f32256c316756c810e44358c6ff0e02965326aafef2f17cf"
+  },
+  "U-32x22": {
+   "sha256": "85c1839d3281174daea3652e959b7b2b6132873fa6d7dd397aa0aba446ee0195"
+  },
+  "large-U-40x24-9ft-stair": {
+   "sha256": "92f8508d2729cc333e1bba2a3d5f580b91a55e0cbd37a1c87e4fb9f45006bafc"
+  },
+  "free-hexagon": {
+   "sha256": "129b8727c85417c7f8643a1dc8564c4e849ee485c4c45e9bdcc7121229c3866c"
+  },
+  "diagonal-boards": {
+   "sha256": "eb579d51862cb5b3590355deb96ca07d5e438f918fdda4a9c6bc11f1224d1fc5"
+  },
+  "outward-boards": {
+   "sha256": "85527928f544aec5e9ea7ba3bdebfcf78169c666aab133f1ca87f1ea99f5ace9"
+  },
+  "no-border": {
+   "sha256": "2d254b943efd9c114bb6c69c56b54af7218ca7e34d10a059215f9af02b5c03af"
+  },
+  "double-border-dividers": {
+   "sha256": "c8b76c7a0e1fb6c363bdf4d36b2d78f627e4d843a990b8f7993b0abd8fe535e4"
+  },
+  "freestanding": {
+   "sha256": "6950471a318b6597b14e4cb0e432336d802fd01773f0f2829cff849b3d7f8de2"
+  },
+  "two-house-walls": {
+   "sha256": "ed96e60172ad8adc9e06aca21b3618df4e86941d782744c907067b679dad4e94"
+  },
+  "flush-beam": {
+   "sha256": "dd680bc7b39aa7414ec89700e5f099e0b233ec16b7cb683169a99091a93b3783"
+  },
+  "multi-stair": {
+   "sha256": "7f5331acd49e7b1406be9b29f66cf5418388840389f7ee9e6a5f41673a1cde16"
+  },
+  "mixed-rail-edges": {
+   "sha256": "f5c1f81f25e814135837a70e03a41a0b9d8ef71494b939361485aa9d47288c5d"
+  },
+  "pvc-white-rail": {
+   "sha256": "b63c515f8c78f00fbd153add22ac0ee334986575ca0437d50e31597420acecfc"
+  },
+  "cut-corner": {
+   "sha256": "a50c18761dfa3085e117f60ba6673a0059e92d2a19ef18cdcbcdb24526ece04c"
+  },
+  "bump-out": {
+   "sha256": "a2ce331d73b954a110cc87dd93f269335b70eeb15b417c3d5d394a4befd50ba4"
+  },
+  "legacy-v4-single-stair": {
+   "sha256": "f70dbee9de573712a19b0f0eed2dea2d00b79c1157b87392e6fcf0dc1719d69f"
+  },
+  "legacy-minimal-attached-false": {
+   "sha256": "a1384ceab921a62da9609b46a6f9718c8a705ba2032d6c2e5799be5ec4fca57e"
+  },
+  "b3-showcase": {
+   "sha256": "29dac7a271959853199dfc0962671af71470489d8c88fb74ee57b37a5c5317cf"
+  },
+  "b2-diagonal-double-frame-dividers": {
+   "sha256": "8b7fc0e049685ac85ce60d4126e44154e2c3d777d2ce8b7d8bd6a602b11f3682"
+  },
+  "b2-vertical-u": {
+   "sha256": "370ffb6246d598c9eb0a4552cc7c4e401de455c0e4c7c3cbde8e50951417ac39"
+  },
+  "cp3-turn-right-wide": {
+   "sha256": "686e9dae107a7a822c5eeb7dadaa7d8cefcc434a2f3255515f76c26ee0e76389"
+  },
+  "b3c-inside-corner-door": {
+   "sha256": "638361d1380d2f82da4c8da2ba5d4e492ccebd082588e3203c5be30dda5f0f4d"
+  },
+  "b3c-outside-corner": {
+   "sha256": "a2109926cb889f67339f83e653ddd23921c2862449831994a6e4dd3ba4912bc1"
+  },
+  "b3c-u-three-walls": {
+   "sha256": "2f3e884312b29222d9ea547dabf00f71512007cdc9769bad3d9e46be3c7ae05f"
+  },
+  "b3c-bevel-walls": {
+   "sha256": "bfc660e8a545098eacbfd01e83f0453a9e81b8334617474be2c8d380eabc403a"
+  },
+  "b3c-short-wall-window": {
+   "sha256": "71cadf4e57063e66dbb435bf2b908e69e64a39f8aeccbb98480850ef152b96f9"
+  },
+  "rails-custom-finish": {
+   "sha256": "54e79388c6513685cd57724f9f279a557cbeb7549e6299cae2d57a22e7d4e4d1"
+  },
+  "freestanding-flush": {
+   "sha256": "2090eb1eb08d8c7aa14aace095f0a83a5f02b1e159bedecb9008a1161e540649"
+  }
+ }
+}

@@ -7,6 +7,7 @@ const test = require('node:test');
 const { execFileSync } = require('child_process');
 const { pathToFileURL } = require('url');
 const H = require('./c6-helpers');
+const { RAIL_LINE } = require('./rail-inset');
 const { assert, VIEWPORTS, openDesign, step, intent, settle, model, saveFile, reopen, undo, redo, fs, os, path, ROOT } = H;
 const h = H.harness(test);
 const PREV_HTML = path.join(os.tmpdir(), `aos-r1f-${process.pid}.html`), PREV = pathToFileURL(PREV_HTML).href;
@@ -130,8 +131,10 @@ test('R1 final 2: a 4′ stair flush with each end of a 16′ edge — position 
     for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) assert.ok(Math.hypot(P[i].x - P[j].x, P[i].z - P[j].z) >= .3, `${side}: no two posts in the same place`);
     const rails = m.parts.filter(p => p.kind === 'top-rail').map(p => { const u = (p.x - e.mid[0]) * e.t[0] + (p.z - e.mid[1]) * e.t[1], v = (p.x - e.mid[0]) * e.n[0] + (p.z - e.mid[1]) * e.n[1], L = Math.max(p.w, p.d); return { a: u - L / 2, b: u + L / 2, v }; }).filter(r => Math.abs(r.v) < .4);
     const sa = st.offset - 2, sb = st.offset + 2;
-    assert.ok(rails.every(r => r.b <= sa + .01 || r.a >= sb - .01), `${side}: no deck rail across the stair`);
+    // R1 rail inset: the deck rail ends on the stair railing line, RAIL_LINE (1½ in. + half a post) inside the stair side.
+    assert.ok(rails.every(r => r.b <= sa + RAIL_LINE + .01 || r.a >= sb - RAIL_LINE - .01), `${side}: no deck rail across the stair`);
     assert.ok(rails.every(r => r.b - r.a > .25), `${side}: no railing slivers at the flush end`);
+    // R1 rail inset: 12′ less RAIL_LINE at the outside corner, plus RAIL_LINE to the stair railing line = 12′.
     const covered = rails.reduce((t, r) => t + (r.b - r.a), 0); assert.ok(Math.abs(covered - 12) < .02, `${side}: the other 12′ of the edge is railed (${covered.toFixed(2)})`);
     await page.screenshot({ path: H.path.join(H.SHOTS, `r1final2-flush-${side}.png`) });
   }

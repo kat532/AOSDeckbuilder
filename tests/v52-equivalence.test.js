@@ -11,6 +11,7 @@ const path = require('path');
 const crypto = require('crypto');
 const { loadEngine } = require('./engine');
 const { fixtures } = require('./fixtures');
+const { withoutRailInset } = require('./rail-inset');
 
 const BASE = path.join(__dirname, 'baseline', 'AOS_Deck_Studio_V5_2_Continuous_Middle_Beams.html');
 const base = loadEngine(BASE), work = loadEngine();
@@ -37,8 +38,11 @@ const B3_CONTEXT = new Set(['earth', 'siding-course', 'house-foundation', 'house
 // still compared here and must be identical to V5.2.
 const joinedWall = (m, p) => { const i = Number(String(p.connect).replace('house-edge-', '')), n = m.geometry.edges.length, H = m.intent.houseEdges;
   return p.kind === 'house-wall' && (H.includes((i + 1) % n) || H.includes((i - 1 + n) % n)); };
+// V5.3 R1 rail inset (owner request, 11 Nov 2026) moves every railing post 1½ in. inside the finished
+// edges. The railing outputs are compared by tests/rail-inset-r1.test.js and the R1 rail record;
+// everything else here must still be identical to V5.2.
 const model = (win, q) => {
-  const m = win.DeckCore.make(q);
+  const m = withoutRailInset(win.DeckCore.make(q));
   m.parts = m.parts.filter(p => !B3_CONTEXT.has(p.kind) && !joinedWall(m, p)).map(p => { if (p.kind !== 'house-wall') return p; const { label, siding, ...rest } = p; return rest; });
   const counts = { ...m.counts }, stats = { ...m.stats };
   for (const k of FRAGMENT_COUNTS) delete counts[k];

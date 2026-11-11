@@ -4,6 +4,7 @@
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const { RAIL_LINE } = require('./rail-inset');
 const { loadEngine } = require('./engine');
 
 const win = loadEngine();
@@ -276,7 +277,7 @@ test('CP3-8 landing guards: never across a flight opening; rail choices kept; no
   // On a turn, the outer guard runs around the landing; the inside of the turn keeps only its short faces.
   const m = build(deck({ staircases: [landing({ turn: 'left', width: 6, depth: 6 }, { rails: { left: true, right: false } })] }));
   const g = m.geometry.stairs[0], s = g.turnSign, segs = guardSegments(g);
-  assert.ok(segs.some(x => Math.abs(x.a[1] - x.b[1]) < 1e-9 && Math.abs(x.a[1] - (g.landing.v1 - 0.08)) < 1e-9), 'far edge guarded');
+  assert.ok(segs.some(x => Math.abs(x.a[1] - x.b[1]) < 1e-9 && Math.abs(x.a[1] - (g.landing.v1 - RAIL_LINE)) < 1e-9), 'far edge guarded'); // R1 rail inset: 1½ in. + half a post
   assert.ok(segs.some(x => Math.abs(x.a[0] - x.b[0]) < 1e-9 && Math.sign(x.a[0]) === -s), 'outer side guarded');
 });
 

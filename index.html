@@ -1102,6 +1102,8 @@ root.AOSGeometry={area,triangulate,halfplane,strip,subtractConvex,subtractMany,s
 'use strict';
 const SCHEMA_VERSION=6,RAIL_PRODUCTS=['Westbury Tuscany','No rail product selected'];const BW=5.36/12,GAP=3/16/12,PITCH=BW+GAP,FT=1/12;
 const PALETTES={'Brown Oak':'#86674c','Rustic Elm':'#73533f','Sandy Birch':'#bfab8a','Silver Maple':'#aaa9a0','Stone Ash':'#777977'};
+// R1 rail inset (owner, 11 Nov 2026): railing post outside faces 1½ in. inside finished outside edges.
+const RAIL_FACE_INSET=1.5/12,RAIL_POST=.21,RAIL_LINE=RAIL_FACE_INSET+RAIL_POST/2;
 const RAILS={'Textured Black':'#20272c','Bronze':'#635849','White':'#e6e9e8'};
 const SHAPES=['rectangle','square','L','T','U','free'];
 const clamp=(v,min,max)=>Math.min(max,Math.max(min,Number(v)||0));
@@ -2317,10 +2319,18 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
      turn?{v0:0,run:lower.run,top:E,risers:L.lowerRisers,pitchRise:lower.stairPitchRise,base:lowerFrame.base,tt:lowerFrame.tt,nn:lowerFrame.nn}:{v0:v1,run:lower.run,top:E,risers:L.lowerRisers,pitchRise:lower.stairPitchRise}]});
  }
  const deckGuardPostCenters=[];
+ // R1 rail inset (owner, 11 Nov 2026): the outside face of every railing post is 1½ in. inside the finished
+ // outside edge (the deck outline the plan dimensions measure to), so post centres sit 1½ in. + half a post
+ // (2.52 in. post) = 0.23 ft in. Rails and balusters run on the same line. Corners: where two inset lines meet.
+ function insetEndT(e,atEnd){const n=es.length,o=es[atEnd?(e.i+1)%n:(e.i-1+n)%n],tn=e.t[0]*o.n[0]+e.t[1]*o.n[1];
+   if(Math.abs(tn)<.2)return atEnd?e.len:0; // (nearly) straight continuation: no corner to clear
+   if(q.houseEdges.includes(o.i))return atEnd?e.len:0; // house wall end: not a finished outside edge, kept where it was
+   const k=(-RAIL_LINE+RAIL_LINE*(e.n[0]*o.n[0]+e.n[1]*o.n[1]))/tn;return atEnd?e.len+k:k;}
  function railSegment(e,start,end,connection='deck-guard',col=railCol){
+   if(start<=1e-9)start=insetEndT(e,false);if(end>=e.len-1e-9)end=insetEndT(e,true);
    const len=end-start;if(len<.46)return;
    const nr=Math.max(1,Math.ceil(len/5.5)),yaw=-Math.atan2(e.t[1],e.t[0]);
-   const point=t=>[e.a[0]+e.t[0]*t-e.n[0]*.08,e.a[1]+e.t[1]*t-e.n[1]*.08];
+   const point=t=>[e.a[0]+e.t[0]*t-e.n[0]*RAIL_LINE,e.a[1]+e.t[1]*t-e.n[1]*RAIL_LINE];
    for(let bay=0;bay<nr;bay++){const a=start+len*bay/nr,b=start+len*(bay+1)/nr;
      for(let k=0;k<2;k++){if(bay>0&&k===0)continue;let p=point(k?b:a);// V5.1: two railed edges meeting at a corner share ONE post (the first edge placed owns it).
        // Previously each edge added its own post ~0.1 ft apart, doubling corner posts and caps.
@@ -2332,7 +2342,9 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  for(const e of es){if(q.houseEdges.includes(e.i)||!q.railEdges.includes(e.i))continue;
    const openings=q.staircases.filter(s=>s.edge===e.i).map(s=>({start:(e.len-s.width)/2+s.offset,end:(e.len+s.width)/2+s.offset})).sort((a,b)=>a.start-b.start);
    const edgeCol=RAILS[railFinish(q,e.i).railColor]||railCol;
-   let at=0;for(const gap of openings){railSegment(e,at,Math.max(at,gap.start),'deck-guard',edgeCol);at=Math.max(at,gap.end);}railSegment(e,at,e.len,'deck-guard',edgeCol);
+   // R1 rail inset: at a stair opening the deck guard ends on the stair railing line (1½ in. + half a post inside
+   // the stair side), where the stair railing meets it on a shared post.
+   let at=0;for(const gap of openings){railSegment(e,at,Math.max(at,gap.start+RAIL_LINE),'deck-guard',edgeCol);at=Math.max(at,gap.end-RAIL_LINE);}railSegment(e,at,e.len,'deck-guard',edgeCol);
  }
  for(const stair of q.staircases){
    const g0=stairModels.find(x=>x.id===stair.id);if(!g0)continue;
@@ -2345,7 +2357,8 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  // Guards: drawn when the landing is more than 30 in. above grade, otherwise on sides whose
  // stair railing is on.
  const LG=g0.landing,LW=LG.width,E=LG.elevation,v0=LG.v0,v1=LG.v1,guardsNeeded=E>2.5+1e-9,stairCol=RAILS[railFinish(q,stair.edge).railColor]||railCol;
- const W=stair.width,W2=W/2,in8=.08,ts=g0.turnSign||0,U=LW/2-in8,wide=U-W2>=.46,slope=g0.rise/(11/12);
+ // R1 rail inset: landing guards and flight rails run 1½ in. (to the post face) inside the landing and stair edges.
+ const W=stair.width,W2=W/2,in8=RAIL_LINE,Wr=W2-RAIL_LINE,ts=g0.turnSign||0,U=LW/2-in8,wide=U-Wr>=.46,slope=g0.rise/(11/12);
  const toW=(u,v)=>[g0.base[0]+u*g0.tt[0]+v*g0.nn[0],g0.base[1]+u*g0.tt[1]+v*g0.nn[1]];
  const allPosts=()=>[...deckGuardPostCenters,...landingGuardPosts];
  const postAt=pt=>allPosts().find(z=>Math.hypot(z[0]-pt[0],z[1]-pt[1])<.30);
@@ -2367,21 +2380,21 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  const frameOf=f=>({base:f.base||[g0.base[0]+g0.nn[0]*f.v0,g0.base[1]+g0.nn[1]*f.v0],tt:f.tt||g0.tt,nn:f.nn||g0.nn});
  // Where each flight side meets the landing: the transition node in landing (u, v) and the
  // flight-local x at which that flight's rail must end (upper) or start (lower).
- const Uo=wide?U:W2;
+ const Uo=wide?U:Wr;
  function transition(fi,side){
-   if(fi===0)return {node:[side*W2,v0+in8],x:v0+in8};
-   if(!ts)return {node:[side*W2,v1-in8],x:-in8};
-   const vLine=v1-W2-ts*side*W2,outer=Math.abs(vLine-v1)<1e-9,uu=outer?U:(wide?U:W2);
-   return {node:[ts*uu,outer?v1-in8:v1-W],x:uu-LW/2};
+   if(fi===0)return {node:[side*Wr,v0+in8],x:v0+in8};
+   if(!ts)return {node:[side*Wr,v1-in8],x:-in8};
+   const vLine=v1-W2-ts*side*W2,outer=Math.abs(vLine-v1)<1e-9,uu=outer?U:(wide?U:Wr);
+   return {node:[ts*uu,outer?v1-in8:v1-W+in8],x:uu-LW/2};
  }
  const flightRailTop=(fi,x)=>(fi===0?g0.flights[0].top:g0.flights[1].top)-slope*x+2.78+.07;
  // Landing guard chains, as landing (u, v) polylines from the upper-flight transition to the lower one.
  const chains=[];
  if(!ts){for(const s of [-1,1]){const key=s<0?'left':'right';if(!guardsNeeded&&!stair.rails[key])continue;
-   chains.push({key,side:s,pts:wide?[[s*W2,v0+in8],[s*U,v0+in8],[s*U,v1-in8],[s*W2,v1-in8]]:[[s*W2,v0+in8],[s*W2,v1-in8]]});}}
+   chains.push({key,side:s,pts:wide?[[s*Wr,v0+in8],[s*U,v0+in8],[s*U,v1-in8],[s*Wr,v1-in8]]:[[s*Wr,v0+in8],[s*Wr,v1-in8]]});}}
  else{const outKey=-ts<0?'left':'right',inKey=outKey==='left'?'right':'left';
-   if(guardsNeeded||stair.rails[outKey])chains.push({key:outKey,side:-ts,pts:[[-ts*W2,v0+in8],...(wide?[[-ts*U,v0+in8]]:[]),[-ts*Uo,v1-in8],[ts*U,v1-in8]]});
-   if(guardsNeeded||stair.rails[inKey])chains.push({key:inKey,side:ts,pts:[[ts*W2,v0+in8],...(wide?[[ts*U,v0+in8]]:[]),[ts*(wide?U:W2),v1-W]]});}
+   if(guardsNeeded||stair.rails[outKey])chains.push({key:outKey,side:-ts,pts:[[-ts*Wr,v0+in8],...(wide?[[-ts*U,v0+in8]]:[]),[-ts*Uo,v1-in8],[ts*U,v1-in8]]});
+   if(guardsNeeded||stair.rails[inKey])chains.push({key:inKey,side:ts,pts:[[ts*Wr,v0+in8],...(wide?[[ts*U,v0+in8]]:[]),[ts*(wide?U:Wr),v1-W+in8]]});}
  // 1) Transition posts first, tall enough for any flight rail that ends on them.
  for(const fi of [0,1])for(const side of [-1,1]){const key=side<0?'left':'right';
    const chain=chains.find(c=>c.key===key),T=transition(fi,side);if(!chain&&!stair.rails[key])continue;
@@ -2395,7 +2408,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  for(const [fi,fl] of [[0,F0],[1,F1]]){const fr=frameOf(fl),top=fl.top,run=fl.run;
    const toWorld=(o,x)=>[fr.base[0]+o*fr.tt[0]+x*fr.nn[0],fr.base[1]+o*fr.tt[1]+x*fr.nn[1]],nose=x=>top-slope*x;
    for(const side of [-1,1]){const key=side<0?'left':'right';if(!stair.rails[key])continue;
-     const o=side*W2,T=transition(fi,side),xa=fi===0?0:T.x,xb=fi===0?T.x:run,len=xb-xa,pitch=slope*len;
+     const o=side*Wr,T=transition(fi,side),xa=fi===0?(deckGuardPostCenters.some(z=>{const t=toWorld(o,-RAIL_LINE);return Math.hypot(z[0]-t[0],z[1]-t[1])<.05;})?-RAIL_LINE:0):T.x,xb=fi===0?T.x:run,len=xb-xa,pitch=slope*len;
      const yaw=-Math.atan2(fr.nn[1],fr.nn[0]),rz=-Math.atan2(pitch,len),mid=toWorld(o,(xa+xb)/2),my=nose((xa+xb)/2);
      add('stair-top-rail','rail',mid[0],my+2.78,mid[1],Math.hypot(len,pitch),.14,.12,stairCol,{yaw,rz,mat:'metal',connect:'stair-guard'});
      add('stair-bottom-rail','rail',mid[0],my+.58,mid[1],Math.hypot(len,pitch),.11,.10,stairCol,{yaw,rz,mat:'metal',connect:'stair-guard'});
@@ -2420,10 +2433,14 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    const noseElevationAt=v=>top-(rise/(11/12))*v;
    const stairCol=RAILS[railFinish(q,stair.edge).railColor]||railCol;
    for(let side of [-1,1]){const key=side<0?'left':'right';if(!stair.rails[key])continue;
-     const u=side*stairW/2,yaw=-Math.atan2(nn[1],nn[0]),slope=-Math.atan2(stairPitchRise,run),pt=toWorld(u,run/2);
-     const railMidElevation=noseElevationAt(run/2);
-     add('stair-top-rail','rail',pt[0],railMidElevation+2.78,pt[1],Math.hypot(run,stairPitchRise),.14,.12,stairCol,{yaw,rz:slope,mat:'metal',connect:'stair-guard'});
-     add('stair-bottom-rail','rail',pt[0],railMidElevation+.58,pt[1],Math.hypot(run,stairPitchRise),.11,.10,stairCol,{yaw,rz:slope,mat:'metal',connect:'stair-guard'});
+     // R1 rail inset: stair railings run 1½ in. (to the post face) inside each outside stair edge. Where the deck
+     // guard post stands at the top of the stair, the sloped rail runs into that post.
+     const u=side*(stairW/2-RAIL_LINE),yaw=-Math.atan2(nn[1],nn[0]);
+     const v0r=!fl||fl.v0===0?([...deckGuardPostCenters].some(x=>{const t=toWorld(u,-RAIL_LINE);return Math.hypot(x[0]-t[0],x[1]-t[1])<.05;})?-RAIL_LINE:0):0;
+     const rl=run-v0r,rp=stairPitchRise*rl/run,slope=-Math.atan2(rp,rl),pt=toWorld(u,v0r+rl/2);
+     const railMidElevation=noseElevationAt(v0r+rl/2);
+     add('stair-top-rail','rail',pt[0],railMidElevation+2.78,pt[1],Math.hypot(rl,rp),.14,.12,stairCol,{yaw,rz:slope,mat:'metal',connect:'stair-guard'});
+     add('stair-bottom-rail','rail',pt[0],railMidElevation+.58,pt[1],Math.hypot(rl,rp),.11,.10,stairCol,{yaw,rz:slope,mat:'metal',connect:'stair-guard'});
      const count=Math.max(2,Math.ceil(run/5.4)+1);
      for(let i=0;i<count;i++){
        const v=run*i/(count-1),p=toWorld(u,v),baseY=noseElevationAt(v);
@@ -2441,6 +2458,11 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    }
    }
  }
+ // R1 rail inset: report what the 1½ in. inset does to stair clear width and to post mounting.
+ for(const stair of q.staircases){const sides=(stair.rails.left?1:0)+(stair.rails.right?1:0);if(!sides)continue;
+   const clearIn=stair.width*12-sides*(RAIL_FACE_INSET+RAIL_POST)*12;
+   if(clearIn<36)alerts.push({level:'review',code:'stair-rail-clear-width',message:`Stair on edge ${stair.edge+1} (${fmtFt(stair.width)} wide): with its railing posts 1½ in. inside the stair edges, about ${Math.round(clearIn)} in. is left between the posts, before any handrail projection. Many jurisdictions require a 36 in. minimum clear stair width; widen the stair or verify the requirement in production review.`});}
+ if(parts.some(p=>p.kind==='railing-post'||p.kind==='stair-rail-post'))alerts.push({level:'review',code:'rail-post-mounting',message:'Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review.'});
  if(q.staircases.length)alerts.push({level:'review',message:'All modeled staircases require field verification of stringers, connections, railings and lower landings.'});
  if(q.supportMode==='ledger'&&!ledgerEdges.length)alerts.push({level:'review',message:'No ledger edges selected. Framing must use independent bearing; select a house edge on the ledger step to enable one.'});
  if(ledgerEdges.length)alerts.push({level:'review',message:`Preliminary ledgers on house edges ${ledgerEdges.map(e=>e.i+1).join(', ')}. Verify attachment viability, existing band joists, flashing, hardware, lateral connections and load path for EACH wall.`});

@@ -4,6 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { loadEngine, snapshot } = require('./engine');
 const { fixtures } = require('./fixtures');
+const { RAIL_LINE } = require('./rail-inset');
 
 const win = loadEngine();
 const core = win.DeckCore;
@@ -65,9 +66,10 @@ test('rail parts on the overridden edge use its color; others keep the whole-dec
   const m = core.make({ ...q, railOverrides: { 2: { railColor: 'Bronze' } } });
   const parts = railParts(m);
   assert.deepEqual(colorsOf(parts), [RAILS.Bronze, RAILS[q.railColor]].sort());
-  // Edge 2 is the 16 ft front edge: its top rail runs the full edge in Bronze.
+  // Edge 2 is the 16 ft front edge: its top rail runs the full edge in Bronze, between the two corner
+  // posts, which since R1 stand 1½ in. + half a post (RAIL_LINE) inside each outside corner.
   const bronzeTop = parts.filter(p => p.kind === 'top-rail' && p.color === RAILS.Bronze).reduce((s, p) => s + p.w, 0);
-  assert.ok(Math.abs(bronzeTop - 16) < 0.01, `bronze top rail ${bronzeTop} ft`);
+  assert.ok(Math.abs(bronzeTop - (16 - 2 * RAIL_LINE)) < 0.01, `bronze top rail ${bronzeTop} ft`);
 });
 
 test('stair railings follow the color of the edge the stair sits on', () => {
@@ -138,7 +140,13 @@ test('posts per railed run: bays + 1, minus one per corner shared by two railed 
     const q = plain(core.sanitize(FIX[name]));
     const es = plain(core.edges(core.polygon(q)));
     const railed = es.filter(e => q.railEdges.includes(e.i));
-    const perEdge = railed.reduce((n, e) => n + Math.max(1, Math.ceil(e.len / 5.5)) + 1, 0);
+    // R1 rail inset: each run is the edge shortened (or, at an inside corner, lengthened) by RAIL_LINE·tan(turn/2)
+    // at every end that meets another outside edge; ends at a house wall stay where they were.
+    const turnTrim = (e, o) => { const cross = e.t[0] * o.t[1] - e.t[1] * o.t[0], dot = e.t[0] * o.t[0] + e.t[1] * o.t[1], phi = Math.atan2(cross, dot);
+      if (q.houseEdges.includes(o.i) || Math.abs(Math.sin(phi)) < 0.2) return 0; return RAIL_LINE * Math.tan(Math.abs(phi) / 2) * Math.sign(phi * turnSign); };
+    const area = es.reduce((s, e) => s + e.a[0] * e.b[1] - e.b[0] * e.a[1], 0), turnSign = Math.sign(area);
+    const runLen = (e) => e.len - turnTrim(es[(e.i - 1 + es.length) % es.length], e) - turnTrim(e, es[(e.i + 1) % es.length]);
+    const perEdge = railed.reduce((n, e) => n + Math.max(1, Math.ceil(runLen(e) / 5.5)) + 1, 0);
     const shared = railed.filter(e => q.railEdges.includes((e.i + 1) % es.length)).length;
     const posts = core.make(q).parts.filter(p => p.kind === 'railing-post').length;
     assert.equal(posts, perEdge - shared, name);

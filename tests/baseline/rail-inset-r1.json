@@ -1,0 +1,1087 @@
+{
+ "note": "R1 rail inset (owner, 11 Nov 2026): railing outputs of the approved-for-testing build. Each record: rail parts (sha256, no ids), rail counts/stats/alerts.",
+ "snapshots": {
+  "small-rect-12x10": {
+   "partsByKind": {
+    "baluster": 75,
+    "bottom-rail": 7,
+    "post-cap": 8,
+    "railing-post": 8,
+    "top-rail": 7
+   },
+   "counts": {
+    "railPosts": 8,
+    "balusters": 75
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 32,
+    "deckRailLF": 32
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "default-rect-16x12": {
+   "partsByKind": {
+    "baluster": 99,
+    "bottom-rail": 9,
+    "post-cap": 10,
+    "railing-post": 10,
+    "top-rail": 9
+   },
+   "counts": {
+    "railPosts": 10,
+    "balusters": 99
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 40,
+    "deckRailLF": 40
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "medium-rect-20x14-stair": {
+   "partsByKind": {
+    "baluster": 106,
+    "bottom-rail": 10,
+    "post-cap": 12,
+    "railing-post": 12,
+    "stair-baluster": 28,
+    "stair-bottom-rail": 2,
+    "stair-rail-post": 4,
+    "stair-top-rail": 2,
+    "top-rail": 10
+   },
+   "counts": {
+    "railPosts": 16,
+    "balusters": 134
+   },
+   "stats": {
+    "stairRailLF": 13.6015,
+    "totalRailLF": 57.6015,
+    "deckRailLF": 44
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "square-14": {
+   "partsByKind": {
+    "baluster": 99,
+    "bottom-rail": 9,
+    "post-cap": 10,
+    "railing-post": 10,
+    "top-rail": 9
+   },
+   "counts": {
+    "railPosts": 10,
+    "balusters": 99
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 42,
+    "deckRailLF": 42
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "L-24x18": {
+   "partsByKind": {
+    "baluster": 147,
+    "bottom-rail": 13,
+    "post-cap": 14,
+    "railing-post": 14,
+    "top-rail": 13
+   },
+   "counts": {
+    "railPosts": 14,
+    "balusters": 147
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 60,
+    "deckRailLF": 60
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "L-flipped-24x18": {
+   "partsByKind": {
+    "baluster": 147,
+    "bottom-rail": 13,
+    "post-cap": 14,
+    "railing-post": 14,
+    "top-rail": 13
+   },
+   "counts": {
+    "railPosts": 14,
+    "balusters": 147
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 60,
+    "deckRailLF": 60
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "T-28x20": {
+   "partsByKind": {
+    "baluster": 164,
+    "bottom-rail": 16,
+    "post-cap": 17,
+    "railing-post": 17,
+    "top-rail": 16
+   },
+   "counts": {
+    "railPosts": 17,
+    "balusters": 164
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 68,
+    "deckRailLF": 68
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "U-32x22": {
+   "partsByKind": {
+    "baluster": 251,
+    "bottom-rail": 21,
+    "post-cap": 22,
+    "railing-post": 22,
+    "top-rail": 21
+   },
+   "counts": {
+    "railPosts": 22,
+    "balusters": 251
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 99.76,
+    "deckRailLF": 99.76
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "large-U-40x24-9ft-stair": {
+   "partsByKind": {
+    "baluster": 270,
+    "bottom-rail": 24,
+    "post-cap": 26,
+    "railing-post": 26,
+    "stair-baluster": 60,
+    "stair-bottom-rail": 2,
+    "stair-rail-post": 6,
+    "stair-top-rail": 2,
+    "top-rail": 24
+   },
+   "counts": {
+    "railPosts": 32,
+    "balusters": 330
+   },
+   "stats": {
+    "stairRailLF": 29.8668,
+    "totalRailLF": 137.7868,
+    "deckRailLF": 107.92
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "free-hexagon": {
+   "partsByKind": {
+    "baluster": 132,
+    "bottom-rail": 10,
+    "post-cap": 11,
+    "railing-post": 11,
+    "top-rail": 10
+   },
+   "counts": {
+    "railPosts": 11,
+    "balusters": 132
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 51.5647,
+    "deckRailLF": 51.5647
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "diagonal-boards": {
+   "partsByKind": {
+    "baluster": 110,
+    "bottom-rail": 10,
+    "post-cap": 11,
+    "railing-post": 11,
+    "top-rail": 10
+   },
+   "counts": {
+    "railPosts": 11,
+    "balusters": 110
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 46,
+    "deckRailLF": 46
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "outward-boards": {
+   "partsByKind": {
+    "baluster": 110,
+    "bottom-rail": 10,
+    "post-cap": 11,
+    "railing-post": 11,
+    "top-rail": 10
+   },
+   "counts": {
+    "railPosts": 11,
+    "balusters": 110
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 46,
+    "deckRailLF": 46
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "no-border": {
+   "partsByKind": {
+    "baluster": 99,
+    "bottom-rail": 9,
+    "post-cap": 10,
+    "railing-post": 10,
+    "top-rail": 9
+   },
+   "counts": {
+    "railPosts": 10,
+    "balusters": 99
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 40,
+    "deckRailLF": 40
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "double-border-dividers": {
+   "partsByKind": {
+    "baluster": 169,
+    "bottom-rail": 13,
+    "post-cap": 14,
+    "railing-post": 14,
+    "top-rail": 13
+   },
+   "counts": {
+    "railPosts": 14,
+    "balusters": 169
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 68,
+    "deckRailLF": 68
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "freestanding": {
+   "partsByKind": {
+    "baluster": 132,
+    "bottom-rail": 12,
+    "post-cap": 12,
+    "railing-post": 12,
+    "top-rail": 12
+   },
+   "counts": {
+    "railPosts": 12,
+    "balusters": 132
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 56,
+    "deckRailLF": 56
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "two-house-walls": {
+   "partsByKind": {
+    "baluster": 121,
+    "bottom-rail": 11,
+    "post-cap": 12,
+    "railing-post": 12,
+    "top-rail": 11
+   },
+   "counts": {
+    "railPosts": 12,
+    "balusters": 121
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 49.56,
+    "deckRailLF": 49.56
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "flush-beam": {
+   "partsByKind": {
+    "baluster": 99,
+    "bottom-rail": 9,
+    "post-cap": 10,
+    "railing-post": 10,
+    "top-rail": 9
+   },
+   "counts": {
+    "railPosts": 10,
+    "balusters": 99
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 40,
+    "deckRailLF": 40
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "multi-stair": {
+   "partsByKind": {
+    "baluster": 119,
+    "bottom-rail": 13,
+    "post-cap": 17,
+    "railing-post": 17,
+    "stair-baluster": 132,
+    "stair-bottom-rail": 6,
+    "stair-rail-post": 12,
+    "stair-top-rail": 6,
+    "top-rail": 13
+   },
+   "counts": {
+    "railPosts": 29,
+    "balusters": 251
+   },
+   "stats": {
+    "stairRailLF": 61.2066,
+    "totalRailLF": 111.2066,
+    "deckRailLF": 50
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "mixed-rail-edges": {
+   "partsByKind": {
+    "baluster": 66,
+    "bottom-rail": 6,
+    "post-cap": 8,
+    "railing-post": 8,
+    "top-rail": 6
+   },
+   "counts": {
+    "railPosts": 8,
+    "balusters": 66
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 28,
+    "deckRailLF": 28
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "pvc-white-rail": {
+   "partsByKind": {
+    "baluster": 99,
+    "bottom-rail": 9,
+    "post-cap": 10,
+    "railing-post": 10,
+    "top-rail": 9
+   },
+   "counts": {
+    "railPosts": 10,
+    "balusters": 99
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 40,
+    "deckRailLF": 40
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "cut-corner": {
+   "partsByKind": {
+    "baluster": 110,
+    "bottom-rail": 9,
+    "post-cap": 10,
+    "railing-post": 10,
+    "top-rail": 9
+   },
+   "counts": {
+    "railPosts": 10,
+    "balusters": 110
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 45.6569,
+    "deckRailLF": 45.6569
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "bump-out": {
+   "partsByKind": {
+    "baluster": 124,
+    "bottom-rail": 14,
+    "post-cap": 15,
+    "railing-post": 15,
+    "top-rail": 14
+   },
+   "counts": {
+    "railPosts": 15,
+    "balusters": 124
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 54,
+    "deckRailLF": 54
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "legacy-v4-single-stair": {
+   "partsByKind": {
+    "baluster": 88,
+    "bottom-rail": 10,
+    "post-cap": 12,
+    "railing-post": 12,
+    "stair-baluster": 14,
+    "stair-bottom-rail": 1,
+    "stair-rail-post": 2,
+    "stair-top-rail": 1,
+    "top-rail": 10
+   },
+   "counts": {
+    "railPosts": 14,
+    "balusters": 102
+   },
+   "stats": {
+    "stairRailLF": 6.8007,
+    "totalRailLF": 42.8007,
+    "deckRailLF": 36
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "legacy-minimal-attached-false": {
+   "partsByKind": {
+    "baluster": 114,
+    "bottom-rail": 10,
+    "post-cap": 10,
+    "railing-post": 10,
+    "top-rail": 10
+   },
+   "counts": {
+    "railPosts": 10,
+    "balusters": 114
+   },
+   "stats": {
+    "stairRailLF": 0,
+    "totalRailLF": 48,
+    "deckRailLF": 48
+   },
+   "alerts": [
+    "review: Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  }
+ },
+ "designs": {
+  "small-rect-12x10": {
+   "railParts": "7e95b1961714247d330c5126a4350fe582c19f7487b7e98626aa296295b48dc2",
+   "railPartCount": 105,
+   "counts": {
+    "railPosts": 8,
+    "balusters": 75
+   },
+   "stats": {
+    "deckRailLF": 32,
+    "stairRailLF": 0,
+    "totalRailLF": 32
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "default-rect-16x12": {
+   "railParts": "ba2212800ff1cfef0c7959974a59e640cc17bce71da82b2efe2c50e33fc0ad54",
+   "railPartCount": 137,
+   "counts": {
+    "railPosts": 10,
+    "balusters": 99
+   },
+   "stats": {
+    "deckRailLF": 40,
+    "stairRailLF": 0,
+    "totalRailLF": 40
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "medium-rect-20x14-stair": {
+   "railParts": "c370838ce5784521f6435ff34a68f1d09b3a942e9384b9f4092882c725675ca7",
+   "railPartCount": 186,
+   "counts": {
+    "railPosts": 16,
+    "balusters": 134
+   },
+   "stats": {
+    "deckRailLF": 44,
+    "stairRailLF": 13.601470508735444,
+    "totalRailLF": 57.601470508735446
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "square-14": {
+   "railParts": "5e4d3e1785db7b04ee66f3dd4ec151c588543c7dfc10c77048841f86ff7bc5ff",
+   "railPartCount": 137,
+   "counts": {
+    "railPosts": 10,
+    "balusters": 99
+   },
+   "stats": {
+    "deckRailLF": 42,
+    "stairRailLF": 0,
+    "totalRailLF": 42
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "L-24x18": {
+   "railParts": "1a1d0c011a015bcaf82ab62f0bd06a00ae5ab024ff74f1f00a7c50846b86fcfc",
+   "railPartCount": 201,
+   "counts": {
+    "railPosts": 14,
+    "balusters": 147
+   },
+   "stats": {
+    "deckRailLF": 60,
+    "stairRailLF": 0,
+    "totalRailLF": 60
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "L-flipped-24x18": {
+   "railParts": "74e3f0decb8b9579f9d0b3b15f5915824b3d9f0516423002c4369658cc5ff36c",
+   "railPartCount": 201,
+   "counts": {
+    "railPosts": 14,
+    "balusters": 147
+   },
+   "stats": {
+    "deckRailLF": 60,
+    "stairRailLF": 0,
+    "totalRailLF": 60
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "T-28x20": {
+   "railParts": "ef677f2f27335cd017a55d2bd5baf0abece4656ebb29445f47ffae33616057e2",
+   "railPartCount": 230,
+   "counts": {
+    "railPosts": 17,
+    "balusters": 164
+   },
+   "stats": {
+    "deckRailLF": 68,
+    "stairRailLF": 0,
+    "totalRailLF": 68
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "U-32x22": {
+   "railParts": "f0d512545e323b76f28173c864b3f6a981c64c801ae967281488df2160ff8bef",
+   "railPartCount": 337,
+   "counts": {
+    "railPosts": 22,
+    "balusters": 251
+   },
+   "stats": {
+    "deckRailLF": 99.75999999999999,
+    "stairRailLF": 0,
+    "totalRailLF": 99.75999999999999
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "large-U-40x24-9ft-stair": {
+   "railParts": "14adbcde4ece70f7050f7a9fb3c18825fecce848839d4ceac0bb221bf57d6645",
+   "railPartCount": 440,
+   "counts": {
+    "railPosts": 32,
+    "balusters": 330
+   },
+   "stats": {
+    "deckRailLF": 107.91999999999999,
+    "stairRailLF": 29.86683407691176,
+    "totalRailLF": 137.78683407691176
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "free-hexagon": {
+   "railParts": "4a4492d2d66249d7e5054ca9cb10813ba50cf07e820daf3848e4010bda828ae0",
+   "railPartCount": 174,
+   "counts": {
+    "railPosts": 11,
+    "balusters": 132
+   },
+   "stats": {
+    "deckRailLF": 51.56467529817257,
+    "stairRailLF": 0,
+    "totalRailLF": 51.56467529817257
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "diagonal-boards": {
+   "railParts": "5798936b99243f8e96fdbe737b348da5753918a9bf33ffce17623849cd1c6cc1",
+   "railPartCount": 152,
+   "counts": {
+    "railPosts": 11,
+    "balusters": 110
+   },
+   "stats": {
+    "deckRailLF": 46,
+    "stairRailLF": 0,
+    "totalRailLF": 46
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "outward-boards": {
+   "railParts": "5798936b99243f8e96fdbe737b348da5753918a9bf33ffce17623849cd1c6cc1",
+   "railPartCount": 152,
+   "counts": {
+    "railPosts": 11,
+    "balusters": 110
+   },
+   "stats": {
+    "deckRailLF": 46,
+    "stairRailLF": 0,
+    "totalRailLF": 46
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "no-border": {
+   "railParts": "ba2212800ff1cfef0c7959974a59e640cc17bce71da82b2efe2c50e33fc0ad54",
+   "railPartCount": 137,
+   "counts": {
+    "railPosts": 10,
+    "balusters": 99
+   },
+   "stats": {
+    "deckRailLF": 40,
+    "stairRailLF": 0,
+    "totalRailLF": 40
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "double-border-dividers": {
+   "railParts": "25a6e64ea0ec02941fad328ff6d293c44eab14266f0317fced44e28fa1ae76b4",
+   "railPartCount": 223,
+   "counts": {
+    "railPosts": 14,
+    "balusters": 169
+   },
+   "stats": {
+    "deckRailLF": 68,
+    "stairRailLF": 0,
+    "totalRailLF": 68
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "freestanding": {
+   "railParts": "b24349d2ef11e8c271cee281d4b0db99116715b94b897aed4155fcd2fca1ace0",
+   "railPartCount": 180,
+   "counts": {
+    "railPosts": 12,
+    "balusters": 132
+   },
+   "stats": {
+    "deckRailLF": 56,
+    "stairRailLF": 0,
+    "totalRailLF": 56
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "two-house-walls": {
+   "railParts": "94216ea38a123c10921918ad6dcabf55063870154daeac8811e529f2787854e5",
+   "railPartCount": 167,
+   "counts": {
+    "railPosts": 12,
+    "balusters": 121
+   },
+   "stats": {
+    "deckRailLF": 49.56,
+    "stairRailLF": 0,
+    "totalRailLF": 49.56
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "flush-beam": {
+   "railParts": "ba2212800ff1cfef0c7959974a59e640cc17bce71da82b2efe2c50e33fc0ad54",
+   "railPartCount": 137,
+   "counts": {
+    "railPosts": 10,
+    "balusters": 99
+   },
+   "stats": {
+    "deckRailLF": 40,
+    "stairRailLF": 0,
+    "totalRailLF": 40
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "multi-stair": {
+   "railParts": "0027eb512aac2ac763d2b3610fe66143d2af55d05b08362364e4498b9c18aed2",
+   "railPartCount": 335,
+   "counts": {
+    "railPosts": 29,
+    "balusters": 251
+   },
+   "stats": {
+    "deckRailLF": 50,
+    "stairRailLF": 61.20661728930949,
+    "totalRailLF": 111.20661728930949
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "mixed-rail-edges": {
+   "railParts": "0e070fcc4de013c5ed810f7b36706a0ae0e65559869c7928a991cd0bf619750f",
+   "railPartCount": 94,
+   "counts": {
+    "railPosts": 8,
+    "balusters": 66
+   },
+   "stats": {
+    "deckRailLF": 28,
+    "stairRailLF": 0,
+    "totalRailLF": 28
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "pvc-white-rail": {
+   "railParts": "443473c0d31009e53f1a80d28a6045d02e3443e9ac2495984f26714ccf4b4dff",
+   "railPartCount": 137,
+   "counts": {
+    "railPosts": 10,
+    "balusters": 99
+   },
+   "stats": {
+    "deckRailLF": 40,
+    "stairRailLF": 0,
+    "totalRailLF": 40
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "cut-corner": {
+   "railParts": "818c04874b1d84593771802fab996acc9f6e2026b99a3c821aa2e13776e98cfd",
+   "railPartCount": 148,
+   "counts": {
+    "railPosts": 10,
+    "balusters": 110
+   },
+   "stats": {
+    "deckRailLF": 45.65685424949238,
+    "stairRailLF": 0,
+    "totalRailLF": 45.65685424949238
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "bump-out": {
+   "railParts": "054f734f89e77fcf6be30f302628392016dc80089675434525ff85f7e68e0d2c",
+   "railPartCount": 182,
+   "counts": {
+    "railPosts": 15,
+    "balusters": 124
+   },
+   "stats": {
+    "deckRailLF": 54,
+    "stairRailLF": 0,
+    "totalRailLF": 54
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "legacy-v4-single-stair": {
+   "railParts": "ada7835e5a0e3f4c68745aa83d646472d7b116e364510786d4b6bc2245d99298",
+   "railPartCount": 150,
+   "counts": {
+    "railPosts": 14,
+    "balusters": 102
+   },
+   "stats": {
+    "deckRailLF": 36,
+    "stairRailLF": 6.800735254367722,
+    "totalRailLF": 42.80073525436772
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "legacy-minimal-attached-false": {
+   "railParts": "ea78add37b3e97b9d1574481a11964be8b4751559024366d4d074b5c0f9bc91f",
+   "railPartCount": 154,
+   "counts": {
+    "railPosts": 10,
+    "balusters": 114
+   },
+   "stats": {
+    "deckRailLF": 48,
+    "stairRailLF": 0,
+    "totalRailLF": 48
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "b3-showcase": {
+   "railParts": "ec8832b891ff97c7599c22737ae5a29a36d050b8d2c0f8af20a46276108f3291",
+   "railPartCount": 245,
+   "counts": {
+    "railPosts": 21,
+    "balusters": 175
+   },
+   "stats": {
+    "deckRailLF": 44,
+    "stairRailLF": 32.030227204735866,
+    "totalRailLF": 76.03022720473587
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "b2-diagonal-double-frame-dividers": {
+   "railParts": "2315d77c2e70656b970784a42b0adcac610fbd3dac8eefdf305a59e743dad544",
+   "railPartCount": 306,
+   "counts": {
+    "railPosts": 27,
+    "balusters": 214
+   },
+   "stats": {
+    "deckRailLF": 56,
+    "stairRailLF": 36.72017107489201,
+    "totalRailLF": 92.72017107489201
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "b2-vertical-u": {
+   "railParts": "c96345770f67b937402c6632abf92644f0c3d18d6120f74711b522518054e836",
+   "railPartCount": 461,
+   "counts": {
+    "railPosts": 36,
+    "balusters": 351
+   },
+   "stats": {
+    "deckRailLF": 91.75999999999999,
+    "stairRailLF": 59.73366815382352,
+    "totalRailLF": 151.4936681538235
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "cp3-turn-right-wide": {
+   "railParts": "c79e21155595bbe0126b3b44d749c27aef3157ab941d17ea91dc83e748a4d287",
+   "railPartCount": 269,
+   "counts": {
+    "railPosts": 24,
+    "balusters": 195
+   },
+   "stats": {
+    "deckRailLF": 50,
+    "stairRailLF": 33.349432824915695,
+    "totalRailLF": 83.3494328249157
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "b3c-inside-corner-door": {
+   "railParts": "11eb1243621c5a6710152a34390b89aee3e9f8b0688a0d4f84bd88af903c46f8",
+   "railPartCount": 111,
+   "counts": {
+    "railPosts": 8,
+    "balusters": 81
+   },
+   "stats": {
+    "deckRailLF": 34,
+    "stairRailLF": 0,
+    "totalRailLF": 34
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "b3c-outside-corner": {
+   "railParts": "aa9c21f33c8992979de95e516b0074357a79477b9e8958afbcb2b348674d17f9",
+   "railPartCount": 221,
+   "counts": {
+    "railPosts": 15,
+    "balusters": 163
+   },
+   "stats": {
+    "deckRailLF": 66.12,
+    "stairRailLF": 0,
+    "totalRailLF": 66.12
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "b3c-u-three-walls": {
+   "railParts": "4d533b9d281b3d7832ed466449a39a9b1bc73b5f67a887d59139fc8d8d914733",
+   "railPartCount": 304,
+   "counts": {
+    "railPosts": 19,
+    "balusters": 230
+   },
+   "stats": {
+    "deckRailLF": 93.28,
+    "stairRailLF": 0,
+    "totalRailLF": 93.28
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "b3c-bevel-walls": {
+   "railParts": "464d1c2bf15e7e86e912eae75bdffd5990d574ba87617780e139a2ef632d6f4b",
+   "railPartCount": 147,
+   "counts": {
+    "railPosts": 10,
+    "balusters": 109
+   },
+   "stats": {
+    "deckRailLF": 45,
+    "stairRailLF": 0,
+    "totalRailLF": 45
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "b3c-short-wall-window": {
+   "railParts": "93c025ef5f3c17f1dc64243996b622d4c233104281ba97710682bf4bcf04f720",
+   "railPartCount": 150,
+   "counts": {
+    "railPosts": 11,
+    "balusters": 108
+   },
+   "stats": {
+    "deckRailLF": 44,
+    "stairRailLF": 0,
+    "totalRailLF": 44
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "rails-custom-finish": {
+   "railParts": "e563375e74402a262a2909efa7d227f5bce1d588f52017c6850e1a5c1a5a1972",
+   "railPartCount": 176,
+   "counts": {
+    "railPosts": 15,
+    "balusters": 128
+   },
+   "stats": {
+    "deckRailLF": 38,
+    "stairRailLF": 16.2694328249157,
+    "totalRailLF": 54.2694328249157
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  },
+  "freestanding-flush": {
+   "railParts": "aec0d6b98f40c2b3783507487ec8213d366c310450ef831b797a1b313c2b5088",
+   "railPartCount": 180,
+   "counts": {
+    "railPosts": 12,
+    "balusters": 132
+   },
+   "stats": {
+    "deckRailLF": 56,
+    "stairRailLF": 0,
+    "totalRailLF": 56
+   },
+   "alerts": [
+    "Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review."
+   ]
+  }
+ }
+}

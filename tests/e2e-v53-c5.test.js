@@ -7,6 +7,7 @@
 // The project keeps its centre offsets (schema 6); these tests check the conversion both ways.
 'use strict';
 const test = require('node:test');
+const { pdfWithoutRail } = require('./rail-inset');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const os = require('os');
@@ -305,7 +306,9 @@ test('C5 the C4 customer PDF is unchanged for an identical design (text and imag
     const d = (await page.evaluate(() => window.AOSDeckStudioTest.pdf())).doc; assert.deepEqual(errors, []); await ctx.close();
     return { pages: d.pages.map(p => ({ texts: p.texts, images: p.images })), images: Object.fromEntries(Object.entries(d.images).map(([k, v]) => [k, crypto.createHash('sha256').update(v.url).digest('hex')])), checks: d.checks }; };
   const c5 = await run(APP), c4 = await run(C4_APP);
-  assert.deepEqual(c5, c4, 'same document as C4');
+  // V5.3 R1 rail inset (owner, 11 Nov 2026): only the 3D render and the railing figure may differ
+  // (checked against the model in tests/e2e-v53-c6-pdf.test.js); everything else is identical to C4.
+  assert.deepEqual(pdfWithoutRail(c5).doc, pdfWithoutRail(c4).doc, 'same document as C4');
 });
 
 test('C5 tablet and phone: Left/Right and Apply work by touch for an opening and a stair; panels scroll to every control', async () => {

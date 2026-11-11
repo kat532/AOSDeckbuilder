@@ -10,6 +10,7 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 const { loadEngine, ROOT } = require('./engine');
 const { fixtures } = require('./fixtures');
+const { withoutRailInset } = require('./rail-inset');
 
 const win = loadEngine(), core = win.DeckCore;
 // The B3 development build the owner tested (bd8d529), for "nothing else changed" checks.
@@ -220,8 +221,10 @@ test('B3c-12 nothing but the house changed: every non-house part, count, materia
   const NOT_HOUSE = (m) => noId(m.parts.filter(p => !(p.group === 'context' && /^(house-|siding-course)/.test(p.kind))));
   let n = 0;
   for (const [name, raw] of Object.entries(all)) {
-    const a = build(raw), b = dev.DeckCore.make(dev.DeckCore.sanitize(raw));
-    if (a.stats.invalidGeometry) continue;
+    // V5.3 R1 rail inset (owner, 11 Nov 2026): railing outputs excepted; they are checked by tests/rail-inset-r1.test.js.
+    const a0 = build(raw), b0 = dev.DeckCore.make(dev.DeckCore.sanitize(raw));
+    if (a0.stats.invalidGeometry) continue;
+    const a = withoutRailInset(a0), b = withoutRailInset(b0);
     assert.deepEqual(NOT_HOUSE(a), NOT_HOUSE(b), `${name}: decking, framing, stairs, landings, railings, openings, slabs`);
     assert.deepEqual(plain(a.counts), plain(b.counts), name); assert.deepEqual(plain(a.materials), plain(b.materials), name);
     assert.deepEqual(plain(a.alerts), plain(b.alerts), name); n++;

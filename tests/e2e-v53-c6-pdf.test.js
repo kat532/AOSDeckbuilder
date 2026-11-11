@@ -8,6 +8,8 @@ const { pathToFileURL } = require('url');
 const H = require('./c6-helpers');
 const { assert, fs, os, path, ROOT, ALL, openDesign, step, intent } = H;
 const { CENSUS_DESIGN } = require('./ui-census');
+const { pdfWithoutRail, withoutRailInset } = require('./rail-inset');
+const railless = (k, v) => k === 'componentModel' ? withoutRailInset({ parts: v }).parts : k === 'counts' ? withoutRailInset({ counts: v }).counts : withoutRailInset({ alerts: v }).alerts;
 const h = H.harness(test);
 const C5_HTML = path.join(os.tmpdir(), `aos-c6-c5-${process.pid}.html`), C5_APP = pathToFileURL(C5_HTML).href;
 test.before(() => fs.writeFileSync(C5_HTML, execFileSync('git', ['show', 'checkpoint/v5.3-c5:index.html'], { cwd: ROOT })));
@@ -18,8 +20,9 @@ async function pdfOf(app, design) {
   if (app) { await page.goto(app); await page.waitForFunction(() => window.DeckCore && window.AOSDeckStudioTest); }
   await openDesign(page, design); await step(page, 7);
   await page.locator('#stepContent [data-action="pdf-preview"]').click(); await page.waitForFunction(() => !document.getElementById('pdfDownloadBtn').disabled, null, { timeout: 60000 });
-  const d = (await page.evaluate(() => window.AOSDeckStudioTest.pdf())).doc; assert.deepEqual(errors, []); await ctx.close();
-  return { pages: d.pages.map(p => ({ texts: p.texts, images: p.images })), images: Object.fromEntries(Object.entries(d.images).map(([k, v]) => [k, crypto.createHash('sha256').update(v.url).digest('hex')])), checks: d.checks };
+  const d = (await page.evaluate(() => window.AOSDeckStudioTest.pdf())).doc, rail = app ? null : H.model(await intent(page)).stats.totalRailLF; assert.deepEqual(errors, []); await ctx.close();
+  if (!app) d.railLFModel = rail; // current build: the railing figure is checked against its own model
+  return { railLFModel: d.railLFModel, pages: d.pages.map(p => ({ texts: p.texts, images: p.images })), images: Object.fromEntries(Object.entries(d.images).map(([k, v]) => [k, crypto.createHash('sha256').update(v.url).digest('hex')])), checks: d.checks };
 }
 const DESIGNS = {
   census: CENSUS_DESIGN,
@@ -30,7 +33,11 @@ const DESIGNS = {
 for (const [name, design] of Object.entries(DESIGNS)) {
   test(`C6 customer PDF identical to the C5 build: ${name}`, async () => {
     const c6 = await pdfOf(null, design), c5 = await pdfOf(C5_APP, design);
-    assert.deepEqual(c6, c5);
+    // V5.3 R1 rail inset (owner, 11 Nov 2026): the 3D render and the railing figure are the only allowed
+    // differences; every other text, image and check is byte-identical. The figure must match this build's model.
+    const a = pdfWithoutRail({ ...c6, railLFModel: undefined }), b = pdfWithoutRail({ ...c5, railLFModel: undefined });
+    assert.deepEqual(a.doc, b.doc);
+    assert.equal(a.railLF, c6.railLFModel.toFixed(1), `${name}: PDF railing linear ft = the model's total railing`);
   });
 }
 
@@ -41,6 +48,8 @@ test('C6 a design file saved by the C5 build (schema 6) opens in C6 with the ide
   const r = await H.reopen(h, file);
   assert.deepEqual(await intent(r.page), JSON.parse(JSON.stringify(data.design)));
   const again = await H.saveFile(r.page);
-  for (const k of ['design', 'componentModel', 'counts', 'alerts']) assert.deepEqual(again.data[k], data[k], `C6 re-save unchanged: ${k}`);
+  assert.deepEqual(again.data.design, data.design, 'C6 re-save unchanged: design');
+  // V5.3 R1 rail inset: the saved component model, counts and alerts are unchanged apart from the railing.
+  for (const k of ['componentModel', 'counts', 'alerts']) assert.deepEqual(railless(k, again.data[k]), railless(k, data[k]), `C6 re-save unchanged: ${k} (railing excepted)`);
   assert.deepEqual(r.errors, []); await r.ctx.close();
 });

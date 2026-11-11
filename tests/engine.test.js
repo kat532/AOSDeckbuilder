@@ -8,6 +8,8 @@ const fs = require('fs');
 const path = require('path');
 const { loadEngine, snapshot } = require('./engine');
 const { fixtures } = require('./fixtures');
+const { snapshotWithoutRail, snapshotRail } = require('./rail-inset');
+const RAIL_PINS = JSON.parse(fs.readFileSync(path.join(__dirname, 'baseline', 'rail-inset-r1.json'), 'utf8')).snapshots;
 
 const win = loadEngine();
 const FIX = fixtures(win);
@@ -30,7 +32,11 @@ for (const [name, raw] of Object.entries(FIX)) {
   const KNOWN_FAILING = { 'cut-corner': 'KNOWN STRUCTURAL FAILURE (V5.2 case 4): angled-corner joists lack confirmed bearing; the recorded corner-beam layout remains the target' };
   test(`model matches V5.0 baseline: ${name}`, KNOWN_FAILING[name] ? { todo: KNOWN_FAILING[name] } : {}, () => {
     const golden = JSON.parse(fs.readFileSync(path.join(GOLDEN, `${name}.json`), 'utf8'));
-    assert.deepEqual(snapshot(win, raw), golden.model);
+    // R1 rail inset (owner, 11 Nov 2026): railing posts moved 1½ in. inside the finished edges. Everything
+    // else must still equal the V5.0 golden exactly; the railing outputs must equal the R1 rail record.
+    const snap = snapshot(win, raw);
+    assert.deepEqual(snapshotWithoutRail(snap), snapshotWithoutRail(golden.model));
+    assert.deepEqual(snapshotRail(snap), RAIL_PINS[name], `${name}: railing outputs (R1 rail inset record)`);
   });
 
   test(`sanitized intent matches V5.0 baseline: ${name}`, () => {

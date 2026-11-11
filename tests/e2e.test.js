@@ -1481,9 +1481,10 @@ test('CP3: landing decking colors follow the main deck in the 2D plan', async ()
   const hex = (c) => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
   const near = (a, b) => a.every((v, i) => Math.abs(v - b[i]) < 26);
   // Corners of the double picture frame are the border color; the middle of the landing is field color (sample a few spots, skipping gaps).
-  // (clear of the guard rail drawn 1 in. inside the landing edge)
-  assert.ok(near(await frame(-3.65, 0.3), hex(colors.border)), 'outer frame course at the corner');
-  assert.ok(near(await frame(3.65, 5.7), hex(colors.border)), 'outer frame course at the far corner');
+  // (clear of the guard rail, which since the R1 rail inset runs RAIL_LINE = 1½ in. + half a post inside the
+  // landing edge: the post covers 1½–4 in. from the edge, so sample the outer course 4.8 in. in)
+  assert.ok(near(await frame(-3.6, 0.4), hex(colors.border)), 'outer frame course at the corner');
+  assert.ok(near(await frame(3.6, 5.6), hex(colors.border)), 'outer frame course at the far corner');
   await page.screenshot({ path: path.join(SHOTS, 'cp3-colors.png') });
   const mids = await Promise.all([[-2.4, 1.6], [2.4, 4.3], [-2.4, 4.3]].map(([u, v]) => frame(u, v)));
   assert.ok(mids.filter(c => near(c, hex(colors.field))).length >= 2, 'field boards in the middle ' + JSON.stringify([mids, hex(colors.field)]));
