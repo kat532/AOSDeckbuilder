@@ -22,7 +22,7 @@ test('R1 new plan: a blank name is refused; a named plan starts and is saved und
   const { ctx, page, errors } = await h.newPage();
   assert.equal(await page.locator('#emptyOverlay').isVisible(), true);
   assert.equal(await page.locator('#startFromCanvas').count(), 0, 'R1 UI2: no Start Designing button');
-  assert.match(await page.locator('#newPlanNext').innerText(), /choose a deck shape/);
+  assert.match(await page.locator('#newPlanNext').innerText(), /choose a deck shape/i); // R1 final 2: now the Step 1 heading
   assert.equal(await page.locator('#openExistingBtn').innerText(), 'Open Existing Plan');
   assert.equal(await page.locator('#projectName').inputValue(), '', 'no default name');
   for (const blank of ['', '   ']) {

@@ -102,7 +102,7 @@
 .aos-confirm-buttons{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .aos-confirm-buttons button{min-height:46px;border-radius:9px;font-size:12px;font-weight:800;padding:10px 8px}
 .aos-confirm-buttons .cancel{border:1px solid #d9e0e5;background:#f5f7f8;color:#334557}
-.aos-confirm-buttons.three{grid-template-columns:1fr 1fr 1fr}.aos-confirm-buttons .primary{border:1px solid #1f2d3a;background:#253746;color:#fff}.textbtn.newplan{background:#ffffff12;color:#fff;border:1px solid #ffffff3d;padding:10px 13px}.textbtn.newplan:hover{background:#ffffff24}.np-short{display:none}@media(max-width:800px){.textbtn.newplan{padding:8px 9px;font-size:10px}.np-long{display:none}.np-short{display:inline}}.newplan-form{display:flex;flex-direction:column;gap:6px;width:min(340px,100%);text-align:left;margin-top:4px}.newplan-form label{font-size:10px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:#4f5d6e}.newplan-form input{min-height:44px;border:1px solid #c9d2d8;border-radius:9px;padding:0 12px;font-size:14px;background:#fff}.newplan-form input:focus{outline:2px solid #c32e3c55;border-color:#c32e3c}.newplan-error{min-height:14px;font-size:11px;font-weight:700;color:#b21d31}.newplan-actions{display:grid;grid-template-columns:1fr;gap:8px}.newplan-next{font-size:12px;font-weight:700;color:#344757}.newplan-actions .start-btn{margin-top:0;min-height:46px}.open-existing{min-height:46px;border:1px solid #c9d2d8;border-radius:10px;background:#fff;color:#253746;font-size:12px;font-weight:800}.aos-confirm-buttons .danger{border:1px solid #ad2736;background:#c32e3c;color:#fff}
+.aos-confirm-buttons.three{grid-template-columns:1fr 1fr 1fr}.aos-confirm-buttons .primary{border:1px solid #1f2d3a;background:#253746;color:#fff}.textbtn.newplan{background:#ffffff12;color:#fff;border:1px solid #ffffff3d;padding:10px 13px}.textbtn.newplan:hover{background:#ffffff24}.np-short{display:none}@media(max-width:800px){.textbtn.newplan{padding:8px 9px;font-size:10px}.np-long{display:none}.np-short{display:inline}}.newplan-form{display:flex;flex-direction:column;gap:6px;width:min(340px,100%);text-align:left;margin-top:4px}.newplan-form label{font-size:10px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:#4f5d6e}.newplan-form input{min-height:44px;border:1px solid #c9d2d8;border-radius:9px;padding:0 12px;font-size:14px;background:#fff}.newplan-form input:focus{outline:2px solid #c32e3c55;border-color:#c32e3c}.newplan-error{min-height:14px;font-size:11px;font-weight:700;color:#b21d31}.newplan-actions{display:grid;grid-template-columns:1fr;gap:8px}.newplan-next{font-size:12px;font-weight:700;color:#344757}.panel-newplan{width:100%;margin:0 0 4px}.panel-newplan label em{font-style:normal;font-weight:700;letter-spacing:0;text-transform:none;color:#a9303d;margin-left:4px}.newplan-actions .start-btn{margin-top:0;min-height:46px}.open-existing{min-height:46px;border:1px solid #c9d2d8;border-radius:10px;background:#fff;color:#253746;font-size:12px;font-weight:800}.aos-confirm-buttons .danger{border:1px solid #ad2736;background:#c32e3c;color:#fff}
 
 /* V5 shape editor: compact controls with one scrollable inspector, large handles on canvas. */
 .inspector.shape-edit .inspector-content,.inspector.stair-edit .inspector-content{overflow-y:auto;overscroll-behavior:contain;padding-bottom:12px}
@@ -321,7 +321,7 @@ body.pdf-open{overflow:hidden}
       <button class="structure-toggle" id="structureToggle" type="button" aria-pressed="false" hidden>⌗ Show framing</button>
       <canvas id="planCanvas" class="viewport-canvas visible" aria-label="2D deck plan; drag deck edges to resize"></canvas>
       <canvas id="glCanvas" class="viewport-canvas" aria-label="3D deck view; rotate, move focus, or pinch to zoom"></canvas>
-      <div class="placeholder" id="emptyOverlay"><div class="blank-graphic"><span class="shape-ghost"></span><span class="blank-dot a"></span><span class="blank-dot b"></span><span class="blank-dot c"></span><span class="blank-dot d"></span></div><strong>Start a new plan</strong><span>Name the plan, then choose a deck shape.</span><form class="newplan-form" id="newPlanForm" novalidate><label for="newPlanName">Plan name</label><input id="newPlanName" maxlength="90" placeholder="Customer or job, e.g. Smith – 12 Oak St" autocomplete="off" aria-describedby="newPlanError"><div class="newplan-error" id="newPlanError" role="alert"></div><div class="newplan-next" id="newPlanNext">Then choose a deck shape in Shape &amp; Size to begin.</div><div class="newplan-actions"><button id="openExistingBtn" class="open-existing" type="button">Open Existing Plan</button></div></form><div id="recentProjects" class="recent-projects" hidden></div></div>
+      <div class="placeholder" id="emptyOverlay"><div class="blank-graphic"><span class="shape-ghost"></span><span class="blank-dot a"></span><span class="blank-dot b"></span><span class="blank-dot c"></span><span class="blank-dot d"></span></div><strong>Start a new plan</strong><span>Name the plan and choose a deck shape in Step 01 · Shape &amp; Size.</span><div id="recentProjects" class="recent-projects" hidden></div></div>
       <div id="shapeOverlay" class="shape-overlay hidden" role="dialog" aria-label="Choose deck shape">
         <div class="shape-dialog"><div class="shape-dialog-head"><strong>Choose your starting shape</strong><button data-action="close-shapes" aria-label="Close shape choices">✕</button></div>
           <div class="shape-grid"><button data-shape="rectangle"><svg viewBox="0 0 60 34"><rect x="5" y="8" width="50" height="20" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>Rectangle</button><button data-shape="square"><svg viewBox="0 0 60 34"><rect x="17" y="3" width="26" height="26" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>Square</button><button data-shape="L"><svg viewBox="0 0 60 34"><path d="M5 5H55V29H27V17H5Z" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>L-Shape</button><button data-shape="T"><svg viewBox="0 0 60 34"><path d="M5 4H55V16H39V30H21V16H5Z" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>T-Shape</button><button data-shape="U"><svg viewBox="0 0 60 34"><path d="M5 4H55V30H40V17H20V30H5Z" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>U-Shape</button><button data-shape="free"><svg viewBox="0 0 60 34"><path d="M7 29L17 6L38 17L53 4" fill="none" stroke="#b52b3c" stroke-width="2.5" stroke-dasharray="4 3"/><circle cx="7" cy="29" r="3" fill="#b52b3c"/></svg>Free Draw</button></div>
@@ -1288,11 +1288,14 @@ function sanitize(s){const b=baseIntent(),x=s||{};const q={...b,...x,stairs:{...
  for(const raw of incoming.slice(0,24)){
    if(raw?.enabled===false)continue;
    const edgeId=Number(raw?.edge),edge=es[edgeId];
-   if(!edge||q.houseEdges.includes(edgeId)||edge.len<3.5)continue;
+   if(!edge||q.houseEdges.includes(edgeId)||edge.len<(raw?.fullWidth===true?3.5:3)-1e-6)continue;
    // V5.2 A3: a full-width stair spans its whole edge and follows that edge's length.
    const full=raw?.fullWidth===true;
-   const width=full?edge.len:clamp(raw?.width??4,3,Math.max(3,edge.len-.5));
-   const reach=Math.max(0,(edge.len-width)/2-.08),offset=full?0:clamp(raw?.offset??0,-reach,reach);
+   // R1 final 2 (owner, 11 Nov 2026): a stair may be as wide as its edge and sit flush with either end, so its outer
+   // stringer lines up with the outside of the adjoining deck framing (as a full-width stair already does).
+   // Saved values that do not fit the edge are still corrected exactly as before (older designs are unchanged).
+   const rw=raw?.width??4,width=full?edge.len:rw<=edge.len+1e-9?clamp(rw,3,Math.max(3,edge.len)):clamp(rw,3,Math.max(3,edge.len-.5));
+   const reach=Math.max(0,(edge.len-width)/2),ro=raw?.offset??0,offset=full?0:Math.abs(ro)<=reach+1e-9?ro:clamp(ro,-Math.max(0,reach-.08),Math.max(0,reach-.08));
    // Maintain a six-inch separation between openings on the same edge.
    const same=q.staircases.filter(s=>s.edge===edgeId);
    if(same.some(s=>Math.abs(s.offset-offset)<(s.width+width)/2+.5))continue;
@@ -3221,8 +3224,8 @@ function remap(q,oldPoly,newPoly,keepIndex=false){
  for(const s of q.staircases||[]){const oldEdge=old[s.edge];if(!oldEdge)continue;
    const point=add(oldEdge.mid,mul(oldEdge.t,s.offset));
    const match=nearestIndex(now,point,oldEdge),e=match.edge;
-   if(!e||match.score>.8||wall.includes(e.i)||(s.fullWidth?e.len<3.5:e.len<s.width+.35))continue;
-   const off=dot(sub(point,e.mid),e.t),limit=(e.len-s.width)/2-.08;
+   if(!e||match.score>.8||wall.includes(e.i)||(s.fullWidth?e.len<3.5:e.len<s.width-1e-6))continue;
+   const off=dot(sub(point,e.mid),e.t),limit=Math.max(0,(e.len-s.width)/2);
    if(!s.fullWidth&&Math.abs(off)>limit+.3)continue;
    const candidate=s.fullWidth?{...s,edge:e.i,width:e.len,offset:0}:{...s,edge:e.i,offset:Math.max(-limit,Math.min(limit,off))};
    if(stairs.some(t=>t.edge===candidate.edge&&Math.abs(t.offset-candidate.offset)<(t.width+candidate.width)/2+.5))continue;
@@ -3328,10 +3331,10 @@ const shapeOps=window.AOSShape;
 const currentStair=()=>state.intent?.staircases?.[state.stairSelected]||null;
 function firstAvailableStairEdge(q,width=4,preferOther=true){
  const es=core.edges(core.polygon(q));
- const ranked=es.filter(e=>!q.houseEdges.includes(e.i)&&e.len>=width+.5)
+ const ranked=es.filter(e=>!q.houseEdges.includes(e.i)&&e.len>=width-1e-6)
    .sort((a,b)=>(preferOther?Number(q.staircases.some(s=>s.edge===a.i))-Number(q.staircases.some(s=>s.edge===b.i)):0)||b.len-a.len);
  for(const e of ranked){for(const center of [0,-e.len*.25,e.len*.25,-e.len*.37,e.len*.37]){
-   const max=(e.len-width)/2-.08,off=clamp(center,-max,max);
+   const max=Math.max(0,(e.len-width)/2),off=clamp(center,-max,max);
    if(q.staircases.every(s=>s.edge!==e.i||Math.abs(s.offset-off)>=(s.width+width)/2+.5))return {edge:e.i,offset:off};
  }}return null;
 }
@@ -3341,8 +3344,8 @@ function stairPlacementProblem(q,index,edgeId,offset,width){
  const e=core.edges(core.polygon(q))[edgeId];
  // V5.2 A3: a full-width stair takes the whole edge, centered.
  if(e&&q.staircases[index]?.fullWidth){width=e.len;offset=0;if(q.staircases[index])q.staircases[index].width=e.len;}
- if(!e||q.houseEdges.includes(edgeId)||(!q.staircases[index]?.fullWidth&&e.len<width+.35))return 'edge';
- if(!q.staircases[index]?.fullWidth&&Math.abs(offset)>(e.len-width)/2-.075)return 'edge';
+ if(!e||q.houseEdges.includes(edgeId)||(!q.staircases[index]?.fullWidth&&e.len<width-1e-6))return 'edge';
+ if(!q.staircases[index]?.fullWidth&&Math.abs(offset)>(e.len-width)/2+1e-6)return 'edge';
  const es=core.edges(core.polygon(q)),me={...q.staircases[index],edge:edgeId,offset,width};
  if(!q.staircases.every((s,i)=>i===index||(
    (s.edge!==edgeId||Math.abs(s.offset-offset)>=(s.width+width)/2+.5)&&
@@ -3551,8 +3554,8 @@ function selectShape(shape){
  // V5.3 R1: a new design starts only once the plan has a name.
  // R1 hotfix 1: a valid name already typed in the Plan name field counts, whichever start route is used
  // (choosing a shape directly, or Start Designing / Enter). Blank or whitespace-only names are still refused.
- if(!state.intent&&!state.pendingPlanName){const typed=$('newPlanName').value.trim().slice(0,90);if(typed){state.pendingPlanName=typed;$('projectName').value=typed;$('newPlanError').textContent='';}}
- if(!state.intent&&!state.pendingPlanName){state.shapePicker=false;showOverlay();$('newPlanError').textContent='Enter a plan name first, then choose a shape.';$('newPlanName').focus();toast('Enter a plan name first.');return;}
+ if(!state.intent&&!state.pendingPlanName){const typed=String($('newPlanName')?.value??state.draftPlanName??'').trim().slice(0,90);if(typed){state.pendingPlanName=typed;state.draftPlanName='';state.newPlanError='';$('projectName').value=typed;}}
+ if(!state.intent&&!state.pendingPlanName){state.shapePicker=false;showOverlay();setPlanError('Enter a plan name first, then choose a shape.');$('newPlanName')?.focus();toast('Enter a plan name first.');return;}
  if(state.intent&&!state._shapeConfirmed){const q=state.intent,stairs=q.staircases.length,custom=Object.keys(q.railOverrides||{}).length,
    name=shape==='free'?'a new hand-drawn outline':shape==='rectangle'?'a rectangle':shape==='square'?'a square':`a ${shape}-shape`,
    lost=[stairs?`${stairs} staircase${stairs>1?'s':''}`:'',custom?`${custom} custom railing finish${custom>1?'es':''}`:'',shape==='free'&&q.houseEdges.length?'house walls (tap them again after drawing)':'',q.features?.length||q.bevels?.length?'bump-outs and angled cuts':'',Array.isArray(q.points)&&q.shape!==shape&&q.shape!=='free'?'custom edge lengths and moved corners':''].filter(Boolean);
@@ -3657,7 +3660,7 @@ function storeLocalPolygon(q,p,{freeAngle=false,topology=false}={}){
  else for(const stair of q.staircases||[]){const edge=core.edges(p)[stair.edge];
    // V5.2 A3: a full-width stair follows its edge; it only needs the edge to stay at least 3′ 6″.
    if(stair.fullWidth){if(!edge||edge.len<3.5){state.lastShapeError='This edit would leave a full-width staircase on an edge shorter than 3′ 6″. Move that staircase first.';return false;}continue;}
-   if(!edge||edge.len<stair.width+.35||Math.abs(stair.offset)>(edge.len-stair.width)/2-.075){
+   if(!edge||edge.len<stair.width-1e-6||Math.abs(stair.offset)>(edge.len-stair.width)/2+1e-6){
    state.lastShapeError='This edit would leave a staircase without enough edge space. Move that staircase first.';return false;
  }}
  return true;
@@ -3893,7 +3896,8 @@ function applySectionDim(q,key,v){
 }
 function renderShapePanel(q){
  if(state.freeDraw)return `<div class="shape-help"><strong>Draw your deck</strong><p>Tap each corner. Edges snap to square, 45° and 22.5° directions on their own, and the corner angle and edge length show as you move. Tap near the green start pin to close.</p></div><div class="action-row"><button data-action="undo-point">↶ Undo point</button><button data-action="finish-draw" ${state.freePts.length<3?'disabled':''}>✓ Finish & Confirm</button><button data-action="cancel-draw">Cancel</button></div><span class="compact-status">${state.freePts.length} corners · ${state.freePts.length>=3?'tap near the green start pin to close. Close is good enough: the last edge is lined up for you.':'tap the plan to place corners.'}</span>`;
- if(!q)return `<div class="shape-grid">${core.SHAPES.map(sh=>`<button data-shape="${sh}">${shapeSvg(sh)}<span>${sh==='free'?'Free Draw':sh==='rectangle'?'Rectangle':sh==='square'?'Square':sh+'-Shape'}</span></button>`).join('')}</div>`;
+ // R1 final 2: the start of a plan lives in this panel: 1 plan name, 2 shape (starts designing), or open a saved plan.
+ if(!q)return `<form class="newplan-form panel-newplan" id="newPlanForm" novalidate><label for="newPlanName">1 · Plan name <em>required</em></label><input id="newPlanName" maxlength="90" value="${esc(state.draftPlanName||'')}" placeholder="Customer or job, e.g. Smith – 12 Oak St" autocomplete="off" aria-describedby="newPlanError"><div class="newplan-error" id="newPlanError" role="alert">${esc(state.newPlanError||'')}</div></form><p class="group-title" id="newPlanNext">2 · Choose a deck shape to begin</p><div class="shape-grid">${core.SHAPES.map(sh=>`<button data-shape="${sh}">${shapeSvg(sh)}<span>${sh==='free'?'Free Draw':sh==='rectangle'?'Rectangle':sh==='square'?'Square':sh+'-Shape'}</span></button>`).join('')}</div><div class="newplan-actions"><button id="openExistingBtn" data-action="open-existing" class="open-existing" type="button">Open Existing Plan</button></div>`;
  const es=state.model.geometry.edges,corner=state.selectedCorner,edge=state.selectedEdge,poly=state.model.geometry.poly;
  // V5.3 R1: Change Deck Shape is always available on this step (it used to disappear while a measurement or
  // corner was selected). When the plan has work in it, say up front that a change asks first.
@@ -3979,10 +3983,10 @@ function applyOpeningSide(o,raw){const q=state.intent,v=parseExactEdgeLength(raw
  state.posError=null;renderPanel();planDraw();toast(`${core.OPENING_TYPES[o.type].label}: ${exactEdgeLabel(v)} from the ${side} end of the ${wn}.`);return true;}
 function applyStairSide(raw){const q=state.intent,st=currentStair();if(!st||st.fullWidth)return false;const v=parseExactEdgeLength(raw),side=state.stairRef==='right'?'right':'left';
  if(!Number.isFinite(v)){posFail('stair','Enter feet and inches, e.g. 2′ 0″ or 2-0.');return false;}
- const f=sideFrame(q,st.edge,'stair'),w=st.width,lo=.08,hi=f.len-w-.08; // the engine keeps a stair 0.08 ft (about 1 in.) from each end of its edge
+ const f=sideFrame(q,st.edge,'stair'),w=st.width,lo=0,hi=f.len-w; // R1 final 2: a stair may sit flush with either end of its edge
  if(hi<lo){posFail('stair',`Edge ${st.edge+1} (${fmt(f.len)}) is too short for a ${fmt(w)} wide stair. No change made.`);return false;}
  if(v<lo-1e-9||v>hi+1e-9){posFail('stair',`That doesn't fit: edge ${st.edge+1} is ${fmt(f.len)} long. A ${fmt(w)} wide stair can be from ${exactEdgeLabel(sixteenth(lo,true))} to ${exactEdgeLabel(sixteenth(hi,false))} from the ${side} end. No change made.`);return false;}
- const reach=(f.len-w)/2-.08,off=+clamp(sideOffset(f,v,w,side),-reach,reach).toFixed(4),before=JSON.stringify(state.intent.staircases);
+ const reach=Math.max(0,(f.len-w)/2),off=+clamp(sideOffset(f,v,w,side),-reach,reach).toFixed(4),before=JSON.stringify(state.intent.staircases);
  changeSelectedStair({offset:off});
  if(JSON.stringify(state.intent.staircases)===before&&Math.abs(st.offset-off)>1e-9){state.posError={kind:'stair',text:$('toast').textContent,id:st.id};renderPanel();return false;}
  state.posError=null;renderPanel();planDraw();toast(`Stairs: ${exactEdgeLabel(v)} from the ${side} end of edge ${st.edge+1}.`);return true;}
@@ -4708,7 +4712,8 @@ function closeLeave(){$('leaveDialog').hidden=true;pendingLeave=null;}
 function startNewPlan(){clearTimeout(autosaveTimer);autosaveTimer=null;state.leaveGuard=false;resetForProject();state.projectId=null;state.projectCreated=null;state.pendingPlanName='';state.savedSnapshot=null;state.savedRecord=null;
  setProject(null,false);state.history=[null];state.historyAt=0;state.visited=new Set([0]);
  $('projectName').value='';markSave('idle');closeProjects();stepTo(0);showOverlay();planDraw();renderRecent();
- const f=$('newPlanName');f.value='';$('newPlanError').textContent='';setTimeout(()=>f.focus(),60);}
+ state.draftPlanName='';state.newPlanError='';renderPanel();setTimeout(()=>$('newPlanName')?.focus(),60);}
+function setPlanError(m){state.newPlanError=m;const el=$('newPlanError');if(el)el.textContent=m;}
 const hasUnsaved=()=>Boolean(state.intent)&&JSON.stringify(state.intent)!==state.savedSnapshot;
 let pendingUnsaved=null,discardTarget=null;
 function askUnsaved(then){if(!hasUnsaved()){then();return;}pendingUnsaved=then;
@@ -4772,6 +4777,7 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
  if(act==='toggle-snap'){state.drawMode=state.drawMode==='orthogonal'?'free':'orthogonal';renderPanel();return;}
  if(act==='cancel-draw'){state.freeDraw=false;state.freePts=[];showOverlay();renderPanel();planDraw();return;}
  if(act==='stair-add'){addIndependentStair();return;}
+ if(act==='open-existing'){openProjects();return;}
  if(act==='house-see-3d'){changeView('3d');return;}
  if(act==='surface-add'){const t=b.dataset.value,T=core.SURFACE_TYPES[t],q=structuredClone(state.intent);
    if((q.surfaces||[]).length>=core.MAX_SURFACES){toast(`Up to ${core.MAX_SURFACES} concrete surfaces.`);return;}
@@ -5020,7 +5026,10 @@ $('stepContent').addEventListener('change',e=>{const slider=e.target.closest('in
    if(val==='width'&&stair.landing?.turn){const w=Math.round(number*12)/12;
      if(w>core.MAX_TURN_WIDTH){toast(`Turning stairs can be up to ${fmt(core.MAX_TURN_WIDTH)} wide.`);renderPanel();return;}
      if(w>stair.landing.depth){changeSelectedStair({width:w,landing:{...stair.landing,depth:w,width:Math.max(stair.landing.width,w)}},`Landing depth set to ${fmt(w)} so the turned lower flight fits.`);fit2d();return;}}
-   changeSelectedStair({[val]:val==='width'?Math.round(number*12)/12:Math.round(number*4)/4});fit2d();return;
+   // R1 final 2: a width change keeps the stair on its edge (a stair flush with one end stays flush with that end).
+   if(val==='width'){const w=Math.round(number*12)/12,e=core.edges(core.polygon(state.intent))[stair.edge],reach=e?Math.max(0,(e.len-w)/2):0;
+     changeSelectedStair({width:w,offset:+clamp(stair.offset,-reach,reach).toFixed(4)});fit2d();return;}
+   changeSelectedStair({[val]:Math.round(number*4)/4});fit2d();return;
  }
  const fs=e.target.closest('select[data-feature-select]');if(fs){state.featureSelected=fs.value;state.shapeTool='feature-edit';const f=selectedFeature();if(f)state.featureDraft={width:f.width,depth:f.depth,fraction:f.fraction,kind:f.kind};renderPanel();return;}
  const f=e.target.closest('input[data-field]');if(!f)return;const num=parseFeet(f.value);if(!Number.isFinite(num)||num<=0){toast('Enter a length like 21′ 3″, 21 3 or 21.25.');renderPanel();return;}
@@ -5051,12 +5060,12 @@ $('stepContent').addEventListener('change',e=>{
 });
 $('stepContent').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('input[data-field]'))e.target.blur();});
 $('shapeOverlay').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.shape)selectShape(b.dataset.shape);else if(b.dataset.action==='close-shapes'){state.shapePicker=false;showOverlay();}});
-$('newPlanForm').addEventListener('submit',e=>{e.preventDefault();const v=$('newPlanName').value.trim().slice(0,90);
- if(!v){$('newPlanError').textContent='Enter a plan name to start (for example, the customer’s name).';$('newPlanName').focus();return;}
- // V5.3 R1 UI2: no separate Start Designing step: Enter only confirms the name and points to the shapes.
- $('newPlanError').textContent='';$('projectName').value=v;const first=document.querySelector('#stepContent [data-shape]');if(first){first.scrollIntoView({block:'nearest'});first.focus();}toast('Now choose a deck shape to begin.');});
-$('openExistingBtn').onclick=openProjects;
-$('newPlanBtn').onclick=()=>{if(!state.intent&&!state.freeDraw){state.shapePicker=false;showOverlay();$('newPlanName').focus();return;}newProject();};
+// R1 final 2: the plan name form is drawn in the Shape & Size panel, so its events are delegated.
+document.addEventListener('input',e=>{if(e.target?.id==='newPlanName'){state.draftPlanName=e.target.value;if(state.newPlanError&&e.target.value.trim())setPlanError('');}});
+document.addEventListener('submit',e=>{if(e.target?.id!=='newPlanForm')return;e.preventDefault();const v=$('newPlanName').value.trim().slice(0,90);
+ if(!v){setPlanError('Enter a plan name to start (for example, the customer’s name).');$('newPlanName').focus();return;}
+ setPlanError('');$('projectName').value=v;const first=document.querySelector('#stepContent [data-shape]');if(first){first.scrollIntoView({block:'nearest'});first.focus();}toast('Now choose a deck shape to begin.');});
+$('newPlanBtn').onclick=()=>{if(!state.intent&&!state.freeDraw){state.shapePicker=false;showOverlay();if(state.step!==0)stepTo(0);const f=$('newPlanName');f?.scrollIntoView({block:'nearest'});f?.focus();return;}newProject();};
 $('unsavedCancel').onclick=()=>{closeUnsaved();if(hasUnsaved())scheduleAutosave();};
 $('leaveCancel').onclick=closeLeave;
 $('leaveAccept').onclick=()=>{const then=pendingLeave;closeLeave();then?.();};
@@ -5076,7 +5085,7 @@ $('mode2d').onclick=()=>changeView('2d');$('mode3d').onclick=()=>changeView('3d'
 $('planEditBtn').onclick=()=>{state.plan.moveView=false;updateHeader();};$('planMoveBtn').onclick=()=>{state.plan.moveView=true;updateHeader();};
 $('undoBtn').onclick=()=>undo();$('redoBtn').onclick=()=>undo(true);$('saveBtn').onclick=()=>saveProject(true);$('openBtn').onclick=openProjects;
 $('projectName').addEventListener('change',e=>{const v=e.target.value.trim().slice(0,90);
- if(!state.intent){$('newPlanName').value=v;return;}
+ if(!state.intent){state.draftPlanName=v;const f=$('newPlanName');if(f)f.value=v;return;}
  if(!v){e.target.value=state.intent.project;toast('A plan needs a name. Type a new name to rename it.');return;}
  if(v!==state.intent.project)patch('project',v);});
 $('measureBtn').onclick=()=>{const v=state.measure==='none'?'all':'none';setMeasureMode(v);toast(v==='all'?'Measurements ON · all measurements on the plan':'Measurements OFF · tap an edge to see and edit its length in the panel');};
@@ -5509,7 +5518,7 @@ planCanvas.addEventListener('pointermove',e=>{if(state.freeDraw&&!state.plan.poi
  if(drag.type==='stairs'){
    const stair=q.staircases[drag.index],g=state.model.geometry.stairs[drag.index];if(!stair||!g)return;
    const e=state.model.geometry.edges[g.edge],p=[pt[0]-e.mid[0],pt[1]-e.mid[1]],pos=p[0]*e.t[0]+p[1]*e.t[1]-drag.grab;
-   const limit=Math.max(0,(e.len-stair.width)/2-.08),newOffset=clamp(Math.round(pos*4)/4,-limit,limit);
+   const limit=Math.max(0,(e.len-stair.width)/2),newOffset=clamp(Math.abs(Math.abs(pos)-limit)<.13?Math.sign(pos)*limit:Math.round(pos*4)/4,-limit,limit); // snaps flush to an end
    if(!validStairPlacement(q,drag.index,e.i,newOffset,stair.width))return;
    stair.offset=newOffset;
  }
@@ -5547,8 +5556,8 @@ function tapPlan(pt){if(state.freeDraw){if(nearFreeStart(pt)){finishFreeDraw();r
    if(state.intent.houseEdges.includes(edge.i)){toast('Stairs cannot attach to house walls.');return;}
    const q=structuredClone(state.intent),existing=q.staircases[state.stairSelected];
    const full=Boolean(existing?.fullWidth),width=full?edge.len:existing?.width||NEW_STAIR_WIDTH;
-   if(!full&&edge.len<width+.35){toast('This edge is too short for the selected stair width.');return;}
-   const v=[pt[0]-edge.mid[0],pt[1]-edge.mid[1]],limit=(edge.len-width)/2-.08;
+   if(!full&&edge.len<width-1e-6){toast('This edge is too short for the selected stair width.');return;}
+   const v=[pt[0]-edge.mid[0],pt[1]-edge.mid[1]],limit=Math.max(0,(edge.len-width)/2);
    const offset=full?0:clamp(Math.round((v[0]*edge.t[0]+v[1]*edge.t[1])*4)/4,-limit,limit);
    if(!existing){q.staircases.push({id:'stair-'+Date.now().toString(36),edge:edge.i,width,offset,enabled:true,rails:{left:true,right:true}});state.stairSelected=q.staircases.length-1;}
    else{existing.edge=edge.i;existing.offset=offset;if(full)existing.width=width;}

@@ -250,9 +250,11 @@ for (const [k, edge, name] of [[0, 2, 'bottom edge (with a turning landing)'], [
   const lft = nearFrom(e, L, s1.offset, s1.width), rgt = nearFrom(e, R, s1.offset, s1.width); assert.ok(Math.abs(lft + rgt + s1.width - e.len) < 1e-6);
   assert.ok(txt.includes('Left end → stairs:') && txt.includes('Right end → stairs:'));
   // Out of range: refused with the allowed range, nothing moved.
+  // V5.3 R1 final 2 (owner decision 11 Nov 2026): stairs may sit flush with an edge end, so 0′ 0″ is now allowed
+  // and the range starts at 0′ 0″; a distance past the far end is the out-of-range value.
   const before = (await saved(page)).design.staircases;
-  await posSet(page, 'stair', 'left', `0' 0"`);
-  assert.match(await posErr(page, 'stair'), new RegExp(`That doesn't fit: edge ${edge + 1} is ${edge === 2 ? '20′ 0″' : '14′ 0″'} long\\. A 3′ 0″ wide stair can be from 0′ 1″ to .+ from the left end\\. No change made\\.`));
+  await posSet(page, 'stair', 'left', `99' 0"`);
+  assert.match(await posErr(page, 'stair'), new RegExp(`That doesn't fit: edge ${edge + 1} is ${edge === 2 ? '20′ 0″' : '14′ 0″'} long\\. A 3′ 0″ wide stair can be from 0′ 0″ to .+ from the left end\\. No change made\\.`));
   assert.deepEqual((await saved(page)).design.staircases, before);
   if (k === 0) await page.screenshot({ path: path.join(SHOTS, 'c5-stair-left-right.png') });
   assert.deepEqual(errors, []); await ctx.close();
