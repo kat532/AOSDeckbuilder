@@ -3536,6 +3536,9 @@ function carryHouseWalls(oldQ,newQ){
 }
 function selectShape(shape){
  // V5.3 R1: a new design starts only once the plan has a name.
+ // R1 hotfix 1: a valid name already typed in the Plan name field counts, whichever start route is used
+ // (choosing a shape directly, or Start Designing / Enter). Blank or whitespace-only names are still refused.
+ if(!state.intent&&!state.pendingPlanName){const typed=$('newPlanName').value.trim().slice(0,90);if(typed){state.pendingPlanName=typed;$('projectName').value=typed;$('newPlanError').textContent='';}}
  if(!state.intent&&!state.pendingPlanName){state.shapePicker=false;showOverlay();$('newPlanError').textContent='Enter a plan name first, then choose a shape.';$('newPlanName').focus();toast('Enter a plan name first.');return;}
  if(state.intent&&!state._shapeConfirmed){const q=state.intent,stairs=q.staircases.length,custom=Object.keys(q.railOverrides||{}).length,
    name=shape==='free'?'a new hand-drawn outline':shape==='rectangle'?'a rectangle':shape==='square'?'a square':`a ${shape}-shape`,
