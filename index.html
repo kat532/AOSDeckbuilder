@@ -194,7 +194,7 @@
 .stepdots .step-alert{position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:#d98a12;box-shadow:0 0 0 2px #fff}
 @media (max-width:760px){.progressbar{min-height:40px}.stepdots .steplabel{display:none}.stepdots .stepdot{padding:15px 2px}.stepdots .stepbar{min-width:24px}}
 .measurebtn{height:32px;min-width:32px;padding:0 10px;border:1px solid #dce2e6;background:#fff;border-radius:8px;font:700 10px/1 system-ui,sans-serif;letter-spacing:.3px;color:#55697a;cursor:pointer;text-transform:uppercase}
-.measurebtn b{color:var(--red-dark);font-weight:800;margin-left:2px}.measurebtn.off b{color:#7a8794}@media(max-width:800px){.measurebtn{padding:0 6px;font-size:8.5px;letter-spacing:0;line-height:1.05}.measurebtn b{display:block;margin:1px 0 0}}
+.measurebtn b{color:var(--red-dark);font-weight:800;margin-left:2px}.measurebtn.off b{color:#7a8794}.measurebtn[hidden]{display:none!important}@media(max-width:800px){.measurebtn{padding:0 6px;font-size:8.5px;letter-spacing:0;line-height:1.05}.measurebtn b{display:block;margin:1px 0 0}}
 .measurebtn:focus-visible{outline:2px solid var(--red);outline-offset:1px}
 .savestatus{font-weight:600;letter-spacing:.2px;text-transform:none;margin-left:3px}
 .savestatus.saved{color:#7fc4a0}.savestatus.pending,.savestatus.saving{color:#c6d1de}.savestatus.error{color:#ff8a94;font-weight:800}
@@ -350,6 +350,16 @@ body.pdf-open{overflow:hidden}
     <div class="aos-confirm-buttons">
       <button class="cancel" type="button" id="dividerConfirmCancel">Keep Dividers</button>
       <button class="danger" type="button" id="dividerConfirmAccept">Remove All</button>
+    </div>
+  </div>
+</div>
+<div class="aos-confirm" id="leaveDialog" role="dialog" aria-modal="true" aria-labelledby="leaveTitle" aria-describedby="leaveMessage" hidden>
+  <div class="aos-confirm-panel">
+    <h2 id="leaveTitle">Start a New Plan?</h2>
+    <p id="leaveMessage"></p>
+    <div class="aos-confirm-buttons">
+      <button class="cancel" type="button" id="leaveCancel">Cancel — Keep Working</button>
+      <button class="primary" type="button" id="leaveAccept">Start New Plan</button>
     </div>
   </div>
 </div>
@@ -3342,10 +3352,13 @@ function stairPlacementProblem(q,index,edgeId,offset,width){
  if(core.stairHitsDeck(es,core.polygon(q),q.height,me))return 'deck';
  return null;
 }
+// R1 final (owner decision 11 Nov 2026): a new staircase starts 3′ 0″ wide; width stays adjustable. Saved and
+// imported stairs keep their own width (the engine's fallback for a missing width is unchanged).
+const NEW_STAIR_WIDTH=3;
 function addIndependentStair(){
- if(!state.intent)return;const q=structuredClone(state.intent),position=firstAvailableStairEdge(q,4);
- if(!position){toast('No free edge section for another 4-ft staircase.');return;}
- q.staircases.push({id:'stair-'+Date.now().toString(36)+'-'+q.staircases.length,enabled:true,width:4,...position,rails:{left:true,right:true}});
+ if(!state.intent)return;const q=structuredClone(state.intent),position=firstAvailableStairEdge(q,NEW_STAIR_WIDTH);
+ if(!position){toast(`No free edge section for another ${fmt(NEW_STAIR_WIDTH)} staircase.`);return;}
+ q.staircases.push({id:'stair-'+Date.now().toString(36)+'-'+q.staircases.length,enabled:true,width:NEW_STAIR_WIDTH,...position,rails:{left:true,right:true}});
  state.stairSelected=q.staircases.length-1;setProject(q);fit2d();toast('New staircase added. Tap another deck edge to relocate it.');
 }
 function changeSelectedStair(update,done){
@@ -3600,7 +3613,7 @@ function updateHeader(){
  $('nextBtn').innerHTML=state.step===LAST_STEP?'Finish <span class="arrow">✓</span>':`Next <span class="next-name">${titles[nextStep(state.step)]}</span><span class="arrow">→</span>`;
  for(const v of ['2d','3d']){$('mode'+v).classList.toggle('active',state.view===v);$('mode'+v).setAttribute('aria-pressed',String(state.view===v));}
  $('structureToggle').hidden=state.view!=='3d';$('structureToggle').classList.toggle('active',renderer3d.showStructure);$('structureToggle').textContent=renderer3d.showStructure?'✓ Framing only':'⌗ See framing';
- const showCamera=state.view==='3d';$('cameraTools').hidden=!showCamera;
+ const showCamera=state.view==='3d';$('cameraTools').hidden=!showCamera;$('measureBtn').hidden=state.view!=='2d'; // R1 final: measurements exist only in 2D (the setting is kept)
  {const pt=$('planTools');pt.hidden=!(state.view==='2d'&&state.intent&&!state.freeDraw);for(const [id,on] of [['planEditBtn',!state.plan.moveView],['planMoveBtn',Boolean(state.plan.moveView)]]){$(id).classList.toggle('active',on);$(id).setAttribute('aria-pressed',String(on));}planCanvas.classList.toggle('move-view',Boolean(state.plan.moveView));}
  for(const [id,selected] of [['cameraRotateBtn',!renderer3d.panMode],['cameraMoveBtn',renderer3d.panMode]]){
   const btn=$(id);btn.classList.toggle('active',selected);btn.setAttribute('aria-pressed',String(selected));
@@ -4646,7 +4659,7 @@ function markSave(status,where,at){state.saveState={status,where:where||state.sa
  const time=state.saveState.at?new Date(state.saveState.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'';
  el.textContent=status==='saved'?`· Saved ${time}`:status==='saving'||status==='pending'?'· Saving…':status==='error'?'· Not saved':'';
  el.title=status==='saved'?`Saved ${place} at ${time}`:status==='error'?'This project is not being saved. Use Projects › Download current to keep a copy.':'';}
-function scheduleAutosave(){if(!state.intent||state.freeDraw)return;markSave('pending');clearTimeout(autosaveTimer);autosaveTimer=setTimeout(()=>{autosaveTimer=null;saveProject(false);},1000);}
+function scheduleAutosave(){if(!state.intent||state.freeDraw)return;markSave('pending');clearTimeout(autosaveTimer);autosaveTimer=setTimeout(()=>{autosaveTimer=null;if(state.leaveGuard)return;saveProject(false);},1000);}
 function projectRecord(){const q=structuredClone(state.intent),now=new Date().toISOString();
  if(!state.projectId){state.projectId=newProjectId();state.projectCreated=now;}
  return {id:state.projectId,name:String(q.project||'Untitled deck'),created:state.projectCreated||now,updated:now,app:'AOS Deck Studio',appVersion:APP_VERSION,schemaVersion:core.SCHEMA_VERSION,areaSqFt:Math.round(state.model?.stats?.deckArea||0),design:q};}
@@ -4658,7 +4671,7 @@ function saveProject(explicit=true){clearTimeout(autosaveTimer);autosaveTimer=nu
    catch(e){if(store.kind==='account'){projectStore.useBrowser();store=localProjects;try{await store.put(rec);}catch(e2){return failSave(explicit);}
        toast('Could not save to your projects here; saved in this browser instead.');}
      else return failSave(explicit);}
-   state.savedSnapshot=JSON.stringify(rec.design);markSave('saved',store.kind,rec.updated);if(explicit)toast(store.kind==='account'?`Saved “${rec.name}” to your projects.`:`Saved “${rec.name}” in this browser.`);
+   state.savedSnapshot=JSON.stringify(rec.design);state.savedRecord=rec;markSave('saved',store.kind,rec.updated);if(explicit)toast(store.kind==='account'?`Saved “${rec.name}” to your projects.`:`Saved “${rec.name}” in this browser.`);
    renderRecent();return true;};
  saveChain=saveChain.then(run,run);return saveChain;}
 function failSave(explicit){markSave('error');if(explicit||!state.saveWarned){state.saveWarned=true;toast('Not saved: this browser is blocking storage. Use Projects › Download current to keep a copy.');}return false;}
@@ -4668,13 +4681,13 @@ async function listProjects(){const store=await projectStore.ready();let rows=[]
 const whenText=iso=>{const d=new Date(iso);if(isNaN(d))return '';const diff=(Date.now()-d)/60000;
  return diff<1?'just now':diff<60?`${Math.round(diff)} min ago`:diff<1440&&d.getDate()===new Date().getDate()?d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):d.toLocaleDateString([],{month:'short',day:'numeric',year:d.getFullYear()===new Date().getFullYear()?undefined:'numeric'});};
 function resetForProject(){state.reviewReturn=false;state.posError=null;state.edgeError=null;state.freeDraw=false;state.freePts=[];state.shapePicker=false;state.selectedEdge=null;state.selectedCorner=null;state.railTarget='all';state.stairSelected=0;state.dividerSelected=0;state.featureSelected=null;state._fitted=false;}
-function loadDesign(design,{id=null,created=null,name}={}){resetForProject();state.pendingPlanName='';
+function loadDesign(design,{id=null,created=null,name}={}){resetForProject();state.pendingPlanName='';state.savedRecord=null;
  const q=core.migrate({design}).intent;if(name)q.project=name;
  state.projectId=id;state.projectCreated=created;setProject(q,false);
  state.history=[structuredClone(state.intent)];state.historyAt=0;fit2d();state.visited=new Set(titles.keys());stepTo(0);}
 async function openProject(id){await flushSave();const store=await projectStore.ready();let rec=null;try{rec=await store.get(id);}catch(e){}
  if(!rec?.design){toast('That project could not be opened.');renderProjects();return;}
- loadDesign(rec.design,{id:rec.id,created:rec.created});state.savedSnapshot=JSON.stringify(state.intent);markSave('saved',store.kind,rec.updated);closeProjects();toast(`Opened “${rec.name}”.`);}
+ loadDesign(rec.design,{id:rec.id,created:rec.created});state.savedSnapshot=JSON.stringify(state.intent);state.savedRecord=structuredClone(rec);markSave('saved',store.kind,rec.updated);closeProjects();toast(`Opened “${rec.name}”.`);}
 async function duplicateProject(id){await flushSave();const store=await projectStore.ready();const rec=await store.get(id).catch(()=>null);if(!rec)return;
  const now=new Date().toISOString(),name=`${rec.name} (copy)`.slice(0,90);
  try{await store.put({...rec,id:newProjectId(),name,created:now,updated:now,design:{...rec.design,project:name}});toast(`Duplicated as “${name}”.`);}catch(e){toast('Could not duplicate: storage is unavailable.');}
@@ -4682,17 +4695,29 @@ async function duplicateProject(id){await flushSave();const store=await projectS
 async function deleteProject(id){const store=await projectStore.ready();try{await store.remove(id);toast('Project deleted.');}catch(e){toast('Could not delete: storage is unavailable.');}state.pendingDelete=null;renderProjects();renderRecent();}
 // V5.3 R1: New Plan. Unsaved changes are offered Save / Discard / Cancel first; the new plan gets its own
 // project id when it is first saved, so saved plans are never overwritten.
-function newProject(){askUnsaved(startNewPlan);}
-function startNewPlan(){clearTimeout(autosaveTimer);autosaveTimer=null;resetForProject();state.projectId=null;state.projectCreated=null;state.pendingPlanName='';state.savedSnapshot=null;
+// R1 final: with a design open, New Plan always asks. Unsaved changes → Save / Discard / Cancel; everything
+// saved → 'Start a New Plan?'. Already on the empty start screen → no question.
+function newProject(){
+ if(!state.intent&&!state.freeDraw){startNewPlan();return;}
+ if(!state.intent){askLeave(`You are drawing “${state.pendingPlanName||'a new plan'}”. Starting a new plan will discard this unfinished drawing; nothing has been saved yet.`,startNewPlan);return;}
+ if(hasUnsaved()){askUnsaved(startNewPlan);return;}
+ askLeave(`You are currently working on ${state.intent.project}. Starting a new plan will close this design. Your saved plan will remain available in Projects.`,startNewPlan);}
+let pendingLeave=null;
+function askLeave(msg,then){pendingLeave=then;$('leaveMessage').textContent=msg;$('leaveDialog').hidden=false;$('leaveCancel').focus();}
+function closeLeave(){$('leaveDialog').hidden=true;pendingLeave=null;}
+function startNewPlan(){clearTimeout(autosaveTimer);autosaveTimer=null;state.leaveGuard=false;resetForProject();state.projectId=null;state.projectCreated=null;state.pendingPlanName='';state.savedSnapshot=null;state.savedRecord=null;
  setProject(null,false);state.history=[null];state.historyAt=0;state.visited=new Set([0]);
  $('projectName').value='';markSave('idle');closeProjects();stepTo(0);showOverlay();planDraw();renderRecent();
  const f=$('newPlanName');f.value='';$('newPlanError').textContent='';setTimeout(()=>f.focus(),60);}
 const hasUnsaved=()=>Boolean(state.intent)&&JSON.stringify(state.intent)!==state.savedSnapshot;
-let pendingUnsaved=null;
+let pendingUnsaved=null,discardTarget=null;
 function askUnsaved(then){if(!hasUnsaved()){then();return;}pendingUnsaved=then;
+ // Autosave waits while the question is open, and Discard can restore exactly what was saved before it.
+ clearTimeout(autosaveTimer);autosaveTimer=null;state.leaveGuard=true;
+ discardTarget={snapshot:state.savedSnapshot,record:state.savedRecord?structuredClone(state.savedRecord):null};
  $('unsavedMessage').textContent=`“${state.intent.project}” has changes that are not saved yet.${state.saveState?.status==='error'?' This browser is blocking storage, so Save may not work here; use Projects › Download current to keep a copy.':''} Save them, discard them, or cancel to keep working on this plan.`;
  $('unsavedDialog').hidden=false;$('unsavedSave').focus();}
-function closeUnsaved(){$('unsavedDialog').hidden=true;pendingUnsaved=null;}
+function closeUnsaved(){$('unsavedDialog').hidden=true;pendingUnsaved=null;state.leaveGuard=false;}
 function projectRowHtml(r,current){const del=state.pendingDelete===r.id;
  return `<div class="project-row${current?' current':''}" data-id="${esc(r.id)}"><div class="pr-main"><b>${esc(r.name)}</b><span>${r.areaSqFt?`${r.areaSqFt} sq ft · `:''}Edited ${esc(whenText(r.updated))}${current?' · <em>Open now</em>':''}</span></div>
  <div class="pr-actions">${del?`<span class="pr-confirm">Delete for good?</span><button type="button" class="danger" data-action="project-delete-yes">Delete</button><button type="button" data-action="project-delete-no">Keep</button>`:
@@ -5032,10 +5057,18 @@ $('newPlanForm').addEventListener('submit',e=>{e.preventDefault();const v=$('new
  $('newPlanError').textContent='';$('projectName').value=v;const first=document.querySelector('#stepContent [data-shape]');if(first){first.scrollIntoView({block:'nearest'});first.focus();}toast('Now choose a deck shape to begin.');});
 $('openExistingBtn').onclick=openProjects;
 $('newPlanBtn').onclick=()=>{if(!state.intent&&!state.freeDraw){state.shapePicker=false;showOverlay();$('newPlanName').focus();return;}newProject();};
-$('unsavedCancel').onclick=closeUnsaved;
-$('unsavedDiscard').onclick=()=>{const then=pendingUnsaved;closeUnsaved();clearTimeout(autosaveTimer);autosaveTimer=null;then?.();};
+$('unsavedCancel').onclick=()=>{closeUnsaved();if(hasUnsaved())scheduleAutosave();};
+$('leaveCancel').onclick=closeLeave;
+$('leaveAccept').onclick=()=>{const then=pendingLeave;closeLeave();then?.();};
+$('leaveDialog').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();closeLeave();}});
+$('unsavedDiscard').onclick=async()=>{const then=pendingUnsaved,target=discardTarget,id=state.projectId;closeUnsaved();clearTimeout(autosaveTimer);autosaveTimer=null;state.leaveGuard=true;
+ // A save that was already writing when the question opened may have stored the discarded change: put the last
+ // saved version back (or, for a plan never saved before, remove what that write created).
+ await saveChain;
+ if(target&&state.savedSnapshot!==target.snapshot){try{const store=await projectStore.ready();if(target.record)await store.put(target.record);else if(state.projectId||id)await store.remove(state.projectId||id);}catch(e){}}
+ state.leaveGuard=false;then?.();};
 $('unsavedSave').onclick=async()=>{const then=pendingUnsaved;const ok=await saveProject(true);if(!ok){$('unsavedMessage').textContent='Could not save here: this browser is blocking storage. Use Projects › Download current to keep a copy, or choose Discard or Cancel.';return;}closeUnsaved();then?.();};
-$('unsavedDialog').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();closeUnsaved();}});
+$('unsavedDialog').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();$('unsavedCancel').click();}});
 $('backBtn').onclick=()=>stepTo(previousStep(state.step));
 $('pdfCloseBtn').onclick=closePdfPreview;$('pdfZoomBtn').onclick=()=>{const z=$('pdfPages').classList.toggle('zoomed');$('pdfZoomBtn').setAttribute('aria-pressed',String(z));$('pdfZoomBtn').textContent=z?'Fit to screen':'Zoom in';};$('pdfDownloadBtn').onclick=downloadPdf;$('pdfPreview').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();closePdfPreview();}}); // V5.3 C4
 $('stepdots').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b||b.disabled)return;const i=Number(b.dataset.step);if(i!==state.step)stepTo(i);});$('nextBtn').onclick=()=>state.step===LAST_STEP?finishReview():stepTo(nextStep(state.step));
@@ -5513,7 +5546,7 @@ function tapPlan(pt){if(state.freeDraw){if(nearFreeStart(pt)){finishFreeDraw();r
    if(!edge)return;
    if(state.intent.houseEdges.includes(edge.i)){toast('Stairs cannot attach to house walls.');return;}
    const q=structuredClone(state.intent),existing=q.staircases[state.stairSelected];
-   const full=Boolean(existing?.fullWidth),width=full?edge.len:existing?.width||4;
+   const full=Boolean(existing?.fullWidth),width=full?edge.len:existing?.width||NEW_STAIR_WIDTH;
    if(!full&&edge.len<width+.35){toast('This edge is too short for the selected stair width.');return;}
    const v=[pt[0]-edge.mid[0],pt[1]-edge.mid[1]],limit=(edge.len-width)/2-.08;
    const offset=full?0:clamp(Math.round((v[0]*edge.t[0]+v[1]*edge.t[1])*4)/4,-limit,limit);

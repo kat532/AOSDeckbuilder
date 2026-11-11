@@ -77,6 +77,7 @@ test('R1h1: a name typed after a refusal works; the plan name is trimmed; New Pl
   await page.locator('#newPlanBtn').click(); assert.equal(await page.locator('#unsavedDialog').isVisible(), true);
   await page.locator('#unsavedCancel').click(); assert.equal((await intent(page)).width, 30, 'Cancel keeps the change');
   await waitSaved(page); await page.locator('#newPlanBtn').click();
+  assert.equal(await page.locator('#leaveDialog').isVisible(), true); await page.locator('#leaveAccept').click(); // R1 final: confirm first
   assert.equal(await page.locator('#emptyOverlay').isVisible(), true); assert.equal(await page.locator('#newPlanName').inputValue(), '', 'fresh, empty name');
   await page.locator('#newPlanName').fill('Second plan'); await panelShape(page).click(); await started(page);
   await waitSaved(page);

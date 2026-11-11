@@ -530,9 +530,10 @@ test('measurements: All shows edge lengths and stair width + position, live', as
   assert.match(dims, /16′/); assert.match(dims, /12′/);
   await page.locator('[data-action="stair-add"]').click();
   dims = await planDims(page);
-  assert.match(dims, /4′ 0″ wide/);
-  // A centered 4 ft stair on a 16 ft or 12 ft edge leaves equal offsets on both sides.
-  assert.ok(/(^|, )6′ 0″(,|\.)/.test(dims) || /(^|, )4′ 0″(,|\.)/.test(dims), dims);
+  // V5.3 R1 final (owner decision 11 Nov 2026): a new staircase starts 3′ 0″ wide (was 4′ 0″).
+  assert.match(dims, /3′ 0″ wide/);
+  // A centered 3 ft stair on a 16 ft or 12 ft edge leaves equal offsets on both sides.
+  assert.ok(/(^|, )6′ 6″, 6′ 6″(,|\.)/.test(dims) || /(^|, )4′ 6″, 4′ 6″(,|\.)/.test(dims), dims);
   const w = page.locator('#stepContent input').first();
   await w.fill('6'); await w.dispatchEvent('change');
   await page.waitForFunction(() => /6′ 0″ wide/.test(document.getElementById('planCanvas').getAttribute('aria-label')));
@@ -670,6 +671,8 @@ test('projects: duplicate is independent; delete asks first; new project keeps t
   await page.waitForFunction(() => document.querySelectorAll('#projectsList .project-row').length === 1);
 
   await page.locator('[data-action="project-new"]').click();
+  // V5.3 R1 final (owner decision): with a design open, New project always asks first.
+  assert.equal(await page.locator('#leaveDialog').isVisible(), true); await page.locator('#leaveAccept').click();
   assert.equal(await page.locator('#emptyOverlay').isVisible(), true);
   assert.equal(await page.locator('#recentProjects .recent-item').count(), 1);
   assert.deepEqual(errors, []);

@@ -48,7 +48,9 @@ test('R1 new plan: New Plan with everything saved goes straight to a fresh, sepa
   await startPlan(page, 'Plan A'); await setWidth(page, '20'); await waitSaved(page);
   const before = await stored(page), idA = Object.keys(before)[0];
   await page.locator('#newPlanBtn').click();
-  assert.equal(await page.locator('#unsavedDialog').isHidden(), true, 'nothing unsaved: no question');
+  assert.equal(await page.locator('#unsavedDialog').isHidden(), true, 'nothing unsaved: no Save/Discard question');
+  // R1 final (owner decision): a saved design still asks 'Start a New Plan?'.
+  assert.equal(await page.locator('#leaveDialog').isVisible(), true); await page.locator('#leaveAccept').click();
   assert.equal(await page.locator('#emptyOverlay').isVisible(), true);
   assert.equal(await page.evaluate(() => window.AOSDeckStudioTest.intent()), null, 'completely fresh');
   assert.equal(await page.locator('#newPlanName').inputValue(), ''); assert.equal(await page.locator('#undoBtn').isDisabled(), true);
@@ -103,8 +105,9 @@ test('R1 new plan: Projects › New project uses the same protection', async () 
   await startPlan(page, 'Lake house'); await waitSaved(page);
   await setWidth(page, '19');
   await page.locator('#openBtn').click(); await page.waitForTimeout(300);
-  // Opening Projects saves pending changes first (existing behavior), so New project goes straight through.
+  // Opening Projects saves pending changes first (existing behavior), so New project asks only 'Start a New Plan?'.
   await page.locator('[data-action="project-new"]').click();
+  assert.equal(await page.locator('#unsavedDialog').isHidden(), true); await page.locator('#leaveAccept').click();
   assert.equal(await page.locator('#emptyOverlay').isVisible(), true);
   assert.equal(Object.values(await stored(page))[0].design.width, 19);
   assert.deepEqual(errors, []); await ctx.close();
@@ -167,6 +170,7 @@ for (const vp of ['tablet', 'phone']) {
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
     await page.screenshot({ path: H.path.join(H.SHOTS, `r1-newplan-header-${vp}.png`) });
     await waitSaved(page); await press(b);
+    await press(page.locator('#leaveAccept')); // R1 final: saved designs still ask 'Start a New Plan?'
     assert.equal(await page.locator('#emptyOverlay').isVisible(), true);
     assert.deepEqual(errors, []); await ctx.close();
   });
