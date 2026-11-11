@@ -193,8 +193,13 @@ test('C4 the PDF plan has its own dimensions: identical with Dims All or Off, an
   await step(page, 7); await page.locator('#stepContent [data-action="pdf-preview"]').scrollIntoViewIfNeeded(); const before = await editorState(page);
   const b = await texts();
   assert.deepEqual(b.t, a.t, 'plan page identical'); assert.deepEqual(b.checks, a.checks);
-  assert.deepEqual(await editorState(page), before); assert.equal((await page.locator('#measureBtn').innerText()).trim(), 'MEASUREMENTS OFF', 'the app keeps Measurements OFF');
+  // V5.3 R1 final (owner): Measurements is hidden in 3D, and Step 7 shows 3D, so the switch is checked by its
+  // state here (a hidden element's innerText drops the CSS upper-casing) and by its visible label back in 2D.
+  assert.deepEqual(await editorState(page), before);
+  assert.deepEqual(await page.locator('#measureBtn').evaluate(b => ({ hidden: b.hidden, checked: b.getAttribute('aria-checked'), label: b.getAttribute('aria-label'), text: b.textContent.trim() })),
+    { hidden: true, checked: 'false', label: 'Measurements off. Tap to turn on.', text: 'Measurements OFF' }, 'the app keeps Measurements OFF (hidden in 3D)');
   await step(page, 0); assert.equal(await page.locator('#stepContent [data-action="done-edge"]').count(), 1, 'the edge editor is still open');
+  await page.locator('#mode2d').click(); assert.equal((await page.locator('#measureBtn').innerText()).trim(), 'MEASUREMENTS OFF', 'the app keeps Measurements OFF (2D)');
   assert.deepEqual(errors, []); await ctx.close();
 });
 

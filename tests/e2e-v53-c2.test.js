@@ -13,6 +13,8 @@ const { execFileSync } = require('child_process');
 const { pathToFileURL } = require('url');
 const { chromium } = require('playwright-core');
 const { STATES, CENSUS_DESIGN } = require('./ui-census');
+const { withoutRailInset } = require('./rail-inset');
+const railless = (k, v) => k === 'componentModel' ? withoutRailInset({ parts: v }).parts : k === 'counts' ? withoutRailInset({ counts: v }).counts : k === 'alerts' ? withoutRailInset({ alerts: v }).alerts : v;
 
 const ROOT = path.join(__dirname, '..');
 const APP = pathToFileURL(path.join(ROOT, 'index.html')).href;
@@ -189,7 +191,12 @@ test('C2 existing saved projects reopen unchanged: the same file saved again giv
     const out = [];
     for (const app of [APP, BASE_APP]) { const { ctx, page, errors } = await newPage(undefined, app); await openDesign(page, design); out.push(await saveFile(page)); assert.deepEqual(errors, []); await ctx.close(); }
     const [c2, base] = out;
-    for (const k of ['schemaVersion', 'design', 'componentModel', 'counts', 'alerts', 'structuralStatus']) assert.deepEqual(c2[k], base[k], `${label}: ${k} identical to d404af5`);
+    // V5.3 R1 rail inset (owner, 11 Nov 2026): railing posts 1½ in. inside the finished edges. The saved
+    // railing parts, rail counts and the two railing review alerts are the only allowed differences from d404af5
+    // (the railing is pinned and checked in tests/rail-inset-r1.test.js); everything else is identical.
+    for (const k of ['schemaVersion', 'design', 'structuralStatus']) assert.deepEqual(c2[k], base[k], `${label}: ${k} identical to d404af5`);
+    for (const k of ['componentModel', 'counts', 'alerts']) assert.deepEqual(railless(k, c2[k]), railless(k, base[k]), `${label}: ${k} identical to d404af5 (railing excepted)`);
+    assert.ok(c2.componentModel.some(p => p.group === 'rail') === base.componentModel.some(p => p.group === 'rail'), `${label}: railing present in both or neither`);
     assert.equal(c2.schemaVersion, 6);
     // And the C2 save opens again unchanged.
     const { ctx, page } = await newPage(); await openDesign(page, c2.design); const again = await saveFile(page);
