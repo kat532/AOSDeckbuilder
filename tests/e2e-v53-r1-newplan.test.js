@@ -11,8 +11,7 @@ const waitSaved = (page) => page.waitForFunction(() => /Saved/.test(document.get
 async function startPlan(page, name, shape = 'rectangle', press) {
   const go = press || ((l) => l.click());
   await page.locator('#newPlanName').fill(name);
-  await go(page.locator('#startFromCanvas'));
-  await go(page.locator(`#shapeOverlay [data-shape="${shape}"]`));
+  await go(page.locator(`#stepContent [data-shape="${shape}"]`)); // V5.3 R1 UI2: choose the shape directly
   await page.waitForFunction(() => /\d+ SQ FT/.test(document.getElementById('squareFeet').textContent));
   await settle(page);
 }
@@ -22,11 +21,12 @@ async function setWidth(page, v) { const w = widthField(page); await w.fill(v); 
 test('R1 new plan: a blank name is refused; a named plan starts and is saved under that name (never "New deck design")', async () => {
   const { ctx, page, errors } = await h.newPage();
   assert.equal(await page.locator('#emptyOverlay').isVisible(), true);
-  assert.equal(await page.locator('#startFromCanvas').innerText(), 'Start Designing');
+  assert.equal(await page.locator('#startFromCanvas').count(), 0, 'R1 UI2: no Start Designing button');
+  assert.match(await page.locator('#newPlanNext').innerText(), /choose a deck shape/);
   assert.equal(await page.locator('#openExistingBtn').innerText(), 'Open Existing Plan');
   assert.equal(await page.locator('#projectName').inputValue(), '', 'no default name');
   for (const blank of ['', '   ']) {
-    await page.locator('#newPlanName').fill(blank); await page.locator('#startFromCanvas').click();
+    await page.locator('#newPlanName').fill(blank); await page.locator('#newPlanName').press('Enter');
     assert.match(await page.locator('#newPlanError').innerText(), /Enter a plan name/);
     assert.equal(await page.locator('#shapeOverlay').isHidden(), true, 'shapes do not open without a name');
   }
@@ -146,8 +146,7 @@ test('R1 new plan: rename later works; a blank rename is refused; Undo/Redo and 
 
 test('R1 new plan: Free Draw also takes the plan name', async () => {
   const { ctx, page, errors } = await h.newPage();
-  await page.locator('#newPlanName').fill('Freeform deck'); await page.locator('#startFromCanvas').click();
-  await page.locator('#shapeOverlay [data-shape="free"]').click();
+  await page.locator('#newPlanName').fill('Freeform deck'); await page.locator('#stepContent [data-shape="free"]').click();
   const box = await page.locator('#planCanvas').boundingBox();
   const scale = Math.min(Math.max(Math.min((box.width - 90) / 24, (box.height - 90) / 18), 7), 23);
   const o = { x: box.x + box.width / 2 - 8 * scale, y: box.y + box.height / 2 - 6 * scale }, at = (fx, fz) => page.mouse.click(o.x + fx * scale, o.y + fz * scale);

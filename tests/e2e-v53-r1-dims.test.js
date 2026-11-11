@@ -64,14 +64,25 @@ test('R1 dims: on Shape & Size every edge measurement is shown and tapping it st
   assert.deepEqual(errors, []); await ctx.close();
 });
 
-test('R1 dims: All / Selected / Off still cycle and each says what it shows', async () => {
+// V5.3 R1 UI2 (owner decision 11 Nov 2026): Measurements is a two-state ON / OFF switch.
+test('R1 dims: Measurements ON / OFF switch says what it does; OFF hides every label; ON brings them back; an old "selected" setting opens as ON', async () => {
   const { ctx, page, errors } = await h.newPage();
   await openDesign(page, CASES.rectangle);
-  for (const [label, msg] of [['Selected', /only the edge, stair or divider you select/], ['Off', /no measurements/], ['All', /every measurement/]]) {
-    await page.locator('#measureBtn').click(); await page.waitForTimeout(120);
-    assert.match(await page.locator('#measureBtn').innerText(), new RegExp(label, 'i'));
-    assert.match(await page.locator('#toast').innerText(), msg);
-  }
-  assert.match(await page.locator('#measureBtn').getAttribute('title'), /All, only the Selected item, or Off/);
+  const b = page.locator('#measureBtn');
+  assert.equal((await b.innerText()).trim(), 'MEASUREMENTS ON'); assert.equal(await b.getAttribute('role'), 'switch'); assert.equal(await b.getAttribute('aria-checked'), 'true');
+  const onCount = (await page.evaluate(() => window.AOSDeckStudioTest.planLabels())).labels.length; assert.ok(onCount > 5);
+  await b.click(); await page.waitForTimeout(120);
+  assert.equal((await b.innerText()).trim(), 'MEASUREMENTS OFF'); assert.equal(await b.getAttribute('aria-checked'), 'false');
+  assert.match(await page.locator('#toast').innerText(), /Measurements OFF/);
+  assert.equal((await page.evaluate(() => window.AOSDeckStudioTest.planLabels())).labels.length, 0, 'OFF: no measurement labels');
+  await b.click(); await page.waitForTimeout(120);
+  assert.equal((await b.innerText()).trim(), 'MEASUREMENTS ON'); assert.match(await page.locator('#toast').innerText(), /Measurements ON/);
+  assert.equal((await page.evaluate(() => window.AOSDeckStudioTest.planLabels())).labels.length, onCount, 'ON: all labels back');
+  assert.match(await b.getAttribute('title'), /ON shows them all, OFF hides them/);
+  await page.evaluate(() => localStorage.setItem('aosDeckStudio.measure', 'selected')); await page.reload(); await page.waitForFunction(() => window.AOSDeckStudioTest);
+  assert.equal((await b.innerText()).trim(), 'MEASUREMENTS ON', 'older Selected setting opens as ON');
+  await page.evaluate(() => localStorage.setItem('aosDeckStudio.measure', 'none')); await page.reload(); await page.waitForFunction(() => window.AOSDeckStudioTest);
+  assert.equal((await b.innerText()).trim(), 'MEASUREMENTS OFF', 'older Off setting opens as OFF');
+  await b.click(); assert.equal(await page.evaluate(() => localStorage.getItem('aosDeckStudio.measure')), 'all', 'same stored values as before');
   assert.deepEqual(errors, []); await ctx.close();
 });

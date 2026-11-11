@@ -2,14 +2,16 @@
 // the C6 expectation (tests/baseline/c6-expected.js). Allowed differences:
 //   1. Header: a New Plan button (#newPlanBtn, data-control=new-plan) before Projects.
 //   3. 2D view tools: Edit / Move view (#planEditBtn, #planMoveBtn) after the 3D camera tools.
+//   4. R1 UI2: the Dims All/Selected/Off cycle is now 'Measurements ON / OFF' (#measureBtn, data-control=measurements).
 //   2. Shape & Size with an edge or a corner selected: Change Deck Shape stays available (C6 hid it).
 // Everything else must still match C6.
 'use strict';
 const { expectedC6 } = require('./c6-expected');
 function expectedR1(base) {
   const c6 = expectedC6(base), chrome = [];
-  for (const k of c6.chrome) { if (k === 'button #openBtn text=Projects') chrome.push('button #newPlanBtn data-control=new-plan'); chrome.push(k);
+  for (const k0 of c6.chrome) { const k = k0 === 'button #measureBtn text=DIMS ALL' ? 'button #measureBtn data-control=measurements' : k0; if (k === 'button #openBtn text=Projects') chrome.push('button #newPlanBtn data-control=new-plan'); chrome.push(k);
     if (k === 'button #cameraUnderBtn text=⤒ Under') chrome.push('button #planEditBtn text=✎ Edit', 'button #planMoveBtn text=✥ Move view'); }
+  if (!chrome.includes('button #measureBtn data-control=measurements')) throw new Error('C6 inventory lost the Dims button');
   if (!chrome.includes('button #planEditBtn text=✎ Edit')) throw new Error('C6 inventory lost the 3D Under button');
   if (!chrome.includes('button #newPlanBtn data-control=new-plan')) throw new Error('C6 inventory lost the Projects button');
   const states = {};

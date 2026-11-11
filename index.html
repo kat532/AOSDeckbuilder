@@ -102,7 +102,7 @@
 .aos-confirm-buttons{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .aos-confirm-buttons button{min-height:46px;border-radius:9px;font-size:12px;font-weight:800;padding:10px 8px}
 .aos-confirm-buttons .cancel{border:1px solid #d9e0e5;background:#f5f7f8;color:#334557}
-.aos-confirm-buttons.three{grid-template-columns:1fr 1fr 1fr}.aos-confirm-buttons .primary{border:1px solid #1f2d3a;background:#253746;color:#fff}.textbtn.newplan{background:#ffffff12;color:#fff;border:1px solid #ffffff3d;padding:10px 13px}.textbtn.newplan:hover{background:#ffffff24}.np-short{display:none}@media(max-width:800px){.textbtn.newplan{padding:8px 9px;font-size:10px}.np-long{display:none}.np-short{display:inline}}.newplan-form{display:flex;flex-direction:column;gap:6px;width:min(340px,100%);text-align:left;margin-top:4px}.newplan-form label{font-size:10px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:#4f5d6e}.newplan-form input{min-height:44px;border:1px solid #c9d2d8;border-radius:9px;padding:0 12px;font-size:14px;background:#fff}.newplan-form input:focus{outline:2px solid #c32e3c55;border-color:#c32e3c}.newplan-error{min-height:14px;font-size:11px;font-weight:700;color:#b21d31}.newplan-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.newplan-actions .start-btn{margin-top:0;min-height:46px}.open-existing{min-height:46px;border:1px solid #c9d2d8;border-radius:10px;background:#fff;color:#253746;font-size:12px;font-weight:800}.aos-confirm-buttons .danger{border:1px solid #ad2736;background:#c32e3c;color:#fff}
+.aos-confirm-buttons.three{grid-template-columns:1fr 1fr 1fr}.aos-confirm-buttons .primary{border:1px solid #1f2d3a;background:#253746;color:#fff}.textbtn.newplan{background:#ffffff12;color:#fff;border:1px solid #ffffff3d;padding:10px 13px}.textbtn.newplan:hover{background:#ffffff24}.np-short{display:none}@media(max-width:800px){.textbtn.newplan{padding:8px 9px;font-size:10px}.np-long{display:none}.np-short{display:inline}}.newplan-form{display:flex;flex-direction:column;gap:6px;width:min(340px,100%);text-align:left;margin-top:4px}.newplan-form label{font-size:10px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:#4f5d6e}.newplan-form input{min-height:44px;border:1px solid #c9d2d8;border-radius:9px;padding:0 12px;font-size:14px;background:#fff}.newplan-form input:focus{outline:2px solid #c32e3c55;border-color:#c32e3c}.newplan-error{min-height:14px;font-size:11px;font-weight:700;color:#b21d31}.newplan-actions{display:grid;grid-template-columns:1fr;gap:8px}.newplan-next{font-size:12px;font-weight:700;color:#344757}.newplan-actions .start-btn{margin-top:0;min-height:46px}.open-existing{min-height:46px;border:1px solid #c9d2d8;border-radius:10px;background:#fff;color:#253746;font-size:12px;font-weight:800}.aos-confirm-buttons .danger{border:1px solid #ad2736;background:#c32e3c;color:#fff}
 
 /* V5 shape editor: compact controls with one scrollable inspector, large handles on canvas. */
 .inspector.shape-edit .inspector-content,.inspector.stair-edit .inspector-content{overflow-y:auto;overscroll-behavior:contain;padding-bottom:12px}
@@ -194,7 +194,7 @@
 .stepdots .step-alert{position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:#d98a12;box-shadow:0 0 0 2px #fff}
 @media (max-width:760px){.progressbar{min-height:40px}.stepdots .steplabel{display:none}.stepdots .stepdot{padding:15px 2px}.stepdots .stepbar{min-width:24px}}
 .measurebtn{height:32px;min-width:32px;padding:0 10px;border:1px solid #dce2e6;background:#fff;border-radius:8px;font:700 10px/1 system-ui,sans-serif;letter-spacing:.3px;color:#55697a;cursor:pointer;text-transform:uppercase}
-.measurebtn b{color:var(--red-dark);font-weight:800;margin-left:2px}
+.measurebtn b{color:var(--red-dark);font-weight:800;margin-left:2px}.measurebtn.off b{color:#7a8794}@media(max-width:800px){.measurebtn{padding:0 6px;font-size:8.5px;letter-spacing:0;line-height:1.05}.measurebtn b{display:block;margin:1px 0 0}}
 .measurebtn:focus-visible{outline:2px solid var(--red);outline-offset:1px}
 .savestatus{font-weight:600;letter-spacing:.2px;text-transform:none;margin-left:3px}
 .savestatus.saved{color:#7fc4a0}.savestatus.pending,.savestatus.saving{color:#c6d1de}.savestatus.error{color:#ff8a94;font-weight:800}
@@ -306,7 +306,7 @@ body.pdf-open{overflow:hidden}
     <div class="workspace-top">
       <div class="mode-switch" role="group" aria-label="View mode"><button id="mode2d" class="viewmode active" aria-pressed="true">◫ <span>2D PLAN</span></button><button id="mode3d" class="viewmode" aria-pressed="false">⬡ <span>3D DECK</span></button></div>
       <div class="workspace-extras"><span id="modelBadge" class="countbadge">READY TO DESIGN</span><span id="framingStatus" class="framingstatus" role="status" aria-live="polite" hidden></span><span id="squareFeet" class="sqft"></span></div>
-      <div class="viewbuttons"><button id="measureBtn" class="measurebtn" type="button" title="Dimensions on the plan: All, only the Selected item, or Off. Tap to change." aria-label="Dimensions: All. Tap to change.">Dims <b>All</b></button><button id="zoomOut" class="iconbtn" title="Zoom out" aria-label="Zoom out">−</button><button id="zoomIn" class="iconbtn" title="Zoom in" aria-label="Zoom in">+</button><button id="fitBtn" class="iconbtn fit" title="Fit drawing to screen" aria-label="Fit view">⌗</button></div>
+      <div class="viewbuttons"><button id="measureBtn" class="measurebtn" type="button" role="switch" aria-checked="true" data-control="measurements" title="Measurements on the 2D plan: ON shows them all, OFF hides them. Tap to switch." aria-label="Measurements on. Tap to turn off.">Measurements <b>ON</b></button><button id="zoomOut" class="iconbtn" title="Zoom out" aria-label="Zoom out">−</button><button id="zoomIn" class="iconbtn" title="Zoom in" aria-label="Zoom in">+</button><button id="fitBtn" class="iconbtn fit" title="Fit drawing to screen" aria-label="Fit view">⌗</button></div>
     </div>
     <div class="viewport" id="viewport">
       <div class="camera-tools" id="cameraTools" role="group" aria-label="3D camera controls" hidden>
@@ -321,7 +321,7 @@ body.pdf-open{overflow:hidden}
       <button class="structure-toggle" id="structureToggle" type="button" aria-pressed="false" hidden>⌗ Show framing</button>
       <canvas id="planCanvas" class="viewport-canvas visible" aria-label="2D deck plan; drag deck edges to resize"></canvas>
       <canvas id="glCanvas" class="viewport-canvas" aria-label="3D deck view; rotate, move focus, or pinch to zoom"></canvas>
-      <div class="placeholder" id="emptyOverlay"><div class="blank-graphic"><span class="shape-ghost"></span><span class="blank-dot a"></span><span class="blank-dot b"></span><span class="blank-dot c"></span><span class="blank-dot d"></span></div><strong>Start a new plan</strong><span>Name the plan, then choose a deck shape.</span><form class="newplan-form" id="newPlanForm" novalidate><label for="newPlanName">Plan name</label><input id="newPlanName" maxlength="90" placeholder="Customer or job, e.g. Smith – 12 Oak St" autocomplete="off" aria-describedby="newPlanError"><div class="newplan-error" id="newPlanError" role="alert"></div><div class="newplan-actions"><button id="startFromCanvas" class="start-btn" type="submit">Start Designing</button><button id="openExistingBtn" class="open-existing" type="button">Open Existing Plan</button></div></form><div id="recentProjects" class="recent-projects" hidden></div></div>
+      <div class="placeholder" id="emptyOverlay"><div class="blank-graphic"><span class="shape-ghost"></span><span class="blank-dot a"></span><span class="blank-dot b"></span><span class="blank-dot c"></span><span class="blank-dot d"></span></div><strong>Start a new plan</strong><span>Name the plan, then choose a deck shape.</span><form class="newplan-form" id="newPlanForm" novalidate><label for="newPlanName">Plan name</label><input id="newPlanName" maxlength="90" placeholder="Customer or job, e.g. Smith – 12 Oak St" autocomplete="off" aria-describedby="newPlanError"><div class="newplan-error" id="newPlanError" role="alert"></div><div class="newplan-next" id="newPlanNext">Then choose a deck shape in Shape &amp; Size to begin.</div><div class="newplan-actions"><button id="openExistingBtn" class="open-existing" type="button">Open Existing Plan</button></div></form><div id="recentProjects" class="recent-projects" hidden></div></div>
       <div id="shapeOverlay" class="shape-overlay hidden" role="dialog" aria-label="Choose deck shape">
         <div class="shape-dialog"><div class="shape-dialog-head"><strong>Choose your starting shape</strong><button data-action="close-shapes" aria-label="Close shape choices">✕</button></div>
           <div class="shape-grid"><button data-shape="rectangle"><svg viewBox="0 0 60 34"><rect x="5" y="8" width="50" height="20" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>Rectangle</button><button data-shape="square"><svg viewBox="0 0 60 34"><rect x="17" y="3" width="26" height="26" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>Square</button><button data-shape="L"><svg viewBox="0 0 60 34"><path d="M5 5H55V29H27V17H5Z" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>L-Shape</button><button data-shape="T"><svg viewBox="0 0 60 34"><path d="M5 4H55V16H39V30H21V16H5Z" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>T-Shape</button><button data-shape="U"><svg viewBox="0 0 60 34"><path d="M5 4H55V30H40V17H20V30H5Z" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>U-Shape</button><button data-shape="free"><svg viewBox="0 0 60 34"><path d="M7 29L17 6L38 17L53 4" fill="none" stroke="#b52b3c" stroke-width="2.5" stroke-dasharray="4 3"/><circle cx="7" cy="29" r="3" fill="#b52b3c"/></svg>Free Draw</button></div>
@@ -5028,7 +5028,8 @@ $('stepContent').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.mat
 $('shapeOverlay').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.shape)selectShape(b.dataset.shape);else if(b.dataset.action==='close-shapes'){state.shapePicker=false;showOverlay();}});
 $('newPlanForm').addEventListener('submit',e=>{e.preventDefault();const v=$('newPlanName').value.trim().slice(0,90);
  if(!v){$('newPlanError').textContent='Enter a plan name to start (for example, the customer’s name).';$('newPlanName').focus();return;}
- $('newPlanError').textContent='';state.pendingPlanName=v;$('projectName').value=v;state.shapePicker=true;showOverlay();});
+ // V5.3 R1 UI2: no separate Start Designing step: Enter only confirms the name and points to the shapes.
+ $('newPlanError').textContent='';$('projectName').value=v;const first=document.querySelector('#stepContent [data-shape]');if(first){first.scrollIntoView({block:'nearest'});first.focus();}toast('Now choose a deck shape to begin.');});
 $('openExistingBtn').onclick=openProjects;
 $('newPlanBtn').onclick=()=>{if(!state.intent&&!state.freeDraw){state.shapePicker=false;showOverlay();$('newPlanName').focus();return;}newProject();};
 $('unsavedCancel').onclick=closeUnsaved;
@@ -5045,7 +5046,7 @@ $('projectName').addEventListener('change',e=>{const v=e.target.value.trim().sli
  if(!state.intent){$('newPlanName').value=v;return;}
  if(!v){e.target.value=state.intent.project;toast('A plan needs a name. Type a new name to rename it.');return;}
  if(v!==state.intent.project)patch('project',v);});
-$('measureBtn').onclick=()=>{const v=MEASURE_MODES[(MEASURE_MODES.indexOf(state.measure||'all')+1)%MEASURE_MODES.length];setMeasureMode(v);toast(v==='all'?'Dimensions: All · every measurement on the plan':v==='selected'?'Dimensions: Selected · only the edge, stair or divider you select':'Dimensions: Off · no measurements on the plan');};
+$('measureBtn').onclick=()=>{const v=state.measure==='none'?'all':'none';setMeasureMode(v);toast(v==='all'?'Measurements ON · all measurements on the plan':'Measurements OFF · tap an edge to see and edit its length in the panel');};
 $('zoomIn').onclick=()=>state.view==='2d'?(state.plan.scale*=1.18,planDraw()):renderer3d.zoom(.85);
 $('zoomOut').onclick=()=>state.view==='2d'?(state.plan.scale/=1.18,planDraw()):renderer3d.zoom(1.18);
 $('fitBtn').onclick=()=>state.view==='2d'?fit2d():renderer3d.fit(); // 3D Fit also recenters the movable orbit target.
@@ -5155,12 +5156,15 @@ function reservedPlanMarks(q,model,es){const out=[],box=(x,y,r)=>out.push({l:x-r
    const m=xy(sf.x,sf.z);out.push({l:m[0]-w,r:m[0]+w,t:m[1]-9,b:m[1]+9,mark:true});}
  return out;}
 // ---- V5.1 measurements: All / Selected / Off, drawn from the live model ----
-const MEASURE_MODES=['all','selected','none'],MEASURE_LABEL={all:'All',selected:'Selected',none:'Off'};
-function loadMeasureMode(){try{const v=localStorage.getItem('aosDeckStudio.measure');return MEASURE_MODES.includes(v)?v:'all';}catch(e){return 'all';}}
+// V5.3 R1 UI2: Measurements ON / OFF. Stored values are unchanged ('all' = ON, 'none' = OFF); an older saved
+// 'selected' setting opens as ON.
+const MEASURE_MODES=['all','none'],MEASURE_LABEL={all:'ON',none:'OFF'};
+function loadMeasureMode(){try{const v=localStorage.getItem('aosDeckStudio.measure');return v==='none'?'none':'all';}catch(e){return 'all';}}
 state.measure=loadMeasureMode();
-$('measureBtn').querySelector('b').textContent=MEASURE_LABEL[state.measure];$('measureBtn').setAttribute('aria-label',`Dimensions: ${MEASURE_LABEL[state.measure]}. Tap to change.`);
+showMeasureMode();
 function setMeasureMode(v){state.measure=v;try{localStorage.setItem('aosDeckStudio.measure',v);}catch(e){}
- const b=$('measureBtn');if(b){b.querySelector('b').textContent=MEASURE_LABEL[v];b.setAttribute('aria-label',`Dimensions: ${MEASURE_LABEL[v]}. Tap to change.`);}planDraw();}
+ showMeasureMode();planDraw();}
+function showMeasureMode(){const b=$('measureBtn');if(!b)return;const on=state.measure!=='none';b.querySelector('b').textContent=on?'ON':'OFF';b.setAttribute('aria-checked',String(on));b.classList.toggle('off',!on);b.setAttribute('aria-label',on?'Measurements on. Tap to turn off.':'Measurements off. Tap to turn on.');}
 // The component the "Selected" mode measures, by step.
 function measureTarget(){const q=state.intent;if(!q)return null;
  if(state.step===0&&state.selectedEdge!==null)return {type:'edge',i:state.selectedEdge};

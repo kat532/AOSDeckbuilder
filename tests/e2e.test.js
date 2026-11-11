@@ -34,8 +34,9 @@ async function openApp(viewport = { width: 1280, height: 900 }) {
 
 async function chooseShape(page, shape) {
   // V5.3 R1: a new plan needs a name before a shape can be chosen.
-  if (await page.locator('#shapeOverlay').isHidden()) { await page.locator('#newPlanName').fill('Test plan'); await page.locator('#startFromCanvas').click(); }
-  await page.locator(`#shapeOverlay [data-shape="${shape}"]`).click();
+  // V5.3 R1 UI2: name the new plan, then pick the shape in Shape & Size (no Start Designing button).
+  if (await page.locator('#shapeOverlay').isHidden()) { await page.locator('#newPlanName').fill('Test plan'); await page.locator(`#stepContent [data-shape="${shape}"]`).click(); }
+  else await page.locator(`#shapeOverlay [data-shape="${shape}"]`).click();
   await page.waitForFunction(() => /\d+ SQ FT/.test(document.getElementById('squareFeet')?.textContent || ''));
 }
 
@@ -326,8 +327,9 @@ test('railing finish: tapping an edge on the 2D plan selects it; tapping again r
 // ---- V5.1 Free Draw ----
 async function startFreeDraw(page) {
   // V5.3 R1: a new plan needs a name before a shape can be chosen.
-  if (await page.locator('#shapeOverlay').isHidden()) { await page.locator('#newPlanName').fill('Test plan'); await page.locator('#startFromCanvas').click(); }
-  await page.locator('#shapeOverlay [data-shape="free"]').click();
+  // V5.3 R1 UI2: name the new plan, then pick Free Draw in Shape & Size (no Start Designing button).
+  if (await page.locator('#shapeOverlay').isHidden()) { await page.locator('#newPlanName').fill('Test plan'); await page.locator('#stepContent [data-shape="free"]').click(); }
+  else await page.locator('#shapeOverlay [data-shape="free"]').click();
   const box = await page.locator('#planCanvas').boundingBox();
   // Same formula the app uses when Free Draw starts (feet -> CSS px).
   const scale = Math.min(Math.max(Math.min((box.width - 90) / 24, (box.height - 90) / 18), 7), 23);
@@ -561,22 +563,24 @@ test('measurements: divider distance from the house updates when the divider mov
   await ctx.close();
 });
 
-test('measurements: Selected shows only the selected railing edge; Off hides; choice is remembered', async () => {
+// V5.3 R1 UI2 (owner decision 11 Nov 2026): the Selected state was removed; Measurements is ON / OFF.
+test('measurements: ON shows them, OFF hides them; choice is remembered', async () => {
   const { ctx, page, errors } = await openApp();
   await chooseShape(page, 'rectangle');
   await stepBtn(page, 'Railings').click();
   await page.locator('[data-path="railTab"][data-value="finish"]').click();
-  await page.locator('#measureBtn').click();
-  assert.match(await page.locator('#measureBtn').innerText(), /Selected/i);
-  assert.match(await planDims(page), /overall/, 'nothing selected: overall size');
+  assert.match(await page.locator('#measureBtn').innerText(), /Measurements ON/i);
+  assert.match(await planDims(page), /16′ 0″/, 'ON: measurements shown');
   await page.locator('[data-action="rail-target"][data-edge="2"]').click();
-  assert.equal(await planDims(page), '2D plan. Dimensions: 16′ 0″.');
+  assert.match(await planDims(page), /16′ 0″/, 'ON: still all measurements with an edge selected');
   await page.locator('#measureBtn').click();
+  assert.match(await page.locator('#measureBtn').innerText(), /Measurements OFF/i);
+  assert.equal(await page.locator('#measureBtn').getAttribute('aria-checked'), 'false');
   assert.equal(await planDims(page), '2D plan. Dimensions hidden.');
   await page.reload();
   await page.waitForFunction(() => window.DeckCore);
-  assert.match(await page.locator('#measureBtn').innerText(), /Off/i);
-  await page.locator('#measureBtn').click(); // back to All for other tests sharing this browser profile
+  assert.match(await page.locator('#measureBtn').innerText(), /Measurements OFF/i);
+  await page.locator('#measureBtn').click(); // back to ON for other tests sharing this browser profile
   assert.deepEqual(errors, []);
   await ctx.close();
 });

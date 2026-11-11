@@ -1,6 +1,6 @@
 'use strict';
 // V5.3 C6 owner R1 hotfix 1 — a valid plan name typed on the start screen is used by every start route:
-// (A) choosing a shape directly in the Shape & Size panel, (B) Start Designing → shape popup, (C) Enter in
+// (A) choosing a shape directly in the Shape & Size panel, (B) [R1 UI2: Start Designing removed], (C) Enter in
 // the name field → shape popup. Blank / whitespace names are still refused on every route.
 const test = require('node:test');
 const H = require('./c6-helpers');
@@ -30,23 +30,25 @@ for (const vp of ['desktop', 'tablet', 'phone']) {
     assert.deepEqual(errors, []); await ctx.close();
   });
 
-  test(`R1h1 (${vp}${touch ? ', touch' : ''}): Start Designing → shape popup, and Enter in the name field → shape popup, both start the named plan`, async () => {
-    for (const how of ['button', 'enter']) {
-      const { ctx, page, errors, press } = await h.newPage(VIEWPORTS[vp]);
-      const name = `Plan by ${how}`;
-      if (touch) { await page.locator('#newPlanName').tap(); await page.keyboard.type(name); } else await page.locator('#newPlanName').fill(name);
-      if (how === 'button') await press(page.locator('#startFromCanvas')); else await page.locator('#newPlanName').press('Enter');
-      assert.equal(await page.locator('#shapeOverlay').isVisible(), true, `${how}: shape popup opens`);
-      await press(page.locator('#shapeOverlay [data-shape="L"]'));
-      await started(page);
-      const I = await intent(page); assert.equal(I.shape, 'L'); assert.equal(I.project, name);
-      await waitSaved(page); assert.deepEqual(Object.values(await stored(page)).map(r => r.name), [name]);
-      assert.deepEqual(errors, []); await ctx.close();
-    }
+  // R1 UI2: Start Designing was removed (owner decision). Enter in the name field confirms the name and moves
+  // keyboard focus to the first shape; Enter again starts the named plan, with no popup.
+  test(`R1h1 (${vp}${touch ? ', touch' : ''}): keyboard — Enter in the name field moves to the shapes; Enter on a shape starts the named plan`, async () => {
+    const { ctx, page, errors } = await h.newPage(VIEWPORTS[vp]);
+    const name = 'Plan by keyboard';
+    if (touch) { await page.locator('#newPlanName').tap(); await page.keyboard.type(name); } else await page.locator('#newPlanName').fill(name);
+    await page.locator('#newPlanName').press('Enter');
+    assert.equal(await page.locator('#shapeOverlay').isHidden(), true, 'no popup');
+    assert.match(await page.locator('#toast').innerText(), /choose a deck shape/);
+    assert.equal(await page.evaluate(() => document.activeElement?.dataset?.shape), 'rectangle', 'focus on the first shape');
+    await page.keyboard.press('Enter');
+    await started(page);
+    const I = await intent(page); assert.equal(I.shape, 'rectangle'); assert.equal(I.project, name);
+    await waitSaved(page); assert.deepEqual(Object.values(await stored(page)).map(r => r.name), [name]);
+    assert.deepEqual(errors, []); await ctx.close();
   });
 }
 
-test('R1h1: blank or whitespace names are refused on every route (panel shape, Start Designing, Enter); nothing is created', async () => {
+test('R1h1: blank or whitespace names are refused on every route (panel shape, Enter); nothing is created', async () => {
   for (const vp of ['desktop', 'phone']) {
     const { ctx, page, errors, press } = await h.newPage(VIEWPORTS[vp]);
     for (const blank of ['', '   ']) {
@@ -55,10 +57,8 @@ test('R1h1: blank or whitespace names are refused on every route (panel shape, S
       assert.equal(await intent(page), null, `${vp} panel "${blank}": no plan`);
       assert.match(await page.locator('#newPlanError').innerText(), /Enter a plan name first/);
       await page.locator('#newPlanError').evaluate(e => { e.textContent = ''; });
-      await press(page.locator('#startFromCanvas'));
-      assert.equal(await page.locator('#shapeOverlay').isHidden(), true, `${vp} button "${blank}": no popup`);
-      assert.match(await page.locator('#newPlanError').innerText(), /Enter a plan name/);
       await page.locator('#newPlanName').press('Enter');
+      assert.match(await page.locator('#newPlanError').innerText(), /Enter a plan name/);
       assert.equal(await page.locator('#shapeOverlay').isHidden(), true, `${vp} Enter "${blank}": no popup`);
     }
     assert.deepEqual(await stored(page), {}, 'nothing saved');

@@ -184,15 +184,16 @@ test('C4 the PDF plan has its own dimensions: identical with Dims All or Off, an
   const a = await texts();
   // Dims Off, a zoomed and panned 2D plan, an edge editor left open on Shape & Size.
   await step(page, 0); await page.locator('#mode2d').click();
-  for (let k = 0; k < 4 && (await page.locator('#measureBtn').innerText()).trim() !== 'DIMS OFF'; k++) await page.locator('#measureBtn').click();
-  assert.equal((await page.locator('#measureBtn').innerText()).trim(), 'DIMS OFF');
+  // V5.3 R1 UI2: the control is now Measurements ON / OFF.
+  for (let k = 0; k < 4 && (await page.locator('#measureBtn').innerText()).trim() !== 'MEASUREMENTS OFF'; k++) await page.locator('#measureBtn').click();
+  assert.equal((await page.locator('#measureBtn').innerText()).trim(), 'MEASUREMENTS OFF');
   await page.locator('#zoomIn').click(); await page.locator('#zoomIn').click();
   const p = await page.evaluate(() => { const e = window.AOSDeckStudioTest.edges()[1]; return window.AOSDeckStudioTest.toScreen(e.mid[0], e.mid[1]); }); await page.mouse.click(p[0], p[1]); await page.waitForTimeout(200);
   assert.equal(await page.locator('#stepContent [data-action="done-edge"]').count(), 1);
   await step(page, 7); await page.locator('#stepContent [data-action="pdf-preview"]').scrollIntoViewIfNeeded(); const before = await editorState(page);
   const b = await texts();
   assert.deepEqual(b.t, a.t, 'plan page identical'); assert.deepEqual(b.checks, a.checks);
-  assert.deepEqual(await editorState(page), before); assert.equal((await page.locator('#measureBtn').innerText()).trim(), 'DIMS OFF', 'the app keeps Dims Off');
+  assert.deepEqual(await editorState(page), before); assert.equal((await page.locator('#measureBtn').innerText()).trim(), 'MEASUREMENTS OFF', 'the app keeps Measurements OFF');
   await step(page, 0); assert.equal(await page.locator('#stepContent [data-action="done-edge"]').count(), 1, 'the edge editor is still open');
   assert.deepEqual(errors, []); await ctx.close();
 });
