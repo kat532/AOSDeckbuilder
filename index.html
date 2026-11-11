@@ -5262,7 +5262,19 @@ function planDraw(){state.planLabelBoxes=[];const {w,h}=canvasSize(),sc=state.pl
  polygonPath(p);ctx.fillStyle='#625442';ctx.fill();
  if(model.preview){for(const st of q.staircases||[])for(const c of core.stairFootprints(es,q.height,st)){ctx.beginPath();c.forEach((v,i)=>{const pt=xy(...v);i?ctx.lineTo(...pt):ctx.moveTo(...pt);});ctx.closePath();ctx.fillStyle='#7a6250';ctx.fill();}
    if(state.step===6&&state.lastFull){ctx.save();ctx.globalAlpha=.3;for(let part of state.lastFull.parts)if(['ledger','joist','rim-joist','dropped-beam','post-6x6'].includes(part.kind))shapePart(part);ctx.restore();}}
- else if(state.step===6){for(let part of model.parts)if(['ledger','joist','rim-joist','dropped-beam','post-6x6','landing-beam','landing-rim','landing-joist','landing-blocking','landing-flat-2x6','landing-post'].includes(part.kind))shapePart(part);}
+ else if(state.step===6){const drawn={};
+   // V5.3 R1: the stair flight in outline (faint treads), so its framing reads in place; then the framing.
+   ctx.save();ctx.globalAlpha=.22;for(let part of model.parts)if(part.kind==='stair-tread')shapePart(part);ctx.restore();
+   for(let part of model.parts)if(['ledger','joist','rim-joist','dropped-beam','post-6x6','landing-beam','landing-rim','landing-joist','landing-blocking','landing-flat-2x6','landing-post'].includes(part.kind)){shapePart(part);drawn[part.kind]=(drawn[part.kind]||0)+1;}
+   // V5.3 R1: stringers (engine stair framing, unchanged). Each is a notched profile placed by the engine's
+   // stair frame (base, tt across, nn down the run); its plan footprint is that profile's run at its offset.
+   ctx.save();ctx.strokeStyle='#5b4329';ctx.lineWidth=1;
+   for(let part of model.parts){if(part.kind!=='stair-stringer'||!part.profile2d||!part.profileBase)continue;
+     const B=part.profileBase,T=part.profileTT,N=part.profileNN,o=part.profileOffset||0,xs=part.profile2d.map(v=>v[0]),u0=Math.min(...xs),u1=Math.max(...xs),half=Math.max(part.d/2,.9/state.plan.scale);
+     const at=(u,v)=>xy(B[0]+T[0]*(o+v)+N[0]*u,B[1]+T[1]*(o+v)+N[1]*u),c=[at(u0,-half),at(u1,-half),at(u1,half),at(u0,half)];
+     ctx.beginPath();c.forEach((v,i)=>i?ctx.lineTo(...v):ctx.moveTo(...v));ctx.closePath();ctx.fillStyle=part.color;ctx.fill();ctx.stroke();drawn[part.kind]=(drawn[part.kind]||0)+1;}
+   ctx.restore();
+   state.planFramingDrawn=drawn;}
  else {
    // Rasterize clipped polygons as a single union per material/color. Drawing
    // each triangle independently causes anti-aliased diagonal hairlines.
