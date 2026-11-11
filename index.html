@@ -4013,16 +4013,37 @@ function surfaceSel(){const list=state.intent?.surfaces||[];if(!list.length){sta
 function renderSurfacesPanel(q){
  const list=q.surfaces||[],sel=surfaceSel(),geo=state.model.geometry.surfaces||[],k=sel?list.indexOf(sel):-1,T=sel?core.SURFACE_TYPES[sel.type]:null,g=sel?geo.find(x=>x.id===sel.id):null;
  const nameOf=x=>`${core.SURFACE_TYPES[x.type].label} ${list.filter(y=>y.type===x.type).indexOf(x)+1}`;
+ const shownOf=x=>(geo.find(y=>y.id===x.id)?.status||'ok')==='ok';
  let html=`<div class="editor-panel surfaces-panel"><div class="editor-head">CONCRETE SURFACES<span>${list.length?`${list.length} on the property`:'none yet'}</span></div>
  <div class="editor-actions"><button data-action="surface-add" data-value="patio">+ Patio</button><button data-action="surface-add" data-value="walkway">+ Walkway</button></div>`;
- if(sel){html+=`<div class="stair-picker"><button data-action="surface-prev" ${k<1?'disabled':''} aria-label="Previous surface">‹</button><strong>${nameOf(sel)} of ${list.length} · ${fmt(sel.width)} × ${fmt(sel.length)}</strong><button data-action="surface-next" ${k>=list.length-1?'disabled':''} aria-label="Next surface">›</button></div>
+ // V5.3 C6: every surface is listed by name and size; tap one to select it (the selected one is marked).
+ if(list.length>1)html+=`<div class="surface-list" role="group" aria-label="Surfaces">${list.map((x,i)=>`<button type="button" data-action="surface-pick" data-index="${i}" class="${x===sel?'selected':''}" aria-pressed="${x===sel}"><span class="surface-icon ${x.type}"></span>${nameOf(x)} · ${fmt(x.width)} × ${fmt(x.length)}${shownOf(x)?'':' ⚠'}</button>`).join('')}</div>`;
+ if(sel){const dist=surfaceDeckGap(q,sel),est=concreteEstimate([sel]);
+   html+=`<div class="stair-picker"><button data-action="surface-prev" ${k<1?'disabled':''} aria-label="Previous surface">‹</button><strong>${nameOf(sel)} of ${list.length} · ${fmt(sel.width)} × ${fmt(sel.length)}</strong><button data-action="surface-next" ${k>=list.length-1?'disabled':''} aria-label="Next surface">›</button></div>
+   <div class="surface-selected" data-surface-type="${sel.type}"><span class="surface-icon ${sel.type}"></span><span><b>Selected: ${nameOf(sel)}</b><em>${sel.type==='walkway'?`Walkway · a path, ${fmt(T.w[0])}–${fmt(T.w[1])} wide, up to ${fmt(T.l[1])} long`:`Patio · a slab, ${fmt(T.w[0])}–${fmt(T.w[1])} each way`} · ${g&&g.status!=='ok'?'hidden (runs into the house)':dist<1/24?'touches or runs under the deck':`about ${fmt(dist)} from the deck`} · turned ${Math.round(sel.angle)}°</em></span></div>
    ${g&&g.status!=='ok'?`<div class="opening-warn">⚠ Hidden: it runs into the house. Drag it away from the house or make it smaller.</div>`:''}
-   <div class="editor-fields"><label>Width<input data-surface-field="width" value="${fmt(sel.width)}"></label><label>Length<input data-surface-field="length" value="${fmt(sel.length)}"></label></div>
+   <div class="editor-fields"><label>Width (ft & in)<input data-surface-field="width" value="${fmt(sel.width)}" placeholder="e.g. 12′ 6″" inputmode="decimal"></label><label>Length (ft & in)<input data-surface-field="length" value="${fmt(sel.length)}" placeholder="e.g. 10′ 0″" inputmode="decimal"></label></div>
    <div class="editor-actions surface-turn"><button data-action="surface-rotate" data-value="-15" aria-label="Turn 15 degrees left">⟲ 15°</button><strong class="surface-angle">${Math.round(sel.angle)}°</strong><button data-action="surface-rotate" data-value="15" aria-label="Turn 15 degrees right">⟳ 15°</button><button data-action="surface-rotate" data-value="90">Turn 90°</button></div>
-   <div class="editor-actions"><button data-action="surface-remove" class="danger">Delete ${T.label.toLowerCase()}</button></div>
+   ${concreteBox(nameOf(sel),est,list,shownOf)}
+   <div class="editor-actions"><button data-action="surface-remove" class="danger">Delete ${nameOf(sel)}</button></div>
    <div class="editor-tip">Drag it in 2D to move it; drag the round corner handle to resize. For presentation only: not a footing, pad or stair landing, and not part of the framing or materials list.</div>`;}
  else html+=`<div class="editor-tip">Add a concrete patio or walkway to show the yard around the deck. Drag them in 2D. For presentation only.</div>`;
  return html+`</div>`;}
+// V5.3 C6: preliminary concrete quantities from each slab's own size, at the model's 4 in. thickness.
+// Rectangles: sq ft = width × length; cu ft = sq ft × 4/12; cu yd = cu ft ÷ 27. Overlaps are not deducted.
+function concreteEstimate(list){const t=core.SURFACE_THICK,sq=list.reduce((a,x)=>a+x.width*x.length,0);return {count:list.length,sqft:sq,cuft:sq*t,cuyd:sq*t/27,thicknessIn:t*12};}
+const fmtQty=(v,d)=>v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+function concreteBox(name,est,list,shownOf){const shown=list.filter(shownOf),all=concreteEstimate(shown),hidden=list.length-shown.length;
+ const row=(label,e)=>`<tr><th>${label}</th><td>${fmtQty(e.sqft,1)} sq ft</td><td>${fmtQty(e.cuft,1)} cu ft</td><td>${fmtQty(e.cuyd,2)} cu yd</td></tr>`;
+ return `<div class="concrete-estimate" data-thickness-in="${fmtQty(est.thicknessIn,0)}"><div class="concrete-head">Preliminary concrete estimate <span>${fmtQty(est.thicknessIn,0)} in. thick</span></div><table>${row(name,est)}${list.length>1?row(`All shown (${shown.length})`,all):''}</table><div class="approx-note">Estimating quantities only, from length × width at ${fmtQty(est.thicknessIn,0)} in. thick. Not an order quantity: no waste, base or site conditions included.${hidden?` ${hidden} hidden surface${hidden>1?'s are':' is'} not counted.`:''} Separate from deck and stair areas.</div></div>`;}
+// Shortest plan distance from a slab to the deck outline (0 when they touch or overlap).
+function surfaceDeckGap(q,sf){const a=core.surfaceCorners(sf),b=core.polygon(q);
+ const inside=(pt,poly)=>{let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const p=poly[i],r=poly[j];if((p[1]>pt[1])!==(r[1]>pt[1])&&pt[0]<(r[0]-p[0])*(pt[1]-p[1])/(r[1]-p[1])+p[0])c=!c;}return c;};
+ if(a.some(p=>inside(p,b))||b.some(p=>inside(p,a)))return 0;
+ const segD=(p,s0,s1)=>{const dx=s1[0]-s0[0],dz=s1[1]-s0[1],L=dx*dx+dz*dz||1,t=Math.max(0,Math.min(1,((p[0]-s0[0])*dx+(p[1]-s0[1])*dz)/L));return Math.hypot(p[0]-s0[0]-t*dx,p[1]-s0[1]-t*dz);};
+ const cross=(p,q2,r,s2)=>{const o=(x,y,z)=>Math.sign((y[0]-x[0])*(z[1]-x[1])-(y[1]-x[1])*(z[0]-x[0]));return o(p,q2,r)!==o(p,q2,s2)&&o(r,s2,p)!==o(r,s2,q2);};
+ let d=Infinity;for(let i=0;i<a.length;i++)for(let j=0;j<b.length;j++){const a0=a[i],a1=a[(i+1)%a.length],b0=b[j],b1=b[(j+1)%b.length];if(cross(a0,a1,b0,b1))return 0;d=Math.min(d,segD(a0,b0,b1),segD(a1,b0,b1),segD(b0,a0,a1),segD(b1,a0,a1));}
+ return d;}
 // First free place for a new slab: patio beyond the deck side away from the house; walkway out from
 // the foot of the first stair (else beside the patio). Kept out of the house.
 function placeSurface(q,type){const T=core.SURFACE_TYPES[type],es=core.edges(core.polygon(q)),poly=core.polygon(q);
@@ -4676,6 +4697,7 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
    if((q.surfaces||[]).length>=core.MAX_SURFACES){toast(`Up to ${core.MAX_SURFACES} concrete surfaces.`);return;}
    const sf=placeSurface(q,t);if(!sf){toast(`No clear spot found for a ${T.label.toLowerCase()}. Add it, then drag it where you want it.`);return;}
    q.surfaces=[...(q.surfaces||[]),sf];state.surfaceSelected=sf.id;setProject(q);toast(`${T.label} added (${fmt(sf.width)} × ${fmt(sf.length)}). Drag it in 2D to move it.`);return;}
+ if(act==='surface-pick'){const x=(state.intent.surfaces||[])[Number(b.dataset.index)];if(x){state.surfaceSelected=x.id;renderPanel();planDraw();}return;}
  if(act==='surface-prev'||act==='surface-next'){const list=state.intent.surfaces||[],k=list.findIndex(x=>x.id===state.surfaceSelected)+(act==='surface-prev'?-1:1);if(list[k]){state.surfaceSelected=list[k].id;renderPanel();planDraw();}return;}
  if(act==='surface-remove'){const q=structuredClone(state.intent),sf=(q.surfaces||[]).find(x=>x.id===state.surfaceSelected);if(!sf)return;q.surfaces=q.surfaces.filter(x=>x.id!==sf.id);state.surfaceSelected=null;setProject(q);toast(`${core.SURFACE_TYPES[sf.type].label} deleted. Undo restores it.`);return;}
  if(act==='surface-rotate'){const sf=surfaceSel();if(!sf)return;const a=((sf.angle+Number(b.dataset.value))%180+180)%180;changeSurface({angle:+a.toFixed(3)});return;}
