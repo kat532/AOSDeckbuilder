@@ -84,7 +84,7 @@
 /* V4.8 camera toolbar: independent on-canvas buttons, sized like
    the existing See Framing button (same typography, border and height). */
 .camera-tools{position:absolute;z-index:8;top:12px;left:14px;display:flex;align-items:center;gap:6px;pointer-events:auto;touch-action:manipulation}
-.camera-tools[hidden]{display:none!important}
+.camera-tools[hidden]{display:none!important}#planCanvas.move-view{cursor:grab}#planCanvas.move-view:active{cursor:grabbing}
 .camera-tool{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:1px solid #d7dee3;border-radius:9px;background:rgba(255,255,255,.94);color:#354959;font-size:11px;font-weight:780;padding:10px 12px;box-shadow:0 3px 10px #17273914;white-space:nowrap;touch-action:manipulation}
 .camera-tool.active{background:#253746;border-color:#253746;color:#fff}
 .camera-tool:focus-visible{outline:3px solid #dd6974;outline-offset:1px}
@@ -313,6 +313,10 @@ body.pdf-open{overflow:hidden}
         <button class="camera-tool active" id="cameraRotateBtn" type="button" aria-pressed="true" title="Drag with one finger to rotate the 3D deck"><span class="camera-symbol" aria-hidden="true">↻</span> Rotate</button>
         <button class="camera-tool" id="cameraMoveBtn" type="button" aria-pressed="false" title="Drag with one finger to move around the 3D deck"><span class="camera-symbol" aria-hidden="true">✥</span> Move</button>
         <button class="camera-tool" id="cameraUnderBtn" type="button" title="Look up at the framing from under the deck"><span class="camera-symbol" aria-hidden="true">⤒</span> Under</button>
+      </div>
+      <div class="camera-tools plan-tools" id="planTools" role="group" aria-label="2D plan: edit or move the view" hidden>
+        <button class="camera-tool active" id="planEditBtn" type="button" aria-pressed="true" title="Tap or drag items on the plan to change them; drag empty space to move the view"><span class="camera-symbol" aria-hidden="true">✎</span> Edit</button>
+        <button class="camera-tool" id="planMoveBtn" type="button" aria-pressed="false" title="Drag anywhere to move the plan; nothing on the plan can change"><span class="camera-symbol" aria-hidden="true">✥</span> Move view</button>
       </div>
       <button class="structure-toggle" id="structureToggle" type="button" aria-pressed="false" hidden>⌗ Show framing</button>
       <canvas id="planCanvas" class="viewport-canvas visible" aria-label="2D deck plan; drag deck edges to resize"></canvas>
@@ -3594,12 +3598,13 @@ function updateHeader(){
  for(const v of ['2d','3d']){$('mode'+v).classList.toggle('active',state.view===v);$('mode'+v).setAttribute('aria-pressed',String(state.view===v));}
  $('structureToggle').hidden=state.view!=='3d';$('structureToggle').classList.toggle('active',renderer3d.showStructure);$('structureToggle').textContent=renderer3d.showStructure?'✓ Framing only':'⌗ See framing';
  const showCamera=state.view==='3d';$('cameraTools').hidden=!showCamera;
+ {const pt=$('planTools');pt.hidden=!(state.view==='2d'&&state.intent&&!state.freeDraw);for(const [id,on] of [['planEditBtn',!state.plan.moveView],['planMoveBtn',Boolean(state.plan.moveView)]]){$(id).classList.toggle('active',on);$(id).setAttribute('aria-pressed',String(on));}planCanvas.classList.toggle('move-view',Boolean(state.plan.moveView));}
  for(const [id,selected] of [['cameraRotateBtn',!renderer3d.panMode],['cameraMoveBtn',renderer3d.panMode]]){
   const btn=$(id);btn.classList.toggle('active',selected);btn.setAttribute('aria-pressed',String(selected));
  }
  $('planCanvas').classList.toggle('visible',state.view==='2d');$('glCanvas').classList.toggle('visible',state.view==='3d');
  const tips=['Tap a measurement to edit exact length · drag edges or corners','Tap deck edges to add or remove house walls','Add & select multiple stairs · drag to reposition','Choose layout; drag dividers to position','Select decking and accent finishes','Tap deck edges or stair sides for railings','STEP 3 · Choose dropped/flush beams and ledger/freestanding support','Orbit to inspect; frame stays under the decking','Add a patio or walkway · drag to move it · drag its round handle to resize'];
- $('viewTip').textContent=state.freeDraw?'90° Locked by default · Finish Shape or green dot':state.view==='3d'?(renderer3d.panMode?'MOVE selected · drag to shift view · pinch to zoom':'ROTATE selected · drag to orbit · two fingers to move/zoom'):state.intent?(state.step===5&&state.railTab==='finish'?'Tap a railed edge to give it its own finish':state.step===8&&state.intent.surfaces?.length?'Drag a patio or walkway to move it · drag its round handle to resize':state.step===1&&state.houseTab==='look'?'Siding and color show in the 3D view':tips[state.step]):'Select a shape to begin';
+ $('viewTip').textContent=state.freeDraw?'90° Locked by default · Finish Shape or green dot':state.view==='2d'&&state.intent&&state.plan.moveView?'MOVE VIEW selected · drag to move the plan · nothing on the plan changes · tap Edit to make changes':state.view==='3d'?(renderer3d.panMode?'MOVE selected · drag to shift view · pinch to zoom':'ROTATE selected · drag to orbit · two fingers to move/zoom'):state.intent?(state.step===5&&state.railTab==='finish'?'Tap a railed edge to give it its own finish':state.step===8&&state.intent.surfaces?.length?'Drag a patio or walkway to move it · drag its round handle to resize':state.step===1&&state.houseTab==='look'?'Siding and color show in the 3D view':tips[state.step]):'Select a shape to begin';
  if(state.view==='3d')renderer3d.draw();else planDraw();
 }
 const seg=(path,opts,cur)=>`<div class="seg">${opts.map(([v,t])=>`<button type="button" data-path="${path}" data-value="${v}" class="${String(v)===String(cur)?'selected':''}">${t}</button>`).join('')}</div>`;
@@ -5013,6 +5018,7 @@ $('backBtn').onclick=()=>stepTo(previousStep(state.step));
 $('pdfCloseBtn').onclick=closePdfPreview;$('pdfZoomBtn').onclick=()=>{const z=$('pdfPages').classList.toggle('zoomed');$('pdfZoomBtn').setAttribute('aria-pressed',String(z));$('pdfZoomBtn').textContent=z?'Fit to screen':'Zoom in';};$('pdfDownloadBtn').onclick=downloadPdf;$('pdfPreview').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();closePdfPreview();}}); // V5.3 C4
 $('stepdots').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b||b.disabled)return;const i=Number(b.dataset.step);if(i!==state.step)stepTo(i);});$('nextBtn').onclick=()=>state.step===LAST_STEP?finishReview():stepTo(nextStep(state.step));
 $('mode2d').onclick=()=>changeView('2d');$('mode3d').onclick=()=>changeView('3d');
+$('planEditBtn').onclick=()=>{state.plan.moveView=false;updateHeader();};$('planMoveBtn').onclick=()=>{state.plan.moveView=true;updateHeader();};
 $('undoBtn').onclick=()=>undo();$('redoBtn').onclick=()=>undo(true);$('saveBtn').onclick=()=>saveProject(true);$('openBtn').onclick=openProjects;
 $('projectName').addEventListener('change',e=>{const v=e.target.value.trim().slice(0,90);
  if(!state.intent){$('newPlanName').value=v;return;}
@@ -5341,6 +5347,8 @@ const local=e=>{let b=planCanvas.getBoundingClientRect();return {x:e.clientX-b.l
 planCanvas.addEventListener('pointerdown',e=>{
  planCanvas.setPointerCapture(e.pointerId);const l=local(e);state.plan.pointers.set(e.pointerId,l);state.plan.tap={x:l.x,y:l.y,moved:false};if(state.plan.pointers.size>1){state.plan.drag=null;state.plan.tap=null;return;}
  if(state.freeDraw||!state.intent)return;state.lastShapeError='';const p=inv(l.x,l.y);
+ // V5.3 R1: Move view — every one-finger/mouse drag moves the plan; nothing is selected or edited.
+ if(state.plan.moveView){state.plan.drag={type:'pan',px:l.x,py:l.y};state.plan.moveTap=true;return;}
  if(state.step===0){const ov=hitOverallLabel(l);if(ov){state.plan.overallTap=ov;state.plan.drag=null;return;}const dimension=hitDimensionLabel(l);if(dimension!==null){state.plan.dimensionTap=dimension;state.plan.drag=null;return;}const vertex=detectVertex(p);if(vertex>=0)state.plan.drag={type:'vertex',index:vertex,basePoly:core.polygon(state.intent),original:JSON.stringify(state.intent)};else{
    const nearest=nearestEdge(p);if(nearest)state.plan.drag={type:'resize-edge',edge:nearest,basePoly:core.polygon(state.intent),grab:p.slice(),original:JSON.stringify(state.intent)};
  }}
@@ -5362,7 +5370,8 @@ planCanvas.addEventListener('pointerdown',e=>{
    }
    if(index>=0){state.dividerSelected=index;state.plan.drag={type:'divider',index,original:JSON.stringify(state.intent)};renderPanel();planDraw();}
  }
- if(!state.plan.drag&&e.pointerType==='mouse'&&!([1,2,5].includes(state.step)))state.plan.drag={type:'pan',px:l.x,py:l.y};
+ // V5.3 R1: dragging empty plan space moves the view in every step, by mouse or one finger (taps still work).
+ if(!state.plan.drag)state.plan.drag={type:'pan',px:l.x,py:l.y};
 });
 planCanvas.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&!e.buttons){const l=local(e);planCanvas.style.cursor=state.step===0&&!state.freeDraw&&(hitOverallLabel(l)||hitDimensionLabel(l)!==null)?'pointer':'';}}); // V5.3 C5
 planCanvas.addEventListener('pointermove',e=>{if(state.freeDraw&&!state.plan.pointers.has(e.pointerId)){const l=local(e);state.freeHover=inv(l.x,l.y);planDraw();return;}if(!state.plan.pointers.has(e.pointerId))return;const l=local(e),prev=state.plan.pointers.get(e.pointerId),before=[...state.plan.pointers.values()];state.plan.pointers.set(e.pointerId,l);
@@ -5465,6 +5474,7 @@ function planEnd(e){if(!state.plan.pointers.has(e.pointerId))return;const l=loca
  if(drag&&tap?.moved&&state.lastShapeError&&['vertex','resize-edge'].includes(drag.type)){
    toast(state.lastShapeError);state.lastShapeError='';
  }
+ if(state.plan.moveTap){state.plan.moveTap=false;if(tap&&!tap.moved)toast('Move view is on: tap Edit to change the plan.');return;}
  if(tap&&!tap.moved){tapPlan(inv(l.x,l.y));}
 }
 ['pointerup','pointercancel','lostpointercapture'].forEach(t=>planCanvas.addEventListener(t,planEnd));
