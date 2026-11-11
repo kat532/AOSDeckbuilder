@@ -21,7 +21,8 @@ const BASE = JSON.parse(fs.readFileSync(path.join(__dirname, 'baseline', 'contro
 // V5.3 C4: plus the Preview customer PDF button in Review (tests/baseline/c4-expected.js).
 // V5.3 C5: plus the Left/Right position controls and per-wall ledger buttons (tests/baseline/c5-expected.js).
 // V5.3 C6: plus the surface list buttons in Patio & Walkway (tests/baseline/c6-expected.js).
-const EXPECT = require('./baseline/c6-expected').expectedC6(BASE);
+// V5.3 C6 owner R1: plus the New Plan header button (tests/baseline/r1-expected.js).
+const EXPECT = require('./baseline/r1-expected').expectedR1(BASE);
 let browser;
 test.before(async () => { browser = await chromium.launch({ executablePath: CHROME, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] }); fs.mkdirSync(SHOTS, { recursive: true }); });
 test.after(async () => { await browser?.close(); });

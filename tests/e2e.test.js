@@ -33,7 +33,8 @@ async function openApp(viewport = { width: 1280, height: 900 }) {
 }
 
 async function chooseShape(page, shape) {
-  if (await page.locator('#shapeOverlay').isHidden()) await page.locator('#startFromCanvas').click();
+  // V5.3 R1: a new plan needs a name before a shape can be chosen.
+  if (await page.locator('#shapeOverlay').isHidden()) { await page.locator('#newPlanName').fill('Test plan'); await page.locator('#startFromCanvas').click(); }
   await page.locator(`#shapeOverlay [data-shape="${shape}"]`).click();
   await page.waitForFunction(() => /\d+ SQ FT/.test(document.getElementById('squareFeet')?.textContent || ''));
 }
@@ -324,7 +325,8 @@ test('railing finish: tapping an edge on the 2D plan selects it; tapping again r
 
 // ---- V5.1 Free Draw ----
 async function startFreeDraw(page) {
-  if (await page.locator('#shapeOverlay').isHidden()) await page.locator('#startFromCanvas').click();
+  // V5.3 R1: a new plan needs a name before a shape can be chosen.
+  if (await page.locator('#shapeOverlay').isHidden()) { await page.locator('#newPlanName').fill('Test plan'); await page.locator('#startFromCanvas').click(); }
   await page.locator('#shapeOverlay [data-shape="free"]').click();
   const box = await page.locator('#planCanvas').boundingBox();
   // Same formula the app uses when Free Draw starts (feet -> CSS px).
