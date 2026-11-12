@@ -1,0 +1,290 @@
+{
+  "recorded": "C7 Gate A, before any engine change",
+  "r1Commit": "01f16df5958ce31408b9f41cecbb267322e85787",
+  "r1IndexSha256": "b8058b7b3614910ec2b81af34cb0b192db46df76f4ebe9a3adcc152fee916e4e",
+  "cases": {
+    "18x12 ledger deck, two 45° cut corners": {
+      "failedOnR1": true,
+      "joist": "2x10",
+      "unsupportedJoists": 4,
+      "unsupportedRims": 2,
+      "outsideBeamsPosts": 0,
+      "beams": [
+        "primary-beam:13.80"
+      ],
+      "posts": 3,
+      "footings": 3,
+      "closeFootingPairs": 0,
+      "footingPadsPastOutline": 0,
+      "joists": 14,
+      "planner": "single-primary-beam-review-required",
+      "joistFaults": [
+        "joist @-7.58: fewer than two bearings, cantilever",
+        "joist @7.09: fewer than two bearings, cantilever",
+        "picture-support-joist @-8.30: fewer than two bearings, cantilever",
+        "picture-support-joist @8.30: fewer than two bearings, cantilever"
+      ],
+      "rimFaults": [
+        "edge 1 (9 ft): fewer than two bearings, cantilever",
+        "edge 5 (9 ft): fewer than two bearings, cantilever"
+      ],
+      "outsideMembers": []
+    },
+    "16x12 ledger deck, one 45° cut corner": {
+      "failedOnR1": true,
+      "joist": "2x10",
+      "unsupportedJoists": 4,
+      "unsupportedRims": 2,
+      "outsideBeamsPosts": 0,
+      "beams": [
+        "primary-beam:12.10"
+      ],
+      "posts": 2,
+      "footings": 2,
+      "closeFootingPairs": 0,
+      "footingPadsPastOutline": 0,
+      "joists": 13,
+      "planner": "single-primary-beam-review-required",
+      "joistFaults": [
+        "joist @-6.58: fewer than two bearings, cantilever",
+        "joist @-5.24: fewer than two bearings, cantilever",
+        "picture-support-joist @-7.30: fewer than two bearings, cantilever",
+        "picture-support-joist @7.30: fewer than two bearings, cantilever"
+      ],
+      "rimFaults": [
+        "edge 1 (8 ft): fewer than two bearings, cantilever",
+        "edge 4 (12 ft): fewer than two bearings, cantilever"
+      ],
+      "outsideMembers": []
+    },
+    "18x12 freestanding angled deck": {
+      "failedOnR1": true,
+      "joist": "2x10",
+      "unsupportedJoists": 0,
+      "unsupportedRims": 2,
+      "outsideBeamsPosts": 5,
+      "beams": [
+        "shared-beam:18.00",
+        "shared-beam:16.00",
+        "corner-beam:1.84",
+        "corner-beam:1.84"
+      ],
+      "posts": 10,
+      "footings": 10,
+      "closeFootingPairs": 6,
+      "footingPadsPastOutline": 4,
+      "joists": 14,
+      "planner": "legacy-bearing-repair",
+      "joistFaults": [],
+      "rimFaults": [
+        "edge 1 (9 ft): back 1/4",
+        "edge 5 (9 ft): back 1/4"
+      ],
+      "outsideMembers": [
+        "dropped-beam shared-beam",
+        "dropped-beam corner-beam",
+        "post-6x6",
+        "dropped-beam corner-beam",
+        "post-6x6"
+      ]
+    },
+    "16x16 octagon": {
+      "failedOnR1": true,
+      "joist": "2x10",
+      "unsupportedJoists": 0,
+      "unsupportedRims": 2,
+      "outsideBeamsPosts": 6,
+      "beams": [
+        "shared-beam:12.00",
+        "shared-beam:12.00",
+        "corner-beam:2.86",
+        "corner-beam:2.86",
+        "corner-beam:2.61",
+        "corner-beam:2.61"
+      ],
+      "posts": 14,
+      "footings": 14,
+      "closeFootingPairs": 8,
+      "footingPadsPastOutline": 8,
+      "joists": 13,
+      "planner": "legacy-bearing-repair",
+      "joistFaults": [],
+      "rimFaults": [
+        "edge 2 (8 ft): back 1/4, front 1/4",
+        "edge 6 (8 ft): back 1/4, front 1/4"
+      ],
+      "outsideMembers": [
+        "dropped-beam shared-beam",
+        "dropped-beam shared-beam",
+        "dropped-beam corner-beam",
+        "dropped-beam corner-beam",
+        "dropped-beam corner-beam",
+        "dropped-beam corner-beam"
+      ]
+    },
+    "20x14 large-corner deck": {
+      "failedOnR1": true,
+      "joist": "2x10",
+      "unsupportedJoists": 0,
+      "unsupportedRims": 2,
+      "outsideBeamsPosts": 0,
+      "beams": [
+        "contour-beam:8.49",
+        "contour-beam:8.00",
+        "contour-beam:8.49"
+      ],
+      "posts": 4,
+      "footings": 4,
+      "closeFootingPairs": 0,
+      "footingPadsPastOutline": 4,
+      "joists": 16,
+      "planner": "convex-perimeter-bearing",
+      "joistFaults": [],
+      "rimFaults": [
+        "edge 1 (8 ft): fewer than two bearings, cantilever",
+        "edge 5 (8 ft): fewer than two bearings, cantilever"
+      ],
+      "outsideMembers": []
+    },
+    "free-drawn hexagon": {
+      "failedOnR1": true,
+      "joist": "2x12",
+      "unsupportedJoists": 0,
+      "unsupportedRims": 0,
+      "outsideBeamsPosts": 3,
+      "beams": [
+        "shared-beam:13.60",
+        "corner-beam:6.63",
+        "corner-beam:6.38"
+      ],
+      "posts": 7,
+      "footings": 7,
+      "closeFootingPairs": 0,
+      "footingPadsPastOutline": 4,
+      "joists": 20,
+      "planner": "legacy-bearing-repair",
+      "joistFaults": [],
+      "rimFaults": [],
+      "outsideMembers": [
+        "dropped-beam shared-beam",
+        "dropped-beam corner-beam",
+        "dropped-beam corner-beam"
+      ]
+    },
+    "bump-out deck": {
+      "failedOnR1": true,
+      "joist": "2x10",
+      "unsupportedJoists": 0,
+      "unsupportedRims": 2,
+      "outsideBeamsPosts": 0,
+      "beams": [
+        "shared-beam:20.00",
+        "shared-beam:6.00"
+      ],
+      "posts": 6,
+      "footings": 6,
+      "closeFootingPairs": 0,
+      "footingPadsPastOutline": 0,
+      "joists": 18,
+      "planner": "legacy-bearing-repair",
+      "joistFaults": [],
+      "rimFaults": [
+        "edge 3 (3 ft): fewer than two bearings, cantilever",
+        "edge 5 (3 ft): fewer than two bearings, cantilever"
+      ],
+      "outsideMembers": []
+    },
+    "standard rectangle": {
+      "failedOnR1": false,
+      "joist": "2x10",
+      "unsupportedJoists": 0,
+      "unsupportedRims": 0,
+      "outsideBeamsPosts": 0,
+      "beams": [
+        "shared-beam:16.00"
+      ],
+      "posts": 3,
+      "footings": 3,
+      "closeFootingPairs": 0,
+      "footingPadsPastOutline": 0,
+      "joists": 13,
+      "planner": "legacy-bearing-repair",
+      "joistFaults": [],
+      "rimFaults": [],
+      "outsideMembers": []
+    },
+    "L template": {
+      "failedOnR1": true,
+      "joist": "2x12",
+      "unsupportedJoists": 0,
+      "unsupportedRims": 1,
+      "outsideBeamsPosts": 0,
+      "beams": [
+        "shared-beam:11.12",
+        "shared-beam:13.68"
+      ],
+      "posts": 5,
+      "footings": 5,
+      "closeFootingPairs": 0,
+      "footingPadsPastOutline": 0,
+      "joists": 20,
+      "planner": "legacy-bearing-repair",
+      "joistFaults": [],
+      "rimFaults": [
+        "edge 3 (7.56 ft): fewer than two bearings, cantilever"
+      ],
+      "outsideMembers": []
+    },
+    "T template": {
+      "failedOnR1": true,
+      "joist": "2x10",
+      "unsupportedJoists": 0,
+      "unsupportedRims": 2,
+      "outsideBeamsPosts": 0,
+      "beams": [
+        "shared-beam:28.00",
+        "shared-beam:11.20"
+      ],
+      "posts": 6,
+      "footings": 6,
+      "closeFootingPairs": 0,
+      "footingPadsPastOutline": 0,
+      "joists": 25,
+      "planner": "legacy-bearing-repair",
+      "joistFaults": [],
+      "rimFaults": [
+        "edge 3 (12 ft): fewer than two bearings, cantilever",
+        "edge 5 (12 ft): fewer than two bearings, cantilever"
+      ],
+      "outsideMembers": []
+    },
+    "U template": {
+      "failedOnR1": true,
+      "joist": "2x10",
+      "unsupportedJoists": 0,
+      "unsupportedRims": 2,
+      "outsideBeamsPosts": 3,
+      "beams": [
+        "shared-beam:32.00",
+        "shared-beam:8.64",
+        "shared-beam:8.64"
+      ],
+      "posts": 10,
+      "footings": 10,
+      "closeFootingPairs": 0,
+      "footingPadsPastOutline": 2,
+      "joists": 26,
+      "planner": "legacy-bearing-repair",
+      "joistFaults": [],
+      "rimFaults": [
+        "edge 3 (11.88 ft): fewer than two bearings, cantilever",
+        "edge 5 (11.88 ft): fewer than two bearings, cantilever"
+      ],
+      "outsideMembers": [
+        "dropped-beam shared-beam",
+        "post-6x6",
+        "post-6x6"
+      ]
+    }
+  }
+}
