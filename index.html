@@ -798,10 +798,11 @@ function buildForSize(runs,poly,joistD,beamD,spacing,style,FS,size){
 // V5.1: structural results are cached by their inputs. Cosmetic edits (colors, railing
 // finishes, project name) produce the same joist runs and reuse the cached layout.
 const CACHE=new Map(),CACHE_MAX=24;
-function choose(runs,poly,joistD,beamD,spacing,style,FS){
- const key=JSON.stringify([runs.map(j=>[j.t,j.a,j.b,j.ledger,j.ledgerEnd,j.role,j.pA,j.pB]),poly,joistD,beamD,spacing,style]);
+function choose(runs,poly,joistD,beamD,spacing,style,FS,opts={}){
+ const sig=r=>r.map(j=>[j.t,j.a,j.b,j.ledger,j.ledgerEnd,j.role,j.pA,j.pB]);
+ const key=JSON.stringify([sig(runs),poly,joistD,beamD,spacing,style,opts.ledgers||[],opts.altRuns?sig(opts.altRuns):null]);
  if(CACHE.has(key)){const hit=CACHE.get(key);CACHE.delete(key);CACHE.set(key,hit);choose.hits++;return structuredClone(hit);}
- const result=chooseUncached(runs,poly,joistD,beamD,spacing,style,FS);
+ const result=chooseUncached(runs,poly,joistD,beamD,spacing,style,FS,opts);
  CACHE.set(key,structuredClone(result));if(CACHE.size>CACHE_MAX)CACHE.delete(CACHE.keys().next().value);choose.misses++;
  return result;}
 choose.hits=0;choose.misses=0;
@@ -1031,7 +1032,249 @@ function irregularSharedLinePlan(runs,poly,joistD,beamD,spacing,style,FS){
  options.sort((a,b)=>b.supportedJoists-a.supportedJoists||a.badRuns.length-b.badRuns.length||a.beams.length-b.beams.length);
  return options[0]||null;
 }
-function chooseUncached(runs,poly,joistD,beamD,spacing,style,FS){
+// ---------------------------------------------------------------------------------------------
+// V5.3 C7 framing (owner authorization, 11 Nov 2026). Two root causes are corrected together:
+//  1. Selection: the R1 order returned the single-primary-beam plan whenever one existed, even
+//     with joists left unsupported, without comparing the layouts the code also builds.
+//  2. Geometry: the corner-beam fallback extended beams to the outline without allowing for
+//     their width, placing beams/posts outside the deck and crowding footings.
+// assessLayout() is ONE independent geometric screen applied to every candidate. It never
+// approves anything structurally: it only decides whether a candidate is geometrically
+// coherent (every joist and load-carrying rim bears within the span/cantilever screens; every
+// beam and post physically inside the outline; every beam has a post layout).
+// ---------------------------------------------------------------------------------------------
+const C7={BEAM_HALF:4.5/24,POST_HALF:5.5/24,MIN_BEARING:1.5/12,RIM_LANE:.095,END_CLEAR:.008,MERGE:.3};
+function c7SegDist(p,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],d=dx*dx+dy*dy||1,t=Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dy)/d));return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dy);}
+// Same inside rule as the DeckCore physical-footprint audit (on-edge within 0.002 ft counts as inside).
+function c7Inside(poly,p){
+ for(let i=0;i<poly.length;i++)if(c7SegDist(p,poly[i],poly[(i+1)%poly.length])<.002)return true;
+ let inside=false;for(let i=0,k=poly.length-1;i<poly.length;k=i++){const a=poly[i],b=poly[k];
+  if((a[1]>p[1])!==(b[1]>p[1])&&p[0]<(b[0]-a[0])*(p[1]-a[1])/(b[1]-a[1])+a[0])inside=!inside;}
+ return inside;}
+// A rectangle footprint is inside the outline when its corners are, no outline vertex lies strictly
+// inside it, and no outline edge properly crosses one of its sides (touching within 0.002 ft is inside).
+function c7RectInside(poly,pts){
+ if(!pts.every(p=>c7Inside(poly,p)))return false;
+ const E=.002,side=(a,b,p)=>(b[0]-a[0])*(p[1]-a[1])-(b[1]-a[1])*(p[0]-a[0]);
+ const ccw=side(pts[0],pts[1],pts[2])>0?1:-1;
+ for(const v of poly){let inside=true;for(let i=0;i<4;i++){const a=pts[i],b=pts[(i+1)%4],L=Math.hypot(b[0]-a[0],b[1]-a[1])||1;if(ccw*side(a,b,v)/L<=E){inside=false;break;}}if(inside)return false;}
+ for(let i=0;i<4;i++){const a=pts[i],b=pts[(i+1)%4];
+  for(let k=0;k<poly.length;k++){const c=poly[k],d=poly[(k+1)%poly.length],Lab=Math.hypot(b[0]-a[0],b[1]-a[1])||1,Lcd=Math.hypot(d[0]-c[0],d[1]-c[1])||1;
+   const d1=side(a,b,c)/Lab,d2=side(a,b,d)/Lab,d3=side(c,d,a)/Lcd,d4=side(c,d,b)/Lcd;
+   if(((d1>E&&d2<-E)||(d1<-E&&d2>E))&&((d3>E&&d4<-E)||(d3<-E&&d4>E)))return false;}}
+ return true;}
+function c7BeamFrame(bm){const len=Math.hypot(bm.b[0]-bm.a[0],bm.b[1]-bm.a[1])||1,d=[(bm.b[0]-bm.a[0])/len,(bm.b[1]-bm.a[1])/len];return {len,d,n:[-d[1],d[0]],c:[(bm.a[0]+bm.b[0])/2,(bm.a[1]+bm.b[1])/2]};}
+function c7BeamRect(bm){const {d,n}=c7BeamFrame(bm),h=C7.BEAM_HALF;return [[bm.a[0]-n[0]*h,bm.a[1]-n[1]*h],[bm.b[0]-n[0]*h,bm.b[1]-n[1]*h],[bm.b[0]+n[0]*h,bm.b[1]+n[1]*h],[bm.a[0]+n[0]*h,bm.a[1]+n[1]*h]];}
+// Where a joist line rests on a beam: the centerline crossing (the R1 rule), or, near a square beam
+// end, at least 1.5 in. of the joist line passing over the beam's physical top (minimum bearing).
+function c7Bearing(j,bm){
+ const t=crossing(j.pA,j.pB,bm.a,bm.b);if(t!==null)return j.a+(j.b-j.a)*t;
+ const {len,d,n,c}=c7BeamFrame(bm),D=[j.pB[0]-j.pA[0],j.pB[1]-j.pA[1]],L=Math.hypot(...D)||1,iv=[0,1];
+ const slab=(f0,f1,h)=>{if(Math.abs(f1)<1e-12){if(Math.abs(f0)>h){iv[0]=1;iv[1]=0;}return;}let a=(-h-f0)/f1,b=(h-f0)/f1;if(a>b)[a,b]=[b,a];iv[0]=Math.max(iv[0],a);iv[1]=Math.min(iv[1],b);};
+ const r=[j.pA[0]-c[0],j.pA[1]-c[1]];slab(dot(r,d),dot(D,d),len/2);slab(dot(r,n),dot(D,n),C7.BEAM_HALF);
+ if((iv[1]-iv[0])*L<C7.MIN_BEARING)return null;return j.a+(j.b-j.a)*(iv[0]+iv[1])/2;}
+// The span/cantilever screen used by buildForSize's final check, on a merged list of bearings.
+function c7RunReasons(j,sp,style,lim){
+ const reason=[];sp=[...sp].sort((a,b)=>a-b).filter((v,i,a)=>!i||v-a[i-1]>C7.MERGE);
+ const spans=sp.slice(1).map((v,k)=>v-sp[k]),back=sp.length?sp[0]-j.a:j.b-j.a,front=sp.length?j.b-sp.at(-1):j.b-j.a;
+ if(sp.length<2)reason.push('no verified pair of bearing locations');
+ if(spans.some(x=>x>lim.span+.07))reason.push('joist span');
+ if(style==='flush'){if(back>C7.BEAM_HALF+.06||front>C7.BEAM_HALF+.06)reason.push('flush end bearing');}
+ else{if(back>2.01||front>2.01||back>lim.cant+.01||front>lim.cant+.01)reason.push('cantilever cap');
+  if(back>.06&&!j.ledger&&spans.length&&back>spans[0]/4+.06)reason.push('backspan quarter');
+  if(front>.06&&spans.length&&front>spans.at(-1)/4+.06)reason.push('frontspan quarter');}
+ return {reason,spans,back,front,supports:sp};}
+// Side rims run WITH the joists and carry deck load like an outer joist: they need a validated
+// bearing path. Rims across the joist ends are closures carried by those joist ends.
+function c7Rims(poly,joistD,opts){
+ const area=poly.reduce((q,a,i)=>{const b=poly[(i+1)%poly.length];return q+a[0]*b[1]-a[1]*b[0];},0),inward=area>=0?1:-1,out=[];
+ const ledgerAt=p=>(opts.ledgers||[]).some(([a,b])=>c7SegDist(p,a,b)<.22);
+ const isLedgerEdge=(a,b)=>(opts.ledgerEdges||[]).some(([c,d])=>c7SegDist(a,c,d)<.02&&c7SegDist(b,c,d)<.02);
+ for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length],len=Math.hypot(b[0]-a[0],b[1]-a[1]);
+  if(len<.3||isLedgerEdge(a,b))continue;
+  const t=[(b[0]-a[0])/len,(b[1]-a[1])/len],role=Math.abs(dot(t,joistD))>.985?'load-carrying':'closure';
+  const rim={edge:i,role,len};out.push(rim);if(role!=='load-carrying'||len<.72)continue;
+  const n=[-t[1]*inward,t[0]*inward],pa=[a[0]+n[0]*C7.RIM_LANE,a[1]+n[1]*C7.RIM_LANE],pb=[b[0]+n[0]*C7.RIM_LANE,b[1]+n[1]*C7.RIM_LANE];
+  let [A,B,VA,VB]=dot(pa,joistD)<=dot(pb,joistD)?[pa,pb,a,b]:[pb,pa,b,a];
+  rim.run={t:dot(A,[-joistD[1],joistD[0]]),a:dot(A,joistD),b:dot(B,joistD),pA:A,pB:B,ledger:ledgerAt(VA),ledgerEnd:ledgerAt(VB),role:'rim'};
+ }
+ return out;}
+// A 5.5 in. post is 1 in. wider than the 4.5 in. beam it carries. Where the post centered on the beam
+// would project past the outline (beam face on the outline), it moves inward by up to 1/2 in. so its
+// face lines up with the beam face. Posts that are already inside never move.
+function c7PlacePost(poly,pt,n){const h=C7.POST_HALF,ok=p=>c7RectInside(poly,[[p[0]-h,p[1]-h],[p[0]+h,p[1]-h],[p[0]+h,p[1]+h],[p[0]-h,p[1]+h]]);
+ if(ok(pt))return pt;const k=C7.POST_HALF-C7.BEAM_HALF+.002;for(const sgn of [1,-1]){const q=[pt[0]+n[0]*k*sgn,pt[1]+n[1]*k*sgn];if(ok(q))return q;}return pt;}
+function c7PostPoints(cand,style,FS,poly){
+ const profile=style==='flush'&&cand.joistNominal<12?'3-2x10':'3-2x12',pts=[];let missing=0,shared=0;
+ for(const bm of cand.beams){const len=bm.len,{d}=c7BeamFrame(bm);
+  const pos=bm.postPositions||(FS.postsForBeam(len,bm.eq,style,profile,Boolean(bm.interior))||{}).positions;
+  if(!pos){missing++;continue;}
+  pos.forEach((p,i)=>{let along=p;if(style==='flush'){const r=5.5/24;along=i===0?r:i===pos.length-1?len-r:p;}
+   const pt=c7PlacePost(poly,[bm.a[0]+d[0]*along,bm.a[1]+d[1]*along],[-d[1],d[0]]);if(pts.some(q=>Math.hypot(q[0]-pt[0],q[1]-pt[1])<.6)){shared++;return;}pts.push(pt);});}
+ return {pts,missing,shared};}
+function assessLayout(cand,runs,poly,joistD,spacing,style,FS,opts){
+ const lim=FS.JOISTS[spacing][cand.joistNominal],beams=cand.beams||[];
+ const bearingsFor=j=>{const sp=[...(j.ledger?[j.a]:[]),...(j.ledgerEnd?[j.b]:[])];for(const bm of beams){const u=c7Bearing(j,bm);if(u!==null)sp.push(u);}return sp;};
+ const unsupported=[],okRuns=[];for(const j of runs){const r=c7RunReasons(j,bearingsFor(j),style,lim);if(r.reason.length)unsupported.push({t:j.t,role:j.role||'joist',reason:r.reason});else okRuns.push(j);}
+ // A side rim is supported on its own bearings, or when it is fastened along its full length to a joist
+ // or trimmer in the adjacent lane (within 3 in.) that itself passes this screen.
+ const backedBy=rr=>okRuns.find(j=>Math.abs((rr.pA[0]-j.pA[0])*joistD[1]-(rr.pA[1]-j.pA[1])*joistD[0])<=.25&&j.a<=rr.a+.3&&j.b>=rr.b-.3);
+ const rims=c7Rims(poly,joistD,opts).map(r=>{if(!r.run)return {edge:r.edge,role:r.role,len:+r.len.toFixed(3),supported:null};
+   const c=c7RunReasons(r.run,bearingsFor(r.run),style,lim);if(!c.reason.length)return {edge:r.edge,role:r.role,len:+r.len.toFixed(3),supported:true,path:'own bearings'};
+   const j=backedBy(r.run);return j?{edge:r.edge,role:r.role,len:+r.len.toFixed(3),supported:true,path:`fastened to adjacent ${j.role||'joist'}`}:{edge:r.edge,role:r.role,len:+r.len.toFixed(3),supported:false,reason:c.reason};});
+ const outsideBeams=beams.filter(bm=>!c7RectInside(poly,c7BeamRect(bm))).length;
+ const {pts,missing,shared}=c7PostPoints(cand,style,FS,poly),h=C7.POST_HALF;
+ const outsidePosts=pts.filter(p=>!c7RectInside(poly,[[p[0]-h,p[1]-h],[p[0]+h,p[1]-h],[p[0]+h,p[1]+h],[p[0]-h,p[1]+h]])).length;
+ let closePairs=0;for(let i=0;i<pts.length;i++)for(let k=i+1;k<pts.length;k++)if(Math.hypot(pts[i][0]-pts[k][0],pts[i][1]-pts[k][1])<3-1e-6)closePairs++;
+ const unsupportedRims=rims.filter(r=>r.supported===false).length,invalid=(cand.invalidRuns||[]).length;
+ const valid=!unsupported.length&&!unsupportedRims&&!outsideBeams&&!outsidePosts&&!missing&&!invalid;
+ // Beams whose tributary load falls outside the prescriptive one-sided table (as DeckCore reports them).
+ const beamsOutsideTable=beams.filter(bm=>FS.allowableBeamPostSpan(bm.eq,style==='flush'&&cand.joistNominal<12?'3-2x10':'3-2x12')===null).length;
+ return {valid,unsupportedJoists:unsupported.length,unsupported,unsupportedRims,rims,outsideBeams,outsidePosts,beamsWithoutPosts:missing,invalidRuns:invalid,beamsOutsideTable,
+  posts:pts.length,sharedPosts:shared,closeFootingPairs:closePairs,beams:beams.length,beamLength:+beams.reduce((s,b)=>s+b.len,0).toFixed(3)};}
+// Stretches of a beam line along which its FULL physical width (plus a 0.008 ft end clearance) is inside
+// the outline: all of them (c7SafeSegments), or the single one overlapping `want` (c7SafeSpan, else null).
+function c7SafeSegments(poly,origin,dir,sMin,sMax){
+ // Exact: the stretches where the centerline AND both faces (plus end clearance) lie inside the outline,
+ // split wherever an outline vertex pokes into the beam's strip.
+ const n=[-dir[1],dir[0]],h=C7.BEAM_HALF+C7.END_CLEAR,v0=dot(origin,n),s0=dot(origin,dir),EPS=1e-6;
+ let segs=[[sMin,sMax]];
+ for(const k of [-1,0,1]){const iv=intervals(poly,dir,v0+k*h).map(([a,b])=>[a-s0,b-s0]),next=[];
+  for(const [a,b] of segs)for(const [c,d] of iv){const lo=Math.max(a,c),hi=Math.min(b,d);if(hi-lo>EPS)next.push([lo,hi]);}
+  segs=next;if(!segs.length)return [];}
+ for(const p of poly){const off=dot(p,n)-v0;if(Math.abs(off)>=h-EPS)continue;const sp=dot(p,dir)-s0,out=[];
+  for(const [a,b] of segs){if(sp<=a+EPS||sp>=b-EPS){out.push([a,b]);continue;}
+   // A vertex inside the strip is a notch corner: the beam must stop one half-width short of it on each side.
+   const before=[a,sp],after=[sp,b];
+   for(const [x,y] of [before,after]){const lo=x===sp?sp+0:x,hi=y===sp?sp-0:y;
+    const ok=s=>[-1,0,1].every(k=>c7Inside(poly,[origin[0]+dir[0]*s+n[0]*h*k,origin[1]+dir[1]*s+n[1]*h*k]));
+    let L=lo,H=hi;for(let i=0;i<40&&H-L>.01;i++){const m=(L+H)/2;if(x===sp){if(ok(m))H=m;else L=m;}else{if(ok(m))L=m;else H=m;}}
+    const seg=x===sp?[H,hi]:[lo,L];if(seg[1]-seg[0]>.02)out.push(seg);}}
+  segs=out;}
+ return segs.filter(([a,b])=>b-a>.02);}
+function c7SafeSpan(poly,origin,dir,sMin,sMax,want){
+ const hit=c7SafeSegments(poly,origin,dir,sMin,sMax).filter(([a,b])=>b>=want[0]-.05&&a<=want[1]+.05);return hit.length===1?hit[0]:null;}
+// Even post layout for a beam of length `len`; an end marked fixed carries its post AT the end (a
+// beam-to-beam junction on one shared post), a free end keeps the R1 rule (<=1 ft overhang, 1/4 span).
+function c7Posts(len,eq,fixedA,fixedB,FS){
+ const tab=FS.allowableBeamPostSpan(eq,'3-2x12'),pitchLimit=Math.min(12,tab??6);
+ for(let n=2;n<60;n++){const free=Number(!fixedA)+Number(!fixedB);
+  // A free end prefers the R1 1 ft overhang, shortened (to no less than 0.25 ft) where that keeps
+  // the posts at least 3 ft apart (AOS footing-spacing guideline, decision 6).
+  let oh=free?Math.min(1,len/(4*(n-1)+free)):0;if(free&&(len-oh*free)/(n-1)<3.01)oh=Math.max(.25,Math.min(oh,(len-3.01*(n-1))/free));
+  const pitch=(len-oh*free)/(n-1);
+  if(pitch>pitchLimit+1e-7||oh>pitch/4+1e-7)continue;
+  const start=fixedA?0:oh;return Array.from({length:n},(_,i)=>start+i*pitch);}
+ return null;}
+// V5.3 C7 angled-rim planner (owner decision 4: prototype angled beams that follow the cut geometry).
+// Main beams come from the R1 shared-beam layout, kept fully inside the outline. Each angled edge whose
+// joists cannot reach a main beam gets ONE beam parallel to that edge, set in so those joists cantilever
+// within the 2 ft cap and the 1/4-backspan rule. It runs from the main beam (one shared post where they
+// meet) out to the side rim, so it also carries the rim. Connections remain flagged for production review.
+function angledRimPlan(runs,poly,joistD,beamD,spacing,style,FS,size,opts,scale=1,extend=false,baseLayout=null){
+ if(style!=='dropped'||!runs.length)return null;
+ const angled=[];for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length],L=Math.hypot(b[0]-a[0],b[1]-a[1]);if(L<.3)continue;
+  const t=[(b[0]-a[0])/L,(b[1]-a[1])/L],al=Math.abs(dot(t,joistD));if(al>.1&&al<.95)angled.push({i,a,b,t,len:L});}
+ const lim=FS.JOISTS[spacing][size],cap=Math.min(2,lim.cant),area=poly.reduce((q,a,i)=>{const b=poly[(i+1)%poly.length];return q+a[0]*b[1]-a[1]*b[0];},0),inward=area>=0?1:-1;
+ const base=baseLayout||buildForSize(structuredClone(runs),poly,joistD,beamD,spacing,style,FS,size);
+ const xs=poly.map(p=>p[0]),zs=poly.map(p=>p[1]),R=Math.hypot(Math.max(...xs)-Math.min(...xs),Math.max(...zs)-Math.min(...zs))+2;
+ // Main beams: every R1 shared beam, re-fitted so its full width stays inside the outline. A beam line
+ // that crosses an open notch (U shapes) becomes one shorter segment per stretch of deck it lies under.
+ // A line whose width just grazes an edge running along it is first shifted sideways (<= 0.3 ft).
+ // The `extend` variant runs each shared line to the ends of the deck stretch it lies under (local
+ // repair beams are then left out: the extended line replaces them).
+ const mains=[];for(const bm of base.beams.filter(b=>b.role==='shared-beam'||(!extend&&b.role==='local-support'))){const {len,d,n}=c7BeamFrame(bm);let best=null;
+  const clip=([g0,g1])=>extend?[g0,g1]:[Math.max(g0,0),Math.min(g1,len)];
+  for(const off of [0,-.05,.05,-.1,.1,-.2,.2,-.3,.3]){const o=[bm.a[0]+n[0]*off,bm.a[1]+n[1]*off],segs=c7SafeSegments(poly,o,d,extend?-R:-.5,extend?len+R:len+.5).filter(([g0,g1])=>g1>=0&&g0<=len).map(clip).filter(([a,b])=>b-a>=1.5);
+   const cover=segs.reduce((q,[a,b])=>q+b-a,0);if(!best||cover>best.cover+.5)best={o,segs,cover,off};}
+  for(const [s0,s1] of best.segs)mains.push({...bm,u:bm.u==null?null:bm.u+best.off,a:[best.o[0]+d[0]*s0,best.o[1]+d[1]*s0],b:[best.o[0]+d[0]*s1,best.o[1]+d[1]*s1],len:s1-s0,lo:bm.lo+s0,hi:bm.lo+s1,items:[],fixedA:false,fixedB:false});}
+ if(!mains.length)return null;
+ const rims=c7Rims(poly,joistD,opts).filter(r=>r.run).map(r=>r.run);
+ const onEdge=(p,e)=>{const v=[p[0]-e.a[0],p[1]-e.a[1]],along=dot(v,e.t);return along>-.15&&along<e.len+.15&&Math.abs(v[0]*e.t[1]-v[1]*e.t[0])<.15;};
+ const bear=(j,list)=>{const sp=[...(j.ledger?[j.a]:[]),...(j.ledgerEnd?[j.b]:[])];for(const bm of list){const u=c7Bearing(j,bm);if(u!==null)sp.push(u);}return sp;};
+ // Members still lacking bearing on the main beams, grouped by the angled edge at their free end.
+ const pend=new Map();
+ for(const j of [...runs,...rims]){if(!c7RunReasons(j,bear(j,mains),style,lim).reason.length)continue;
+  for(const [p,endB] of [[j.pB,true],[j.pA,false]]){if(endB?j.ledgerEnd:j.ledger)continue;const e=angled.find(e=>onEdge(p,e));if(!e)continue;
+   const key=e.i+(endB?'b':'a');if(!pend.has(key))pend.set(key,{e,endB,items:[]});pend.get(key).items.push(j);}}
+ const corner=[];
+ for(const {e,endB,items} of pend.values()){
+  // Along-joist overhang c past the corner beam: <=2 ft cap, <= table cantilever, and the joist keeps
+  // 4x c of backspan to its previous bearing (ledger or main beam), or 6x c when its other end also overhangs.
+  // With exactly one other bearing, the new span must also stay >= 4x the overhang at the member's other end.
+  let c=cap-.05;for(const j of items){const end=endB?j.b:j.a,far=endB?j.a:j.b,others=bear(j,mains).filter(u=>Math.abs(u-end)>.3);
+   if(!others.length){c=Math.min(c,(j.b-j.a)/6-.03);continue;}
+   const P=Math.min(...others.map(u=>Math.abs(end-u)));c=Math.min(c,P/5-.03);
+   if(others.length===1){const ov=(endB?j.ledger:j.ledgerEnd)?0:Math.abs(far-others[0]);c=Math.min(c,P-4*ov-.05);}}
+  c=Math.max(.5,c*scale);if(c<.5)return null;
+  const s=Math.abs(e.t[0]*joistD[1]-e.t[1]*joistD[0]),n=[-e.t[1]*inward,e.t[0]*inward],off=c*s,origin=[e.a[0]+n[0]*off,e.a[1]+n[1]*off];
+  const crossS=items.map(j=>{const end=endB?j.pB:j.pA,dir=endB?[-joistD[0],-joistD[1]]:joistD,p=[end[0]+dir[0]*c,end[1]+dir[1]*c];return dot([p[0]-origin[0],p[1]-origin[1]],e.t);});
+  const want=[Math.min(...crossS),Math.max(...crossS)],span=c7SafeSpan(poly,origin,e.t,-R,R,want);if(!span)return null;
+  // Junction with the nearest main beam whose line meets this one inside both safe stretches.
+  let best=null;for(const m of mains){const {d}=c7BeamFrame(m),den=e.t[0]*d[1]-e.t[1]*d[0];if(Math.abs(den)<.05)continue;
+   const w=[m.a[0]-origin[0],m.a[1]-origin[1]],sj=(w[0]*d[1]-w[1]*d[0])/den,mj=(w[0]*e.t[1]-w[1]*e.t[0])/den;
+   if(sj<span[0]-1e-6||sj>span[1]+1e-6)continue;
+   const mspan=c7SafeSpan(poly,m.a,d,-R,R,[Math.min(0,mj),Math.max(m.len,mj)]);if(!mspan||mj<mspan[0]-1e-6||mj>mspan[1]+1e-6)continue;
+   const gap=sj<want[0]?want[0]-sj:sj>want[1]?sj-want[1]:0;if(!best||gap<best.gap)best={m,sj,mj,gap};}
+  let lo,hi;const pitch=spacing/12/Math.max(.2,s);
+  // The corner beam runs from the junction to the outline on the side holding most corner members;
+  // members on the other side of the junction are carried by the main beam, which is extended to it.
+  // Its far end stops just past the last corner member, reaching the outline only when that is within
+  // about one joist bay (a cut corner's side rim); a bay's angled edges point into the deck and must not
+  // drag the beam across joists the main beam already carries.
+  if(best){const beyond=crossS.filter(v=>v>best.sj).length,before=crossS.length-beyond;
+   if(beyond>=before){lo=best.sj;hi=span[1]-want[1]<pitch*1.2?span[1]:Math.min(span[1],want[1]+pitch*.5);}
+   else{hi=best.sj;lo=want[0]-span[0]<pitch*1.2?span[0]:Math.max(span[0],want[0]-pitch*.5);}}
+  else{lo=Math.max(span[0],want[0]-pitch*.5);hi=Math.min(span[1],want[1]+pitch*.5);
+   if(lo-span[0]<pitch*1.2)lo=span[0];if(span[1]-hi<pitch*1.2)hi=span[1];}
+  if(hi-lo<1.5)return null;
+  const A=[origin[0]+e.t[0]*lo,origin[1]+e.t[1]*lo],B=[origin[0]+e.t[0]*hi,origin[1]+e.t[1]*hi];
+  const cb={a:A,b:B,len:hi-lo,u:null,lo,hi,eq:Math.max(...items.map(j=>j.b-j.a)),role:'corner-beam',
+   source:'angled corner beam following the cut edge; bearing, shared post and beam-to-beam connection require AOS production review',
+   interior:false,needsConnectionReview:true,items:items.filter(j=>j.role!=='rim').map(j=>({j,t:j.t})),overhangFt:+c.toFixed(3),fixedA:false,fixedB:false};
+  if(best){const J=[origin[0]+e.t[0]*best.sj,origin[1]+e.t[1]*best.sj],m=best.m,{d}=c7BeamFrame(m);
+   if(Math.abs(best.sj-lo)<1e-6)cb.fixedA=true;else cb.fixedB=true;
+   // The main beam ends AT the junction on the corner side (its length beyond it is replaced).
+   const toCorner=dot([(A[0]+B[0])/2-J[0],(A[1]+B[1])/2-J[1]],d)>0;
+   if(toCorner){m.b=J;m.fixedB=true;}else{m.a=J;m.fixedA=true;}m.len=Math.hypot(m.b[0]-m.a[0],m.b[1]-m.a[1]);
+   if(m.len<1.5)return null;}
+  corner.push(cb);}
+ const beams=[...mains,...corner].filter(b=>b.len>=1.5);
+ for(const bm of beams){if(!bm.fixedA&&!bm.fixedB)continue;const pos=c7Posts(bm.len,bm.eq,bm.fixedA,bm.fixedB,FS);if(!pos)return null;bm.postPositions=pos;}
+ for(const bm of beams){delete bm.fixedA;delete bm.fixedB;}
+ const checks=[],bad=[];for(const j of runs){const r=c7RunReasons(j,bear(j,beams),style,lim);
+  const c={t:j.t,a:j.a,b:j.b,role:j.role||'joist',ledgerStart:j.ledger,ledgerEnd:j.ledgerEnd,spans:r.spans,back:r.back,front:r.front,ok:!r.reason.length,reason:r.reason};checks.push(c);if(!c.ok)bad.push(c);}
+ return {joistNominal:size,beams,groups:[],requests:[],badRuns:bad,checks,invalidRuns:[],diagnosticCount:bad.length,
+  score:beams.length*12+bad.length*300,clusterCount:beams.length,duplicates:0,planner:corner.length?'angled-rim-beams-review-required':'fitted-shared-beams-review-required'};}
+const C7_SIZE_PREF={10:0,8:1,12:2};
+function chooseUncached(runs,poly,joistD,beamD,spacing,style,FS,opts={}){
+ const legacy=legacyChooseUncached(runs,poly,joistD,beamD,spacing,style,FS);
+ const legacyAssessment=assessLayout(legacy,runs,poly,joistD,spacing,style,FS,opts);
+ // R1 layouts that pass the screen are kept exactly as approved (rectangles, L, T, U, ...).
+ if(legacyAssessment.valid)return {...legacy,runSet:'r1',assessment:{...legacyAssessment,selection:'r1-layout-valid',compared:1}};
+ // Candidates are planned on the R1 runs and, where DeckCore offers it, on the rim-backed run set.
+ const pool=[];const push=(c,source,set,rs)=>{if(c)pool.push({c,source,set,rs});};
+ for(const [set,rs] of [['r1',runs],...(opts.altRuns?[['backed',opts.altRuns]]:[])]){
+  if(set!=='r1')push(legacyChooseUncached(rs,poly,joistD,beamD,spacing,style,FS),'r1-planner',set,rs);
+  for(const s of [8,10,12]){push(straightBearingPlan(rs,poly,joistD,beamD,spacing,style,FS,s),'single-primary-beam',set,rs);
+   push(perimeterPlan(rs,poly,joistD,spacing,style,FS,s),'convex-perimeter',set,rs);
+   const base=buildForSize(structuredClone(rs),poly,joistD,beamD,spacing,style,FS,s);push(base,'shared-and-corner-beams',set,rs);
+   for(const k of [1,.8,.6])for(const x of [false,true])push(angledRimPlan(rs,poly,joistD,beamD,spacing,style,FS,s,opts,k,x,base),'angled-rim-beams',set,rs);}
+  push(irregularSharedLinePlan(rs,poly,joistD,beamD,spacing,style,FS),'irregular-shared-lines',set,rs);}
+ const scored=pool.map(({c,source,set,rs})=>({c,source,set,a:assessLayout(c,rs,poly,joistD,spacing,style,FS,opts)}));
+ const candidates=scored.map(x=>({size:x.c.joistNominal,beams:x.c.beams.length,unresolved:x.a.unsupportedJoists,groups:(x.c.groups||[]).length,planner:x.c.planner||x.source,runSet:x.set,
+   valid:x.a.valid,outsideMembers:x.a.outsideBeams+x.a.outsidePosts,unsupportedRims:x.a.unsupportedRims,posts:x.a.posts,closeFootingPairs:x.a.closeFootingPairs}));
+ // Hard constraints first. The smallest change wins: R1's own planner on the rim-backed joists (the R1
+ // beams plus backing joists) when it passes. Otherwise, among valid layouts: fewest beams outside the
+ // prescriptive beam table (fewer posts are never bought with unverifiable beam loads), fewest
+ // posts/footings, fewest crowded footings, fewest beams, least beam length, R1 joist-size preference.
+ const valid=scored.filter(x=>x.a.valid).sort((x,y)=>(x.source==='r1-planner'?0:1)-(y.source==='r1-planner'?0:1)||x.a.beamsOutsideTable-y.a.beamsOutsideTable||x.a.posts-y.a.posts||x.a.closeFootingPairs-y.a.closeFootingPairs||x.a.beams-y.a.beams||x.a.beamLength-y.a.beamLength||C7_SIZE_PREF[x.c.joistNominal]-C7_SIZE_PREF[y.c.joistNominal]);
+ if(valid.length){const w=valid[0];return {...w.c,runSet:w.set,planner:w.c.planner||w.source,candidates,c7Candidates:candidates,assessment:{...w.a,selection:'c7-best-valid',compared:scored.length,r1:legacyAssessment}};}
+ // No candidate passes: keep the R1 layout and say plainly that it needs structural review.
+ // (R1's own candidate list stays in the model stats; the C7 comparison is in model.framing.)
+ return {...legacy,runSet:'r1',c7Candidates:candidates,structuralReviewRequired:true,assessment:{...legacyAssessment,selection:'no-valid-layout',compared:scored.length,r1:legacyAssessment}};
+}
+function legacyChooseUncached(runs,poly,joistD,beamD,spacing,style,FS){
 
  const straight=[8,10,12].map(s=>straightBearingPlan(runs,poly,joistD,beamD,spacing,style,FS,s)).filter(Boolean);
  if(straight.length){
@@ -1053,7 +1296,7 @@ function chooseUncached(runs,poly,joistD,beamD,spacing,style,FS){
  layouts.sort((a,b)=>a.score-b.score);const chosen=layouts[0];
  return {...chosen,candidates:layouts.map(x=>({size:x.joistNominal,beams:x.beams.length,unresolved:x.diagnosticCount,groups:x.groups.length}))};
 }
-global.AOSSharedSupport={choose,buildForSize};
+global.AOSSharedSupport={choose,buildForSize,c7:{assessLayout,angledRimPlan,placePost:c7PlacePost,C7}};
 })(window);
 
 </script><script>
@@ -1709,13 +1952,33 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
      joistSegs.push({t,a,b,pA:A,pB:B,ledger:ledgerBearingAt(A),ledgerEnd:ledgerBearingAt(B),role:'corner-trimmer'});
    }
  }
+ // V5.3 C7 (owner decision 7): a side rim along a NOTCH (L, T, U, bump-out) runs only part of the
+ // length of the deck strip it bounds, so no joist lane backs it and its far end bears only on a
+ // cantilevered corner. Where that happens, one continuous rim-backing joist is placed in the rim's
+ // lane (0.09 ft in, like every outer joist lane) for the full strip, replacing a corner-trimmer stub
+ // in the same lane. Rims that span their whole strip (all rectangles) are unchanged.
+ // The rim-backed run set is only a CANDIDATE: the R1 layout is always planned on the R1 runs first.
+ const backedRuns=joistSegs.slice();let backedAdded=0;
+ for(const e of es){if(ledgerEdges.some(l=>l.i===e.i)||e.len<.72||Math.abs(dot(e.t,joistD))<=.985)continue;
+   const lane=[e.a[0]-e.n[0]*.09,e.a[1]-e.n[1]*.09],t=dot(lane,joistNormal),ra=Math.min(dot(e.a,joistD),dot(e.b,joistD)),rb=Math.max(dot(e.a,joistD),dot(e.b,joistD));
+   const strip=lineIntervals(poly,joistD,t).find(([a,b])=>a<=ra+.3&&b>=rb-.3);if(!strip)continue;
+   const [a,b]=strip;if(a>=ra-.3&&b<=rb+.3)continue;
+   if(backedRuns.some(j=>Math.abs(j.t-t)<.25&&j.role!=='corner-trimmer'&&j.a<=ra+.3&&j.b>=rb-.3))continue;
+   for(let k=backedRuns.length-1;k>=0;k--)if(backedRuns[k].role==='corner-trimmer'&&Math.abs(backedRuns[k].t-t)<.25)backedRuns.splice(k,1);
+   const A=fromUV(joistD,a,t),B=fromUV(joistD,b,t);
+   backedRuns.push({t,a,b,pA:A,pB:B,ledger:ledgerBearingAt(A),ledgerEnd:ledgerBearingAt(B),role:'rim-backing-joist'});backedAdded++;
+ }
  if(suppressedRimDuplicateTrimmers)alerts.push({level:'review',message:`${suppressedRimDuplicateTrimmers} corner trimmer(s) coincident with existing perimeter rim framing omitted to avoid duplicate members; verify rim/trimmer connection design.`});
  // Global shared-bearing solver groups nearby joist runs and places a SHORT
  // local beam for a genuinely short L/T/U recess, not another beam for every
  // joist. All proposals remain preliminary and must be independently checked.
  const optimize=global.AOSSharedSupport;
  if(!optimize)throw Error('V4.6 shared support solver was not loaded');
- const chosen=optimize.choose(joistSegs,poly,joistD,beamD,joistSpacing,q.beamStyle,FS);
+ // V5.3 C7: the planner also needs the ledger lines to classify and check side rims.
+ const chosen=optimize.choose(joistSegs,poly,joistD,beamD,joistSpacing,q.beamStyle,FS,{ledgers:ledgerEdges.filter(e=>Math.abs(dot(e.t,joistD))<.28).map(e=>[e.a,e.b]),ledgerEdges:ledgerEdges.map(e=>[e.a,e.b]),altRuns:backedAdded?backedRuns:null});
+ // V5.3 C7: the chosen layout was planned on the rim-backed run set; build those joists.
+ const rimBackingJoists=chosen.runSet==='backed'?backedAdded:0;
+ if(chosen.runSet==='backed'){joistSegs.length=0;joistSegs.push(...backedRuns);}
  const joistNominal=chosen.joistNominal,joistDepth=FS.JOISTS[joistSpacing][joistNominal].depth;
  const boardThick=FT,joistTop=H-boardThick,joistY=joistTop-joistDepth/2,joistBottom=joistTop-joistDepth;
  const beamProfile=q.beamStyle==='flush'&&joistNominal<12?'3-2x10':'3-2x12';
@@ -1731,6 +1994,10 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  for(const j of joistSegs){const mode=j.ledger&&j.ledgerEnd?'both-ledgers':j.ledger||j.ledgerEnd?'ledger':'freestanding';j.solution=FS.solveRun(j.b-j.a,mode,q.beamStyle,joistSpacing,joistNominal);}
  if(unsupportedSelection.length)alerts.push({level:'warning',message:`${unsupportedSelection.length} joists exceed the selected 2x${joistNominal} span layout; engineered supports needed.`});
  if(beamSupportDiagnostics.length)alerts.push({level:'warning',message:`${beamSupportDiagnostics.length} joist runs do not yet have confirmed beam/ledger bearing. Concept NOT cleared for construction; revise local beams or headers.`});
+ // V5.3 C7: no compared layout passed the geometric screen. The R1 layout is kept, never presented as buildable.
+ const framingAssessment=chosen.assessment||null;
+ if(chosen.structuralReviewRequired)alerts.push({level:'warning',code:'framing-structural-review',message:`No framing layout was found in which every joist and load-carrying rim bears and every beam and post stays inside the deck outline (${framingAssessment.compared} layouts compared). This design requires structural review; the framing shown is NOT a buildable layout.`});
+ if(framingAssessment&&framingAssessment.unsupportedRims)alerts.push({level:'warning',code:'rim-support',message:`${framingAssessment.unsupportedRims} load-carrying side rim${framingAssessment.unsupportedRims>1?'s do':' does'} not have a confirmed beam/ledger bearing path. Revise support before construction.`});
  if(chosen.groups.length>1)alerts.push({level:'info',message:`Grouped ${joistSegs.length} individual joist runs into ${chosen.groups.length} support-length zones. Short/local beams are limited to the zones they bear.`});
  if(chosen.candidates.some(x=>x.unresolved>0))alerts.push({level:'review',message:'Alternative uniform joist sizes were compared, but some complex shapes still require a real trimmer/header load path review.'});
  if(beams.some(b=>b.needsConnectionReview))alerts.push({level:'warning',message:'Some irregular areas need local headers or shared support beams; member reactions and hardware are NOT verified for construction.'});
@@ -1870,7 +2137,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  // end overhang and <=1/4 adjacent post span. All post loads need review.
  let unsupportedBeamLoads=0;
  const beamRecords=[],postPoints=[],ROLE_LABEL={'shared-beam':'shared beam','corner-beam':'angled corner beam','local-support':'local support beam','perimeter-header':'perimeter flush header','contour-beam':'perimeter support beam','primary-beam':'single primary support beam'};
- let sharedPosts=0;
+ let sharedPosts=0,postsMovedInside=0;
  for(let bm of beams){
    const t=[(bm.b[0]-bm.a[0])/bm.len,(bm.b[1]-bm.a[1])/bm.len],mid=[(bm.a[0]+bm.b[0])/2,(bm.a[1]+bm.b[1])/2];
    const postLayout=bm.postPositions?{
@@ -1893,7 +2160,9 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
        const r=5.5/24;
        along=postIndex===0?r:postIndex===postLayout.positions.length-1?bm.len-r:along;
      }
-     const point=[bm.a[0]+t[0]*along,bm.a[1]+t[1]*along],base=.12,postH=beamBottom-base;
+     // V5.3 C7: a post that would project past the outline moves inward (<= 1/2 in.) to the beam face.
+     const raw=[bm.a[0]+t[0]*along,bm.a[1]+t[1]*along],point=optimize.c7.placePost(poly,raw,[-t[1],t[0]]),base=.12,postH=beamBottom-base;
+     if(point!==raw)postsMovedInside++;
      // Where two beams meet, one post carries both (connection flagged below), never two side by side.
      if(postPoints.some(p=>Math.hypot(p[0]-point[0],p[1]-point[1])<.6)){sharedPosts++;continue;}
      if(postH<=.4){alerts.push({level:'review',message:'Low deck elevation needs an alternate beam/post/pier detail.'});continue;}
@@ -2473,7 +2742,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  if(isDiagonal)alerts.push({level:'review',message:'Diagonal boards use a provisional 12in on-center orthogonal joist layout; verify selected decking span, cut-end blocking and ledger conditions.'});
  alerts.push({level:'review',message:'Framing layout is an explicit bearing concept, NOT a code-verified design. Joist/beam species, grade, spans, connections, ledger, post heights and footing loads require production review.'});
  const qty=kind=>parts.filter(p=>p.kind===kind).length;
- const counts={joistNominal:`2x${joistNominal}`,joistSpacingIn:joistSpacing,pictureFlatBlocks:flatBorderBlocks,dividerFlatBlocks:flatDividerBlocks,fieldBoards:estimatedPhysicalBoards,borderBoards:qty('picture-frame'),dividers:qty('divider-board'),joists:qty('joist')+qty('picture-support-joist')+qty('divider-support-joist'),pictureSupportJoists:qty('picture-support-joist'),dividerSupportJoists:qty('divider-support-joist'),beams:qty('dropped-beam'),ledger:qty('ledger'),posts:qty('post-6x6'),footings:qty('footing-concept'),stringers:qty('stair-stringer'),treads:qty('stair-tread'),risers:qty('stair-riser'),railPosts:qty('railing-post')+qty('stair-rail-post'),balusters:qty('baluster')+qty('stair-baluster')};
+ const counts={joistNominal:`2x${joistNominal}`,joistSpacingIn:joistSpacing,pictureFlatBlocks:flatBorderBlocks,dividerFlatBlocks:flatDividerBlocks,fieldBoards:estimatedPhysicalBoards,borderBoards:qty('picture-frame'),dividers:qty('divider-board'),joists:qty('joist')+qty('picture-support-joist')+qty('divider-support-joist')+qty('corner-trimmer')+qty('rim-backing-joist'),cornerTrimmers:qty('corner-trimmer'),rimBackingJoists:qty('rim-backing-joist'),rimJoists:qty('rim-joist'),pictureSupportJoists:qty('picture-support-joist'),dividerSupportJoists:qty('divider-support-joist'),beams:qty('dropped-beam'),ledger:qty('ledger'),posts:qty('post-6x6'),footings:qty('footing-concept'),stringers:qty('stair-stringer'),treads:qty('stair-tread'),risers:qty('stair-riser'),railPosts:qty('railing-post')+qty('stair-rail-post'),balusters:qty('baluster')+qty('stair-baluster')};
  // V5.2 A3: landing parts are counted on their own; designs without a landing are unchanged.
  if(stairModels.some(g=>g.landing)){const LD=stairModels.filter(g=>g.landing).map(g=>g.landing.decking),sum=k=>+LD.reduce((a,x)=>a+x[k],0).toFixed(2);
    Object.assign(counts,{landings:stairModels.filter(g=>g.landing).length,landingPosts:qty('landing-post'),landingFootings:qty('landing-footing'),landingFraming:qty('landing-beam')+qty('landing-rim')+qty('landing-joist'),landingBlocking:qty('landing-blocking'),landingFlat2x6:qty('landing-flat-2x6'),landingFlat2x6LF:+parts.filter(p=>p.kind==='landing-flat-2x6').reduce((a,p)=>a+p.w,0).toFixed(2),landingFrameSupportJoists:parts.filter(p=>p.kind==='landing-joist'&&p.role==='frame-support').length,
@@ -2517,7 +2786,12 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    supplementalBlocking:{fieldEndBlocks,lf:+fieldEndBlockLF.toFixed(2)}};
  if(openingModels.length){counts.doors=okOpenings.filter(o=>o.type==='door').length;counts.patioDoors=okOpenings.filter(o=>o.type==='patio').length;counts.windows=okOpenings.filter(o=>o.type==='window').length;
    stats.openings=openingModels.map(({a,b,...r})=>r);}
- return {intent:q,parts,counts,alerts,stats,materials,geometry:{deckLineResolved,dividerAdjust,openings:openingModels,surfaces:surfaceModels,house:{siding,color:houseColor,colorName:q.houseColor||DEFAULT_HOUSE_COLOR},poly,edges:es,inside,beams,joists:joistSegs,boardAxis:d,dividerRows,dividerFractions,dividerSpanFt:umax-umin,dividerStart:umin,joistAxis:joistD,stair:firstStair,stairs:stairModels}};
+ // V5.3 C7: framing selection record (planner, screen results, rim classification). Diagnostic only.
+ const framing=framingAssessment?{planner:chosen.planner||'shared-and-corner-beams',selection:framingAssessment.selection,screenPassed:framingAssessment.valid,structuralReviewRequired:Boolean(chosen.structuralReviewRequired),layoutsCompared:framingAssessment.compared,
+   rimBackingJoists,postsMovedInside,changedFromR1:framingAssessment.selection==='c7-best-valid'||rimBackingJoists>0||postsMovedInside>0,
+   candidates:chosen.c7Candidates||null,unsupportedJoists:framingAssessment.unsupportedJoists,unsupportedRims:framingAssessment.unsupportedRims,outsideBeams:framingAssessment.outsideBeams,outsidePosts:framingAssessment.outsidePosts,closeFootingPairs:framingAssessment.closeFootingPairs,rims:framingAssessment.rims,
+   r1:framingAssessment.r1?{unsupportedJoists:framingAssessment.r1.unsupportedJoists,unsupportedRims:framingAssessment.r1.unsupportedRims,outsideBeams:framingAssessment.r1.outsideBeams,outsidePosts:framingAssessment.r1.outsidePosts,posts:framingAssessment.r1.posts}:null}:null;
+ return {intent:q,parts,counts,alerts,stats,materials,framing,geometry:{deckLineResolved,dividerAdjust,openings:openingModels,surfaces:surfaceModels,house:{siding,color:houseColor,colorName:q.houseColor||DEFAULT_HOUSE_COLOR},poly,edges:es,inside,beams,joists:joistSegs,boardAxis:d,dividerRows,dividerFractions,dividerSpanFt:umax-umin,dividerStart:umin,joistAxis:joistD,stair:firstStair,stairs:stairModels}};
 }
 global.DeckCore={openingRange,wallEnds,houseNeighbours,WALL_FRONT,WALL_BACK,SIDING_STYLES,HOUSE_COLORS,DEFAULT_SIDING,DEFAULT_HOUSE_COLOR,SURFACE_TYPES,MAX_SURFACES,SURFACE_TOP,SURFACE_THICK,surfaceCorners,surfaceProblem,quadsOverlap,houseZones,OPENING_TYPES,OPENING_END_CLEAR,OPENING_GAP,OPENING_MAX_TOP,MAX_OPENINGS,openingProblem,openingTop,openingBottom,stairPlan,LANDING_MIN_HEIGHT,LANDING_TURNS,LANDING_DECK_LINES,MAX_TURN_WIDTH,turnSign,stairFootprints,stairHitsDeck,SCHEMA_VERSION,RAIL_PRODUCTS,railFinish,derivePerimeter,migrate,baseIntent,sanitize,make,stairOverlap,resolveDividerFractions,MAX_DIVIDER_ROWS,MAX_FIELD_SECTION_FT,MIN_DIVIDER_SPACING_FT,PALETTES,RAILS,SHAPES,BW,GAP,PITCH,polygon,edges,validPolygon,lineIntervals,offsetPolygon};
 })(window);
@@ -5332,6 +5606,9 @@ function openingAt(pt){const list=state.intent?.openings||[],es=state.model?.geo
  for(const o of list){const sp=openingSpan(o,es);if(!sp)continue;const d=[sp.b[0]-sp.a[0],sp.b[1]-sp.a[1]],l2=d[0]*d[0]+d[1]*d[1]||1,c=[sp.a[0]+sp.e.n[0]*.12,sp.a[1]+sp.e.n[1]*.12];
    const t=clamp(((pt[0]-c[0])*d[0]+(pt[1]-c[1])*d[1])/l2,0,1),dist=Math.hypot(pt[0]-c[0]-t*d[0],pt[1]-c[1]-t*d[1]);if(dist<bd){bd=dist;best=o;}}
  return best;}
+// V5.3 C7: the 2D Framing plan draws every joist role the model builds (support joists, corner trimmers and
+// rim-backing joists were previously left out of 2D although 3D showed them), so 2D and 3D show the same framing.
+const PLAN_FRAMING_KINDS=['ledger','joist','picture-support-joist','divider-support-joist','corner-trimmer','rim-backing-joist','rim-joist','dropped-beam','post-6x6'];
 function planDraw(){state.planLabelBoxes=[];const {w,h}=canvasSize(),sc=state.plan.scale;ctx.fillStyle='#f5f7f8';ctx.fillRect(0,0,w,h);
  const grid=Math.max(8,sc),ox=xy(0,0);ctx.strokeStyle='#e1e9ed';ctx.lineWidth=.7;ctx.beginPath();for(let x=((ox[0]%grid)+grid)%grid;x<w;x+=grid){ctx.moveTo(x,0);ctx.lineTo(x,h);}for(let y=((ox[1]%grid)+grid)%grid;y<h;y+=grid){ctx.moveTo(0,y);ctx.lineTo(w,y);}ctx.stroke();
  if(state.freeDraw){freePlan();return;}if(!state.intent)return;
@@ -5339,11 +5616,11 @@ function planDraw(){state.planLabelBoxes=[];const {w,h}=canvasSize(),sc=state.pl
  drawSurfaces2d(model,false);
  polygonPath(p);ctx.fillStyle='#625442';ctx.fill();
  if(model.preview){for(const st of q.staircases||[])for(const c of core.stairFootprints(es,q.height,st)){ctx.beginPath();c.forEach((v,i)=>{const pt=xy(...v);i?ctx.lineTo(...pt):ctx.moveTo(...pt);});ctx.closePath();ctx.fillStyle='#7a6250';ctx.fill();}
-   if(state.step===6&&state.lastFull){ctx.save();ctx.globalAlpha=.3;for(let part of state.lastFull.parts)if(['ledger','joist','rim-joist','dropped-beam','post-6x6'].includes(part.kind))shapePart(part);ctx.restore();}}
+   if(state.step===6&&state.lastFull){ctx.save();ctx.globalAlpha=.3;for(let part of state.lastFull.parts)if(PLAN_FRAMING_KINDS.includes(part.kind))shapePart(part);ctx.restore();}}
  else if(state.step===6){const drawn={};
    // V5.3 R1: the stair flight in outline (faint treads), so its framing reads in place; then the framing.
    ctx.save();ctx.globalAlpha=.22;for(let part of model.parts)if(part.kind==='stair-tread')shapePart(part);ctx.restore();
-   for(let part of model.parts)if(['ledger','joist','rim-joist','dropped-beam','post-6x6','landing-beam','landing-rim','landing-joist','landing-blocking','landing-flat-2x6','landing-post'].includes(part.kind)){shapePart(part);drawn[part.kind]=(drawn[part.kind]||0)+1;}
+   for(let part of model.parts)if([...PLAN_FRAMING_KINDS,'landing-beam','landing-rim','landing-joist','landing-blocking','landing-flat-2x6','landing-post'].includes(part.kind)){shapePart(part);drawn[part.kind]=(drawn[part.kind]||0)+1;}
    // V5.3 R1: stringers (engine stair framing, unchanged). Each is a notched profile placed by the engine's
    // stair frame (base, tt across, nn down the run); its plan footprint is that profile's run at its offset.
    ctx.save();ctx.strokeStyle='#5b4329';ctx.lineWidth=1;

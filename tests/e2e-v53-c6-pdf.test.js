@@ -9,6 +9,10 @@ const H = require('./c6-helpers');
 const { assert, fs, os, path, ROOT, ALL, openDesign, step, intent } = H;
 const { CENSUS_DESIGN } = require('./ui-census');
 const { pdfWithoutRail, withoutRailInset } = require('./rail-inset');
+// V5.3 C7 framing (owner, 11 Nov 2026): framing outputs of designs C7 reframes and the new framing count
+// categories/alerts are excepted (tests/c7-framing.js), decided from this build's engine model of the design.
+const { savedWithoutC7 } = require('./c7-framing');
+const C7W = require('./engine').loadEngine(), c7decide = (design) => C7W.DeckCore.make(C7W.DeckCore.sanitize(design));
 const railless = (k, v) => k === 'componentModel' ? withoutRailInset({ parts: v }).parts : k === 'counts' ? withoutRailInset({ counts: v }).counts : withoutRailInset({ alerts: v }).alerts;
 const h = H.harness(test);
 const C5_HTML = path.join(os.tmpdir(), `aos-c6-c5-${process.pid}.html`), C5_APP = pathToFileURL(C5_HTML).href;
@@ -50,6 +54,7 @@ test('C6 a design file saved by the C5 build (schema 6) opens in C6 with the ide
   const again = await H.saveFile(r.page);
   assert.deepEqual(again.data.design, data.design, 'C6 re-save unchanged: design');
   // V5.3 R1 rail inset: the saved component model, counts and alerts are unchanged apart from the railing.
-  for (const k of ['componentModel', 'counts', 'alerts']) assert.deepEqual(railless(k, again.data[k]), railless(k, data[k]), `C6 re-save unchanged: ${k} (railing excepted)`);
+  const dc = c7decide(data.design);
+  for (const k of ['componentModel', 'counts', 'alerts']) assert.deepEqual(savedWithoutC7(k, railless(k, again.data[k]), dc), savedWithoutC7(k, railless(k, data[k]), dc), `C6 re-save unchanged: ${k} (railing and C7 framing excepted)`);
   assert.deepEqual(r.errors, []); await r.ctx.close();
 });

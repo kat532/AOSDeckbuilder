@@ -7,9 +7,6 @@
 //   - a conceptual footing pad projecting past the outline is NOT a defect by itself (reported only);
 //   - footings closer than 3 ft are a REVIEW flag (must be counted and alerted), never a failure.
 // Gate A recorded these against R1 (01f16df): see C7_R1_FAILING; Gate B makes them pass.
-// GATE A FORM: the engine is still R1. Every case R1 fails runs as a documented expected failure (todo) with
-// the R1 defect as its reason; checks of the engine's C7 screen and new counts are todo until Gate B.
-const GATE_A_TODO = 'C7 Gate A: added before the Gate B engine change; expected to fail on R1';
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -40,7 +37,7 @@ const C7_R1_FAILING = {
 };
 
 for (const [name, q] of Object.entries(CASES)) {
-  test(`C7 framing: every joist and load-carrying rim bears; every beam and post inside the outline: ${name}`, C7_R1_FAILING[name] ? { todo: `C7 Gate A: R1 defect — ${C7_R1_FAILING[name]}` } : {}, () => {
+  test(`C7 framing: every joist and load-carrying rim bears; every beam and post inside the outline: ${name}`, () => {
     const r = audit(q);
     assert.deepEqual(plain(r.joistFaults.map(x => `${x.j.role || 'joist'} @${x.j.t.toFixed(2)}: ${x.f.join(', ')}`)), [], 'unsupported joists');
     assert.deepEqual(plain(r.rims.filter(x => !x.supported).map(x => `edge ${x.edge} (${x.len} ft): ${x.faults.join(', ')}`)), [], 'unsupported load-carrying rims');
@@ -51,14 +48,14 @@ for (const [name, q] of Object.entries(CASES)) {
     assert.equal(r.m.stats.closeFootingPairs, r.close, 'close footing pairs counted');
     assert.equal(r.close > 0, r.m.alerts.some(a => /closer than 3 ft/.test(a.message)), 'close footings flagged for review');
     // The engine's own screen agrees with this independent audit, and nothing is presented as approved.
-    if (r.m.framing) assert.ok(r.m.framing.screenPassed, 'engine screen passed'); // C7 screen: added in Gate B
+    assert.ok(r.m.framing && r.m.framing.screenPassed, 'engine screen passed');
     assert.equal(r.m.stats.unresolvedJoistRuns, 0);
     assert.ok(!r.m.alerts.some(a => /No framing layout was found/.test(a.message)));
     assert.ok(r.m.alerts.some(a => /NOT a code-verified design/.test(a.message)));
   });
 }
 
-test('C7 framing counts are internally correct: corner trimmers, rim-backing joists and rim joists', { todo: GATE_A_TODO }, () => {
+test('C7 framing counts are internally correct: corner trimmers, rim-backing joists and rim joists', () => {
   for (const [name, q] of Object.entries({ ...CASES, ...BASE })) {
     const m = core.make(core.sanitize(q)), qty = (k) => m.parts.filter(p => p.kind === k).length;
     assert.equal(m.counts.joists, qty('joist') + qty('picture-support-joist') + qty('divider-support-joist') + qty('corner-trimmer') + qty('rim-backing-joist'), `${name}: joists include every joist role`);
@@ -69,7 +66,7 @@ test('C7 framing counts are internally correct: corner trimmers, rim-backing joi
   }
 });
 
-test('C7 every baseline design passes the framing screen; exactly the documented designs are reframed', { todo: GATE_A_TODO }, () => {
+test('C7 every baseline design passes the framing screen; exactly the documented designs are reframed', () => {
   const changed = [];
   for (const [name, q] of Object.entries(BASE)) {
     const r = audit(q);
@@ -80,7 +77,7 @@ test('C7 every baseline design passes the framing screen; exactly the documented
   assert.deepEqual(changed.sort(), Object.keys(C7_REFRAMED).sort(), 'reframed designs = C7_REFRAMED in tests/c7-framing.js');
 });
 
-test('C7 when no layout passes, the design is reported for structural review and never as buildable', { todo: GATE_A_TODO }, () => {
+test('C7 when no layout passes, the design is reported for structural review and never as buildable', () => {
   // The owner irregular deck: R1 itself leaves joist runs without confirmed bearing; C7 finds no layout that
   // passes, keeps the R1 layout unchanged and says so.
   const owner = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'owner-irregular-deck.json'), 'utf8')).design;
@@ -91,7 +88,7 @@ test('C7 when no layout passes, the design is reported for structural review and
   assert.equal(m.counts.beams, 3); assert.equal(m.counts.posts, 8); // the R1 layout, unchanged
 });
 
-test('C7 angled corner beams are labeled, follow the cut edge, and meet the main beam on one shared post', { todo: GATE_A_TODO }, () => {
+test('C7 angled corner beams are labeled, follow the cut edge, and meet the main beam on one shared post', () => {
   const m = core.make(core.sanitize(CASES['18x12 ledger deck, two 45° cut corners']));
   const corner = m.parts.filter(p => p.kind === 'dropped-beam' && p.role === 'corner-beam');
   assert.equal(corner.length, 2);

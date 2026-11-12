@@ -9,6 +9,7 @@ const path = require('path');
 const { loadEngine, snapshot } = require('./engine');
 const { fixtures } = require('./fixtures');
 const { snapshotWithoutRail, snapshotRail } = require('./rail-inset');
+const { snapshotWithoutC7 } = require('./c7-framing');
 const RAIL_PINS = JSON.parse(fs.readFileSync(path.join(__dirname, 'baseline', 'rail-inset-r1.json'), 'utf8')).snapshots;
 
 const win = loadEngine();
@@ -29,13 +30,18 @@ for (const [name, raw] of Object.entries(FIX)) {
   // Case 4 (owner decision 7 Nov 2026): V5.2 frames angled corners with one main beam and
   // leaves short corner joists without confirmed bearing. That is NOT accepted as passing:
   // the recorded snapshot stays the target and the test runs as a known structural failure.
-  const KNOWN_FAILING = { 'cut-corner': 'KNOWN STRUCTURAL FAILURE (V5.2 case 4): angled-corner joists lack confirmed bearing; the recorded corner-beam layout remains the target' };
+  // V5.3 C7: the corner joists are now supported (tests/framing-c7.test.js), but this golden predates the B2
+  // decking and B3 house changes recorded in every other golden, so it still differs outside the framing.
+  // It may only be re-recorded after the owner accepts the C7 framing (C7 authorization, decision 19).
+  const KNOWN_FAILING = { 'cut-corner': 'KNOWN FAILURE (V5.2 case 4 golden): framing now supported in C7; golden predates B2 decking/B3 house and awaits owner-approved re-record' };
   test(`model matches V5.0 baseline: ${name}`, KNOWN_FAILING[name] ? { todo: KNOWN_FAILING[name] } : {}, () => {
     const golden = JSON.parse(fs.readFileSync(path.join(GOLDEN, `${name}.json`), 'utf8'));
     // R1 rail inset (owner, 11 Nov 2026): railing posts moved 1½ in. inside the finished edges. Everything
     // else must still equal the V5.0 golden exactly; the railing outputs must equal the R1 rail record.
-    const snap = snapshot(win, raw);
-    assert.deepEqual(snapshotWithoutRail(snap), snapshotWithoutRail(golden.model));
+    // V5.3 C7 framing (owner, 11 Nov 2026): framing outputs of the designs C7 reframes, and the new framing
+    // count categories, are excepted here and checked by tests/framing-c7.test.js; everything else exact.
+    const snap = snapshot(win, raw), c7 = win.DeckCore.make(raw);
+    assert.deepEqual(snapshotWithoutC7(snapshotWithoutRail(snap), c7), snapshotWithoutC7(snapshotWithoutRail(golden.model), c7));
     assert.deepEqual(snapshotRail(snap), RAIL_PINS[name], `${name}: railing outputs (R1 rail inset record)`);
   });
 

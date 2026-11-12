@@ -14,6 +14,10 @@ const { pathToFileURL } = require('url');
 const { chromium } = require('playwright-core');
 const { STATES, CENSUS_DESIGN } = require('./ui-census');
 const { withoutRailInset } = require('./rail-inset');
+// V5.3 C7 framing (owner, 11 Nov 2026): framing outputs of designs C7 reframes and the new framing count
+// categories/alerts are excepted (tests/c7-framing.js), decided from this build's engine model of the design.
+const { savedWithoutC7 } = require('./c7-framing');
+const C7W = require('./engine').loadEngine(), c7decide = (design) => C7W.DeckCore.make(C7W.DeckCore.sanitize(design));
 const railless = (k, v) => k === 'componentModel' ? withoutRailInset({ parts: v }).parts : k === 'counts' ? withoutRailInset({ counts: v }).counts : k === 'alerts' ? withoutRailInset({ alerts: v }).alerts : v;
 
 const ROOT = path.join(__dirname, '..');
@@ -195,7 +199,8 @@ test('C2 existing saved projects reopen unchanged: the same file saved again giv
     // railing parts, rail counts and the two railing review alerts are the only allowed differences from d404af5
     // (the railing is pinned and checked in tests/rail-inset-r1.test.js); everything else is identical.
     for (const k of ['schemaVersion', 'design', 'structuralStatus']) assert.deepEqual(c2[k], base[k], `${label}: ${k} identical to d404af5`);
-    for (const k of ['componentModel', 'counts', 'alerts']) assert.deepEqual(railless(k, c2[k]), railless(k, base[k]), `${label}: ${k} identical to d404af5 (railing excepted)`);
+    const dc = c7decide(c2.design);
+    for (const k of ['componentModel', 'counts', 'alerts']) assert.deepEqual(savedWithoutC7(k, railless(k, c2[k]), dc), savedWithoutC7(k, railless(k, base[k]), dc), `${label}: ${k} identical to d404af5 (railing and C7 framing excepted)`);
     assert.ok(c2.componentModel.some(p => p.group === 'rail') === base.componentModel.some(p => p.group === 'rail'), `${label}: railing present in both or neither`);
     assert.equal(c2.schemaVersion, 6);
     // And the C2 save opens again unchanged.

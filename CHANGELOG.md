@@ -2,6 +2,21 @@
 
 All changes to `index.html` and the test suite. Staging and production are deployed separately and only with owner approval.
 
+## V5.3 C7 Gates A and B — framing planner prototype (branch `v5.3/c7`, 11 Nov 2026)
+
+Owner authorization 11 Nov 2026 (C7 Phase 2). Built from protected R1 `01f16df` (index.html `b8058b7b…`, unchanged; tag `checkpoint/v5.3-c7-start`). **Pending owner review; not deployed.** Concept framing only, never presented as engineered.
+
+**Gate A (tests first, engine unchanged, tag `checkpoint/v5.3-c7-gate-a`)**: independent framing audit (`tests/c7-audit.js`) and required cases (`tests/framing-c7.test.js`). On R1, 10 of 11 cases fail (unsupported joists or side rims, or beams/posts outside the outline); recorded in `tests/baseline/c7-framing-r1-gate-a.json` and run as documented expected failures. R1 full regression: 541 tests, 537 pass, 0 fail, 4 TODO.
+
+**Gate B (planner)**
+- Selection by hard constraints: the R1 layout is kept when it passes the screen (every joist and load-carrying side rim bears within span, 2 ft cantilever and 1/4-backspan limits; every beam and post physically inside the outline). Otherwise all layouts are compared; if none passes, the R1 layout is kept and a warning says it requires structural review and is NOT buildable.
+- Angled corner beams parallel to each cut, set in so the corner joists cantilever within the limits, meeting the main beam on one shared post (connection flagged) and running to the side rim. Beams fitted so their full width stays inside; U-shape beams moved clear of the open notch; segments where a line crosses a notch.
+- Load-carrying side rims checked; continuous rim-backing joist along L/T/U/bump-out notch side rims. Flush perimeter posts moved ½ in. inward to the beam face where they projected.
+- Counts: joists include corner trimmers and rim-backing joists; new cornerTrimmers, rimBackingJoists, rimJoists. 2D Framing plan draws every joist role (2D and 3D now show the same members).
+- Results: all 11 required cases and all 35 baseline designs pass the screen (14 reframed, listed in `tests/c7-framing.js`). 18x12 two cut corners: 4 joists unsupported → 0, 3 → 5 posts. Octagon: 14 → 10 posts, 8 → 0 crowded footing pairs.
+- Open: flush-beam angled decks and 45° bay bump-outs mostly have no passing layout and are flagged for structural review (header/trimmer option not built).
+- Full regression: 568 tests, 567 pass, 0 fail, 1 TODO (cut-corner golden predates B2/B3; re-record only after owner acceptance).
+
 ## V5.2 Group A — checkpoint 2: A3 full-width stairs and landings (branch `v5.2/feature-recovery`, 7 Nov 2026)
 
 Built on checkpoint 1 (tag `checkpoint/v5.2-groupA-a1a2`, unchanged). Internal build `5.2-group-a-a3`. Main deck framing generator untouched. 254 tests: 250 pass, 0 fail, 4 known structural failures (case 4).

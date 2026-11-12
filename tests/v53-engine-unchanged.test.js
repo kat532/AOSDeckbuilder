@@ -12,6 +12,8 @@ const { execFileSync } = require('child_process');
 const { loadEngine, ROOT } = require('./engine');
 const { designs } = require('./baseline/designs');
 const { withoutRailInset, isRail, RAIL_ALERT } = require('./rail-inset');
+const { withoutC7 } = require('./c7-framing');
+const c7HashExcepted = new Set();
 
 const win = loadEngine(), core = win.DeckCore;
 const canon = (m) => JSON.stringify({ intent: m.intent, parts: m.parts, counts: m.counts, materials: m.materials, alerts: m.alerts, stats: m.stats, geometry: m.geometry });
@@ -29,7 +31,11 @@ test('V5.3 guard: complete engine output of all 35 baseline designs matches the 
   for (const [name, raw] of Object.entries(all)) {
     const m = JSON.parse(JSON.stringify(core.make(core.sanitize(raw))));
     assert.ok(base.designs[name].sha256, `${name}: in the d404af5 record`);
-    assert.equal(sha(canon(withoutRailInset(m))), noRail.designs[name].sha256, `${name}: parts, geometry, framing, materials and alerts unchanged (railing excepted)`);
+    // V5.3 C7 framing: a design C7 reframes is compared field by field with its framing excepted in the direct
+    // d404af5 test below (its recorded hash necessarily covers the old framing); every other design must
+    // still hash identically once the new framing count categories are removed.
+    if (m.framing && m.framing.changedFromR1) c7HashExcepted.add(name);
+    else assert.equal(sha(canon(withoutC7(withoutRailInset(m)))), noRail.designs[name].sha256, `${name}: parts, geometry, framing, materials and alerts unchanged (railing excepted)`);
     const pin = railPins[name], rail = m.parts.filter(isRail).map(({ id, ...p }) => p);
     assert.equal(sha(JSON.stringify(rail)), pin.railParts, `${name}: railing parts (R1 rail inset record)`);
     assert.deepEqual({ counts: { railPosts: m.counts.railPosts, balusters: m.counts.balusters }, stats: { deckRailLF: m.stats.deckRailLF, stairRailLF: m.stats.stairRailLF, totalRailLF: m.stats.totalRailLF }, alerts: m.alerts.filter(a => RAIL_ALERT.test(a.message)).map(a => a.message) },
@@ -45,8 +51,8 @@ test('V5.3 guard: same engine output as the d404af5 build itself (direct compari
   // only (existing behaviour at d404af5; parts, counts, materials, alerts and stats do not change).
   const old = loadEngine(tmp), cur = loadEngine(); fs.unlinkSync(tmp);
   for (const [name, raw] of Object.entries(designs(cur))) {
-    const a = JSON.parse(canon(cur.DeckCore.make(cur.DeckCore.sanitize(raw)))), b = JSON.parse(canon(old.DeckCore.make(old.DeckCore.sanitize(raw))));
-    assert.deepEqual(withoutRailInset(a), withoutRailInset(b), name); // R1 rail inset: railing excepted (see above)
+    const am = cur.DeckCore.make(cur.DeckCore.sanitize(raw)), a = JSON.parse(canon(am)), b = JSON.parse(canon(old.DeckCore.make(old.DeckCore.sanitize(raw))));
+    assert.deepEqual(withoutC7(withoutRailInset(a), am), withoutC7(withoutRailInset(b), am), name); // R1 rail inset: railing excepted; C7: framing of reframed designs excepted
   }
 });
 
