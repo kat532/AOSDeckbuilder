@@ -36,7 +36,7 @@ function matrix() {
   for (const rails of [{ left: false, right: true }, { left: true, right: false }, { left: false, right: false }]) out[`H5 rails ${JSON.stringify(rails)}`] = { ...R, height: 5, staircases: [S({ rails })] };
   // Owner support testing (12 Nov 2026): 7′, 8′, 8′1″ and 10′, straight and with straight / left / right landings,
   // and a low landing with no room for posts.
-  for (const [hn, h] of [['7', 7], ['8', 8], ['8-1', 8 + 1 / 12], ['10', 10]]) {
+  for (const [hn, h] of [['4', 4], ['5', 5], ['6', 6], ['7', 7], ['8', 8], ['8-1', 8 + 1 / 12], ['10', 10]]) {
     out[`support ${hn} straight`] = { ...R, height: h, staircases: [S({})] };
     for (const turn of ['straight', 'left', 'right']) out[`support ${hn} landing ${turn}`] = { ...R, height: h, staircases: [S({ width: 4, landing: { elevation: h / 2, width: 5, depth: 4, turn } })] };
     out[`support ${hn} low landing`] = { ...R, height: h, staircases: [S({ landing: { elevation: 1.2, width: 4, depth: 4 } })] };
@@ -62,13 +62,27 @@ function audit(name, m) {
       assert.ok(b.maxClearIn < REQ.OPEN_IN, `${at}: ${b.maxClearIn.toFixed(2)} in. clear opening (4 in. sphere)`);
     }
   }
+  // Gate C3 (owner's final rule): the span check runs at every height. Above 8 ft of deck-to-grade rise, supports
+  // are generated so every span passes. At 8 ft 0 in. or less NOTHING is generated, and every flight whose cut
+  // stringers exceed the span limit carries a Structural Review Required warning (never shown as approved).
+  const H = m.intent.height, over = H > AOS_RISE_FT + 1e-9, spanWarnings = codes(m, 'stair-stringer-span');
+  let failing = 0;
   for (const s of stringers(m)) {
     const at = `${name}: stair ${s.F.stair.id} flight ${s.F.fi}`;
     assert.ok(s.count >= 2, `${at}: stringers`);
     assert.ok(s.ocIn <= REQ.STRINGER_OC_IN, `${at}: stringers ${s.ocIn.toFixed(1)} in. on centre (max 18)`);
-    assert.ok(s.maxSpanFt <= REQ.CUT_STRINGER_FT + 1e-6, `${at}: cut stringers span ${s.maxSpanFt.toFixed(2)} ft between supports (max 6)`);
-    if (s.runFt > REQ.CUT_STRINGER_FT) assert.equal(s.supports, Math.ceil(s.runFt / REQ.CUT_STRINGER_FT - 1e-9) - 1, `${at}: evenly spaced supports`);
+    if (over) {
+      assert.ok(s.maxSpanFt <= REQ.CUT_STRINGER_FT + 1e-6, `${at}: cut stringers span ${s.maxSpanFt.toFixed(2)} ft between supports (max 6)`);
+      if (s.runFt > REQ.CUT_STRINGER_FT) assert.equal(s.supports, Math.ceil(s.runFt / REQ.CUT_STRINGER_FT - 1e-9) - 1, `${at}: evenly spaced supports`);
+    } else {
+      assert.equal(s.supports, 0, `${at}: no generated support at ${H} ft (8 ft or less)`);
+      if (s.maxSpanFt > REQ.CUT_STRINGER_FT + 1e-6) failing++;
+    }
   }
+  if (!over) assert.ok(!m.parts.some(p => ['stair-stringer-support', 'stair-support-post', 'stair-support-footing'].includes(p.kind)), `${name}: nothing generated at 8 ft or less`);
+  assert.equal(spanWarnings.length, failing, `${name}: one Structural Review Required warning per unsupported over-span flight`);
+  assert.equal((m.stats.stairSpanReview || []).length, failing, `${name}: flagged flights recorded for the 2D outline`);
+  for (const a of spanWarnings) { assert.equal(a.level, 'warning'); assert.match(a.message, /^Structural Review Required/); assert.match(a.message, /NOT structurally approved/); assert.match(a.message, /Additional support, a different stringer design or other verified construction details may be necessary/); }
   // Every stair support beam stands on posts under it, each post on a footing.
   const beams = m.parts.filter(p => p.kind === 'stair-stringer-support'), posts = m.parts.filter(p => p.kind === 'stair-support-post'), feet = m.parts.filter(p => p.kind === 'stair-support-footing');
   for (const b of beams) {
@@ -157,7 +171,11 @@ test('C7 Gate C: before/after on the baseline designs (R1 failed the screening c
   for (const raw of Object.values(designs(win))) for (const [C, out] of [[r1, before], [core, after]]) {
     const m = build(raw, C);
     for (const b of bays(m)) { if (b.kind !== 'stair' && b.bottomGapIn >= REQ.OPEN_IN) out.bottomGap++; if (b.maxClearIn >= (b.kind === 'stair' ? REQ.STAIR_OPEN_IN : REQ.OPEN_IN)) out.openings++; if (b.triangleIn >= REQ.TRIANGLE_IN) out.triangle++; }
-    for (const s of stringers(m)) if (s.maxSpanFt > REQ.CUT_STRINGER_FT + 1e-6) out.stringerSpan++;
+    // An over-span flight counts as a finding unless it is supported, or (Gate C3, deck 8 ft or less) flagged
+    // Structural Review Required; it is never left silently unsupported.
+    const flagged = new Set((m.stats.stairSpanReview || []).map(r => `${r.stair}|${r.flight}`));
+    for (const s of stringers(m)) if (s.maxSpanFt > REQ.CUT_STRINGER_FT + 1e-6 && !flagged.size) out.stringerSpan++;
+    if (flagged.size) assert.equal(flagged.size, stringers(m).filter(s => s.maxSpanFt > REQ.CUT_STRINGER_FT + 1e-6).length);
   }
   fs.mkdirSync(path.join(ROOT, 'test-results'), { recursive: true });
   fs.writeFileSync(path.join(ROOT, 'test-results', 'c7-gate-c-report.json'), JSON.stringify({ r1: before, gateC: after }, null, 2));
@@ -165,24 +183,41 @@ test('C7 Gate C: before/after on the baseline designs (R1 failed the screening c
   assert.deepEqual(after, { bottomGap: 0, openings: 0, triangle: 0, stringerSpan: 0 });
 });
 
-test('C7 Gate C: AOS 8 ft rule (owner, 12 Nov 2026) at 7′, 8′, 8′1″ and 10′, straight and with landings', () => {
-  const cases = { '7′': 7, '8′': 8, '8′1″': 8 + 1 / 12, '10′': 10 }, rows = {};
-  for (const [hn, h] of Object.entries(cases)) for (const lnd of [null, 'straight', 'left', 'right', 'low']) {
-    const st = lnd === null ? S({}) : lnd === 'low' ? S({ landing: { elevation: 1.2, width: 4, depth: 4 } }) : S({ width: 4, landing: { elevation: h / 2, width: 5, depth: 4, turn: lnd } });
-    const m = build({ ...R, height: h, staircases: [st] }), rule = aosRule(m), a = codes(m, 'stair-intermediate-support');
-    const beams = m.parts.filter(p => p.kind === 'stair-stringer-support').length, landingPosts = m.parts.filter(p => p.kind === 'landing-post').length;
-    rows[`${hn} ${lnd || 'no landing'}`] = { beams, landingPosts, rule: rule.length ? (rule[0].beams ? 'support beam' : 'landing') : 'n/a' };
-    if (h > 8) {
-      assert.equal(rule.length, 1); assert.ok(rule[0].satisfied, `${hn} ${lnd}`);
-      if (lnd && lnd !== 'low') assert.match(a[0].message, /Provided by its landing on \d+ posts and footings/);
-      if (!lnd) { assert.ok(beams >= 1); assert.match(a[0].message, /Provided by \d+ stringer support beams?/); }
-    } else assert.equal(a.length, 0, `${hn}: no AOS rule note at 8 ft or less`);
-    // The span rule still applies at every height (never replaced by the 8 ft rule or the landing).
-    for (const s of stringers(m)) assert.ok(s.maxSpanFt <= 6 + 1e-6, `${hn} ${lnd}: span ${s.maxSpanFt}`);
-    for (const sp of supportPaths(m)) assert.deepEqual(sp.faults, []);
+test('C7 Gate C3: owner support rule at 4′, 5′, 6′, 7′, 8′0″, 8′1″ and 10′: straight, turning landings, long runs', () => {
+  const cases = { '4′': 4, '5′': 5, '6′': 6, '7′': 7, '8′0″': 8, '8′1″': 8 + 1 / 12, '10′': 10 }, rows = {};
+  const variants = { 'straight': (h) => S({}), 'landing straight': (h) => S({ width: 4, landing: { elevation: h / 2, width: 5, depth: 4, turn: 'straight' } }),
+    'landing left': (h) => S({ width: 4, landing: { elevation: h / 2, width: 5, depth: 4, turn: 'left' } }), 'landing right': (h) => S({ width: 4, landing: { elevation: h / 2, width: 5, depth: 4, turn: 'right' } }),
+    'low landing (long upper run)': (h) => S({ landing: { elevation: 1.2, width: 4, depth: 4 } }), 'wide 6 ft stair': (h) => S({ width: 6 }) };
+  for (const [hn, h] of Object.entries(cases)) for (const [vn, mk] of Object.entries(variants)) {
+    if (h < 3 && vn.includes('landing')) continue;
+    const m = build({ ...R, height: h, staircases: [mk(h)] });
+    if (m.stats.invalidGeometry) continue;
+    const rule = aosRule(m), a = codes(m, 'stair-intermediate-support'), span = codes(m, 'stair-stringer-span'), st = stringers(m);
+    const kinds = (k) => m.parts.filter(p => p.kind === k).length;
+    const row = rows[`${hn} ${vn}`] = { beams: kinds('stair-stringer-support'), posts: kinds('stair-support-post'), footings: kinds('stair-support-footing'), landingPosts: kinds('landing-post'),
+      runsFt: st.map(s => +s.runFt.toFixed(2)), spanWarnings: span.length };
+    // Quantities match the members (what 2D/3D draw; checked in the app by tests/e2e-v53-c7c-stairs.test.js).
+    assert.equal(m.counts.stairSupportBeams || 0, row.beams); assert.equal(m.counts.stairSupportPosts || 0, row.posts); assert.equal(m.counts.stairSupportFootings || 0, row.footings);
+    for (const sp of supportPaths(m)) assert.deepEqual(sp.faults, [], `${hn} ${vn}: support load path`);
+    if (h > AOS_RISE_FT + 1e-9) {
+      // 3. supports appear above 8′0″; 4. a landing on its own posts satisfies the height rule.
+      assert.equal(rule.length, 1); assert.ok(rule[0].satisfied, `${hn} ${vn}`);
+      assert.equal(span.length, 0, `${hn} ${vn}: every span supported, no span warning`);
+      for (const s of st) assert.ok(s.maxSpanFt <= REQ.CUT_STRINGER_FT + 1e-6, `${hn} ${vn}: span ${s.maxSpanFt}`);
+      if (/landing/.test(vn)) assert.match(a[0].message, /Provided by its landing on \d+ posts and footings/);
+      else { assert.ok(row.beams >= 1); assert.match(a[0].message, /Provided by \d+ stringer support beams?/); }
+    } else {
+      // 1. nothing generated at 8′0″ or below; 2. warnings remain for spans over the limit.
+      assert.equal(row.beams + row.posts + row.footings, 0, `${hn} ${vn}: no generated supports`);
+      assert.equal(a.length, 0);
+      assert.equal(span.length, st.filter(s => s.runFt > REQ.CUT_STRINGER_FT + 1e-6).length, `${hn} ${vn}: Structural Review Required per over-span flight`);
+    }
   }
-  // Under 8 ft, a 7′ straight stair still gets a support from the span rule alone.
-  assert.ok(rows['7′ no landing'].beams >= 1);
+  // Long runs at or below 8 ft are flagged, not supported: 7′ and 8′0″ straight stairs (9.2 / 11 ft runs).
+  for (const k of ['7′ straight', '8′0″ straight', '8′0″ low landing (long upper run)']) { assert.equal(rows[k].beams, 0); assert.ok(rows[k].spanWarnings >= 1, k); }
+  assert.equal(rows['4′ straight'].spanWarnings, 0, '4′: 5.5 ft run, within 6 ft');
+  assert.equal(rows['5′ straight'].spanWarnings, 1, '5′: 6.4 ft run, over 6 ft: flagged, not supported');
+  assert.ok(rows['8′1″ straight'].beams >= 1 && rows['10′ straight'].beams >= 2);
   fs.mkdirSync(path.join(ROOT, 'test-results'), { recursive: true });
   fs.writeFileSync(path.join(ROOT, 'test-results', 'c7-gate-c-support-matrix.json'), JSON.stringify(rows, null, 2));
 });

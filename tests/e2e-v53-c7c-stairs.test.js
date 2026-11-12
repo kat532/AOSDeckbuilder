@@ -12,7 +12,8 @@ const h = H.harness(test);
 const R = { shape: 'rectangle', width: 20, depth: 14, houseEdges: [0], railEdges: [1, 2, 3] };
 const S = (o) => ({ id: 's', edge: 2, width: 3, offset: 0, rails: { left: true, right: true }, ...o });
 const CASES = {
-  '7 ft deck, 3 ft stair (stringer support)': { ...R, height: 7, staircases: [S({})] },
+  '10 ft deck, 3 ft stair (stringer supports)': { ...R, height: 10, staircases: [S({})] },
+  '7 ft deck, 3 ft stair (span flagged, nothing generated)': { ...R, height: 7, staircases: [S({})] },
   '10 ft deck, turning landing': { ...R, height: 10, staircases: [S({ width: 4, landing: { elevation: 5, width: 5, depth: 4, turn: 'left' } })] },
   '5 ft deck, stair left side and edge 3 unrailed': { ...R, height: 5, railEdges: [1, 3], staircases: [S({ rails: { left: false, right: true } })] },
 };
@@ -36,13 +37,14 @@ for (const [name, design] of Object.entries(CASES)) {
     const v3 = await page.evaluate(() => window.AOSDeckStudioTest.framingView());
     await page.screenshot({ path: H.path.join(H.SHOTS, `c7c-framing-3d-${slug(name)}.png`) });
     for (const k of KINDS) { const n = m.parts.filter(p => p.kind === k).length; assert.equal(v.plan[k] || 0, n, `2D ${k}`); assert.equal(v3.view3d[k] || 0, n, `3D ${k}`); }
-    if (/support/.test(name)) assert.ok(m.parts.some(p => p.kind === 'stair-stringer-support'));
+    if (/supports\)/.test(name)) assert.ok(m.parts.some(p => p.kind === 'stair-stringer-support'));
+    if (/flagged/.test(name)) { assert.ok(!m.parts.some(p => KINDS.includes(p.kind))); assert.equal((m.stats.stairSpanReview || []).length, 1); }
     // Review → Framing lists the Gate C items.
     await step(page, 7); await page.waitForTimeout(200);
     await page.locator('#stepContent [data-path="reviewMode"][data-value="internal"]').click(); await page.waitForTimeout(150);
     await page.locator('#stepContent [data-path="reviewTab"][data-value="framing"]').click(); await page.waitForTimeout(150);
     const text = await page.locator('#stepContent').innerText();
-    for (const a of m.alerts.filter(a => ['stair-handrail-required', 'stair-guard-required', 'guard-required', 'stair-stringer-support', 'stair-finished-clearance'].includes(a.code)))
+    for (const a of m.alerts.filter(a => ['stair-handrail-required', 'stair-guard-required', 'guard-required', 'stair-stringer-support', 'stair-stringer-span', 'stair-intermediate-support', 'stair-finished-clearance'].includes(a.code)))
       assert.ok(text.includes(a.message.slice(0, 60)), `Review lists: ${a.message.slice(0, 60)}`);
     await page.screenshot({ path: H.path.join(H.SHOTS, `c7c-review-${slug(name)}.png`) });
     // Save and reopen: identical design.
@@ -62,6 +64,42 @@ async function planPixel(page, x, z) {
   const [sx, sy] = await page.evaluate(([x, z]) => window.AOSDeckStudioTest.toScreen(x, z), [x, z]);
   const box = await page.locator('#planCanvas').boundingBox();
   return page.evaluate(([sx, sy]) => { const c = document.getElementById('planCanvas'), r = c.getBoundingClientRect(), k = c.width / r.width; return Array.from(c.getContext('2d').getImageData(Math.round(sx * k), Math.round(sy * k), 1, 1).data.slice(0, 3)); }, [sx - box.x, sy - box.y]);
+}
+// Gate C3 (owner's final rule): at 8′0″ or less nothing is generated; an over-span flight is outlined in red in 2D,
+// labelled, and named Structural Review Required in the summary, Review and alerts.
+for (const [label, ht] of [['7′ deck, straight stair', 7], ['8′0″ deck, straight stair', 8]]) {
+  test(`C7 Gate C3 owner path: add a stair at or below 8 ft: no generated supports, span flagged for structural review (${label})`, async () => {
+    const { ctx, page, errors } = await h.newPage();
+    await openDesign(page, { ...R, height: ht, staircases: [] });
+    const stepBtn = (n) => page.locator('#stepdots [data-step]', { hasText: n });
+    await stepBtn('Stairs').click(); await page.waitForTimeout(200);
+    await page.locator('#stepContent [data-action="stair-add"]').first().click(); await page.waitForTimeout(300);
+    const m = model(await intent(page));
+    assert.ok(!m.parts.some(p => KINDS.includes(p.kind) || p.kind === 'stair-support-footing'), 'no generated supports');
+    assert.equal(m.alerts.filter(a => a.code === 'stair-stringer-span').length, 1);
+    await stepBtn('Framing').click();
+    await page.waitForFunction(() => window.AOSDeckStudioTest.framingStatus() === 'current', null, { timeout: 60000 }); await page.waitForTimeout(300);
+    await page.screenshot({ path: H.path.join(H.SHOTS, `c7c3-owner-path-2d-${slug(label)}.png`) });
+    const v = await page.evaluate(() => window.AOSDeckStudioTest.framingView());
+    for (const k of KINDS) assert.equal(v.plan[k] || 0, 0);
+    assert.match(await page.locator('#stepContent').innerText(), /stairs: Structural Review Required — stringer span/);
+    // The red outline is drawn along the flagged flight's edge.
+    const r = m.stats.stairSpanReview[0], c = r.corners, mid = [(c[0][0] + c[3][0]) / 2, (c[0][1] + c[3][1]) / 2];
+    const px = await Promise.all([-0.4, -0.2, 0, 0.2, 0.4].flatMap(t => [-0.04, 0, 0.04].map(o => planPixel(page, mid[0] + o, mid[1] + t))));
+    assert.ok(px.some(p => p[0] > 170 && p[1] < 90 && p[2] < 90), `red outline in 2D: ${JSON.stringify(px)}`);
+    await page.locator('#mode3d').click(); await page.waitForTimeout(300);
+    if (!(await page.evaluate(() => window.AOSDeckStudioTest.framingView())).showStructure) { await page.locator('#structureToggle').click(); await page.waitForTimeout(400); }
+    const v3 = await page.evaluate(() => window.AOSDeckStudioTest.framingView());
+    for (const k of KINDS) assert.equal(v3.view3d[k] || 0, 0);
+    await page.screenshot({ path: H.path.join(H.SHOTS, `c7c3-owner-path-3d-${slug(label)}.png`) });
+    await page.locator('#mode2d').click(); await step(page, 7); await page.waitForTimeout(200);
+    await page.locator('#stepContent [data-path="reviewMode"][data-value="internal"]').click(); await page.waitForTimeout(150);
+    await page.locator('#stepContent [data-path="reviewTab"][data-value="framing"]').click(); await page.waitForTimeout(150);
+    const text = await page.locator('#stepContent').innerText();
+    assert.match(text, /Structural Review Required · 1 flight over 6 ft unsupported/);
+    assert.ok(text.includes(m.alerts.find(a => a.code === 'stair-stringer-span').message.slice(0, 60)));
+    assert.deepEqual(errors, []); await ctx.close();
+  });
 }
 for (const [label, ht, landing] of [['8′1″ deck, straight stair', 8 + 1 / 12, false], ['10′ deck, stair with a turning landing', 10, true]]) {
   test(`C7 Gate C owner path: add a stair, open Framing: the stair supports are visible in 2D and 3D (${label})`, async () => {
@@ -86,7 +124,8 @@ for (const [label, ht, landing] of [['8′1″ deck, straight stair', 8 + 1 / 12
     for (const b of sup) { const d = [Math.cos(-b.yaw), Math.sin(-b.yaw)], n = [-d[1], d[0]];
       const px = await Promise.all([-0.25, 0.25].flatMap(t => [-0.08, 0.08].map(o => planPixel(page, b.x + d[0] * t + n[0] * o, b.z + d[1] * t + n[1] * o))));
       assert.ok(px.filter(orange).length >= 3, `support beam visible in 2D at (${b.x.toFixed(1)}, ${b.z.toFixed(1)}): ${JSON.stringify(px)}`); }
-    assert.match(await page.locator('#stepContent').innerText(), /stairs: \d+ support beams? on \d+ posts \(AOS review\)/);
+    const nPosts = m.parts.filter(p => p.kind === 'stair-support-post').length;
+    assert.match(await page.locator('#stepContent').innerText(), new RegExp(`stairs: ${sup.length} support beams? on ${nPosts} posts \\(AOS review\\)`));
     // 3D: the view refits once the stair has supports, so the whole stair (and its supports) is framed.
     await page.locator('#mode3d').click(); await page.waitForTimeout(300);
     if (!(await page.evaluate(() => window.AOSDeckStudioTest.framingView())).showStructure) { await page.locator('#structureToggle').click(); await page.waitForTimeout(400); }

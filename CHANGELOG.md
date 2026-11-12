@@ -2,6 +2,18 @@
 
 All changes to `index.html` and the test suite. Staging and production are deployed separately and only with owner approval.
 
+## V5.3 C7 Gate C3 — owner's final stair-support rule (branch `v5.3/c7`, 12 Nov 2026)
+
+Owner: **Gate C2 not approved**; final intended behavior confirmed. Built on `checkpoint/v5.3-c7-gate-c2` (`aaf67f3`, unchanged). **Pending owner approval; not deployed; final C7 release work not started.**
+
+**Root cause:** in C2 the 6 ft cut-stringer span check both screened the stairs and generated the supports, so supports were drawn at any height. Screening and generation are now separate.
+- **Deck 8′0″ or less** (vertical deck-to-grade rise): nothing is generated. Every flight is still checked; a flight whose cut stringers span more than 6 ft with no support gets a **"Structural Review Required"** warning (additional support, a different stringer design or other verified details may be necessary; NOT structurally approved), a red dashed outline and label in 2D Framing, and a line in the framing summary and Review › Framing. Recorded in `stats.stairSpanReview`.
+- **Deck more than 8′0″**: support beams, posts and concept footings are generated. A landing on its own posts and footings satisfies the height rule; flights longer than 6 ft get the further supports the span check needs. Connections and sizes stay flagged for AOS production review.
+
+**Tests**: 4′, 5′, 6′, 7′, 8′0″, 8′1″ and 10′ × straight, landings (straight/left/right), low landing (long upper run) and 6 ft wide stairs; quantities equal the generated members; owner-path app tests at 7′ and 8′0″ (no members in 2D or 3D, red outline, summary and Review) and at 8′1″ and 10′ (members visible, counts and summary match). Gate C exceptions extended only to the new warning and `stats.stairSpanReview`.
+
+**Full regression**: 609 tests, 608 pass, 0 fail, 1 TODO (cut-corner golden, unchanged), 35.5 min; tree identical before and after the run.
+
 ## V5.3 C7 Gate C2 — owner stair support correction (branch `v5.3/c7`, 12 Nov 2026)
 
 Owner testing: **Gate C not approved**; the intermediate stair support "did not appear as expected". Built on `checkpoint/v5.3-c7-gate-c` (`884fd15`, unchanged). **Pending owner approval; not deployed; final C7 release work not started.**

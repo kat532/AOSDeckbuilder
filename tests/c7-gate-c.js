@@ -16,7 +16,7 @@
 const GATE_C_RAIL_KINDS = new Set(['baluster', 'stair-baluster', 'bottom-rail', 'stair-bottom-rail']);
 const GATE_C_STAIR_KINDS = new Set(['stair-stringer-support', 'stair-support-post', 'stair-support-footing']);
 const GATE_C_COUNTS = ['stairSupportBeams', 'stairSupportPosts', 'stairSupportFootings'];
-const GATE_C_ALERT = /AOS requires at least one intermediate structural support|finished clear width about|continuous graspable handrail 34–38 in\.|need a guard \(Minnesota Residential Code R312\.1\.1|cut stringers run .* than the 6 ft limit for cut stringers/;
+const GATE_C_ALERT = /Structural Review Required — stair on edge|AOS requires at least one intermediate structural support|finished clear width about|continuous graspable handrail 34–38 in\.|need a guard \(Minnesota Residential Code R312\.1\.1|cut stringers run .* than the 6 ft limit for cut stringers/;
 const alertText = (a) => typeof a === 'string' ? a : a.message;
 const drop = (o, keys) => Object.fromEntries(Object.entries(o || {}).filter(([k]) => !keys.includes(k)));
 // Full model (plain JSON): without the Gate C stair members, counts and alerts (railing is handled by rail-inset.js).
@@ -26,6 +26,7 @@ function withoutGateC(m) {
   if (o.counts) o.counts = drop(o.counts, GATE_C_COUNTS);
   if (o.alerts) o.alerts = o.alerts.filter(a => !GATE_C_ALERT.test(alertText(a)));
   if (o.stats && 'partCount' in o.stats) delete o.stats.partCount;
+  if (o.stats) delete o.stats.stairSpanReview; // Gate C3: flights flagged Structural Review Required (stringer span)
   return o;
 }
 // engine.js snapshot() form.
@@ -34,6 +35,7 @@ function snapshotWithoutGateC(s) {
   for (const k of Object.keys(o.partsByKind || {})) if (GATE_C_STAIR_KINDS.has(k)) { n += o.partsByKind[k]; delete o.partsByKind[k]; }
   if (typeof o.partCount === 'number') o.partCount -= n;
   o.counts = drop(o.counts, GATE_C_COUNTS); o.alerts = (o.alerts || []).filter(a => !GATE_C_ALERT.test(alertText(a)));
+  if (o.stats) delete o.stats.stairSpanReview;
   return o;
 }
 // R1 rail record form (snapshotRail / design pin): balusters re-spaced by Gate C are excepted; posts, caps,
@@ -51,6 +53,7 @@ function savedWithoutGateC(k, v) {
   if (k === 'componentModel') return (v || []).filter(p => !GATE_C_STAIR_KINDS.has(p.kind));
   if (k === 'counts') return drop(v, GATE_C_COUNTS);
   if (k === 'alerts') return (v || []).filter(a => !GATE_C_ALERT.test(alertText(a)));
+  if (k === 'stats' && v && typeof v === 'object') { const o = { ...v }; delete o.stairSpanReview; return o; }
   return v;
 }
 module.exports = { savedWithoutGateC, GATE_C_RAIL_KINDS, GATE_C_STAIR_KINDS, GATE_C_COUNTS, GATE_C_ALERT, withoutGateC, snapshotWithoutGateC, railRecordWithoutGateC, r1RailParts };

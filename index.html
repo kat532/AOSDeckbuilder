@@ -2500,22 +2500,30 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  // V5.2 A3: flight() is the original single-flight builder, parameterized by the flight's top and
  // bottom elevations and where it starts along the stair (v0). A staircase without a landing calls
  // it exactly once with top = deck height, bottom = grade and v0 = 0, so its parts are unchanged.
- const stairModels=[],landingGuardPosts=[];
+ const stairModels=[],landingGuardPosts=[],stairSpanReview=[];
  for(const stair of q.staircases){
  const se=es[stair.edge],tt=se.t,nn=se.n,base=[se.mid[0]+tt[0]*stair.offset,se.mid[1]+tt[1]*stair.offset];
  const stairBase=base,stt=tt,snn=nn,pendingSupports=[];
- // V5.3 C7 Gate C (owner, 11–12 Nov 2026). Intermediate stair supports:
- //  - verified span rule: cut stringers may span at most 6 ft horizontally between supports (AWC DCA 6), on
- //    every flight, whatever the stair's height;
- //  - AOS rule (owner, 12 Nov 2026): a stair with more than 8 ft of vertical rise has at least one intermediate
- //    structural support. A landing counts only when it is framed on its own posts and footings; otherwise a
- //    support beam is added to the longest flight. The AOS rule is in addition to the span rule, never instead.
+ // V5.3 C7 Gate C3 (owner's final rule, 12 Nov 2026). Span SCREENING and support GENERATION are separate:
+ //  - span screening, at every height: cut stringers may span at most 6 ft horizontally between supports
+ //    (AWC DCA 6). Every flight is checked; a flight that exceeds it without supports gets a
+ //    "Structural Review Required" warning and is never presented as structurally approved.
+ //  - generation, only when the deck is MORE than 8 ft above grade (vertical deck-to-grade rise, not run or
+ //    stringer length): intermediate support beams, posts and concept footings are drawn automatically. A
+ //    landing framed on its own posts and footings satisfies the height rule; flights still longer than the
+ //    span limit get the additional supports the span check needs. At 8 ft 0 in. or less nothing is generated.
  // Each support: a beam across all stringers with its top at their underside, on posts under the outer stringers
  // (and between them where the beam would span more than 6 ft), each post on a concept footing. Sizes, bearing,
  // connections and footings are concepts for AOS production review.
  function finishStairSupports(landingPosts){
    const rule=H>AOS_STAIR_SUPPORT_RISE+1e-9,landingSupports=landingPosts>0;
-   for(const f of pendingSupports)f.n=Math.max(1,Math.ceil(f.run/CUT_STRINGER_SPAN-1e-9));
+   // Span screening (every height): supports the span check needs, per flight.
+   for(const f of pendingSupports)f.need=Math.max(1,Math.ceil(f.run/CUT_STRINGER_SPAN-1e-9));
+   // Generation only above the height threshold; at or below it, failing flights are reported instead.
+   for(const f of pendingSupports)f.n=rule?f.need:1;
+   if(!rule)for(const f of pendingSupports)if(f.need>1){
+     stairSpanReview.push({stair:stair.id,edge:se.i,flight:f.label,run:+f.run.toFixed(3),limit:CUT_STRINGER_SPAN,corners:[f.toWorld(-stair.width/2,0),f.toWorld(stair.width/2,0),f.toWorld(stair.width/2,f.run),f.toWorld(-stair.width/2,f.run)]});
+     alerts.push({level:'warning',code:'stair-stringer-span',message:`Structural Review Required — stair on edge ${se.i+1}${pendingSupports.length>1?` (${f.label})`:''}: its cut stringers span ${fmtFt(f.run)} horizontally with no intermediate support, more than the ${CUT_STRINGER_SPAN} ft verified limit for cut stringers (AWC DCA 6). The deck is ${fmtFt(H)} above grade (${AOS_STAIR_SUPPORT_RISE} ft or less), so no support is drawn automatically. Additional support, a different stringer design or other verified construction details may be necessary. This stair is NOT structurally approved; AOS production review required.`});}
    let ruleAdded=false;
    if(rule&&!landingSupports&&pendingSupports.length&&pendingSupports.every(f=>f.n<2)){const f=pendingSupports.reduce((a,b)=>b.run>a.run?b:a);f.n=2;ruleAdded=true;}
    let beams=0;
@@ -2983,6 +2991,8 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    maxFrontCantFt:Math.max(0,...joistSegs.map(j=>j.solution?.joistCantileverFront||0)),maxRearCantFt:Math.max(0,...joistSegs.map(j=>j.solution?.joistCantileverRear||0)),maxBeamCantFt:Math.max(0,...beamRecords.map(b=>b.postOverhang||0)),
    beamLengthsFt:beamRecords.map(b=>+b.len.toFixed(3)),postSpacingFt:beamRecords.map(b=>+b.postPitch.toFixed(3)),
    primaryLedgerEdge:q.primaryLedgerEdge,ledgerEdges:ledgerEdges.map(e=>e.i),ledgerCount:ledgerEdges.length,beamRows:beams.length,beamRoles:beamRecords.reduce((m,b)=>{const r=b.role||'shared-beam';m[r]=(m[r]||0)+1;return m;},{}),closeFootingPairs:closeFootings,sharedPosts,physicalSupportOutsideCount:physicalOutside.length,structuralEnvelopeOutsideCount:outsideStructural.length,footingOutsideProjectionCount:outsideFoundations.length,physicalSupportOutside:physicalOutside.map(p=>({kind:p.kind,role:p.role})),joistNominal:`2x${joistNominal}`,beamProfile,joistSpacingIn:joistSpacing,joistMaxSpanFt:FS.JOISTS[joistSpacing][joistNominal].span,unresolvedJoistRuns:beamSupportDiagnostics.length,sharedSupportZones:chosen.groups.length,framingPlanner:chosen.planner||'legacy-bearing-repair',optimizerCandidates:chosen.candidates,unverifiedBeamLoadCount:unsupportedBeamLoads,pictureFrameFlatBlocks:flatBorderBlocks,dividerFlatBlocks:flatDividerBlocks,pictureFrameFlatLF:borderFlatLF,dividerFlatLF:dividerFlatLF,pictureFrameSupportJoists:qty('picture-support-joist'),dividerSupportJoists:qty('divider-support-joist')};
+ // C7 Gate C3: stair flights whose cut stringers exceed the span limit with no support (deck 8 ft or less).
+ if(stairSpanReview.length)stats.stairSpanReview=stairSpanReview;
  if(stairModels.some(g=>g.landing))stats.landings=stairModels.filter(g=>g.landing).map(g=>({stair:g.id,edge:g.edge,elevationFt:+g.landing.elevation.toFixed(4),widthFt:g.landing.width,depthFt:g.landing.depth,upperRisers:g.landing.upperRisers,lowerRisers:g.landing.lowerRisers,riserIn:+(g.rise*12).toFixed(3),posts:g.landing.posts,guardLF:+g.landing.guardLF.toFixed(2),turn:g.turn,decking:g.landing.decking,structuralApproval:false}));
  // V5.2 B2: decking take-off from the boards actually generated (not from mesh fragments):
  // every field course, picture-frame board and divider bar is measured at its long point.
@@ -4788,7 +4798,8 @@ function reviewFraming(q,m){const c=m.counts,st=m.stats,alerts=m.alerts||[],warn
   c.landings?rvRow('landing-posts','Landing posts',`${c.landingPosts}`):'',c.landings?rvRow('landing-footings','Landing footings',`${c.landingFootings}`):'',
   c.landings?rvRow('landing-framing','Landing framing members',`${c.landingFraming}`):'',
   c.landingFrameSupportJoists?rvRow('landing-support-joists','Landing frame support joists',`${c.landingFrameSupportJoists}`):'',
-  c.stairSupportBeams?rvRow('stair-supports','Stair support beams',`${c.stairSupportBeams} · ${c.stairSupportPosts} posts · ${c.stairSupportFootings} footings · concept, AOS review`):''].join(''));
+  c.stairSupportBeams?rvRow('stair-supports','Stair support beams',`${c.stairSupportBeams} · ${c.stairSupportPosts} posts · ${c.stairSupportFootings} footings · concept, AOS review`):'',
+  (m.stats.stairSpanReview||[]).length?rvRow('stair-span-review','Stair stringer span',`Structural Review Required · ${m.stats.stairSpanReview.length} flight${m.stats.stairSpanReview.length===1?'':'s'} over 6 ft unsupported`):''].join(''));
  html+=reviewBlocking(m);
  const group=(lvl,title)=>{const list=alerts.filter(a=>a.level===lvl);return list.length?`<div class="rv-issues rv-${lvl}" data-level="${lvl}"><h4>${title} (${list.length})</h4><ul>${list.map(a=>`<li>${esc(alertText(a.message))}</li>`).join('')}</ul></div>`:'';};
  const other=alerts.filter(a=>!['warning','review','info'].includes(a.level));
@@ -5155,7 +5166,7 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
       +(q.houseEdges.length?`<div class="control-group"><p class="group-title">House walls</p><div class="ledger-list">${q.houseEdges.map(i=>{const e=es[i],on=ledgerMode&&q.ledgerEdges.includes(i);return `<div class="ledger-row ${on?'on':''}" data-ledger-edge="${i}"><div class="ledger-name"><b>${wallName(es,i)} · edge ${i+1}</b><span>${e?fmt(e.len):''} · ${on?'Ledger ✓':ledgerMode?'No ledger':'No ledger (freestanding)'}</span></div><button type="button" data-action="ledger-toggle" data-edge="${i}">${on?'Remove ledger':'Add ledger'}</button></div>`;}).join('')}</div><p class="support-explain">You can also tap L / − on a house wall in the plan.</p></div>`:`<p class="support-explain">No house walls are set, so the deck is freestanding.</p>`)
       +`<div class="control-group"><p class="group-title">Beam arrangement</p>${seg('beamStyle',[['dropped','Dropped beam'],['flush','Flush beam*']],q.beamStyle)}</div>`
       +`${state.framingStatus&&state.framingStatus!=='current'?`<div class="framing-pending ${state.framingStatus}">${state.framingStatus==='invalid'?'Framing can’t be generated until the outline is fixed.':state.framingStatus==='calculating'?'Updating framing…':'The framing below is from before your last change.'}${state.framingStatus==='pending'?' <button type="button" data-action="framing-update">Update framing</button>':''}</div>`:''}`
-      +`<div class="framing-summary">Joists ${m.stats.joistNominal} at ${m.stats.joistSpacingIn} in. on center, running ${Math.abs(ja[0])>=Math.abs(ja[1])?'left–right':'top–bottom'} on the plan · ${m.counts.ledger} ledger${m.counts.ledger===1?'':'s'} · ${m.counts.beams} beam${m.counts.beams===1?'':'s'} · ${m.counts.posts} posts${m.counts.stairSupportBeams?` · stairs: ${m.counts.stairSupportBeams} support beam${m.counts.stairSupportBeams===1?'':'s'} on ${m.counts.stairSupportPosts} posts (AOS review)`:''}</div>`
+      +`<div class="framing-summary">Joists ${m.stats.joistNominal} at ${m.stats.joistSpacingIn} in. on center, running ${Math.abs(ja[0])>=Math.abs(ja[1])?'left–right':'top–bottom'} on the plan · ${m.counts.ledger} ledger${m.counts.ledger===1?'':'s'} · ${m.counts.beams} beam${m.counts.beams===1?'':'s'} · ${m.counts.posts} posts${m.counts.stairSupportBeams?` · stairs: ${m.counts.stairSupportBeams} support beam${m.counts.stairSupportBeams===1?'':'s'} on ${m.counts.stairSupportPosts} posts (AOS review)`:''}${(m.stats.stairSpanReview||[]).length?` · <b style="color:#c62828">stairs: Structural Review Required — stringer span</b>`:''}</div>`
       +`<div class="framing-status" data-note="framing-status"><b>${unresolved?`⚠ ${unresolved} joist bearing${unresolved===1?'':'s'} not yet verified`:'Preliminary framing concept'}</b>Not engineered or code-approved. AOS production review is required before construction.</div>`
       +`<div class="action-row"><button data-action="framing-details">View framing measurements →</button></div>`;
    }
@@ -5957,6 +5968,13 @@ function planDraw(){state.planLabelBoxes=[];const {w,h}=canvasSize(),sc=state.pl
      ctx.save();ctx.translate(cx,cy);ctx.rotate(a);const L=part.w*sc,Wd=Math.max(8,part.d*sc);ctx.fillStyle='#c98a3e';ctx.fillRect(-L/2,-Wd/2,L,Wd);ctx.strokeRect(-L/2,-Wd/2,L,Wd);ctx.restore();}
    for(let part of model.parts){if(part.kind!=='stair-support-post')continue;const g=planFootprintOf(part);
      ctx.beginPath();g.pts.forEach((v,i)=>{const pt=xy(v[0],v[1]);i?ctx.lineTo(...pt):ctx.moveTo(...pt);});ctx.closePath();ctx.fillStyle='#3d2f22';ctx.fill();ctx.stroke();}
+   ctx.restore();
+   // C7 Gate C3: a flight whose stringers exceed the span limit with no support (deck 8 ft or less) is outlined
+   // in red and labelled; nothing is drawn under it, and it is never shown as approved.
+   ctx.save();ctx.strokeStyle='#c62828';ctx.lineWidth=3;ctx.setLineDash([8,5]);
+   for(const r of model.stats.stairSpanReview||[]){ctx.beginPath();r.corners.forEach((v,i)=>{const pt=xy(v[0],v[1]);i?ctx.lineTo(...pt):ctx.moveTo(...pt);});ctx.closePath();ctx.stroke();
+     const c=r.corners.reduce((a,v)=>[a[0]+v[0]/4,a[1]+v[1]/4],[0,0]),[lx,ly]=xy(c[0],c[1]),txt='STRUCTURAL REVIEW';ctx.setLineDash([]);ctx.font='700 11px Inter, sans-serif';const tw=ctx.measureText(txt).width;
+     ctx.fillStyle='#c62828';ctx.fillRect(lx-tw/2-5,ly-9,tw+10,18);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(txt,lx,ly);ctx.setLineDash([8,5]);}
    ctx.restore();
  }
  // House wall indicators; each perimeter edge is a selectable entity.
