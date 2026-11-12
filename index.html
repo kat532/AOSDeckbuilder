@@ -1487,7 +1487,7 @@ const RAIL_FACE_INSET=1.5/12,RAIL_POST=.21,RAIL_LINE=RAIL_FACE_INSET+RAIL_POST/2
 // never inherit the aluminum 1½ in. inset.
 const RAIL_MOUNTS={'aluminum-surface':{faceInset:RAIL_FACE_INSET,post:RAIL_POST,label:'top-mounted aluminum (surface plate)'}};
 const RAIL_PRODUCT_MOUNT={'Westbury Tuscany':'aluminum-surface','No rail product selected':'aluminum-surface'};
-// Gate C guard infill (screening against the 2021 IRC as published by jurisdictions; never a code approval):
+// Gate C guard infill (screening against the Minnesota Residential Code (Minn. R. ch. 1309, the 2018 IRC as amended; a 2024-IRC-based edition is expected late 2026, so confirm the edition in force); never a code approval):
 // no opening may pass a 4 in. sphere, so balusters are spaced for at most 3¾ in. clear (also used on stairs,
 // where 4⅜ in. applies); the bottom rail's underside sits 3 in. above the walking surface; on a stair the
 // sloped bottom rail sits ½ in. above the nosing line so the riser/tread/rail triangle stays under a 6 in. sphere.
@@ -1497,6 +1497,8 @@ function infill(s0,s1,postW=RAIL_POST){const S=s1-s0-postW;if(S<=RAIL_MAX_CLEAR+
  for(let k=1;k<=n;k++)out.push(s0+postW/2+k*g+(k-.5)*BALUSTER_W);return out;}
 // Cut stringers: horizontal span between supports (AWC prescriptive deck guide); longer flights get support beams.
 const CUT_STRINGER_SPAN=6;
+// AOS framing rule (owner, 12 Nov 2026): a stair with more than 8 ft of vertical rise has at least one intermediate structural support.
+const AOS_STAIR_SUPPORT_RISE=8;
 const RAILS={'Textured Black':'#20272c','Bronze':'#635849','White':'#e6e9e8'};
 const SHAPES=['rectangle','square','L','T','U','free'];
 const clamp=(v,min,max)=>Math.min(max,Math.max(min,Number(v)||0));
@@ -2501,7 +2503,43 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  const stairModels=[],landingGuardPosts=[];
  for(const stair of q.staircases){
  const se=es[stair.edge],tt=se.t,nn=se.n,base=[se.mid[0]+tt[0]*stair.offset,se.mid[1]+tt[1]*stair.offset];
- const stairBase=base,stt=tt,snn=nn;
+ const stairBase=base,stt=tt,snn=nn,pendingSupports=[];
+ // V5.3 C7 Gate C (owner, 11–12 Nov 2026). Intermediate stair supports:
+ //  - verified span rule: cut stringers may span at most 6 ft horizontally between supports (AWC DCA 6), on
+ //    every flight, whatever the stair's height;
+ //  - AOS rule (owner, 12 Nov 2026): a stair with more than 8 ft of vertical rise has at least one intermediate
+ //    structural support. A landing counts only when it is framed on its own posts and footings; otherwise a
+ //    support beam is added to the longest flight. The AOS rule is in addition to the span rule, never instead.
+ // Each support: a beam across all stringers with its top at their underside, on posts under the outer stringers
+ // (and between them where the beam would span more than 6 ft), each post on a concept footing. Sizes, bearing,
+ // connections and footings are concepts for AOS production review.
+ function finishStairSupports(landingPosts){
+   const rule=H>AOS_STAIR_SUPPORT_RISE+1e-9,landingSupports=landingPosts>0;
+   for(const f of pendingSupports)f.n=Math.max(1,Math.ceil(f.run/CUT_STRINGER_SPAN-1e-9));
+   let ruleAdded=false;
+   if(rule&&!landingSupports&&pendingSupports.length&&pendingSupports.every(f=>f.n<2)){const f=pendingSupports.reduce((a,b)=>b.run>a.run?b:a);f.n=2;ruleAdded=true;}
+   let beams=0;
+   for(const f of pendingSupports){if(f.n<2)continue;
+     const {run,toWorld,tt,stringerCenterSpan,under}=f,undersideAt=x=>{for(let i=0;i+1<under.length;i++){const [x0,y0]=under[i],[x1,y1]=under[i+1];if(x>=x0-1e-9&&x<=x1+1e-9)return y0+(y1-y0)*(x-x0)/((x1-x0)||1);}return under.at(-1)[1];};
+     const beamLen=stringerCenterSpan+1.5*FT+.1,beamD=9.25*FT,beamW=3*FT,postW=3.5*FT,crossYaw=-Math.atan2(tt[1],tt[0]);
+     const postU=[-stringerCenterSpan/2,stringerCenterSpan/2],extra=Math.ceil(stringerCenterSpan/CUT_STRINGER_SPAN-1e-9)-1;
+     for(let k=1;k<=extra;k++)postU.splice(k,0,-stringerCenterSpan/2+stringerCenterSpan*k/(extra+1));
+     const why=run>CUT_STRINGER_SPAN+1e-9?`cut stringers limited to ${CUT_STRINGER_SPAN} ft horizontal span`:`AOS rule: stairs over ${AOS_STAIR_SUPPORT_RISE} ft of rise need an intermediate support`;
+     for(let k=1;k<f.n;k++){const x=run*k/f.n,topY=undersideAt(x),c=toWorld(0,x),postH=topY-beamD-.12;
+       const beam=add('stair-stringer-support','stair-framing',c[0],topY-beamD/2,c[1],beamLen,beamD,beamW,'#856143',{yaw:crossYaw,connect:'stair-stringer-support',
+         label:`Stair support beam ${k} of ${f.n-1} (${f.label}), 2-2x10 concept: ${why}. Verify size, bearing, post and footing, and the stringer connection in AOS production review.`});
+       if(beam)beam.stairSupport={stairId:stair.id,flight:f.label,x,rule:run>CUT_STRINGER_SPAN+1e-9?'cut-stringer-span':'aos-8ft-rise'};
+       beams++;
+       for(const u of postU){const pp=toWorld(u,x);
+         // Every beam stands on posts and footings (no floating beam); a beam too close to grade for a post
+         // bears on its footing directly.
+         if(postH>.25)add('stair-support-post','stair-framing',pp[0],.12+postH/2,pp[1],postW,postH,postW,'#9e7b57',{connect:'stair-support-post',label:'4x4 stair support post (concept; verify size, height, bracing and connections)'});
+         add('stair-support-footing','foundation',pp[0],-.22,pp[1],1.25,.62,1.25,'#a6a3a0',{mat:'concrete',connect:'stair-support-footing',label:'stair support footing concept; size/depth unverified'});}
+     }
+     if(run>CUT_STRINGER_SPAN+1e-9)alerts.push({level:'review',code:'stair-stringer-support',message:`Stair on edge ${se.i+1}${pendingSupports.length>1?` (${f.label})`:''}: its cut stringers run ${fmtFt(run)} horizontally, more than the ${CUT_STRINGER_SPAN} ft limit for cut stringers, so ${f.n-1} support beam${f.n>2?'s':''} on posts and footings ${f.n>2?'are':'is'} drawn under them (spans about ${fmtFt(run/f.n)}). Concept only: beam size, post and footing design and the stringer connections require AOS production review.`});
+   }
+   if(rule)alerts.push({level:'review',code:'stair-intermediate-support',message:`Stair on edge ${se.i+1} rises ${fmtFt(H)}, more than ${AOS_STAIR_SUPPORT_RISE} ft: AOS requires at least one intermediate structural support. ${landingSupports?`Provided by its landing on ${landingPosts} posts and footings`:ruleAdded?'A support beam on posts and footings is drawn under the stringers for this rule':`Provided by ${beams} stringer support beam${beams===1?'':'s'} on posts and footings`}${landingSupports&&beams?`, plus ${beams} stringer support beam${beams===1?'':'s'}`:''}. Concept only: AOS production review required.`});
+ }
  // Checkpoint 3 (A4): an optional frame {base, tt, nn} lets the lower flight of a turning stair
  // run off the side of the landing. Without it the flight runs straight out from the deck edge.
  function flight(v0,top,bottom,risers,rise,frame){
@@ -2566,27 +2604,9 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
        connect:'stairs',label:'individually notched 2x stringer; verify remaining throat, top hanger and bottom landing'});
      if(part){part.profile2d=profile.map(x=>[...x]);part.profileBase=base;part.profileTT=tt;part.profileNN=nn;part.profileOffset=off;}
    }
-   // V5.3 C7 Gate C: cut stringers may span at most 6 ft horizontally between supports (AWC prescriptive deck
-   // guide). A longer flight gets evenly spaced support beams across all stringers, each on posts under the outer
-   // stringers (and between them where the beam would span more than 6 ft) with concept footings. The beam top is
-   // at the stringers' underside. Sizes, bearing, connections and footings are concepts for AOS production review.
-   if(run>CUT_STRINGER_SPAN+1e-9){
-     const under=[...bottoms].sort((a,b)=>a[0]-b[0]),undersideAt=x=>{for(let i=0;i+1<under.length;i++){const [x0,y0]=under[i],[x1,y1]=under[i+1];if(x>=x0-1e-9&&x<=x1+1e-9)return y0+(y1-y0)*(x-x0)/((x1-x0)||1);}return under.at(-1)[1];};
-     const n=Math.ceil(run/CUT_STRINGER_SPAN-1e-9),beamLen=stringerCenterSpan+1.5*FT+.1,beamD=9.25*FT,beamW=3*FT,postW=3.5*FT;
-     const postU=[-stringerCenterSpan/2,stringerCenterSpan/2],extra=Math.ceil(stringerCenterSpan/CUT_STRINGER_SPAN-1e-9)-1;
-     for(let k=1;k<=extra;k++)postU.splice(k,0,-stringerCenterSpan/2+stringerCenterSpan*k/(extra+1));
-     const crossYaw=-Math.atan2(tt[1],tt[0]);
-     for(let k=1;k<n;k++){const x=run*k/n,topY=undersideAt(x),c=toWorld(0,x);
-       const beam=add('stair-stringer-support','stair-framing',c[0],topY-beamD/2,c[1],beamLen,beamD,beamW,'#856143',{yaw:crossYaw,connect:'stair-stringer-support',
-         label:`2-2x10 stair stringer support beam ${k} of ${n-1} (concept): cut stringers limited to ${CUT_STRINGER_SPAN} ft horizontal span; verify size, bearing and stringer connection`});
-       if(beam)beam.stairSupport={flightTop:top,x,stairId:stair.id};
-       const postH=topY-beamD-.12;
-       for(const u of postU){const pp=toWorld(u,x);
-         if(postH>.25)add('stair-support-post','stair-framing',pp[0],.12+postH/2,pp[1],postW,postH,postW,'#9e7b57',{connect:'stair-support-post',label:'4x4 stair support post (concept; verify size, height, bracing and connection)'});
-         add('stair-support-footing','foundation',pp[0],-.22,pp[1],1.25,.62,1.25,'#a6a3a0',{mat:'concrete',connect:'stair-support-footing',label:'stair support footing concept; size/depth unverified'});}
-     }
-     alerts.push({level:'review',code:'stair-stringer-support',message:`Stair on edge ${se.i+1}: its cut stringers run ${fmtFt(run)} horizontally, more than the ${CUT_STRINGER_SPAN} ft limit for cut stringers, so ${n-1} support beam${n>2?'s':''} on posts and footings ${n>2?'are':'is'} drawn under them (spans about ${fmtFt(run/n)}). Concept only: beam size, post and footing design and the stringer connections require AOS production review.`});
-   }
+   // V5.3 C7 Gate C: support beams are decided per stair once all its flights and its landing exist
+   // (finishStairSupports below); here each flight only records what a support needs.
+   pendingSupports.push({run,top,tt,nn,base,toWorld,stringerCenterSpan,under:[...bottoms].sort((a,b)=>a[0]-b[0]),label:frame?'lower flight':(stair.landing?'upper flight':'flight')});
    // Finished diagonal side skirt is a cosmetic panel, separate from structural stringers.
    // The existing stair-framing stringer profiles remain unchanged for framing mode.
    if(run>.1){
@@ -2624,7 +2644,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  }
  const plan=stair.landing?stairPlan(H,stair):null,L=plan?.landing;
  if(!L){
-   const risers=Math.max(2,Math.ceil(H/(7.75/12))),rise=H/risers,{run,stairPitchRise}=flight(0,H,0,risers,rise),stairW=stair.width;
+   const risers=Math.max(2,Math.ceil(H/(7.75/12))),rise=H/risers,{run,stairPitchRise}=flight(0,H,0,risers,rise),stairW=stair.width;finishStairSupports(0);
    stairModels.push({id:stair.id,base,edge:se.i,tt,nn,run,width:stairW,risers,rise,
      pitchRise:stairPitchRise,pitch:Math.atan2(stairPitchRise,run),enabled:true});
    continue;
@@ -2756,6 +2776,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  if(turn)alerts.push({level:'review',message:`Stair on edge ${se.i+1} turns ${stair.landing.turn} at its landing: the lower-flight stringer connection to the landing side header, the inside-corner framing and the guard post at the turn are NOT verified. Production review required.`});
  // A landing or lower flight that runs back under the deck outline cannot be built as drawn.
  if(stairHitsDeck(es,poly,H,stair))alerts.push({level:'warning',message:`Stair on edge ${se.i+1}: its landing or lower flight runs back under the deck outline. Move the stair, shorten the landing or turn the stair${turn?' the other way':''}.`});
+ finishStairSupports(landingPosts);
  const fps=stairFootprints(es,H,stair);
  stairModels.push({id:stair.id,base,edge:se.i,tt,nn,run:turn?v1:plan.run,width:stair.width,risers:plan.N,rise:plan.rise,
    pitchRise:upper.stairPitchRise,pitch:Math.atan2(upper.stairPitchRise,upper.run),enabled:true,
@@ -2917,16 +2938,16 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  for(const stair of q.staircases){const sides=(stair.rails.left?1:0)+(stair.rails.right?1:0);if(!sides)continue;
    const clearIn=stair.width*12-sides*(RAIL_FACE_INSET+RAIL_POST)*12;
    if(clearIn<36)alerts.push({level:'review',code:'stair-rail-clear-width',message:`Stair on edge ${stair.edge+1} (${fmtFt(stair.width)} wide): with its railing posts 1½ in. inside the stair edges, about ${Math.round(clearIn)} in. is left between the posts, before any handrail projection. Many jurisdictions require a 36 in. minimum clear stair width; widen the stair or verify the requirement in production review.`});}
- // V5.3 C7 Gate C (screening against the 2021 IRC as published by jurisdictions, never a code approval):
+ // V5.3 C7 Gate C (screening against the Minnesota Residential Code (Minn. R. ch. 1309, the 2018 IRC as amended; a 2024-IRC-based edition is expected late 2026, so confirm the edition in force); never a code approval):
  // finished stair clearance, required handrails and required guards.
  for(const stair of q.staircases){const g=stairModels.find(x=>x.id===stair.id);if(!g)continue;const sides=(stair.rails.left?1:0)+(stair.rails.right?1:0),W=stair.width*12;
    const between=W-sides*(RAIL_FACE_INSET+RAIL_POST)*12,one=between-4.5,two=between-9;
-   if(between<36||(sides&&one<31.5))alerts.push({level:'review',code:'stair-finished-clearance',message:`Stair on edge ${stair.edge+1} (${fmtFt(stair.width)}): finished clear width about ${Math.round(between)} in. ${sides?'between the railing posts':'between the stair edges'}. If a handrail projecting up to 4½ in. is mounted inside ${sides===2?'one guard it leaves about '+Math.round(one)+' in. (both guards: about '+Math.round(two)+' in.)':'the guard it leaves about '+Math.round(one)+' in.'}. Screening reference (2021 IRC R311.7.1): 36 in. clear above the handrail; at and below it, 31½ in. with one handrail or 27 in. with two. Confirm the stair width and handrail layout in AOS production review.`});
+   if(between<36||(sides&&one<31.5))alerts.push({level:'review',code:'stair-finished-clearance',message:`Stair on edge ${stair.edge+1} (${fmtFt(stair.width)}): finished clear width about ${Math.round(between)} in. ${sides?'between the railing posts':'between the stair edges'}. If a handrail projecting up to 4½ in. is mounted inside ${sides===2?'one guard it leaves about '+Math.round(one)+' in. (both guards: about '+Math.round(two)+' in.)':'the guard it leaves about '+Math.round(one)+' in.'}. Screening reference (Minnesota Residential Code, Minn. R. 1309.0311, amending IRC R311.7.1): 36 in. clear above the handrail; at and below it, 31½ in. with one handrail or 27 in. with two. Confirm the stair width and handrail layout in AOS production review.`});
    const flights=g.flights&&g.flights.length?g.flights:[{risers:g.risers}];
-   if(flights.some(f=>f.risers>=4))alerts.push({level:'warning',code:'stair-handrail-required',message:`Stair on edge ${stair.edge+1} has ${Math.max(...flights.map(f=>f.risers))} risers in a flight: a continuous graspable handrail 34–38 in. above the tread nosings is required on at least one side (2021 IRC R311.7.8). It is not shown in this design, and the guard top rail (about 34 in. above the nosings) is not verified as a graspable handrail. Specify the handrail, brackets and returns in AOS production review.`});
-   if(H>2.5+1e-9)for(const k of ['left','right'])if(!stair.rails[k])alerts.push({level:'warning',code:'stair-guard-required',message:`Stair on edge ${stair.edge+1}: its ${k} side has no railing, but the stair starts ${fmtFt(H)} above grade. Open sides of stairs more than 30 in. above grade need a guard (2021 IRC R312.1.1); turn the ${k} stair railing on or confirm the condition in AOS production review.`});}
+   if(flights.some(f=>f.risers>=4))alerts.push({level:'warning',code:'stair-handrail-required',message:`Stair on edge ${stair.edge+1} has ${Math.max(...flights.map(f=>f.risers))} risers in a flight: a continuous graspable handrail 34–38 in. above the tread nosings is required on at least one side (Minnesota Residential Code R311.7.8, Minn. R. ch. 1309). It is not shown in this design, and the guard top rail (about 34 in. above the nosings) is not verified as a graspable handrail. Specify the handrail, brackets and returns in AOS production review.`});
+   if(H>2.5+1e-9)for(const k of ['left','right'])if(!stair.rails[k])alerts.push({level:'warning',code:'stair-guard-required',message:`Stair on edge ${stair.edge+1}: its ${k} side has no railing, but the stair starts ${fmtFt(H)} above grade. Open sides of stairs more than 30 in. above grade need a guard (Minnesota Residential Code R312.1.1, Minn. R. ch. 1309); turn the ${k} stair railing on or confirm the condition in AOS production review.`});}
  if(H>2.5+1e-9){const open=es.filter(e=>!q.houseEdges.includes(e.i)&&!q.railEdges.includes(e.i)&&e.len-q.staircases.filter(s=>s.edge===e.i).reduce((t,s)=>t+s.width,0)>.5).map(e=>e.i+1);
-   if(open.length)alerts.push({level:'warning',code:'guard-required',message:`The deck is ${fmtFt(H)} above grade (over 30 in.), but edge${open.length>1?'s':''} ${open.join(', ')} ${open.length>1?'have':'has'} no railing. Open sides more than 30 in. above grade need a guard (2021 IRC R312.1.1); add the railing or confirm the condition (for example a wall or bench) in AOS production review.`});}
+   if(open.length)alerts.push({level:'warning',code:'guard-required',message:`The deck is ${fmtFt(H)} above grade (over 30 in.), but edge${open.length>1?'s':''} ${open.join(', ')} ${open.length>1?'have':'has'} no railing. Open sides more than 30 in. above grade need a guard (Minnesota Residential Code R312.1.1, Minn. R. ch. 1309); add the railing or confirm the condition (for example a wall or bench) in AOS production review.`});}
  if(parts.some(p=>p.kind==='railing-post'||p.kind==='stair-rail-post'))alerts.push({level:'review',code:'rail-post-mounting',message:'Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review.'});
  if(q.staircases.length)alerts.push({level:'review',message:'All modeled staircases require field verification of stringers, connections, railings and lower landings.'});
  if(q.supportMode==='ledger'&&!ledgerEdges.length)alerts.push({level:'review',message:'No ledger edges selected. Framing must use independent bearing; select a house edge on the ledger step to enable one.'});
@@ -3919,6 +3940,9 @@ function setProject(raw,commit=true,keepPanel=false){
  // Rebuilding WebGL on every pointer-move makes local edge dragging lag badly.
  // Draw the updated 2D model immediately; upload 3D geometry on release.
  if(!state.model.preview&&(!state.plan.drag||state.view==='3d'))renderer3d.setModel(state.model);
+ // C7 Gate C (owner testing): a stair that gains stringer support members (added, lengthened or given a landing)
+ // reaches out of the original 3D frame; refit once when that set changes so the supports are in view.
+ if(!state.model.preview){const k=state.model.parts.filter(p=>p.kind==='stair-stringer-support').length;if(state._stairSupportKey!==undefined&&k>0&&k!==state._stairSupportKey)state._fitted=false;state._stairSupportKey=k;}
  if(state.intent&&!state._fitted){renderer3d.fit();state._fitted=true;}if(!state.intent)state._fitted=false;
  if(!state.model.preview)$('modelBadge').textContent=state.model.stats.partCount?`${state.model.stats.partCount} COMPONENTS`:'READY TO DESIGN';
  if(!state.intent)setFramingStatus('none');
@@ -4763,7 +4787,8 @@ function reviewFraming(q,m){const c=m.counts,st=m.stats,alerts=m.alerts||[],warn
   c.landings?rvRow('landings','Landings',`${c.landings}${c.turningStairs?` (${c.turningStairs} turning)`:''} · concept, not approved`):'',
   c.landings?rvRow('landing-posts','Landing posts',`${c.landingPosts}`):'',c.landings?rvRow('landing-footings','Landing footings',`${c.landingFootings}`):'',
   c.landings?rvRow('landing-framing','Landing framing members',`${c.landingFraming}`):'',
-  c.landingFrameSupportJoists?rvRow('landing-support-joists','Landing frame support joists',`${c.landingFrameSupportJoists}`):''].join(''));
+  c.landingFrameSupportJoists?rvRow('landing-support-joists','Landing frame support joists',`${c.landingFrameSupportJoists}`):'',
+  c.stairSupportBeams?rvRow('stair-supports','Stair support beams',`${c.stairSupportBeams} · ${c.stairSupportPosts} posts · ${c.stairSupportFootings} footings · concept, AOS review`):''].join(''));
  html+=reviewBlocking(m);
  const group=(lvl,title)=>{const list=alerts.filter(a=>a.level===lvl);return list.length?`<div class="rv-issues rv-${lvl}" data-level="${lvl}"><h4>${title} (${list.length})</h4><ul>${list.map(a=>`<li>${esc(alertText(a.message))}</li>`).join('')}</ul></div>`:'';};
  const other=alerts.filter(a=>!['warning','review','info'].includes(a.level));
@@ -5130,7 +5155,7 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
       +(q.houseEdges.length?`<div class="control-group"><p class="group-title">House walls</p><div class="ledger-list">${q.houseEdges.map(i=>{const e=es[i],on=ledgerMode&&q.ledgerEdges.includes(i);return `<div class="ledger-row ${on?'on':''}" data-ledger-edge="${i}"><div class="ledger-name"><b>${wallName(es,i)} · edge ${i+1}</b><span>${e?fmt(e.len):''} · ${on?'Ledger ✓':ledgerMode?'No ledger':'No ledger (freestanding)'}</span></div><button type="button" data-action="ledger-toggle" data-edge="${i}">${on?'Remove ledger':'Add ledger'}</button></div>`;}).join('')}</div><p class="support-explain">You can also tap L / − on a house wall in the plan.</p></div>`:`<p class="support-explain">No house walls are set, so the deck is freestanding.</p>`)
       +`<div class="control-group"><p class="group-title">Beam arrangement</p>${seg('beamStyle',[['dropped','Dropped beam'],['flush','Flush beam*']],q.beamStyle)}</div>`
       +`${state.framingStatus&&state.framingStatus!=='current'?`<div class="framing-pending ${state.framingStatus}">${state.framingStatus==='invalid'?'Framing can’t be generated until the outline is fixed.':state.framingStatus==='calculating'?'Updating framing…':'The framing below is from before your last change.'}${state.framingStatus==='pending'?' <button type="button" data-action="framing-update">Update framing</button>':''}</div>`:''}`
-      +`<div class="framing-summary">Joists ${m.stats.joistNominal} at ${m.stats.joistSpacingIn} in. on center, running ${Math.abs(ja[0])>=Math.abs(ja[1])?'left–right':'top–bottom'} on the plan · ${m.counts.ledger} ledger${m.counts.ledger===1?'':'s'} · ${m.counts.beams} beam${m.counts.beams===1?'':'s'} · ${m.counts.posts} posts</div>`
+      +`<div class="framing-summary">Joists ${m.stats.joistNominal} at ${m.stats.joistSpacingIn} in. on center, running ${Math.abs(ja[0])>=Math.abs(ja[1])?'left–right':'top–bottom'} on the plan · ${m.counts.ledger} ledger${m.counts.ledger===1?'':'s'} · ${m.counts.beams} beam${m.counts.beams===1?'':'s'} · ${m.counts.posts} posts${m.counts.stairSupportBeams?` · stairs: ${m.counts.stairSupportBeams} support beam${m.counts.stairSupportBeams===1?'':'s'} on ${m.counts.stairSupportPosts} posts (AOS review)`:''}</div>`
       +`<div class="framing-status" data-note="framing-status"><b>${unresolved?`⚠ ${unresolved} joist bearing${unresolved===1?'':'s'} not yet verified`:'Preliminary framing concept'}</b>Not engineered or code-approved. AOS production review is required before construction.</div>`
       +`<div class="action-row"><button data-action="framing-details">View framing measurements →</button></div>`;
    }
@@ -5922,6 +5947,18 @@ function planDraw(){state.planLabelBoxes=[];const {w,h}=canvasSize(),sc=state.pl
  }
  if(q.staircases.length)for(let part of model.parts)if(part.kind==='stair-riser'){const pt=xy(part.x,part.z);ctx.save();ctx.translate(...pt);ctx.rotate(-(part.yaw||0));ctx.fillStyle='#5d443c';ctx.fillRect(-part.w*sc/2,-2,part.w*sc,4);ctx.restore();}
  if(state.step!==6)for(let part of model.parts)if(['top-rail','railing-post','stair-top-rail','stair-rail-post'].includes(part.kind))shapePart(part);
+ if(state.step===6&&!model.preview){const sc=state.plan.scale;
+   // V5.3 C7 Gate C (owner testing, 12 Nov 2026): stair support beams and their posts sit UNDER the stringers,
+   // so on the Framing step they are drawn again last (over the stringers and riser lines), outlined, so they
+   // read clearly; in the Gate C build the stringers and risers hid them.
+   // The 3 in. wide beam is drawn at least 8 px wide so it reads at any zoom.
+   ctx.save();ctx.strokeStyle='#1f2a33';ctx.lineWidth=1;
+   for(let part of model.parts){if(part.kind!=='stair-stringer-support')continue;const [cx,cy]=xy(part.x,part.z),sc=state.plan.scale,a=-(part.yaw||0);
+     ctx.save();ctx.translate(cx,cy);ctx.rotate(a);const L=part.w*sc,Wd=Math.max(8,part.d*sc);ctx.fillStyle='#c98a3e';ctx.fillRect(-L/2,-Wd/2,L,Wd);ctx.strokeRect(-L/2,-Wd/2,L,Wd);ctx.restore();}
+   for(let part of model.parts){if(part.kind!=='stair-support-post')continue;const g=planFootprintOf(part);
+     ctx.beginPath();g.pts.forEach((v,i)=>{const pt=xy(v[0],v[1]);i?ctx.lineTo(...pt):ctx.moveTo(...pt);});ctx.closePath();ctx.fillStyle='#3d2f22';ctx.fill();ctx.stroke();}
+   ctx.restore();
+ }
  // House wall indicators; each perimeter edge is a selectable entity.
  // V5.3 R1: house walls read as the house: a hatched house-side band outside the deck and a thick charcoal
  // wall line (drawing only; wall positions, openings and ledgers are unchanged).

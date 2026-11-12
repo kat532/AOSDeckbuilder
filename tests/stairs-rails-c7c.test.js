@@ -1,7 +1,8 @@
 // V5.3 C7 Gate C (owner authorization 11 Nov 2026): stair and railing stabilization. Every fixture, every
 // baseline design and a matrix of stairs (heights, 3′/3½′/4′/6′/full widths, landings straight and turning,
 // railing sides on and off) are checked with the independent audit in tests/c7c-audit.js. Screening against the
-// 2021 IRC as published by jurisdictions and the AWC prescriptive deck guide; nothing here is a code approval.
+// Minnesota Residential Code (Minn. R. ch. 1309: 2018 IRC as amended) and the AWC prescriptive deck guide (DCA 6);
+// nothing here is a code approval.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -15,7 +16,7 @@ const { fixtures } = require('./fixtures');
 const { designs } = require('./baseline/designs');
 const { isRail } = require('./rail-inset');
 const { GATE_C_RAIL_KINDS, r1RailParts } = require('./c7-gate-c');
-const { REQ, bays, required, stringers } = require('./c7c-audit');
+const { REQ, bays, required, stringers, supportPaths, aosRule, AOS_RISE_FT } = require('./c7c-audit');
 
 const win = loadEngine(), core = win.DeckCore;
 const tmp = path.join(os.tmpdir(), `aos-r1c-${process.pid}.html`);
@@ -33,6 +34,13 @@ function matrix() {
   for (const [h, turn] of [[6, 'straight'], [8, 'straight'], [9, 'left'], [10, 'right']]) for (const W of [3, 4])
     out[`H${h} W${W} landing ${turn}`] = { ...R, height: h, staircases: [S({ width: W, landing: { elevation: h / 2, width: W + 1, depth: 4, turn } })] };
   for (const rails of [{ left: false, right: true }, { left: true, right: false }, { left: false, right: false }]) out[`H5 rails ${JSON.stringify(rails)}`] = { ...R, height: 5, staircases: [S({ rails })] };
+  // Owner support testing (12 Nov 2026): 7′, 8′, 8′1″ and 10′, straight and with straight / left / right landings,
+  // and a low landing with no room for posts.
+  for (const [hn, h] of [['7', 7], ['8', 8], ['8-1', 8 + 1 / 12], ['10', 10]]) {
+    out[`support ${hn} straight`] = { ...R, height: h, staircases: [S({})] };
+    for (const turn of ['straight', 'left', 'right']) out[`support ${hn} landing ${turn}`] = { ...R, height: h, staircases: [S({ width: 4, landing: { elevation: h / 2, width: 5, depth: 4, turn } })] };
+    out[`support ${hn} low landing`] = { ...R, height: h, staircases: [S({ landing: { elevation: 1.2, width: 4, depth: 4 } })] };
+  }
   out['H5 edge 3 unrailed'] = { ...R, height: 5, railEdges: [1, 3], staircases: [S({})] };
   out['H2 edge 3 unrailed (under 30 in.)'] = { ...R, height: 2, railEdges: [1, 3], staircases: [S({})] };
   return out;
@@ -67,8 +75,15 @@ function audit(name, m) {
     const d = [Math.cos(-b.yaw), Math.sin(-b.yaw)], under = posts.filter(p => { const v = [p.x - b.x, p.z - b.z]; return Math.abs(v[0] * d[1] - v[1] * d[0]) < 0.02 && Math.abs(v[0] * d[0] + v[1] * d[1]) <= b.w / 2; });
     assert.ok(under.length >= 2, `${name}: stair support beam on at least two posts`);
     for (const p of under) { assert.ok(Math.abs(p.y + p.h / 2 - (b.y - b.h / 2)) < 1e-6, `${name}: post top at the beam underside`); assert.ok(feet.some(f => Math.hypot(f.x - p.x, f.z - p.z) < 1e-6), `${name}: footing under the post`); }
-    assert.ok(/AOS production review|verify/.test(b.label));
+    assert.ok(/AOS production review/.test(b.label));
   }
+  // Load path of every stair support (independent check) and the AOS 8 ft rule.
+  for (const sp of supportPaths(m)) assert.deepEqual(sp.faults, [], `${name}: stair support beam at (${sp.b.x.toFixed(2)}, ${sp.b.z.toFixed(2)})`);
+  const rule = aosRule(m), ruleAlerts = codes(m, 'stair-intermediate-support');
+  assert.equal(ruleAlerts.length, rule.length, `${name}: one AOS 8 ft rule note per stair over ${AOS_RISE_FT} ft`);
+  for (const r of rule) assert.ok(r.satisfied, `${name}: stair ${r.id} over 8 ft has an intermediate structural support`);
+  for (const a of ruleAlerts) assert.equal(a.level, 'review');
+  if (m.intent.height <= AOS_RISE_FT + 1e-9) assert.equal(ruleAlerts.length, 0);
   // Required guards and handrails are reported (they are never silently left out).
   const req = required(m), q = m.intent;
   const deckAlert = codes(m, 'guard-required');
@@ -91,7 +106,7 @@ function audit(name, m) {
 test('C7 Gate C: guards, stair guards, stringers, required guards and handrails on every fixture, design and stair matrix case', () => {
   let n = 0, stairs = 0;
   for (const [name, raw] of Object.entries(ALL())) { const m = build(raw); if (m.stats.invalidGeometry) continue; audit(name, m); n++; stairs += m.intent.staircases.length; }
-  assert.ok(n >= 110 && stairs >= 69, `${n} designs, ${stairs} stairs checked`);
+  assert.ok(n >= 130 && stairs >= 89, `${n} designs, ${stairs} stairs checked`);
 });
 
 test('C7 Gate C: the 1½ in. aluminum railing inset is preserved: posts, post caps and top rails are exactly R1\'s', () => {
@@ -148,4 +163,26 @@ test('C7 Gate C: before/after on the baseline designs (R1 failed the screening c
   fs.writeFileSync(path.join(ROOT, 'test-results', 'c7-gate-c-report.json'), JSON.stringify({ r1: before, gateC: after }, null, 2));
   assert.ok(before.bottomGap > 0 && before.openings > 0 && before.triangle > 0 && before.stringerSpan > 0, `R1 findings ${JSON.stringify(before)}`);
   assert.deepEqual(after, { bottomGap: 0, openings: 0, triangle: 0, stringerSpan: 0 });
+});
+
+test('C7 Gate C: AOS 8 ft rule (owner, 12 Nov 2026) at 7′, 8′, 8′1″ and 10′, straight and with landings', () => {
+  const cases = { '7′': 7, '8′': 8, '8′1″': 8 + 1 / 12, '10′': 10 }, rows = {};
+  for (const [hn, h] of Object.entries(cases)) for (const lnd of [null, 'straight', 'left', 'right', 'low']) {
+    const st = lnd === null ? S({}) : lnd === 'low' ? S({ landing: { elevation: 1.2, width: 4, depth: 4 } }) : S({ width: 4, landing: { elevation: h / 2, width: 5, depth: 4, turn: lnd } });
+    const m = build({ ...R, height: h, staircases: [st] }), rule = aosRule(m), a = codes(m, 'stair-intermediate-support');
+    const beams = m.parts.filter(p => p.kind === 'stair-stringer-support').length, landingPosts = m.parts.filter(p => p.kind === 'landing-post').length;
+    rows[`${hn} ${lnd || 'no landing'}`] = { beams, landingPosts, rule: rule.length ? (rule[0].beams ? 'support beam' : 'landing') : 'n/a' };
+    if (h > 8) {
+      assert.equal(rule.length, 1); assert.ok(rule[0].satisfied, `${hn} ${lnd}`);
+      if (lnd && lnd !== 'low') assert.match(a[0].message, /Provided by its landing on \d+ posts and footings/);
+      if (!lnd) { assert.ok(beams >= 1); assert.match(a[0].message, /Provided by \d+ stringer support beams?/); }
+    } else assert.equal(a.length, 0, `${hn}: no AOS rule note at 8 ft or less`);
+    // The span rule still applies at every height (never replaced by the 8 ft rule or the landing).
+    for (const s of stringers(m)) assert.ok(s.maxSpanFt <= 6 + 1e-6, `${hn} ${lnd}: span ${s.maxSpanFt}`);
+    for (const sp of supportPaths(m)) assert.deepEqual(sp.faults, []);
+  }
+  // Under 8 ft, a 7′ straight stair still gets a support from the span rule alone.
+  assert.ok(rows['7′ no landing'].beams >= 1);
+  fs.mkdirSync(path.join(ROOT, 'test-results'), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, 'test-results', 'c7-gate-c-support-matrix.json'), JSON.stringify(rows, null, 2));
 });

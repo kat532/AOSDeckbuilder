@@ -1,7 +1,8 @@
 // V5.3 C7 Gate C (owner, 11 Nov 2026): independent stair and railing audit. Written from the model's parts and
 // geometry only (not from the engine's own constants or alerts), so the engine is not grading itself.
 //
-// Requirements checked, as summarised by jurisdictions publishing the 2021 IRC (R311.7, R312) and the AWC
+// Requirements checked: the Minnesota Residential Code (Minn. R. ch. 1309, adopting the 2018 IRC with amendments;
+// stair width per Minn. R. 1309.0311; R311.7 and R312 values unchanged from the 2018 IRC), and the AWC
 // prescriptive deck guide (cut stringers), and the owner's approved AOS defaults. These are SCREENING checks for a
 // sales/concept design; the app never presents a stair or guard as code-approved:
 //   GUARD_MIN_IN      36    deck / landing guard height above the walking surface (R312.1.2; AOS default 36 in.)
@@ -123,4 +124,47 @@ function stringers(m) {
   return res;
 }
 
-module.exports = { REQ, bays, required, stringers, flights, triangleSphere, STEP };
+// ---- Stair support load path and the AOS 8 ft rule (owner, 12 Nov 2026) ----------------------------------
+// Every stair support beam: runs across the stair under ALL stringers of one flight, its top at the stringers'
+// underside at that point (not floating, not cutting into them), inside the flight's run; it stands on at least
+// two posts whose tops meet its underside and which stand under it; each post has a footing under it.
+// AOS rule: a stair with more than 8 ft of rise has at least one intermediate structural support: a stair
+// support beam on some flight, or a landing framed on its own posts (2+) with footings under the landing.
+const AOS_RISE_FT = 8;
+function undersideAt(profile, x) { // lowest point of the stringer profile polygon on the vertical line at x
+  let lo = Infinity; for (let i = 0; i < profile.length; i++) { const a = profile[i], b = profile[(i + 1) % profile.length];
+    if ((a[0] - x) * (b[0] - x) > 0 || a[0] === b[0]) continue; const t = (x - a[0]) / (b[0] - a[0]); lo = Math.min(lo, a[1] + t * (b[1] - a[1])); }
+  return lo;
+}
+function supportPaths(m) {
+  const out = [], F = flights(m), posts = m.parts.filter(p => p.kind === 'stair-support-post'), feet = m.parts.filter(p => p.kind === 'stair-support-footing');
+  for (const b of m.parts.filter(p => p.kind === 'stair-stringer-support')) {
+    const faults = [], d = dir(b);
+    const fl = F.map(f => ({ f, l: local(f, b.x, b.z) })).find(({ f, l }) => Math.abs(dot(d, f.tt)) > 0.99 && l[1] > 0.05 && l[1] < f.run - 0.05 && Math.abs(l[0]) < 0.5);
+    if (!fl) { out.push({ b, faults: ['not across a stair flight, inside its run'] }); continue; }
+    const strs = m.parts.filter(p => p.kind === 'stair-stringer' && p.profileBase && Math.hypot(p.profileBase[0] - fl.f.base[0], p.profileBase[1] - fl.f.base[1]) < 1e-6 && Math.abs(dot(p.profileNN, fl.f.nn) - 1) < 1e-6);
+    for (const s of strs) { if (Math.abs(s.profileOffset - fl.l[0]) > b.w / 2) faults.push('a stringer is not over the beam');
+      const u = undersideAt(s.profile2d, fl.l[1]); if (Math.abs(top(b) - u) > 0.02) faults.push(`beam top ${top(b).toFixed(2)} vs stringer underside ${u.toFixed(2)}`); }
+    const under = posts.filter(p => { const v = [p.x - b.x, p.z - b.z]; return Math.abs(v[0] * d[1] - v[1] * d[0]) < 0.02 && Math.abs(dot(v, d)) <= b.w / 2; });
+    if (under.length < 2) faults.push(`${under.length} posts under the beam`);
+    for (const p of under) { if (Math.abs(top(p) - bot(b)) > 1e-6) faults.push('post top not at the beam underside'); if (bot(p) > 0.2) faults.push('post does not reach its footing');
+      if (!feet.some(f => Math.hypot(f.x - p.x, f.z - p.z) < 1e-6)) faults.push('post without a footing'); }
+    out.push({ b, flight: fl.f, x: fl.l[1], posts: under.length, faults });
+  }
+  return out;
+}
+function aosRule(m) {
+  const H = m.intent.height, res = [];
+  for (const g of m.geometry.stairs || []) {
+    if (H <= AOS_RISE_FT + 1e-9) continue;
+    const beams = supportPaths(m).filter(s => s.flight && s.flight.stair.id === g.id && !s.faults.length).length;
+    let landingPosts = 0;
+    if (g.landing) { const L = g.landing, feet = m.parts.filter(p => p.kind === 'landing-footing');
+      landingPosts = m.parts.filter(p => { if (p.kind !== 'landing-post') return false; const u = (p.x - g.base[0]) * g.tt[0] + (p.z - g.base[1]) * g.tt[1], v = (p.x - g.base[0]) * g.nn[0] + (p.z - g.base[1]) * g.nn[1];
+        return Math.abs(u) <= L.width / 2 + 0.01 && v >= L.v0 - 0.01 && v <= L.v1 + 0.01 && feet.some(f => Math.hypot(f.x - p.x, f.z - p.z) < 1e-6) && Math.abs(top(p) - (L.elevation - 0)) < 1.5; }).length; }
+    res.push({ id: g.id, beams, landingPosts, satisfied: beams > 0 || landingPosts >= 2 });
+  }
+  return res;
+}
+
+module.exports = { REQ, bays, required, stringers, flights, triangleSphere, STEP, supportPaths, aosRule, AOS_RISE_FT };

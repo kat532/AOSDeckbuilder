@@ -16,7 +16,7 @@
 const GATE_C_RAIL_KINDS = new Set(['baluster', 'stair-baluster', 'bottom-rail', 'stair-bottom-rail']);
 const GATE_C_STAIR_KINDS = new Set(['stair-stringer-support', 'stair-support-post', 'stair-support-footing']);
 const GATE_C_COUNTS = ['stairSupportBeams', 'stairSupportPosts', 'stairSupportFootings'];
-const GATE_C_ALERT = /finished clear width about|continuous graspable handrail 34–38 in\.|need a guard \(2021 IRC R312\.1\.1\)|cut stringers run .* than the 6 ft limit for cut stringers/;
+const GATE_C_ALERT = /AOS requires at least one intermediate structural support|finished clear width about|continuous graspable handrail 34–38 in\.|need a guard \(Minnesota Residential Code R312\.1\.1|cut stringers run .* than the 6 ft limit for cut stringers/;
 const alertText = (a) => typeof a === 'string' ? a : a.message;
 const drop = (o, keys) => Object.fromEntries(Object.entries(o || {}).filter(([k]) => !keys.includes(k)));
 // Full model (plain JSON): without the Gate C stair members, counts and alerts (railing is handled by rail-inset.js).

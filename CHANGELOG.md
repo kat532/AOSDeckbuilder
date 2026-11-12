@@ -2,9 +2,26 @@
 
 All changes to `index.html` and the test suite. Staging and production are deployed separately and only with owner approval.
 
+## V5.3 C7 Gate C2 — owner stair support correction (branch `v5.3/c7`, 12 Nov 2026)
+
+Owner testing: **Gate C not approved**; the intermediate stair support "did not appear as expected". Built on `checkpoint/v5.3-c7-gate-c` (`884fd15`, unchanged). **Pending owner approval; not deployed; final C7 release work not started.**
+
+**Reproduced in the Gate C HTML** (owner path: deck with no stairs → Stairs → add stair → Framing; 7′, 8′, 8′1″, 10′ and a 10′ turning landing): the engine built the support beams, posts and footings, but
+- 2D Framing drew the stringers and riser lines over the 3 in. beam, so it could not be seen; the framing summary did not mention it;
+- 3D kept the camera fitted before the stair was added, so the stair and its supports were partly out of view.
+
+**Repairs**
+- 2D Framing draws stair support beams (at least 8 px wide, outlined) and their posts last, over the stringers and riser lines; the framing summary and Review › Framing list them.
+- 3D refits once when a stair gains support members, so the whole stair and its supports are in view (no other camera change).
+- AOS framing rule (owner, 12 Nov 2026): a stair with more than 8 ft of vertical rise has at least one intermediate structural support. A landing counts only when framed on its own posts and footings; otherwise a support beam is added to the longest flight. The 6 ft cut-stringer span rule still applies to every flight at every height. A *review* note states which support satisfies the rule.
+- Supports are decided per stair after its flights and landing exist; every beam sits under all stringers with its top at their underside, on posts with footings (independently checked).
+- Code references corrected to the Minnesota Residential Code (Minn. R. ch. 1309, adopting the 2018 IRC with amendments; stair width per Minn. R. 1309.0311). A 2024-IRC-based Minnesota edition is expected in late 2026; confirm the edition in force.
+
+**Full regression**: 606 tests, 605 pass, 0 fail, 1 TODO (cut-corner golden, unchanged), 37.4 min; tree identical before and after the run. New tests: AOS 8 ft rule and support load path (130 cases, 89 stairs), owner-path e2e (2D color, summary, 3D refit).
+
 ## V5.3 C7 Gate C — stair and railing stabilization (branch `v5.3/c7`, 11–12 Nov 2026)
 
-Owner authorization 11 Nov 2026, from the owner-approved Gate B2 checkpoint (`checkpoint/v5.3-c7-gate-b2-approved`, `dcff7d0`, unchanged). **Pending owner approval; not deployed.** Screening against the 2021 IRC (R311.7, R312) as published by jurisdictions and the AWC prescriptive deck guide; nothing is presented as code-approved.
+Owner authorization 11 Nov 2026, from the owner-approved Gate B2 checkpoint (`checkpoint/v5.3-c7-gate-b2-approved`, `dcff7d0`, unchanged). **Pending owner approval; not deployed.** Screening against the Minnesota Residential Code (Minn. R. ch. 1309: 2018 IRC R311.7, R312 as amended; corrected in Gate C2 from "2021 IRC") and the AWC prescriptive deck guide (DCA 6); nothing is presented as code-approved.
 
 **Findings on R1 / Gate B2 (35 baseline designs, independent audit `tests/c7c-audit.js`)**
 - Deck and landing guards: bottom-rail underside about 5½ in. above the decking, so a 4 in. sphere passes (430 guard bays).
