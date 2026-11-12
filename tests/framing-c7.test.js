@@ -16,7 +16,9 @@ const { loadEngine, ROOT } = require('./engine');
 const { fixtures } = require('./fixtures');
 const { designs } = require('./baseline/designs');
 const { C7_REFRAMED } = require('./c7-framing');
-const { CASES: C7CASES, audit: c7audit } = require('./c7-audit');
+const { CASES: C7CASES, audit: c7audit, supportChecks } = require('./c7-audit');
+const { pfMembers } = require('./c7-picture-frame');
+const IRREGULAR = require('./c7-irregular-shapes');
 
 const win = loadEngine(), core = win.DeckCore;
 const FX = fixtures(win), BASE = designs(win), CASES = C7CASES(FX);
@@ -42,6 +44,7 @@ for (const [name, q] of Object.entries(CASES)) {
     assert.deepEqual(plain(r.joistFaults.map(x => `${x.j.role || 'joist'} @${x.j.t.toFixed(2)}: ${x.f.join(', ')}`)), [], 'unsupported joists');
     assert.deepEqual(plain(r.rims.filter(x => !x.supported).map(x => `edge ${x.edge} (${x.len} ft): ${x.faults.join(', ')}`)), [], 'unsupported load-carrying rims');
     assert.deepEqual(plain(r.outsideMembers.map(p => `${p.kind} ${p.role || ''}`.trim())), [], 'beams/posts outside the deck outline');
+    assert.deepEqual(supportChecks(r.m), [], 'beam connections, beam-end posts and posts under beams');
     for (const p of r.m.parts.filter(p => p.kind === 'dropped-beam')) assert.ok(p.w >= 1.5, `${p.w.toFixed(2)} ft ${p.role} beam (no tiny beam fragments)`);
     assert.equal(r.m.counts.footings, r.m.counts.posts, 'one footing per post');
     // Review, not failure: crowded footings are counted and flagged; footing pads past the outline are allowed.
@@ -77,15 +80,74 @@ test('C7 every baseline design passes the framing screen; exactly the documented
   assert.deepEqual(changed.sort(), Object.keys(C7_REFRAMED).sort(), 'reframed designs = C7_REFRAMED in tests/c7-framing.js');
 });
 
-test('C7 when no layout passes, the design is reported for structural review and never as buildable', () => {
-  // The owner irregular deck: R1 itself leaves joist runs without confirmed bearing; C7 finds no layout that
-  // passes, keeps the R1 layout unchanged and says so.
-  const owner = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'owner-irregular-deck.json'), 'utf8')).design;
-  const m = core.make(owner);
-  assert.equal(m.framing.screenPassed, false);
-  assert.equal(m.framing.structuralReviewRequired, true);
-  assert.ok(m.alerts.some(a => a.level === 'warning' && /No framing layout was found.*requires structural review.*NOT a buildable layout/.test(a.message)));
-  assert.equal(m.counts.beams, 3); assert.equal(m.counts.posts, 8); // the R1 layout, unchanged
+// Owner visual testing, 11 Nov 2026 (Gate B NOT approved). The owner irregular deck and the challenging custom
+// outlines below are checked member by member: joists and rims bear, beams and posts are inside, beams touch
+// only where they END on one post that stands under both, every beam end has a post, no post stands alone.
+const OWNER = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'owner-irregular-deck.json'), 'utf8')).design;
+const SHAPES = IRREGULAR(OWNER);
+// Outlines on which no compared layout passes the screen (short joists in acute 22.5/45-degree tips whose
+// cantilevers exceed a quarter of the span between their two bearings). Shown for production review.
+const C7_NO_VALID_LAYOUT = ['flared 22.5° sides', 'narrow angled arm'];
+
+test('C7 the owner irregular deck now has a layout that passes the screen, with every connection supported', () => {
+  const r = audit(OWNER);
+  assert.equal(r.m.framing.screenPassed, true);
+  assert.equal(r.m.framing.structuralReviewRequired, false);
+  assert.deepEqual(plain(r.joistFaults.map(x => x.j.t.toFixed(2))), []);
+  assert.deepEqual(plain(r.rims.filter(x => !x.supported).map(x => x.edge)), []);
+  assert.deepEqual(plain(r.outsideMembers.map(p => p.kind)), []);
+  assert.deepEqual(supportChecks(r.m), []);
+  assert.equal(r.m.stats.unresolvedJoistRuns, 0);
+  assert.ok(!r.m.parts.some(p => p.structuralFault), 'nothing marked red');
+  assert.ok(r.m.alerts.some(a => /NOT a code-verified design/.test(a.message)));
+});
+
+for (const [name, q] of Object.entries(SHAPES)) {
+  test(`C7 irregular outline: framing passes, or every failing member is shown red for production review: ${name}`, () => {
+    const r = audit(q), m = r.m;
+    // Whatever is shown: no beam/post outside, no clash, no beam end without a post, no orphan post.
+    assert.deepEqual(plain(r.outsideMembers.map(p => p.kind)), [], 'beams/posts outside');
+    assert.deepEqual(supportChecks(m), [], 'connections and posts');
+    assert.equal(m.framing.screenPassed, !C7_NO_VALID_LAYOUT.includes(name), 'screen result as documented');
+    if (m.framing.screenPassed) {
+      assert.deepEqual(plain(r.joistFaults.map(x => `${x.j.t.toFixed(2)}: ${x.f.join(', ')}`)), []);
+      assert.deepEqual(plain(r.rims.filter(x => !x.supported).map(x => x.edge)), []);
+      assert.ok(!m.parts.some(p => p.structuralFault));
+      return;
+    }
+    assert.equal(m.framing.structuralReviewRequired, true);
+    assert.ok(m.alerts.some(a => a.level === 'warning' && /requires structural review.*NOT a buildable layout/.test(a.message)));
+    assert.ok(m.alerts.some(a => a.level === 'warning' && /shown in red/.test(a.message)));
+    // Each joist the independent audit finds unsupported is drawn red and labelled NOT BUILDABLE.
+    const nrm = [-m.geometry.joistAxis[1], m.geometry.joistAxis[0]];
+    for (const { j } of r.joistFaults) {
+      const red = m.parts.filter(p => p.structuralFault && /joist|trimmer/.test(p.kind) && Math.abs(p.x * nrm[0] + p.z * nrm[1] - j.t) < 0.12);
+      assert.ok(red.length && red.every(p => p.color === '#c62828' && /^NOT BUILDABLE/.test(p.label)), `joist @${j.t.toFixed(2)} marked red`);
+    }
+    assert.ok(r.joistFaults.length > 0 && m.framing.faultMarked >= r.joistFaults.length);
+  });
+}
+
+test('C7 picture-frame framing is R1\'s, member by member, on every baseline design', () => {
+  // tests/baseline/c7-picture-frame-r1.json was recorded from R1 (01f16df) by scripts/record-c7-picture-frame-r1.js.
+  const R1 = JSON.parse(fs.readFileSync(path.join(__dirname, 'baseline', 'c7-picture-frame-r1.json'), 'utf8'));
+  assert.equal(R1.recordedFrom.slice(0, 7), '01f16df');
+  for (const [name, q] of Object.entries(BASE)) {
+    const m = core.make(core.sanitize(q));
+    assert.deepEqual(plain(pfMembers(m)), R1.designs[name], `${name}: support joists, flat 2x6 blocking, corner trimmers, field-end blocking`);
+    // No rim-backing joist where a picture-frame assembly already backs the rim.
+    for (const f of m.parts.filter(p => p.kind === 'picture-blocking-2x6-flat')) {
+      const e = m.geometry.edges[Number(/edge-(\d+)-/.exec(f.connect)[1])];
+      assert.ok(!m.parts.some(p => p.kind === 'rim-backing-joist' && Math.abs((p.x - e.a[0]) * e.n[0] + (p.z - e.a[1]) * e.n[1]) < 1.6), `${name}: edge ${e.i} has no rim-backing joist`);
+    }
+  }
+});
+
+test('C7 bordered rims backed by the R1 picture-frame assembly are reported as such', () => {
+  const r = audit(CASES['L template']);
+  assert.ok(r.rims.some(x => x.supported && x.path === 'picture-frame assembly'));
+  assert.equal(r.m.counts.rimBackingJoists, 0);
+  assert.ok(r.m.framing.rims.some(x => /picture-frame assembly/.test(x.path || '')));
 });
 
 test('C7 angled corner beams are labeled, follow the cut edge, and meet the main beam on one shared post', () => {

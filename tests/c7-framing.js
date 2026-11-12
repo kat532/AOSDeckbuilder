@@ -15,39 +15,37 @@
 //     - framing counts (joists, beams, posts, footings), framing stats, geometry.beams/joists, the
 //       supplemental blocking quantity, and framing alerts.
 //   A design's framing changes only when (a) the R1 layout fails the C7 screen and another layout passes
-//   it, (b) a rim-backing joist is added along a notch side rim, or (c) a post that projected past the
-//   outline is moved inward to the beam face. tests/framing-c7.test.js pins which baseline designs these are
+//   it (or, when none passes, a layout with fewer screen failures is shown with its faults in red), (b) a
+//   rim-backing joist is added along a notch side rim that has NO picture-frame assembly, or (c) a post that
+//   projected past the outline is moved inward to the beam face.
+//   Owner visual testing (11 Nov 2026, Gate B NOT approved): a rim already backed by R1's picture-frame
+//   assembly (rim / flat 2x6 / picture-support joist) gets no rim-backing joist, so every bordered L, T,
+//   bump-out, two-wall and B2 design is back to R1's framing exactly and is no longer in C7_REFRAMED. tests/framing-c7.test.js pins which baseline designs these are
 //   (C7_REFRAMED below) and checks every reframed design structurally.
 'use strict';
 const C7_NEW_COUNTS = ['cornerTrimmers', 'rimBackingJoists', 'rimJoists'];
 const C7_FRAMING_KINDS = new Set(['joist', 'picture-support-joist', 'divider-support-joist', 'corner-trimmer', 'rim-backing-joist', 'rim-joist',
   'dropped-beam', 'post-6x6', 'footing-concept', 'field-end-blocking', 'ledger']);
-// The joist size can differ between layouts (ledger and joist depth, span limit and beam-load screening follow it).
+// The joist size can differ between layouts (ledger and joist depth, span limit and beam-load screening follow it,
+// and so do the beam profile (3-2x10 vs 3-2x12 for flush beams) and the flush-beam depth alert).
 const C7_FRAMING_COUNTS = ['joists', 'beams', 'posts', 'footings', 'joistNominal'];
 const C7_FRAMING_STATS = ['partCount', 'beamLengthsFt', 'postSpacingFt', 'beamRows', 'beamRoles', 'sharedPosts', 'physicalSupportOutside', 'physicalSupportOutsideCount',
   'structuralEnvelopeOutsideCount', 'footingOutsideProjectionCount', 'unresolvedJoistRuns', 'framingPlanner', 'optimizerCandidates', 'sharedSupportZones', 'maxBeamCantFt', 'closeFootingPairs',
-  'joistNominal', 'joistMaxSpanFt', 'unverifiedBeamLoadCount'];
-const C7_FRAMING_ALERT = /individual joist runs into|physical beam\/post footprints|conceptual footing pads|Single primary beam|Interior\/shared beams|supplemental blocks|joist runs do not yet|footings closer than 3 ft|local support beam|Alternative uniform joist sizes|carry two beam ends|angled corner beam|No framing layout was found|load-carrying side rim|Some irregular areas need local headers|Irregular deck uses preliminary shared beams|Perimeter beam candidate|tributary load estimates outside|exceed the one-sided prescriptive/;
+  'joistNominal', 'joistMaxSpanFt', 'unverifiedBeamLoadCount', 'beamProfile'];
+const C7_FRAMING_ALERT = /individual joist runs into|physical beam\/post footprints|conceptual footing pads|Single primary beam|Interior\/shared beams|supplemental blocks|joist runs do not yet|footings closer than 3 ft|local support beam|Alternative uniform joist sizes|carry two beam ends|angled corner beam|No framing layout was found|load-carrying side rim|shown in red: unsupported|Some irregular areas need local headers|Irregular deck uses preliminary shared beams|Perimeter beam candidate|tributary load estimates outside|exceed the one-sided prescriptive|Flush-top beam extends below joists/;
 // Baseline designs (tests/baseline/designs.js) whose framing C7 changes, and why. Pinned by framing-c7.test.js.
 const C7_REFRAMED = {
   'cut-corner': 'angled corner beams replace the single primary beam that left 4 joists unsupported (TODO case 4)',
   'free-hexagon': 'angled corner beams; R1 corner beams projected past the outline',
   'b3c-bevel-walls': 'angled corner beam; R1 corner beam projected past the outline',
-  'U-32x22': 'main beam moved 0.1 ft clear of the open notch it ran into; rim-backing joists at the notch side rims',
-  'large-U-40x24-9ft-stair': 'main beam moved clear of the open notch; rim-backing joists at the notch side rims',
-  'L-24x18': 'rim-backing joist along the notch side rim (R1 rim bore only on a beam and a cantilevered corner)',
-  'L-flipped-24x18': 'rim-backing joist along the notch side rim',
-  'T-28x20': 'rim-backing joists along both notch side rims',
-  'two-house-walls': 'rim-backing joist along the notch side rim',
-  'bump-out': 'rim-backing joists along both bump-out side rims',
-  'b2-diagonal-double-frame-dividers': 'rim-backing joist along the notch side rim',
-  'b2-vertical-u': 'rim-backing joist along the notch side rim',
+  'U-32x22': 'main beam moved 0.1 ft clear of the open notch it ran into (picture-frame framing unchanged from R1)',
+  'large-U-40x24-9ft-stair': 'main beam moved clear of the open notch (picture-frame framing unchanged from R1)',
   'flush-beam': 'perimeter-header posts moved 1/2 in. inward to the beam face (R1 posts projected past the outline)',
   'freestanding-flush': 'perimeter-header posts moved 1/2 in. inward to the beam face (R1 posts projected past the outline)',
 };
 const drop = (o, keys) => Object.fromEntries(Object.entries(o || {}).filter(([k]) => !keys.includes(k)));
 const alertText = (a) => typeof a === 'string' ? a : a.message;
-const C7_NEW_ALERT = /No framing layout was found|load-carrying side rim/;
+const C7_NEW_ALERT = /No framing layout was found|load-carrying side rim|shown in red: unsupported/;
 const reframed = (c7Model) => Boolean(c7Model && c7Model.framing && c7Model.framing.changedFromR1);
 function legacyJoists(counts) {
   if (!counts || !('joists' in counts)) return counts;

@@ -84,8 +84,15 @@ function audit(win, q) {
     const [P, Q, VP, VQ] = (A[0] * jD[0] + A[1] * jD[1]) <= (B[0] * jD[0] + B[1] * jD[1]) ? [A, B, e.a, e.b] : [B, A, e.b, e.a];
     const run = { pA: P, pB: Q, a: P[0] * jD[0] + P[1] * jD[1], b: Q[0] * jD[0] + Q[1] * jD[1], ledger: ledgerAt(VP), ledgerEnd: ledgerAt(VQ) };
     const own = memberFaults(run, beams, lim, style);
-    const backed = okJoists.some(j => Math.abs((P[0] - j.pA[0]) * jD[1] - (P[1] - j.pA[1]) * jD[0]) <= 0.25 && j.a <= run.a + 0.3 && j.b >= run.b - 0.3);
-    rims.push({ edge: e.i, len: +e.len.toFixed(2), supported: !own.length || backed, faults: own.length && !backed ? own : [] });
+    const covers = (j) => j.a <= run.a + 0.3 && j.b >= run.b - 0.3, off = (j) => Math.abs((P[0] - j.pA[0]) * jD[1] - (P[1] - j.pA[1]) * jD[0]);
+    const backed = okJoists.some(j => off(j) <= 0.25 && covers(j));
+    // R1 picture-frame assembly (owner-approved): rim / continuous flat 2x6 / picture-support joist. Accepted
+    // only when the model actually builds it on THIS edge: a flat 2x6 strip lying between the rim and a
+    // bearing picture-support joist, the strip and the joist each running the rim's full length.
+    const flats = m.parts.filter(p => p.kind === 'picture-blocking-2x6-flat' && new RegExp(`edge-${e.i}-board-`).test(p.connect));
+    const assembly = flats.length && okJoists.some(j => j.role === 'picture-support-joist' && covers(j) && off(j) <= 1.6 * flats.length &&
+      flats.every(f => { const c = [f.x, f.z], dr = Math.abs((P[0] - c[0]) * jD[1] - (P[1] - c[1]) * jD[0]); return dr < off(j) && f.w >= run.b - run.a - 0.6; }));
+    rims.push({ edge: e.i, len: +e.len.toFixed(2), supported: !own.length || backed || Boolean(assembly), path: !own.length ? 'own bearings' : backed ? 'adjacent joist' : assembly ? 'picture-frame assembly' : null, faults: own.length && !backed && !assembly ? own : [] });
   }
   const outsideMembers = m.parts.filter(p => (p.kind === 'dropped-beam' || p.kind === 'post-6x6') && !footprintInside(poly, footprint(p)));
   const outsidePads = m.parts.filter(p => p.kind === 'footing-concept' && !footprintInside(poly, footprint(p))).length;
@@ -98,4 +105,30 @@ function audit(win, q) {
       joists: m.counts.joists, cornerTrimmers: m.counts.cornerTrimmers, rimBackingJoists: m.counts.rimBackingJoists, rimJoists: m.counts.rimJoists, planner: m.framing ? m.framing.planner : m.stats.framingPlanner } };
 }
 
-module.exports = { CASES, audit, footprintInside, footprint, memberFaults, bearing };
+// ---- Beam / post support checks (owner visual testing, 11 Nov 2026) ---------------------------------------
+// From the model's parts only: (1) two beams whose 4.5 in. bodies touch must END at one post that stands
+// under BOTH (an end-to-end or T connection); any other contact or a mid-span crossing is a clash; (2) every
+// beam end has a post under that beam within 1 ft (beam overhang limit) of the end; (3) every post stands
+// under a beam. Returns readable defect strings.
+function supportChecks(m) {
+  const beams = m.parts.filter(p => p.kind === 'dropped-beam'), posts = m.parts.filter(p => p.kind === 'post-6x6');
+  const seg = (b) => { const c = Math.cos(-b.yaw), s = Math.sin(-b.yaw); return { b, a: [b.x - c * b.w / 2, b.z - s * b.w / 2], e: [b.x + c * b.w / 2, b.z + s * b.w / 2], d: [c, s], L: b.w }; };
+  const S = beams.map(seg), hw = 4.5 / 24;
+  const under = (p, s) => { const v = [p.x - s.a[0], p.z - s.a[1]], al = v[0] * s.d[0] + v[1] * s.d[1]; return al >= -0.05 && al <= s.L + 0.05 && Math.abs(v[0] * s.d[1] - v[1] * s.d[0]) <= hw + 0.02; };
+  const body = (s) => [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([u, v]) => [s.b.x + s.d[0] * u * s.L / 2 - s.d[1] * v * hw, s.b.z + s.d[1] * u * s.L / 2 + s.d[0] * v * hw]);
+  const overlap = (A, B) => { for (const P of [A, B]) for (let i = 0; i < 4; i++) { const a = P[i], b = P[(i + 1) % 4], n = [-(b[1] - a[1]), b[0] - a[0]];
+    const pa = A.map(p => p[0] * n[0] + p[1] * n[1]), pb = B.map(p => p[0] * n[0] + p[1] * n[1]), l = Math.hypot(...n);
+    if (Math.max(...pa) <= Math.min(...pb) + 0.01 * l || Math.max(...pb) <= Math.min(...pa) + 0.01 * l) return false; } return true; };
+  const tag = (s) => `${s.b.role || 'beam'} (${s.a.map(v => v.toFixed(1))})-(${s.e.map(v => v.toFixed(1))})`, out = [];
+  for (let i = 0; i < S.length; i++) for (let k = i + 1; k < S.length; k++) {
+    const A = S[i], B = S[k]; if (!overlap(body(A), body(B))) continue;
+    const ends = (s) => [s.a, s.e];
+    const ok = posts.some(p => under(p, A) && under(p, B) && [...ends(A), ...ends(B)].some(e => Math.hypot(p.x - e[0], p.z - e[1]) <= 0.6 + 5.5 / 24));
+    if (!ok) out.push(`beam clash / unsupported connection: ${tag(A)} x ${tag(B)}`);
+  }
+  for (const s of S) for (const e of [s.a, s.e]) if (!posts.some(p => under(p, s) && Math.hypot(p.x - e[0], p.z - e[1]) <= 1.02 + 5.5 / 24)) out.push(`beam end without a post under it: ${tag(s)} at (${e.map(v => v.toFixed(1))})`);
+  for (const p of posts) if (!S.some(s => under(p, s))) out.push(`post not under any beam at (${p.x.toFixed(2)},${p.z.toFixed(2)})`);
+  return out;
+}
+
+module.exports = { CASES, audit, footprintInside, footprint, memberFaults, bearing, supportChecks };

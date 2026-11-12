@@ -2,6 +2,26 @@
 
 All changes to `index.html` and the test suite. Staging and production are deployed separately and only with owner approval.
 
+## V5.3 C7 Gate B corrections — owner visual testing (branch `v5.3/c7`, 11 Nov 2026)
+
+Owner visual testing: **Gate B NOT approved**; Gate C not started. Built on the Gate B commit `66be222` (tag `checkpoint/v5.3-c7-gate-b`, unchanged). R1 unchanged. **Pending owner visual testing; not deployed.** Concept framing only, never presented as engineered.
+
+**Irregular beam and post placement (root causes and repairs)**
+- A post within 0.6 ft of another beam's post was counted as carrying both beams even when it did not stand under the second beam (inherited from R1; in the screen and in the model). Now a post serves two beams only when it is physically under both; it moves to the crossing of the two beam centerlines when that works, otherwise the beam end has no post and the layout fails the screen.
+- Beam-to-beam contact was never checked. Two beams whose bodies touch must now END on one post under both (end-to-end or T connection); a mid-span crossing or any other overlap is a clash and fails the screen.
+- New inset support-ring candidate for outlines with angled edges (concave corners, narrow sections, mixed 45°/22.5° edges): one beam per joist-end edge, set in by the cantilever, consecutive beams meeting on one post at the crossing of their centerlines; free ends run on (≤ 0.6 ft, inside the outline) under the side rims; interior straight beams only as long as the joists that need them, ending on a post at the ring beam. Rectangles, L, T and U keep their framing.
+- When no layout passes, the layout with the fewest screen failures is shown (R1's when nothing is better) and every failing member is RED in 2D and 3D, labelled NOT BUILDABLE, with a warning; it is never presented as a usable arrangement.
+- Owner irregular deck: R1 / Gate B left 12 joists and 2 side rims without bearing; now 0 (10 beams, 27 posts, 2x8). Of 12 custom outlines (`tests/c7-irregular-shapes.js`), 10 pass the screen; 2 (flared 22.5° sides, narrow angled arm) have short tip joists that fail the 1/4-backspan rule and are shown red for production review.
+
+**Picture-frame blocking regression**
+- Cause: Gate B added a rim-backing joist on notch side rims that R1's picture-frame assembly (rim / continuous flat 2x6 / picture-support joist) already backed; this doubled the framing, removed corner-trimmer stubs and shifted field-end blocking. Geometry, not rendering.
+- Repair: no rim-backing joist on an edge with a picture-frame assembly; the screen and the independent audit accept that assembly as the rim's support path. Every baseline design now builds R1's support joists, flat 2x6 blocking, corner trimmers and field-end blocking exactly (`tests/baseline/c7-picture-frame-r1.json`, recorded from R1 by `scripts/record-c7-picture-frame-r1.js`). Reframed baseline designs: 14 → 7.
+- Rendering: the 2D Framing plan now also draws the flat 2x6 picture-frame / divider blocking and field-end blocking that 3D showed (see-through, so beams under it stay readable).
+
+**Full regression**: 594 tests, 593 pass, 0 fail, 1 TODO (cut-corner golden, unchanged), 34.9 min; index.html identical before and after the run.
+
+**Tests**: beam/post connection checks in the independent audit (`supportChecks`); 12 custom outlines plus the owner deck checked member by member; 2D/3D agreement by member position (each member's drawn 2D outline and the vertices 3D builds, against the model, 0.01 ft) and red marking in both views; R1 picture-frame members preserved. Exceptions changed only for reframed designs (beam profile and flush-beam depth alert follow the joist size).
+
 ## V5.3 C7 Gates A and B — framing planner prototype (branch `v5.3/c7`, 11 Nov 2026)
 
 Owner authorization 11 Nov 2026 (C7 Phase 2). Built from protected R1 `01f16df` (index.html `b8058b7b…`, unchanged; tag `checkpoint/v5.3-c7-start`). **Pending owner review; not deployed.** Concept framing only, never presented as engineered.

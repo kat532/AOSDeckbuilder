@@ -85,7 +85,12 @@ test('identical to V5.2 on the owner irregular deck (continuous middle-beam plan
   const owner = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'owner-irregular-deck.json'), 'utf8')).design;
   const a = model(work, owner), b = model(base, owner);
   assert.deepEqual(a, b);
-  assert.equal(a.counts.beams, 3); assert.equal(a.counts.posts, 8);
+  // V5.3 C7 owner visual testing (11 Nov 2026): C7 reframes this deck (V5.2/R1's 3 beams and 8 posts left
+  // 13 joist runs without bearing). Its framing is checked member by member in tests/framing-c7.test.js;
+  // everything else above is still identical to V5.2.
+  const v52 = base.DeckCore.make(owner);
+  assert.equal(v52.counts.beams, 3); assert.equal(v52.counts.posts, 8);
+  assert.equal(work.DeckCore.make(owner).framing.changedFromR1, true);
 });
 
 test('identical to V5.2 on 176 generated angled, bay, box and side bump-out decks', () => {
