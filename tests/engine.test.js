@@ -10,6 +10,8 @@ const { loadEngine, snapshot } = require('./engine');
 const { fixtures } = require('./fixtures');
 const { snapshotWithoutRail, snapshotRail } = require('./rail-inset');
 const { snapshotWithoutC7 } = require('./c7-framing');
+// V5.3 C7 Gate C (stairs and railings): the Gate C outputs are excepted the same way; tests/stairs-rails-c7c.test.js checks them.
+const { snapshotWithoutGateC, railRecordWithoutGateC } = require('./c7-gate-c');
 const RAIL_PINS = JSON.parse(fs.readFileSync(path.join(__dirname, 'baseline', 'rail-inset-r1.json'), 'utf8')).snapshots;
 
 const win = loadEngine();
@@ -41,8 +43,8 @@ for (const [name, raw] of Object.entries(FIX)) {
     // V5.3 C7 framing (owner, 11 Nov 2026): framing outputs of the designs C7 reframes, and the new framing
     // count categories, are excepted here and checked by tests/framing-c7.test.js; everything else exact.
     const snap = snapshot(win, raw), c7 = win.DeckCore.make(raw);
-    assert.deepEqual(snapshotWithoutC7(snapshotWithoutRail(snap), c7), snapshotWithoutC7(snapshotWithoutRail(golden.model), c7));
-    assert.deepEqual(snapshotRail(snap), RAIL_PINS[name], `${name}: railing outputs (R1 rail inset record)`);
+    assert.deepEqual(snapshotWithoutGateC(snapshotWithoutC7(snapshotWithoutRail(snap), c7)), snapshotWithoutGateC(snapshotWithoutC7(snapshotWithoutRail(golden.model), c7)));
+    assert.deepEqual(railRecordWithoutGateC(snapshotRail(snap)), railRecordWithoutGateC(RAIL_PINS[name]), `${name}: railing outputs (R1 rail inset record; Gate C balusters excepted)`);
   });
 
   test(`sanitized intent matches V5.0 baseline: ${name}`, () => {

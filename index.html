@@ -1481,6 +1481,22 @@ const SCHEMA_VERSION=6,RAIL_PRODUCTS=['Westbury Tuscany','No rail product select
 const PALETTES={'Brown Oak':'#86674c','Rustic Elm':'#73533f','Sandy Birch':'#bfab8a','Silver Maple':'#aaa9a0','Stone Ash':'#777977'};
 // R1 rail inset (owner, 11 Nov 2026): railing post outside faces 1½ in. inside finished outside edges.
 const RAIL_FACE_INSET=1.5/12,RAIL_POST=.21,RAIL_LINE=RAIL_FACE_INSET+RAIL_POST/2;
+// V5.3 C7 Gate C: railing mounting geometry by system. Only the top-mounted (surface plate) aluminum system is in
+// the app; RAIL_FACE_INSET belongs to it alone. AOS wood railing presets (owner spec D4: posts outside-rim
+// face-mounted or in-deck through the decking) are NOT in the app and must define their own mounting here; they
+// never inherit the aluminum 1½ in. inset.
+const RAIL_MOUNTS={'aluminum-surface':{faceInset:RAIL_FACE_INSET,post:RAIL_POST,label:'top-mounted aluminum (surface plate)'}};
+const RAIL_PRODUCT_MOUNT={'Westbury Tuscany':'aluminum-surface','No rail product selected':'aluminum-surface'};
+// Gate C guard infill (screening against the 2021 IRC as published by jurisdictions; never a code approval):
+// no opening may pass a 4 in. sphere, so balusters are spaced for at most 3¾ in. clear (also used on stairs,
+// where 4⅜ in. applies); the bottom rail's underside sits 3 in. above the walking surface; on a stair the
+// sloped bottom rail sits ½ in. above the nosing line so the riser/tread/rail triangle stays under a 6 in. sphere.
+const RAIL_MAX_CLEAR=3.75/12,BALUSTER_W=.054,RAIL_BOTTOM_GAP=3/12,STAIR_RAIL_BOTTOM_GAP=.5/12,BOTTOM_RAIL_H=.11;
+// Baluster centres between two posts at s0 and s1 (centres, same line): even clear gaps of at most RAIL_MAX_CLEAR.
+function infill(s0,s1,postW=RAIL_POST){const S=s1-s0-postW;if(S<=RAIL_MAX_CLEAR+1e-9)return [];const n=Math.ceil((S-RAIL_MAX_CLEAR)/(RAIL_MAX_CLEAR+BALUSTER_W)-1e-9),g=(S-n*BALUSTER_W)/(n+1),out=[];
+ for(let k=1;k<=n;k++)out.push(s0+postW/2+k*g+(k-.5)*BALUSTER_W);return out;}
+// Cut stringers: horizontal span between supports (AWC prescriptive deck guide); longer flights get support beams.
+const CUT_STRINGER_SPAN=6;
 const RAILS={'Textured Black':'#20272c','Bronze':'#635849','White':'#e6e9e8'};
 const SHAPES=['rectangle','square','L','T','U','free'];
 const clamp=(v,min,max)=>Math.min(max,Math.max(min,Number(v)||0));
@@ -2550,6 +2566,27 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
        connect:'stairs',label:'individually notched 2x stringer; verify remaining throat, top hanger and bottom landing'});
      if(part){part.profile2d=profile.map(x=>[...x]);part.profileBase=base;part.profileTT=tt;part.profileNN=nn;part.profileOffset=off;}
    }
+   // V5.3 C7 Gate C: cut stringers may span at most 6 ft horizontally between supports (AWC prescriptive deck
+   // guide). A longer flight gets evenly spaced support beams across all stringers, each on posts under the outer
+   // stringers (and between them where the beam would span more than 6 ft) with concept footings. The beam top is
+   // at the stringers' underside. Sizes, bearing, connections and footings are concepts for AOS production review.
+   if(run>CUT_STRINGER_SPAN+1e-9){
+     const under=[...bottoms].sort((a,b)=>a[0]-b[0]),undersideAt=x=>{for(let i=0;i+1<under.length;i++){const [x0,y0]=under[i],[x1,y1]=under[i+1];if(x>=x0-1e-9&&x<=x1+1e-9)return y0+(y1-y0)*(x-x0)/((x1-x0)||1);}return under.at(-1)[1];};
+     const n=Math.ceil(run/CUT_STRINGER_SPAN-1e-9),beamLen=stringerCenterSpan+1.5*FT+.1,beamD=9.25*FT,beamW=3*FT,postW=3.5*FT;
+     const postU=[-stringerCenterSpan/2,stringerCenterSpan/2],extra=Math.ceil(stringerCenterSpan/CUT_STRINGER_SPAN-1e-9)-1;
+     for(let k=1;k<=extra;k++)postU.splice(k,0,-stringerCenterSpan/2+stringerCenterSpan*k/(extra+1));
+     const crossYaw=-Math.atan2(tt[1],tt[0]);
+     for(let k=1;k<n;k++){const x=run*k/n,topY=undersideAt(x),c=toWorld(0,x);
+       const beam=add('stair-stringer-support','stair-framing',c[0],topY-beamD/2,c[1],beamLen,beamD,beamW,'#856143',{yaw:crossYaw,connect:'stair-stringer-support',
+         label:`2-2x10 stair stringer support beam ${k} of ${n-1} (concept): cut stringers limited to ${CUT_STRINGER_SPAN} ft horizontal span; verify size, bearing and stringer connection`});
+       if(beam)beam.stairSupport={flightTop:top,x,stairId:stair.id};
+       const postH=topY-beamD-.12;
+       for(const u of postU){const pp=toWorld(u,x);
+         if(postH>.25)add('stair-support-post','stair-framing',pp[0],.12+postH/2,pp[1],postW,postH,postW,'#9e7b57',{connect:'stair-support-post',label:'4x4 stair support post (concept; verify size, height, bracing and connection)'});
+         add('stair-support-footing','foundation',pp[0],-.22,pp[1],1.25,.62,1.25,'#a6a3a0',{mat:'concrete',connect:'stair-support-footing',label:'stair support footing concept; size/depth unverified'});}
+     }
+     alerts.push({level:'review',code:'stair-stringer-support',message:`Stair on edge ${se.i+1}: its cut stringers run ${fmtFt(run)} horizontally, more than the ${CUT_STRINGER_SPAN} ft limit for cut stringers, so ${n-1} support beam${n>2?'s':''} on posts and footings ${n>2?'are':'is'} drawn under them (spans about ${fmtFt(run/n)}). Concept only: beam size, post and footing design and the stringer connections require AOS production review.`});
+   }
    // Finished diagonal side skirt is a cosmetic panel, separate from structural stringers.
    // The existing stair-framing stringer profiles remain unchanged for framing mode.
    if(run>.1){
@@ -2746,8 +2783,9 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
      for(let k=0;k<2;k++){if(bay>0&&k===0)continue;let p=point(k?b:a);// V5.1: two railed edges meeting at a corner share ONE post (the first edge placed owns it).
        // Previously each edge added its own post ~0.1 ft apart, doubling corner posts and caps.
        if(deckGuardPostCenters.some(x=>Math.hypot(x[0]-p[0],x[1]-p[1])<.30))continue;deckGuardPostCenters.push(p);add('railing-post','rail',p[0],H+1.52,p[1],.21,3.05,.21,col,{mat:'metal',connect:connection});add('post-cap','rail',p[0],H+3.10,p[1],.30,.11,.30,col,{mat:'metal',connect:connection});}
-     let p=point((a+b)/2),L=b-a;add('top-rail','rail',p[0],H+3.02,p[1],L,.14,.15,col,{yaw,mat:'metal',connect:connection});add('bottom-rail','rail',p[0],H+.51,p[1],L,.11,.1,col,{yaw,mat:'metal',connect:connection});
-     const num=Math.max(0,Math.floor(L/(4.25/12))-1);for(let k=1;k<=num;k++){let sp=point(a+L*k/(num+1));add('baluster','rail',sp[0],H+1.78,sp[1],.054,2.38,.054,col,{mat:'metal',connect:connection});}
+     let p=point((a+b)/2),L=b-a;add('top-rail','rail',p[0],H+3.02,p[1],L,.14,.15,col,{yaw,mat:'metal',connect:connection});add('bottom-rail','rail',p[0],H+RAIL_BOTTOM_GAP+BOTTOM_RAIL_H/2,p[1],L,BOTTOM_RAIL_H,.1,col,{yaw,mat:'metal',connect:connection});
+     // Gate C: balusters spaced for at most 3¾ in. clear between posts, from the bottom rail up to the top rail.
+     const b0=H+RAIL_BOTTOM_GAP+BOTTOM_RAIL_H+.025,b1=H+2.97;for(const s of infill(a,b)){let sp=point(s);add('baluster','rail',sp[0],(b0+b1)/2,sp[1],BALUSTER_W,b1-b0,BALUSTER_W,col,{mat:'metal',connect:connection});}
    }
  }
  for(const e of es){if(q.houseEdges.includes(e.i)||!q.railEdges.includes(e.i))continue;
@@ -2782,8 +2820,8 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
    for(let bay=0;bay<nr;bay++){const s0=len*bay/nr,s1=len*(bay+1)/nr;
      for(const x of bay?[s1]:[s0,s1])placePost(P(x),E,3.05,'landing-guard');
      const m=P((s0+s1)/2),Lb=s1-s0;add('stair-top-rail','rail',m[0],E+3.02,m[1],Lb,.14,.12,stairCol,{yaw,mat:'metal',connect:'landing-guard'});
-     add('stair-bottom-rail','rail',m[0],E+.51,m[1],Lb,.11,.10,stairCol,{yaw,mat:'metal',connect:'landing-guard'});
-     const num=Math.max(0,Math.floor(Lb/(4.25/12))-1);for(let k=1;k<=num;k++){const sp=P(s0+Lb*k/(num+1));add('stair-baluster','rail',sp[0],E+1.78,sp[1],.054,2.38,.054,stairCol,{mat:'metal',connect:'landing-guard'});}
+     add('stair-bottom-rail','rail',m[0],E+RAIL_BOTTOM_GAP+BOTTOM_RAIL_H/2,m[1],Lb,BOTTOM_RAIL_H,.10,stairCol,{yaw,mat:'metal',connect:'landing-guard'});
+     const b0=E+RAIL_BOTTOM_GAP+BOTTOM_RAIL_H+.025,b1=E+2.97;for(const s of infill(s0,s1)){const sp=P(s);add('stair-baluster','rail',sp[0],(b0+b1)/2,sp[1],BALUSTER_W,b1-b0,BALUSTER_W,stairCol,{mat:'metal',connect:'landing-guard'});}
    }guardLF+=len;LG.guards.push({a:[ua,va],b:[ub,vb]});}
  // Flights in their own coordinates: across o (side * W/2) and along x. The upper flight is the
  // stair frame; the lower flight is either straight on or the turned frame.
@@ -2822,14 +2860,15 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
      const o=side*Wr,T=transition(fi,side),xa=fi===0?(deckGuardPostCenters.some(z=>{const t=toWorld(o,-RAIL_LINE);return Math.hypot(z[0]-t[0],z[1]-t[1])<.05;})?-RAIL_LINE:0):T.x,xb=fi===0?T.x:run,len=xb-xa,pitch=slope*len;
      const yaw=-Math.atan2(fr.nn[1],fr.nn[0]),rz=-Math.atan2(pitch,len),mid=toWorld(o,(xa+xb)/2),my=nose((xa+xb)/2);
      add('stair-top-rail','rail',mid[0],my+2.78,mid[1],Math.hypot(len,pitch),.14,.12,stairCol,{yaw,rz,mat:'metal',connect:'stair-guard'});
-     add('stair-bottom-rail','rail',mid[0],my+.58,mid[1],Math.hypot(len,pitch),.11,.10,stairCol,{yaw,rz,mat:'metal',connect:'stair-guard'});
+     const cosS=len/Math.hypot(len,pitch);add('stair-bottom-rail','rail',mid[0],my+STAIR_RAIL_BOTTOM_GAP+BOTTOM_RAIL_H/(2*cosS),mid[1],Math.hypot(len,pitch),BOTTOM_RAIL_H,.10,stairCol,{yaw,rz,mat:'metal',connect:'stair-guard'});
      const count=Math.max(2,Math.ceil(len/5.4)+1);
      for(let i=0;i<count;i++){const x=xa+len*i/(count-1),p=toWorld(o,x);
        // The landing end is the transition post placed above; the other end and any
        // intermediate posts stand on the stair.
        if(!postAt(p)){const part=add('stair-rail-post','rail',p[0],nose(x)+1.5,p[1],.21,3.0,.21,stairCol,{mat:'metal',connect:'stair-guard'});const rec=[p[0],p[1]];rec.part=part;landingGuardPosts.push(rec);}
-       if(i<count-1){const step=len/(count-1),balN=Math.max(1,Math.floor(step/(4/12))-1);
-         for(let j=1;j<=balN;j++){const xx=x+step*j/(balN+1);if(fi===0?xx>run:xx<0)continue;const sp=toWorld(o,xx);add('stair-baluster','rail',sp[0],nose(xx)+1.73,sp[1],.054,2.3,.054,stairCol,{mat:'metal',connect:'stair-guard'});}}
+       if(i<count-1){const step=len/(count-1);
+         // Gate C: at most 3¾ in. clear between posts; balusters from the sloped bottom rail to the top rail.
+         for(const xx of infill(x,x+step)){if(fi===0?xx>run:xx<0)continue;const sp=toWorld(o,xx),y0=nose(xx)+STAIR_RAIL_BOTTOM_GAP+BOTTOM_RAIL_H/cosS+.02,y1=nose(xx)+2.88;add('stair-baluster','rail',sp[0],(y0+y1)/2,sp[1],BALUSTER_W,y1-y0,BALUSTER_W,stairCol,{mat:'metal',connect:'stair-guard'});}}
      }
      (LG.flightRails=LG.flightRails||[]).push({flight:fi,side:key,from:toWorld(o,xa),to:toWorld(o,xb),topStart:nose(xa)+2.78,topEnd:nose(xb)+2.78});
    }
@@ -2851,7 +2890,7 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
      const rl=run-v0r,rp=stairPitchRise*rl/run,slope=-Math.atan2(rp,rl),pt=toWorld(u,v0r+rl/2);
      const railMidElevation=noseElevationAt(v0r+rl/2);
      add('stair-top-rail','rail',pt[0],railMidElevation+2.78,pt[1],Math.hypot(rl,rp),.14,.12,stairCol,{yaw,rz:slope,mat:'metal',connect:'stair-guard'});
-     add('stair-bottom-rail','rail',pt[0],railMidElevation+.58,pt[1],Math.hypot(rl,rp),.11,.10,stairCol,{yaw,rz:slope,mat:'metal',connect:'stair-guard'});
+     const cosS=rl/Math.hypot(rl,rp);add('stair-bottom-rail','rail',pt[0],railMidElevation+STAIR_RAIL_BOTTOM_GAP+BOTTOM_RAIL_H/(2*cosS),pt[1],Math.hypot(rl,rp),BOTTOM_RAIL_H,.10,stairCol,{yaw,rz:slope,mat:'metal',connect:'stair-guard'});
      const count=Math.max(2,Math.ceil(run/5.4)+1);
      for(let i=0;i<count;i++){
        const v=run*i/(count-1),p=toWorld(u,v),baseY=noseElevationAt(v);
@@ -2861,9 +2900,14 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
          add('stair-rail-post','rail',p[0],baseY+1.5,p[1],.21,3.0,.21,stairCol,{mat:'metal',connect:'stair-guard'});
          // At a turn the two flights' inside rails can meet at one corner: they share that post.
          if(g0.landing)landingGuardPosts.push(p);}
-       if(i<count-1){const balN=Math.max(1,Math.floor((run/(count-1))/(4/12))-1);
-         for(let j=1;j<=balN;j++){const vv=v+(run/(count-1))*j/(balN+1),s=toWorld(u,vv),yy=noseElevationAt(vv);
-           add('stair-baluster','rail',s[0],yy+1.73,s[1],.054,2.3,.054,stairCol,{mat:'metal',connect:'stair-guard'});}
+       if(i<count-1){
+         // Gate C: the first bay starts at the deck guard post when the stair rail runs into it (v = -RAIL_LINE);
+         // balusters are spaced between the posts actually there, at most 3¾ in. clear.
+         // A stair a few inches short of a deck corner shares that corner post (R1 merge rule): start from it.
+         const shared=i===0?[...deckGuardPostCenters].find(x=>Math.hypot(x[0]-p[0],x[1]-p[1])<.30):null;
+         const va=shared?(shared[0]-base[0])*nn[0]+(shared[1]-base[1])*nn[1]:i===0?v0r:v,vb=run*(i+1)/(count-1);
+         for(const vv of infill(va,vb)){const s=toWorld(u,vv),yy=noseElevationAt(vv),y0=yy+STAIR_RAIL_BOTTOM_GAP+BOTTOM_RAIL_H/cosS+.02,y1=yy+2.88;
+           add('stair-baluster','rail',s[0],(y0+y1)/2,s[1],BALUSTER_W,y1-y0,BALUSTER_W,stairCol,{mat:'metal',connect:'stair-guard'});}
        }
      }
    }
@@ -2873,6 +2917,16 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  for(const stair of q.staircases){const sides=(stair.rails.left?1:0)+(stair.rails.right?1:0);if(!sides)continue;
    const clearIn=stair.width*12-sides*(RAIL_FACE_INSET+RAIL_POST)*12;
    if(clearIn<36)alerts.push({level:'review',code:'stair-rail-clear-width',message:`Stair on edge ${stair.edge+1} (${fmtFt(stair.width)} wide): with its railing posts 1½ in. inside the stair edges, about ${Math.round(clearIn)} in. is left between the posts, before any handrail projection. Many jurisdictions require a 36 in. minimum clear stair width; widen the stair or verify the requirement in production review.`});}
+ // V5.3 C7 Gate C (screening against the 2021 IRC as published by jurisdictions, never a code approval):
+ // finished stair clearance, required handrails and required guards.
+ for(const stair of q.staircases){const g=stairModels.find(x=>x.id===stair.id);if(!g)continue;const sides=(stair.rails.left?1:0)+(stair.rails.right?1:0),W=stair.width*12;
+   const between=W-sides*(RAIL_FACE_INSET+RAIL_POST)*12,one=between-4.5,two=between-9;
+   if(between<36||(sides&&one<31.5))alerts.push({level:'review',code:'stair-finished-clearance',message:`Stair on edge ${stair.edge+1} (${fmtFt(stair.width)}): finished clear width about ${Math.round(between)} in. ${sides?'between the railing posts':'between the stair edges'}. If a handrail projecting up to 4½ in. is mounted inside ${sides===2?'one guard it leaves about '+Math.round(one)+' in. (both guards: about '+Math.round(two)+' in.)':'the guard it leaves about '+Math.round(one)+' in.'}. Screening reference (2021 IRC R311.7.1): 36 in. clear above the handrail; at and below it, 31½ in. with one handrail or 27 in. with two. Confirm the stair width and handrail layout in AOS production review.`});
+   const flights=g.flights&&g.flights.length?g.flights:[{risers:g.risers}];
+   if(flights.some(f=>f.risers>=4))alerts.push({level:'warning',code:'stair-handrail-required',message:`Stair on edge ${stair.edge+1} has ${Math.max(...flights.map(f=>f.risers))} risers in a flight: a continuous graspable handrail 34–38 in. above the tread nosings is required on at least one side (2021 IRC R311.7.8). It is not shown in this design, and the guard top rail (about 34 in. above the nosings) is not verified as a graspable handrail. Specify the handrail, brackets and returns in AOS production review.`});
+   if(H>2.5+1e-9)for(const k of ['left','right'])if(!stair.rails[k])alerts.push({level:'warning',code:'stair-guard-required',message:`Stair on edge ${stair.edge+1}: its ${k} side has no railing, but the stair starts ${fmtFt(H)} above grade. Open sides of stairs more than 30 in. above grade need a guard (2021 IRC R312.1.1); turn the ${k} stair railing on or confirm the condition in AOS production review.`});}
+ if(H>2.5+1e-9){const open=es.filter(e=>!q.houseEdges.includes(e.i)&&!q.railEdges.includes(e.i)&&e.len-q.staircases.filter(s=>s.edge===e.i).reduce((t,s)=>t+s.width,0)>.5).map(e=>e.i+1);
+   if(open.length)alerts.push({level:'warning',code:'guard-required',message:`The deck is ${fmtFt(H)} above grade (over 30 in.), but edge${open.length>1?'s':''} ${open.join(', ')} ${open.length>1?'have':'has'} no railing. Open sides more than 30 in. above grade need a guard (2021 IRC R312.1.1); add the railing or confirm the condition (for example a wall or bench) in AOS production review.`});}
  if(parts.some(p=>p.kind==='railing-post'||p.kind==='stair-rail-post'))alerts.push({level:'review',code:'rail-post-mounting',message:'Railing posts are modeled with their outside faces 1½ in. inside the finished deck and stair edges, so deck posts stand on the decking inside the rim joist and stair posts stand on the treads, mostly inside the outer stringers (at landing corners they share the landing support post position). Post mounting, blocking and hardware are not modeled; verify the post attachment in production review.'});
  if(q.staircases.length)alerts.push({level:'review',message:'All modeled staircases require field verification of stringers, connections, railings and lower landings.'});
  if(q.supportMode==='ledger'&&!ledgerEdges.length)alerts.push({level:'review',message:'No ledger edges selected. Framing must use independent bearing; select a house edge on the ledger step to enable one.'});
@@ -2884,8 +2938,10 @@ function make(raw){if(!raw)return {intent:null,parts:[],counts:{},alerts:[],stat
  if(isDiagonal)alerts.push({level:'review',message:'Diagonal boards use a provisional 12in on-center orthogonal joist layout; verify selected decking span, cut-end blocking and ledger conditions.'});
  alerts.push({level:'review',message:'Framing layout is an explicit bearing concept, NOT a code-verified design. Joist/beam species, grade, spans, connections, ledger, post heights and footing loads require production review.'});
  const qty=kind=>parts.filter(p=>p.kind===kind).length;
+ const gateCStairCounts={stairSupportBeams:qty('stair-stringer-support'),stairSupportPosts:qty('stair-support-post'),stairSupportFootings:qty('stair-support-footing')};
  const counts={joistNominal:`2x${joistNominal}`,joistSpacingIn:joistSpacing,pictureFlatBlocks:flatBorderBlocks,dividerFlatBlocks:flatDividerBlocks,fieldBoards:estimatedPhysicalBoards,borderBoards:qty('picture-frame'),dividers:qty('divider-board'),joists:qty('joist')+qty('picture-support-joist')+qty('divider-support-joist')+qty('corner-trimmer')+qty('rim-backing-joist'),cornerTrimmers:qty('corner-trimmer'),rimBackingJoists:qty('rim-backing-joist'),rimJoists:qty('rim-joist'),pictureSupportJoists:qty('picture-support-joist'),dividerSupportJoists:qty('divider-support-joist'),beams:qty('dropped-beam'),ledger:qty('ledger'),posts:qty('post-6x6'),footings:qty('footing-concept'),stringers:qty('stair-stringer'),treads:qty('stair-tread'),risers:qty('stair-riser'),railPosts:qty('railing-post')+qty('stair-rail-post'),balusters:qty('baluster')+qty('stair-baluster')};
  // V5.2 A3: landing parts are counted on their own; designs without a landing are unchanged.
+ if(gateCStairCounts.stairSupportBeams)Object.assign(counts,gateCStairCounts);
  if(stairModels.some(g=>g.landing)){const LD=stairModels.filter(g=>g.landing).map(g=>g.landing.decking),sum=k=>+LD.reduce((a,x)=>a+x[k],0).toFixed(2);
    Object.assign(counts,{landings:stairModels.filter(g=>g.landing).length,landingPosts:qty('landing-post'),landingFootings:qty('landing-footing'),landingFraming:qty('landing-beam')+qty('landing-rim')+qty('landing-joist'),landingBlocking:qty('landing-blocking'),landingFlat2x6:qty('landing-flat-2x6'),landingFlat2x6LF:+parts.filter(p=>p.kind==='landing-flat-2x6').reduce((a,p)=>a+p.w,0).toFixed(2),landingFrameSupportJoists:parts.filter(p=>p.kind==='landing-joist'&&p.role==='frame-support').length,
    // Checkpoint 3: landing decking is counted apart from the deck's field/border boards (no double counting).
@@ -5788,7 +5844,7 @@ function planDraw(){state.planLabelBoxes=[];const {w,h}=canvasSize(),sc=state.pl
    // V5.3 R1: the stair flight in outline (faint treads), so its framing reads in place; then the framing.
    ctx.save();ctx.globalAlpha=.22;for(let part of model.parts)if(part.kind==='stair-tread')shapePart(part);ctx.restore();
    const geom=[];
-   for(let part of model.parts)if([...PLAN_FRAMING_KINDS,'landing-beam','landing-rim','landing-joist','landing-blocking','landing-flat-2x6','landing-post'].includes(part.kind)){// flat 2x6 / field-end blocking sits ON the joists: drawn see-through so beams and posts under it stay readable
+   for(let part of model.parts)if([...PLAN_FRAMING_KINDS,'landing-beam','landing-rim','landing-joist','landing-blocking','landing-flat-2x6','landing-post','stair-stringer-support','stair-support-post'].includes(part.kind)){// flat 2x6 / field-end blocking sits ON the joists: drawn see-through so beams and posts under it stay readable
      const see=/blocking/.test(part.kind);if(see){ctx.save();ctx.globalAlpha=.55;}shapePart(part);if(see)ctx.restore();drawn[part.kind]=(drawn[part.kind]||0)+1;if(PLAN_FRAMING_KINDS.includes(part.kind))geom.push(planFootprintOf(part));}
    state.planFramingGeom=geom;
    // V5.3 R1: stringers (engine stair framing, unchanged). Each is a notched profile placed by the engine's

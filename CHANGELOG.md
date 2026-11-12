@@ -2,6 +2,27 @@
 
 All changes to `index.html` and the test suite. Staging and production are deployed separately and only with owner approval.
 
+## V5.3 C7 Gate C — stair and railing stabilization (branch `v5.3/c7`, 11–12 Nov 2026)
+
+Owner authorization 11 Nov 2026, from the owner-approved Gate B2 checkpoint (`checkpoint/v5.3-c7-gate-b2-approved`, `dcff7d0`, unchanged). **Pending owner approval; not deployed.** Screening against the 2021 IRC (R311.7, R312) as published by jurisdictions and the AWC prescriptive deck guide; nothing is presented as code-approved.
+
+**Findings on R1 / Gate B2 (35 baseline designs, independent audit `tests/c7c-audit.js`)**
+- Deck and landing guards: bottom-rail underside about 5½ in. above the decking, so a 4 in. sphere passes (430 guard bays).
+- Baluster spacing by a rounded count: openings up to 4.4 in. on short bays and landings, and up to 6.3 in. on stairs, where the first bay starts at the deck post but its balusters started at the stair edge (51 bays).
+- Stair bottom rail about 6 in. above the nosings: the riser/tread/rail triangle passes a 9.4 in. sphere (max 6).
+- Cut stringers spanning up to 11.9 ft with no intermediate support (9 flights over 6 ft).
+- No warning when an open deck edge or stair side more than 30 in. above grade has no guard, and no handrail requirement shown.
+
+**Repairs**
+- Balusters spaced between the posts actually there for at most 3¾ in. clear (deck, landing, stair); bottom rail underside 3 in. above the deck/landing; stair bottom rail ½ in. above the nosing line.
+- Cut-stringer flights longer than 6 ft get evenly spaced support beams across all stringers, on 4x4 posts with concept footings (2D, 3D, counts; review alert).
+- New alerts: handrail required (4+ risers; not modeled, guard top rail not verified graspable) and guard required (deck edges or stair sides over 30 in. with no railing), both *warning*; stair finished clearance with the 36 / 31½ / 27 in. references, *review*.
+- 3′ default stair width kept. Posts, post caps and top rails are exactly R1's (1½ in. aluminum inset preserved). Railing mounting is keyed to the top-mounted aluminum system only; no wood preset added.
+
+**Full regression**: 603 tests, 602 pass, 0 fail, 1 TODO (cut-corner golden, unchanged), 35.8 min; index.html sha256 bd3f92e2… identical before and after. One older e2e check (CP3 rail ends) exempted fixed bottom-rail heights at the deck; it now requires the rail end to be at the deck guard post instead.
+
+**Tests**: `tests/stairs-rails-c7c.test.js` (110 designs and matrix cases, 69 stairs), `tests/e2e-v53-c7c-stairs.test.js`; Gate C exceptions only for the changed balusters/bottom rails, stair support members and new alerts (`tests/c7-gate-c.js`); posts, caps and top rails compared with the R1 build itself.
+
 ## V5.3 C7 Gate B corrections — owner visual testing (branch `v5.3/c7`, 11 Nov 2026)
 
 Owner visual testing: **Gate B NOT approved**; Gate C not started. Built on the Gate B commit `66be222` (tag `checkpoint/v5.3-c7-gate-b`, unchanged). R1 unchanged. **Pending owner visual testing; not deployed.** Concept framing only, never presented as engineered.

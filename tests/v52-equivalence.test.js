@@ -13,6 +13,8 @@ const { loadEngine } = require('./engine');
 const { fixtures } = require('./fixtures');
 const { withoutRailInset } = require('./rail-inset');
 const { withoutC7 } = require('./c7-framing');
+// V5.3 C7 Gate C (stairs and railings): the Gate C outputs are excepted the same way; tests/stairs-rails-c7c.test.js checks them.
+const { withoutGateC } = require('./c7-gate-c');
 
 const BASE = path.join(__dirname, 'baseline', 'AOS_Deck_Studio_V5_2_Continuous_Middle_Beams.html');
 const base = loadEngine(BASE), work = loadEngine();
@@ -45,7 +47,7 @@ const joinedWall = (m, p) => { const i = Number(String(p.connect).replace('house
 // V5.3 C7 framing (owner, 11 Nov 2026): on a design whose framing C7 changes (decided from the current build's
 // model, identically for both builds) the framing outputs are excepted; tests/framing-c7.test.js checks them.
 const model = (win, q) => {
-  const m = withoutC7(withoutRailInset(win.DeckCore.make(q)), work.DeckCore.make(q));
+  const m = withoutGateC(withoutC7(withoutRailInset(win.DeckCore.make(q)), work.DeckCore.make(q)));
   m.parts = m.parts.filter(p => !B3_CONTEXT.has(p.kind) && !joinedWall(m, p)).map(p => { if (p.kind !== 'house-wall') return p; const { label, siding, ...rest } = p; return rest; });
   const counts = { ...m.counts }, stats = { ...m.stats };
   for (const k of FRAGMENT_COUNTS) delete counts[k];

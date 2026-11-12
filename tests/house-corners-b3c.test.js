@@ -12,6 +12,8 @@ const { loadEngine, ROOT } = require('./engine');
 const { fixtures } = require('./fixtures');
 const { withoutRailInset } = require('./rail-inset');
 const { withoutC7 } = require('./c7-framing');
+// V5.3 C7 Gate C (stairs and railings): the Gate C outputs are excepted the same way; tests/stairs-rails-c7c.test.js checks them.
+const { withoutGateC } = require('./c7-gate-c');
 
 const win = loadEngine(), core = win.DeckCore;
 // The B3 development build the owner tested (bd8d529), for "nothing else changed" checks.
@@ -226,7 +228,7 @@ test('B3c-12 nothing but the house changed: every non-house part, count, materia
     const a0 = build(raw), b0 = dev.DeckCore.make(dev.DeckCore.sanitize(raw));
     if (a0.stats.invalidGeometry) continue;
     // V5.3 C7 framing: framing of designs C7 reframes excepted (tests/framing-c7.test.js); new count categories removed.
-    const a = withoutC7(withoutRailInset(a0), a0), b = withoutC7(withoutRailInset(b0), a0);
+    const a = withoutGateC(withoutC7(withoutRailInset(a0), a0)), b = withoutGateC(withoutC7(withoutRailInset(b0), a0));
     assert.deepEqual(NOT_HOUSE(a), NOT_HOUSE(b), `${name}: decking, framing, stairs, landings, railings, openings, slabs`);
     assert.deepEqual(plain(a.counts), plain(b.counts), name); assert.deepEqual(plain(a.materials), plain(b.materials), name);
     assert.deepEqual(plain(a.alerts), plain(b.alerts), name); n++;

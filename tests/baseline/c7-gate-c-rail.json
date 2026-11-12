@@ -1,0 +1,180 @@
+{
+ "note": "C7 Gate C (owner authorization 11 Nov 2026): balusters and bottom rails of the build submitted for owner review. sha256 of the parts (no ids).",
+ "designs": {
+  "small-rect-12x10": {
+   "sha256": "9e9594440c24ce3d81a26a044c7a8d58bedcac72a2562b649db2becf1d4bf837",
+   "balusters": 78,
+   "parts": 85
+  },
+  "default-rect-16x12": {
+   "sha256": "de4cefd13178ddbef31093e1a15a7a156b268903828c5b115752aa80aaf2e045",
+   "balusters": 99,
+   "parts": 108
+  },
+  "medium-rect-20x14-stair": {
+   "sha256": "ec2b8e665092f9441012b3665dacbd04e1e0b54341c865c026cbd5fbf6d90f32",
+   "balusters": 140,
+   "parts": 152
+  },
+  "square-14": {
+   "sha256": "59d92d021e4e95dde6d0d1d2ed21f627bc0f7df00b3ccd161fd78c6e77ab7d5b",
+   "balusters": 105,
+   "parts": 114
+  },
+  "L-24x18": {
+   "sha256": "da22542e281a7295d2cdc924d8a79c07224803e549e6f17242ff13619265a3c7",
+   "balusters": 147,
+   "parts": 160
+  },
+  "L-flipped-24x18": {
+   "sha256": "9fa2a379ca12aa1fa35fa24bbb43b2cc42270176f275bedcd2e1c7018ca2e1f3",
+   "balusters": 147,
+   "parts": 160
+  },
+  "T-28x20": {
+   "sha256": "d1f847394012e80eb3fd73519fb942a58f1bcdea13f35403a21cc6b01b066e9c",
+   "balusters": 172,
+   "parts": 188
+  },
+  "U-32x22": {
+   "sha256": "bb61646bb6e77c17fbb842c0a3122a4671d4ee860692ef986d90f7613a59c2c2",
+   "balusters": 251,
+   "parts": 272
+  },
+  "large-U-40x24-9ft-stair": {
+   "sha256": "09e521030a5eacb261e34ec768f5b0a9da026364d2b06724c9c71a40aa35654c",
+   "balusters": 334,
+   "parts": 360
+  },
+  "free-hexagon": {
+   "sha256": "c78dc4253a79218436803d02c80d8b24da7666a2400bf110637648e7ba5b8ba6",
+   "balusters": 132,
+   "parts": 142
+  },
+  "diagonal-boards": {
+   "sha256": "a9598e19dfc768ac95342f005c5b3dc91c86021c3a6a529ed4b3a4f3a8996fa5",
+   "balusters": 116,
+   "parts": 126
+  },
+  "outward-boards": {
+   "sha256": "a9598e19dfc768ac95342f005c5b3dc91c86021c3a6a529ed4b3a4f3a8996fa5",
+   "balusters": 116,
+   "parts": 126
+  },
+  "no-border": {
+   "sha256": "de4cefd13178ddbef31093e1a15a7a156b268903828c5b115752aa80aaf2e045",
+   "balusters": 99,
+   "parts": 108
+  },
+  "double-border-dividers": {
+   "sha256": "78e6aea4944f05cfaa54d3985fc0cbe0a74d210ff579a2b3aeeef8d71940130c",
+   "balusters": 169,
+   "parts": 182
+  },
+  "freestanding": {
+   "sha256": "6817deb1a7fc2e84eb3aa45d97741c5e5063453e6da9f76aedeaa0aee116c885",
+   "balusters": 138,
+   "parts": 150
+  },
+  "two-house-walls": {
+   "sha256": "1ba7a27df68b40616328018d4d9b26a6b8c410e039ce998dd8afab99d6ed1e36",
+   "balusters": 121,
+   "parts": 132
+  },
+  "flush-beam": {
+   "sha256": "de4cefd13178ddbef31093e1a15a7a156b268903828c5b115752aa80aaf2e045",
+   "balusters": 99,
+   "parts": 108
+  },
+  "multi-stair": {
+   "sha256": "1daa67999630a788418a420b1d6e74cbc9b7a55c3b74d73cf4cb208c5ac0c3f6",
+   "balusters": 253,
+   "parts": 272
+  },
+  "mixed-rail-edges": {
+   "sha256": "9075d4833effbda436bb3441096403ecee33190683a9ea077eebc7c5a9fc7620",
+   "balusters": 72,
+   "parts": 78
+  },
+  "pvc-white-rail": {
+   "sha256": "f49344f69215dd5ed1e780bd6f8bf12927fa99343652500bfab3e116f621da03",
+   "balusters": 99,
+   "parts": 108
+  },
+  "cut-corner": {
+   "sha256": "edfa773b8110a1d443e49123622805a0a927a25708a447c176ae7b75e0165a7f",
+   "balusters": 115,
+   "parts": 124
+  },
+  "bump-out": {
+   "sha256": "f269d8c09218db17c02707527eb9d403b07ce69e3a4162d0a32d4d6e2184d52a",
+   "balusters": 136,
+   "parts": 150
+  },
+  "legacy-v4-single-stair": {
+   "sha256": "ae72d8f272712a72a74ab9772864292b0ce3466bd02e977d2ddfbf62c827fb99",
+   "balusters": 102,
+   "parts": 113
+  },
+  "legacy-minimal-attached-false": {
+   "sha256": "5030eed634d6d3b5d07989fe25fc53064e1ffd3a29f7302e3654a59116b5b707",
+   "balusters": 114,
+   "parts": 124
+  },
+  "b3-showcase": {
+   "sha256": "b6f5b77a6d6de56fb89e993affc570a6d7ba8b794a77256be00c222d5cd06249",
+   "balusters": 184,
+   "parts": 203
+  },
+  "b2-diagonal-double-frame-dividers": {
+   "sha256": "2c2067f31f7559fbaad72ee48c9b776df4099e8fbc642676c4f7c2c3fd9550ee",
+   "balusters": 220,
+   "parts": 245
+  },
+  "b2-vertical-u": {
+   "sha256": "cfbfb0869b3aa2e44df2b751d4a0e14d5de513e2d5b0c098ac0ade636079a728",
+   "balusters": 356,
+   "parts": 381
+  },
+  "cp3-turn-right-wide": {
+   "sha256": "59ed240e921a00ff01869dd4ba86e6b4984bbe0aea79ec1f68b6968f40dddd7c",
+   "balusters": 196,
+   "parts": 215
+  },
+  "b3c-inside-corner-door": {
+   "sha256": "da18cfab2fbd8776b0c6cf5453518e82cfe35aca456525b134f592107e00f8b7",
+   "balusters": 88,
+   "parts": 95
+  },
+  "b3c-outside-corner": {
+   "sha256": "014f2604bc012f5c241950d91009038163c1469bc9a1c324bb6f9ccdc2055bd7",
+   "balusters": 163,
+   "parts": 177
+  },
+  "b3c-u-three-walls": {
+   "sha256": "ee7a71469e45e3fee5e74dbc46277d0c53386f25100cf69aa4671806ec23a4e7",
+   "balusters": 234,
+   "parts": 252
+  },
+  "b3c-bevel-walls": {
+   "sha256": "33c74162e8071d6b08c2def58604ee33f4a7242e1a9ee7b3eefe34dd017ba67e",
+   "balusters": 112,
+   "parts": 121
+  },
+  "b3c-short-wall-window": {
+   "sha256": "c111ba603cc9b377d465995630c6c56fb709320a916c784321fa0bbbb4f06dbe",
+   "balusters": 108,
+   "parts": 118
+  },
+  "rails-custom-finish": {
+   "sha256": "3c11c76a75a95ba09cb5ca8e352fc13cf5f1397a1ba2f0b30682cc549529691a",
+   "balusters": 128,
+   "parts": 139
+  },
+  "freestanding-flush": {
+   "sha256": "076a60eb5a75eaff2302dd9b24585f547ed0fee8ae809387bbe3484e6a6803df",
+   "balusters": 138,
+   "parts": 150
+  }
+ }
+}

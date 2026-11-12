@@ -1607,8 +1607,12 @@ function railGaps(scene) { // rail ends (plan + height) that do not finish on a 
     const t = [Math.cos(-r.yaw), Math.sin(-r.yaw)], hl = r.w / 2 * Math.cos(r.rz || 0), dy = r.w / 2 * Math.abs(Math.sin(r.rz || 0));
     for (const e of [{ x: r.x - t[0] * hl, z: r.z - t[1] * hl, y: r.y + dy }, { x: r.x + t[0] * hl, z: r.z + t[1] * hl, y: r.y - dy }]) {
       const near = posts.filter(p => Math.hypot(p.x - e.x, p.z - e.z) <= 0.105 + 1e-9 && p.y + p.h / 2 >= e.y - 1e-9 && p.y - p.h / 2 <= e.y + 1e-9);
-      // The deck-side end of an upper flight finishes on a deck railing post (not in this list); allow ends at the deck height.
-      if (!near.length && !(Math.abs(e.y - 7 - 2.78) < 0.2 || Math.abs(e.y - 7 - 0.58) < 0.2)) bad.push(`${r.kind}/${r.connect} @ ${e.x.toFixed(2)},${e.z.toFixed(2)},${e.y.toFixed(2)}`);
+      // The deck-side end of an upper flight finishes on a deck railing post (not in this list). V5.3 C7 Gate C moved the
+      // stair bottom rail down to the nosing line, so instead of exempting fixed rail heights at the deck, the end must
+      // be exactly where that deck guard post stands: on the deck guard line 1½ in. + half a post inside the stair edge
+      // (z = 14 − 0.23 ft on this 14 ft deck), within the post's height above the deck.
+      const atDeckPost = Math.abs(e.z - (14 - (1.5 + 1.26) / 12)) < 1e-3 && e.y >= 7 && e.y <= 7 + 3.05;
+      if (!near.length && !atDeckPost) bad.push(`${r.kind}/${r.connect} @ ${e.x.toFixed(2)},${e.z.toFixed(2)},${e.y.toFixed(2)}`);
     }
   }
   return bad;

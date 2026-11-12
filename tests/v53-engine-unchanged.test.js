@@ -13,6 +13,12 @@ const { loadEngine, ROOT } = require('./engine');
 const { designs } = require('./baseline/designs');
 const { withoutRailInset, isRail, RAIL_ALERT } = require('./rail-inset');
 const { withoutC7 } = require('./c7-framing');
+// V5.3 C7 Gate C (stairs and railings): the Gate C outputs are excepted the same way; tests/stairs-rails-c7c.test.js checks them.
+const { withoutGateC, railRecordWithoutGateC, r1RailParts } = require('./c7-gate-c');
+// The R1 build (01f16df) itself: Gate C must leave its railing posts, caps and top rails exactly as they are.
+const r1Tmp = path.join(os.tmpdir(), `aos-r1-${process.pid}.html`);
+fs.writeFileSync(r1Tmp, execFileSync('git', ['show', '01f16df:index.html'], { cwd: ROOT }));
+const r1 = loadEngine(r1Tmp); fs.unlinkSync(r1Tmp);
 const c7HashExcepted = new Set();
 
 const win = loadEngine(), core = win.DeckCore;
@@ -35,11 +41,14 @@ test('V5.3 guard: complete engine output of all 35 baseline designs matches the 
     // d404af5 test below (its recorded hash necessarily covers the old framing); every other design must
     // still hash identically once the new framing count categories are removed.
     if (m.framing && m.framing.changedFromR1) c7HashExcepted.add(name);
-    else assert.equal(sha(canon(withoutC7(withoutRailInset(m)))), noRail.designs[name].sha256, `${name}: parts, geometry, framing, materials and alerts unchanged (railing excepted)`);
-    const pin = railPins[name], rail = m.parts.filter(isRail).map(({ id, ...p }) => p);
-    assert.equal(sha(JSON.stringify(rail)), pin.railParts, `${name}: railing parts (R1 rail inset record)`);
-    assert.deepEqual({ counts: { railPosts: m.counts.railPosts, balusters: m.counts.balusters }, stats: { deckRailLF: m.stats.deckRailLF, stairRailLF: m.stats.stairRailLF, totalRailLF: m.stats.totalRailLF }, alerts: m.alerts.filter(a => RAIL_ALERT.test(a.message)).map(a => a.message) },
-      { counts: pin.counts, stats: pin.stats, alerts: pin.alerts }, `${name}: railing quantities and alerts`);
+    else assert.equal(sha(canon(withoutGateC(withoutC7(withoutRailInset(m))))), noRail.designs[name].sha256, `${name}: parts, geometry, framing, materials and alerts unchanged (railing excepted)`);
+    const pin = railPins[name];
+    // Gate C: the R1 record's railing hash covers the balusters and bottom rails Gate C re-spaced and lowered, so
+    // posts, post caps and top rails are compared part by part with the R1 build itself, and the R1 quantities
+    // and alerts with the record (balusters excepted; pinned in tests/baseline/c7-gate-c-rail.json).
+    assert.deepEqual(r1RailParts(m, isRail), r1RailParts(JSON.parse(JSON.stringify(r1.DeckCore.make(r1.DeckCore.sanitize(raw)))), isRail), `${name}: railing posts, caps and top rails identical to R1`);
+    assert.deepEqual(railRecordWithoutGateC({ counts: { railPosts: m.counts.railPosts, balusters: m.counts.balusters }, stats: { deckRailLF: m.stats.deckRailLF, stairRailLF: m.stats.stairRailLF, totalRailLF: m.stats.totalRailLF }, alerts: m.alerts.filter(a => RAIL_ALERT.test(a.message)).map(a => a.message) }),
+      railRecordWithoutGateC({ counts: pin.counts, stats: pin.stats, alerts: pin.alerts }), `${name}: railing quantities and alerts`);
   }
 });
 
@@ -52,7 +61,7 @@ test('V5.3 guard: same engine output as the d404af5 build itself (direct compari
   const old = loadEngine(tmp), cur = loadEngine(); fs.unlinkSync(tmp);
   for (const [name, raw] of Object.entries(designs(cur))) {
     const am = cur.DeckCore.make(cur.DeckCore.sanitize(raw)), a = JSON.parse(canon(am)), b = JSON.parse(canon(old.DeckCore.make(old.DeckCore.sanitize(raw))));
-    assert.deepEqual(withoutC7(withoutRailInset(a), am), withoutC7(withoutRailInset(b), am), name); // R1 rail inset: railing excepted; C7: framing of reframed designs excepted
+    assert.deepEqual(withoutGateC(withoutC7(withoutRailInset(a), am)), withoutGateC(withoutC7(withoutRailInset(b), am)), name); // R1 rail inset: railing excepted; C7: framing of reframed designs excepted
   }
 });
 
