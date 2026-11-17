@@ -317,6 +317,26 @@ body.pdf-open{overflow:hidden}
 .ledger-row.on{border-color:#9ccfb5;background:#f3fbf6}.ledger-row button{min-height:36px;padding:0 10px;border-radius:8px;border:1px solid #c9d2d8;background:#fff;font-weight:780;font-size:11px;white-space:nowrap}
 .support-explain{font-size:11px;color:#4f5d6e;line-height:1.4;margin:0}
 .framing-status{border-radius:9px;padding:7px 9px;font-size:11px;line-height:1.4;background:#fff7e6;border:1px solid #efd398;color:#5b4413}.framing-status b{display:block;font-size:11.5px}
+
+/* Product library v1.2: catalog pickers (decking, railing, privacy). Colors are approximate previews. */
+.cat-picker{background:#f9fafb;border:1px solid #dbe2e8;border-radius:10px;padding:10px;margin:4px 0;display:flex;flex-direction:column;gap:2px}
+.cat-status{font-size:11.5px;color:#475569;line-height:1.4;margin:0 0 6px}.cat-status b{color:#152b3c}
+.cat-label{margin:8px 0 5px;font-size:11px;font-weight:800;color:#344255}
+.cat-grid{display:grid;gap:6px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.cat-option{min-height:44px;border:1px solid #bdcbd7;border-radius:8px;background:white;color:#273a4b;padding:7px 5px;font-size:11px;font-weight:750;line-height:1.25;text-align:center;overflow-wrap:anywhere}
+.cat-option.selected,.cat-chip.selected{border-color:#ba3444;box-shadow:0 0 0 1px #ba3444 inset;background:#fff4f5}
+.cat-option:disabled,.cat-chip:disabled{opacity:.6;color:#657789;background:#f2f3f5;cursor:not-allowed}
+.cat-option small,.cat-chip small{display:block;color:#6d7782;font-size:9.5px;line-height:1.3;font-weight:550;margin-top:2px}
+.cat-chips{display:grid;gap:6px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.cat-chip{display:flex;align-items:center;gap:7px;min-height:44px;border:1px solid #cdd7df;border-radius:8px;background:#fff;color:#273a4b;padding:5px 7px;font-size:11px;font-weight:750;text-align:left;min-width:0}
+.cat-chip .cat-sw{flex:0 0 26px;height:26px;border-radius:5px;box-shadow:inset 0 0 0 1px #0002}.cat-chip .cat-name{min-width:0;overflow-wrap:anywhere;line-height:1.2}
+.cat-note{font-size:10.5px;color:#5b6878;line-height:1.45;margin:6px 0 0}
+.cat-preview{border:1px solid #dce3e9;border-radius:8px;padding:8px;margin-top:6px;font-size:11px;background:#fff}
+.cat-preview summary{cursor:pointer;font-size:11px;font-weight:750;color:#304255;min-height:24px}
+.cat-preview[open]>summary{margin-bottom:8px}
+.stair-finish{display:flex;flex-direction:column;gap:5px;padding:7px 0;border-top:1px solid #e6ebef;font-size:11px}.stair-finish-row{display:grid;grid-template-columns:52px 1fr;align-items:center;gap:6px}
+.product-note{font-weight:750;color:#8a5a12}
+@media(max-width:360px){.cat-grid,.cat-chips{grid-template-columns:1fr}}
 </style></head>
 <body><div class="shell">
 <header class="appbar">
@@ -360,7 +380,7 @@ body.pdf-open{overflow:hidden}
           <div class="shape-grid"><button data-shape="rectangle"><svg viewBox="0 0 60 34"><rect x="5" y="8" width="50" height="20" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>Rectangle</button><button data-shape="square"><svg viewBox="0 0 60 34"><rect x="17" y="3" width="26" height="26" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>Square</button><button data-shape="L"><svg viewBox="0 0 60 34"><path d="M5 5H55V29H27V17H5Z" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>L-Shape</button><button data-shape="T"><svg viewBox="0 0 60 34"><path d="M5 4H55V16H39V30H21V16H5Z" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>T-Shape</button><button data-shape="U"><svg viewBox="0 0 60 34"><path d="M5 4H55V30H40V17H20V30H5Z" fill="#d9bc9d" stroke="#8b6c52" stroke-width="2"/></svg>U-Shape</button><button data-shape="free"><svg viewBox="0 0 60 34"><path d="M7 29L17 6L38 17L53 4" fill="none" stroke="#b52b3c" stroke-width="2.5" stroke-dasharray="4 3"/><circle cx="7" cy="29" r="3" fill="#b52b3c"/></svg>Free Draw</button></div>
         </div></div>
       <div id="freeDrawOverlay" class="free-overlay hidden"><strong>FREE DRAW</strong><span>Tap corners · Tap the green starting dot to close</span></div>
-      <div class="viewport-note"><span class="indicator"></span><span id="viewTip">Select a shape to begin</span></div>
+      <div class="viewport-note"><span class="indicator"></span><span id="viewTip">Select a shape to begin</span><span id="productNote" class="product-note" hidden> · Approximate product colors</span></div>
       <div class="toast" id="toast" aria-live="polite"></div>
     </div>
     <div class="canvas-footnote"><span>DESIGN PREVIEW · NOT ENGINEERED PLANS</span><span id="modelDetail">Individual components generated automatically</span></div>
@@ -4007,7 +4027,7 @@ const nextStep=id=>STEP_FLOW[Math.min(STEP_FLOW.length-1,flowPosition(id)+1)];
 const previousStep=id=>STEP_FLOW[Math.max(0,flowPosition(id)-1)];
 const titles=['Shape & Size','House & Height','Stairs & Landings','Decking Layout','Decking Selection','Railings','Framing & Ledger','Review & Present','Patio & Walkway'];
 const hints=['Choose and shape','Tap house edges','Tap an edge to add','Choose board pattern','Choose finish colors','Tap to add/remove','Choose beams and support early','Present the design','Concrete around the deck'];
-const state={dimensionLabels:[],intent:null,model:null,step:0,view:'2d',houseTab:'walls',surfaceSelected:null,layoutTab:'direction',finishTab:'field',railTab:'locations',railTarget:'all',reviewMode:'customer',reviewTab:'materials',reviewReturn:false,openingRef:'left',stairRef:'left',posError:null,edgeError:null,dividerSelected:0,stairSelected:0,selectedCorner:null,previewPoly:null,cornerPreview:null,cornerPreviewError:'',cornerKey:null,cornerSize:1,cornerAngle:45,cornerOrientation:'first',shapeTool:null,featureDraft:{kind:'bump',width:4,depth:2,fraction:.5},featureSelected:null,shapePicker:false,freeDraw:false,freePts:[],freeHover:null,freeRedo:[],measure:'all',drawSnap:true,drawMode:'auto',selectedEdge:null,framingDetails:false,history:[null],historyAt:0,plan:{scale:18,panX:0,panY:0,targetZ:6,pointers:new Map(),drag:null,tap:null},toastTimeout:0};
+const state={catalogDraft:null,railDraft:null,dimensionLabels:[],intent:null,model:null,step:0,view:'2d',houseTab:'walls',surfaceSelected:null,layoutTab:'direction',finishTab:'field',railTab:'locations',railTarget:'all',reviewMode:'customer',reviewTab:'materials',reviewReturn:false,openingRef:'left',stairRef:'left',posError:null,edgeError:null,dividerSelected:0,stairSelected:0,selectedCorner:null,previewPoly:null,cornerPreview:null,cornerPreviewError:'',cornerKey:null,cornerSize:1,cornerAngle:45,cornerOrientation:'first',shapeTool:null,featureDraft:{kind:'bump',width:4,depth:2,fraction:.5},featureSelected:null,shapePicker:false,freeDraw:false,freePts:[],freeHover:null,freeRedo:[],measure:'all',drawSnap:true,drawMode:'auto',selectedEdge:null,framingDetails:false,history:[null],historyAt:0,plan:{scale:18,panX:0,panY:0,targetZ:6,pointers:new Map(),drag:null,tap:null},toastTimeout:0};
 const planCanvas=$('planCanvas'),ctx=planCanvas.getContext('2d'),glCanvas=$('glCanvas'),renderer3d=new window.Deck3D(glCanvas);
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 // Construction-style lengths (display only; geometry keeps its exact values): 21.25 -> 21′ 3″, 16 -> 16′ 0″.
@@ -4166,24 +4186,25 @@ function applyDividerRemoval(positions,selected,message){
 }
 // Confirmation lives inside Deck Studio, so it also works when the HTML is
 // opened from Android's Downloads/content:// viewer, which may suppress JS dialogs.
-let pendingDividerChange=null,previousDividerFocus=null;
+let pendingDividerChange=null,pendingDividerCancel=null,previousDividerFocus=null;
 function closeDividerConfirmation(){
  $('dividerConfirm').hidden=true;
- pendingDividerChange=null;
+ pendingDividerChange=null;pendingDividerCancel=null;
  if(previousDividerFocus?.isConnected)previousDividerFocus.focus();
  previousDividerFocus=null;
 }
-function askDividerConfirmation(title,message,buttonLabel,onAccept,cancelLabel='Keep Dividers'){
+function askDividerConfirmation(title,message,buttonLabel,onAccept,cancelLabel='Keep Dividers',onCancel=null){
  $('dividerConfirmCancel').textContent=cancelLabel;
  previousDividerFocus=document.activeElement;
- pendingDividerChange=onAccept;
+ pendingDividerChange=onAccept;pendingDividerCancel=onCancel;
  $('dividerConfirmTitle').textContent=title;
  $('dividerConfirmMessage').textContent=message;
  $('dividerConfirmAccept').textContent=buttonLabel;
  $('dividerConfirm').hidden=false;
  $('dividerConfirmCancel').focus();
 }
-$('dividerConfirmCancel').addEventListener('click',closeDividerConfirmation);
+// Product library: the second button may carry its own action (e.g. keep border colors); Escape/backdrop never do.
+$('dividerConfirmCancel').addEventListener('click',()=>{const action=pendingDividerCancel;closeDividerConfirmation();if(action)action();});
 $('dividerConfirmAccept').addEventListener('click',()=>{
  const action=pendingDividerChange;
  closeDividerConfirmation();
@@ -4225,7 +4246,8 @@ function undo(re=false){
    if(re){const p=state.freeRedo.pop();if(p)state.freePts.push(p);}else{const p=state.freePts.pop();if(p)state.freeRedo.push(p);}
    renderPanel();planDraw();updateHeader();return;}
  const i=state.historyAt+(re?1:-1);if(i<0||i>=state.history.length)return;state.historyAt=i;setProject(state.history[i],false);fit2d();toast(re?'Restored':'Undone');scheduleAutosave();}
-function railSummary(q){const keys=Object.keys(q.railOverrides||{}).map(Number).sort((a,b)=>a-b),base=`${railSty(q.railStyle)} · ${railCol(q.railColor)}`;
+function railSummary(q){if(railCatalog(q)){const {base,own}=railSummaryCatalog(q);return own.length?`${base} (other railings); ${own.join('; ')}`:base;}
+ const keys=Object.keys(q.railOverrides||{}).map(Number).sort((a,b)=>a-b),base=`${railSty(q.railStyle)} · ${railCol(q.railColor)}`;
  return keys.length?`${base} (other edges); `+keys.map(k=>{const f=core.railFinish(q,k);return `Edge ${k+1}: ${railSty(f.railStyle)} · ${railCol(f.railColor)}`;}).join('; '):base;}
 function toggleEdge(kind,i){const q=structuredClone(state.intent),set=new Set(kind==='house'?q.houseEdges:q.railEdges);
  if(kind==='house'){
@@ -4332,6 +4354,126 @@ const input=(path,label,val,min,max,step=.5)=>`<div class="field-card"><label>${
 const swatches=(path,palette,selected,rail=false,mark=false,label=n=>n)=>`<div class="swatches${mark?' marked':''}">${Object.entries(palette).map(([name,hex])=>`<button type="button" data-path="${path}" data-value="${name}" class="swatch ${rail?'rail':''} ${name===selected?'selected':''}" aria-label="${esc(label(name))}" title="${esc(label(name))}"${mark?` aria-pressed="${name===selected}"`:''}><span class="swatch-paint" style="background-color:${hex}">${mark&&name===selected?'<i class="swatch-check" aria-hidden="true">✓</i>':''}</span><span>${esc(label(name))}</span></button>`).join('')}</div>`;
 // V5.3 C6: one-line "what is chosen now" card for the finish steps (presentation only).
 const finishCard=(rows)=>`<div class="finish-current" role="status">${rows.map(([label,hex,main,sub])=>`<div class="finish-row"><span class="finish-chip" style="background-color:${hex}"></span><span class="finish-text"><small>${label}</small><b>${main}</b>${sub?`<em>${sub}</em>`:''}</span></div>`).join('')}</div>`;
+// ---- Product library v1.2 · decking selection (Stage C) ----------------------------------------
+// James picks brand → collection → color; nothing is preselected (owner RD-01, Q01/Q02). The pick is
+// saved as stable library IDs in q.catalogDecking; the engine reads only colors from it (through the
+// appearance hook), so shape, stairs, railings, frames, dividers, board direction and framing never change.
+const DECK_CAT=productCatalog.decking;
+const deckBrandById=id=>DECK_CAT.find(b=>b.id===id)||null;
+function deckSel(q){const p=appearance.deckPick(q);if(!p)return null;
+ return {p,brand:appearance.brandOfLine(p.lineId),line:appearance.line(p.lineId),color:appearance.deckColor(p.colorId)};}
+// Role colors come only from the selected collection (compatible contrast); otherwise they follow the main color.
+const roleCol=(sel,id)=>{const c=id&&appearance.deckColor(id);return c&&c.lineId===sel.line.id?c:sel.color;};
+const deckProductLabel=q=>{const s=deckSel(q);return s?`${s.brand.name} · ${s.line.name} · ${s.color.name}`:`${deckMat(q.collection)} · ${deckCol(q.decking)}`;};
+const frameLabel=q=>{const s=deckSel(q);return s?roleCol(s,s.p.frameColorId).name:deckCol(q.border);};
+const dividerLabel=q=>{const s=deckSel(q);return s?roleCol(s,s.p.dividerColorId).name:deckCol(q.border);};
+const colorTierNote=c=>c.look.tier==='C'?'Color sample pending: this preview color is provisional.':'Approximate color: confirm with a physical sample.';
+const lineNotice=l=>l.listing==='listed-with-notice'?(l.reason||'Confirm local availability before quoting.'):l.listing==='coming-soon'?'Coming soon: browse only, not for quotes.':l.listing==='hold'?(l.reason||'Not available for new sales.'):'';
+const PRODUCT_APPROX_NOTE='<div class="approx-note" data-note="product-approx">Product colors are approximate previews made by AOS from manufacturer descriptions, not manufacturer images or measured samples. Confirm every color with a physical sample.</div>';
+const catOpt=(attr,value,label,selected,disabled=false,extra='')=>`<button type="button" ${attr}="${esc(value)}" class="cat-option${selected?' selected':''}" aria-pressed="${selected}" ${disabled?'disabled':''}>${esc(label)}${extra?`<small>${esc(extra)}</small>`:''}</button>`;
+const catChip=(attr,value,name,hex,selected,disabled=false,extra='')=>`<button type="button" ${attr}="${esc(value)}" class="cat-chip${selected?' selected':''}" aria-pressed="${selected}" ${disabled?'disabled':''}><span class="cat-sw" style="background-color:${hex}"></span><span class="cat-name">${esc(name)}${extra?`<small>${esc(extra)}</small>`:''}</span></button>`;
+function deckCatalogPanel(q){const sel=deckSel(q),draft=state.catalogDraft||{brandId:sel?.brand.id||null,lineId:sel?.line.id||null};
+ const brand=deckBrandById(draft.brandId),line=brand?.lines.find(x=>x.id===draft.lineId);
+ let out=`<section class="cat-picker" data-catalog="decking"><p class="group-title">Decking product</p><p class="cat-status">${sel?`Selected: <b>${esc(deckProductLabel(q))}</b>`:'No decking product selected yet. Choose the brand, collection and color with your customer.'}</p>`;
+ out+=`<p class="cat-label">1. Brand</p><div class="cat-grid brands">${DECK_CAT.map(b=>catOpt('data-catalog-brand',b.id,b.name,b.id===draft.brandId)).join('')}</div>`;
+ if(brand){out+=`<p class="cat-label">2. Collection</p><div class="cat-grid lines">${brand.lines.map(l=>catOpt('data-catalog-line',l.id,l.name,l.id===draft.lineId,!l.selectable,[l.material,l.listing==='coming-soon'?'Coming soon':l.listing==='hold'?'Not for new sales':l.listing==='listed-with-notice'?'Check supply':''].filter(Boolean).join(' · '))).join('')}</div>`;}
+ if(line){out+=`<p class="cat-label">3. Color</p><div class="cat-chips">${line.colors.map(c=>catChip('data-catalog-color',c.id,c.name,c.look.hex,sel?.color.id===c.id,!c.selectable,!c.selectable?'Not available':c.look.tier==='C'?'sample pending':'')).join('')}</div>`;
+  const n=lineNotice(line);if(n)out+=`<p class="cat-note">${esc(n)}</p>`;}
+ if(sel&&(!line||sel.line.id===line.id))out+=`<p class="cat-note"><b>${esc(sel.color.name)}</b>: ${esc(colorTierNote(sel.color))}</p>`;
+ out+=`<p class="cat-note">Choosing a product changes colors only. Deck shape, stairs, railings, picture frames, dividers, board direction and framing stay as they are; board sizes and quantities are unchanged in this release.</p>`;
+ if(sel)out+=`<div class="action-row"><button type="button" data-action="catalog-clear">Use concept preview instead</button></div>`;
+ return out+PRODUCT_APPROX_NOTE+'</section>';
+}
+function deckRolesPanel(q){const s=deckSel(q),colors=s.line.colors.filter(c=>c.selectable);
+ const row=(role,label,cur,help)=>`<p class="group-title">${label}</p><div class="cat-chips">${colors.map(c=>catChip('data-deck-role',role+'|'+c.id,c.name,c.look.hex,cur.id===c.id,false,c.id===s.color.id?'main color':'')).join('')}</div>${help?`<div class="compact-status">${help}</div>`:''}`;
+ let out=`<section class="cat-picker" data-catalog="decking-roles"><p class="cat-status">Colors from <b>${esc(s.brand.name)} ${esc(s.line.name)}</b>. Each part starts matching the main decking color; pick another color from the same collection for contrast.</p>`;
+ out+=row('frame','Picture frame',roleCol(s,s.p.frameColorId),q.borderCount?'':'This deck has no picture frame; the color is kept for when one is added.');
+ out+=row('divider','Divider boards',roleCol(s,s.p.dividerColorId),'');
+ out+=row('fascia','Fascia',roleCol(s,s.p.fasciaColorId),s.line.fascia?'':'No matching fascia is listed for this collection. AOS confirms a compatible fascia (technical review).');
+ if((state.model?.stats?.landings||[]).length)out+=row('landing','Landings',roleCol(s,s.p.landingColorId),'Attached landings start with the main decking.');
+ if(q.staircases.length){out+=`<p class="group-title">Stairs</p>`;
+  q.staircases.forEach((st,i)=>{const own=s.p.stairs?.[st.id]||{};
+   const seg2=(part,label)=>`<div class="stair-finish-row"><span>${label}</span><div class="seg">${[['main','Main color'],['frame','Frame color']].map(([v,t])=>`<button type="button" data-stair-finish="${esc(st.id)}|${part}|${v}" class="${(own[part]||'main')===v?'selected':''}">${t}</button>`).join('')}</div></div>`;
+   out+=`<div class="stair-finish"><b>Stair ${i+1}</b>${seg2('tread','Treads')}${seg2('riser','Risers')}</div>`;});
+  if(!s.line.riser)out+=`<div class="compact-status">No separate riser board is listed for this collection; risers are shown in the chosen color and need product selection or technical review.</div>`;}
+ const notes=s.brand.notices||[];if(notes.length)out+=`<details class="cat-preview"><summary>${esc(s.brand.name)} notes for AOS</summary>${notes.map(n=>`<p class="cat-note"><b>${esc(n.topic)}</b>: ${esc(n.text)}</p>`).join('')}</details>`;
+ return out+PRODUCT_APPROX_NOTE+'</section>';
+}
+// ---- Product library v1.2 · railings (Stage D) ---------------------------------------------------
+// Global default: Westbury Tuscany C10, Black Fine Texture. Category defaults: RDI Avalon (vertical square
+// balusters, Matte Black); AOS wood T-top with round black aluminum balusters, in-deck posts. Existing designs
+// store "Westbury Tuscany" + a concept color: they map exactly to library IDs below, so no file is rewritten.
+const RAIL_CAT=productCatalog.railing,railBrandById=id=>RAIL_CAT.find(b=>b.id===id)||null;
+const LEGACY_RAIL_FINISH={'Textured Black':'westbury--black-fine-texture','Bronze':'westbury--bronze-fine-texture','White':'westbury--white-fine-texture'};
+const legacyRailSel=(style,color)=>style==='Westbury Tuscany'?{brandId:'westbury',systemId:'westbury-tuscany',modelId:'westbury-tuscany--c10',finishId:LEGACY_RAIL_FINISH[color]||null}:{};
+const railCatalog=q=>q&&q.catalogRailing&&typeof q.catalogRailing==='object'?q.catalogRailing:null;
+const pickRail=o=>o&&o.systemId?{brandId:o.brandId,systemId:o.systemId,modelId:o.modelId||null,finishId:o.finishId||null,...(o.mounting?{mounting:o.mounting}:{})}:{};
+// Effective railing for a target: 'all', an edge index, or 'stair:<id>' (stair override, else its edge, else deck-wide).
+function railSel(q,t){const r=railCatalog(q),sid=typeof t==='string'&&t.startsWith('stair:')?t.slice(6):null,st=sid&&q.staircases.find(s=>s.id===sid);
+ if(r){if(st)return pickRail(r.stairs?.[sid]||r.edges?.[st.edge]||r);if(Number.isInteger(t))return pickRail(r.edges?.[t]||r);return pickRail(r);}
+ const f=st?core.railFinish(q,st.edge):Number.isInteger(t)?core.railFinish(q,t):{railStyle:q.railStyle,railColor:q.railColor};return legacyRailSel(f.railStyle,f.railColor);}
+function railInfo(sel){const b=railBrandById(sel?.brandId),s=b?.systems.find(x=>x.id===sel.systemId),m=s?.models.find(x=>x.id===sel.modelId)||null,f=b?.finishes[sel.finishId]||null;return s?{b,s,m,f}:null;}
+const railLabelOf=sel=>{const i=railInfo(sel);if(!i)return 'No rail product selected';const sys=i.s.name.toLowerCase().startsWith(i.b.short.toLowerCase())?i.s.name:`${i.b.short} ${i.s.name}`,code=i.m?.code&&/^[A-Z]/.test(i.m.code)?i.m.code:'';
+ return `${sys}${code?' '+code:i.m?' · '+i.m.name:''} · ${i.f?i.f.name:'finish to choose'}`;};
+const railRenderNote=sel=>{const i=railInfo(sel);if(!i)return '';const r=i.m?.render||i.s.render;
+ if(r==='placeholder')return `Not drawn accurately yet: the 2D/3D view shows a generic picket railing in this finish, not ${i.s.id==='aos-wood-railing'?'the AOS wood railing (4×4 posts, 2×6 cap)':'the '+(i.m?.name||i.s.name).toLowerCase()+' infill'}.`;
+ return r==='approximate'?'Drawn approximately with the standard picket railing.':'';};
+const railHex=sel=>{const i=railInfo(sel);return i?.f?.look.hex||core.RAILS['Textured Black'];};
+// Category default when James switches brand (owner hierarchy); wood lumber follows treated decking, else brown.
+function railBrandDefault(q,brandId){const b=railBrandById(brandId),d={brandId,...b.defaults};
+ if(brandId==='aos-wood-railing'){const dk=deckSel(q);d.finishId=dk?.line.id==='aos-treated-green'?'aos-wood--green-treated':'aos-wood--brown-treated';}
+ return pickRail(d);}
+// System switch: keep the finish when the system offers it, else its black, else the owner D-04 fallback (may be none).
+function railSystemDefault(q,brandId,systemId,cur){const b=railBrandById(brandId),s=b.systems.find(x=>x.id===systemId);
+ if(brandId==='aos-wood-railing')return railBrandDefault(q,brandId);
+ const model=(b.defaults.systemId===systemId&&b.defaults.modelId)||s.models.find(m=>m.render==='standard')?.id||s.models[0]?.id||null;
+ let fin=s.finishIds.includes(cur?.finishId)?cur.finishId:b.defaultBlackFinishBySystem?.[systemId]||b.noBlackFinishDefault?.[systemId]||(s.finishIds.includes(b.defaults.finishId)?b.defaults.finishId:null);
+ return pickRail({brandId,systemId,modelId:model,finishId:fin});}
+function railTargets(q){const es=core.edges(core.polygon(q));return {edges:es.filter(e=>q.railEdges.includes(e.i)),stairs:q.staircases.map((s,i)=>({s,i})).filter(x=>x.s.rails?.left||x.s.rails?.right)};}
+function railCatalogPanel(q,t){const cur=railSel(q,t),i=railInfo(cur),d=state.railDraft&&state.railDraft.target===String(t)?state.railDraft:null;
+ const bId=d?.brandId||cur.brandId,b=railBrandById(bId),sId=d?d.systemId:cur.systemId,s=b?.systems.find(x=>x.id===sId);
+ let out=`<section class="cat-picker" data-catalog="railing"><p class="cat-label">1. Railing brand</p><div class="cat-grid">${RAIL_CAT.map(x=>catOpt('data-rail-brand',x.id,x.name,x.id===bId,false,x.id===RAIL_CAT[0].id?'AOS default':'')).join('')}</div>`;
+ if(b){const groups=[...new Set(b.systems.map(x=>x.material||''))];
+  out+=`<p class="cat-label">2. Family</p><div class="cat-grid">${b.systems.map(x=>catOpt('data-rail-system',x.id,x.name,x.id===sId,!x.selectable,[groups.length>1?x.material:'',x.listing==='hold'?'Not for new sales':x.listing==='listed-with-notice'?'See note':'',x.render==='placeholder'?'not drawn yet':''].filter(Boolean).join(' · '))).join('')}</div>`;}
+ if(s){if(s.models.length>1)out+=`<p class="cat-label">3. Style / infill</p><div class="cat-grid">${s.models.map(m=>catOpt('data-rail-model',m.id,m.code?`${m.code} · ${m.name}`:m.name,m.id===(d?.modelId||cur.modelId),false,m.render==='placeholder'?'not drawn yet':m.render==='approximate'?'drawn approximately':'')).join('')}</div>`;
+  const fins=s.finishIds.map(id=>({id,...b.finishes[id]})).filter(f=>bId!=='aos-wood-railing'||f.group==='lumber').sort((x,y)=>(y.stock?1:0)-(x.stock?1:0));
+  out+=`<p class="cat-label">${s.models.length>1?'4':'3'}. ${bId==='aos-wood-railing'?'Railing lumber (all AOS wood railing)':'Finish'}</p><div class="cat-chips">${fins.map(f=>catChip('data-rail-finish',f.id,f.name,f.look.hex,!d&&f.id===cur.finishId&&s.id===cur.systemId,false,[f.stock?'AOS stock':'',f.look.tier==='C'?'sample pending':''].filter(Boolean).join(' · '))).join('')}</div>`;
+  if(d&&!d.finishId)out+=`<p class="cat-note"><b>Choose a finish</b> to apply ${esc(s.name)}; no default finish is published for this family.</p>`;
+  if(bId==='aos-wood-railing'){const mnt=cur.mounting||b.defaults.mounting;out+=`<p class="cat-label">Posts</p><div class="cat-grid">${[['in-deck','In-deck 4×4 (inside rim)'],['face-mount','Face-mounted (outside rim)']].map(([v,l])=>catOpt('data-rail-mount',v,l,mnt===v)).join('')}</div><p class="cat-note">Balusters: round black aluminum. Stair handrail: 1½ in. satin black. Post connections, blocking and hardware need AOS technical review.</p>`;}
+  if(s.reason)out+=`<p class="cat-note">${esc(s.reason)}</p>`;
+  if(s.id==='rdi-avalon'&&b.defaults.assemblyStatus)out+=`<p class="cat-note">Avalon top rail (Pellinore or Tristan) is confirmed by AOS; RDI names no standard top rail.</p>`;}
+ const rn=railRenderNote(cur);if(rn)out+=`<p class="cat-note rail-render-note"><b>${esc(rn)}</b></p>`;
+ return out+'<div class="approx-note">Finish colors are approximate previews. Confirm with a physical sample.</div></section>';}
+// Writes a railing choice for a target, following each brand's approved switching behaviour.
+function applyRail(t,sel,msg){const q=structuredClone(state.intent);let r=railCatalog(q);
+ if(!r){const es=core.edges(core.polygon(q));r={libraryVersion:productCatalog.libraryVersion,...legacyRailSel(q.railStyle,q.railColor),edges:{},stairs:{}};
+  for(const e of es)if(q.railOverrides?.[e.i]){const f=core.railFinish(q,e.i);r.edges[e.i]=legacyRailSel(f.railStyle,f.railColor);}}
+ r={...r,edges:{...(r.edges||{})},stairs:{...(r.stairs||{})}};const isWood=sel.brandId==='aos-wood-railing';
+ const finish=()=>{if(isWood)for(const o of [r,...Object.values(r.edges),...Object.values(r.stairs)])if(o.brandId==='aos-wood-railing')o.finishId=sel.finishId; // D4: lumber is one global choice
+  q.catalogRailing=r;state.railDraft=null;setProject(q);toast(msg);};
+ if(t==='all'){const nCustom=Object.keys(r.edges).length+Object.keys(r.stairs).length,brand=railBrandById(sel.brandId);
+  Object.assign(r,{brandId:sel.brandId,systemId:sel.systemId,modelId:sel.modelId,finishId:sel.finishId});if(sel.mounting)r.mounting=sel.mounting;else delete r.mounting;
+  if(nCustom&&brand.onDefaultChange==='ask'){askDividerConfirmation('Change custom edges too?',`${nCustom===1?'1 edge or stair has':nCustom+' edges or stairs have'} its own railing. Apply ${railLabelOf(sel)} to them as well, or keep them as they are?`,'Apply to All',()=>{r.edges={};r.stairs={};finish();},'Keep Custom',finish);return;}
+  finish();return;}
+ const key=Number.isInteger(t)?['edges',t]:['stairs',String(t).slice(6)];r[key[0]][key[1]]=sel;finish();}
+function railSummaryCatalog(q){const {edges,stairs}=railTargets(q),r=railCatalog(q),base=railLabelOf(pickRail(r));
+ const own=[...edges.filter(e=>r.edges?.[e.i]).map(e=>`Edge ${e.i+1}: ${railLabelOf(pickRail(r.edges[e.i]))}`),...stairs.filter(x=>r.stairs?.[x.s.id]).map(x=>`Stair ${x.i+1}: ${railLabelOf(pickRail(r.stairs[x.s.id]))}`)];
+ return {base,own};}
+const ROLE_KEY={frame:'frameColorId',divider:'dividerColorId',fascia:'fasciaColorId',landing:'landingColorId'};
+// Q14: changing the main color asks whether border colors that were changed should be kept or replaced.
+function pickDeckColor(brand,line,color){const q=structuredClone(state.intent),old=q.catalogDecking&&typeof q.catalogDecking==='object'?q.catalogDecking:null;
+ const base={libraryVersion:productCatalog.libraryVersion,brandId:brand.id,lineId:line.id,colorId:color.id};
+ const done=(p,msg)=>{q.catalogDecking=p;state.catalogDraft=null;setProject(q);toast(msg);};
+ const label=`${brand.name} ${line.name} · ${color.name}`;
+ if(!old||old.lineId!==line.id){const p={...base};if(old?.stairs)p.stairs=old.stairs;
+  const had=old&&Object.values(ROLE_KEY).some(k=>old[k]);
+  done(p,`${label} selected${had?'; frame, divider and fascia colors now match it (the old ones belong to another collection)':''}. Colors are approximate.`);return;}
+ const custom=Object.values(ROLE_KEY).filter(k=>old[k]&&old[k]!==color.id);
+ if(!custom.length){done({...old,...base},`${label} selected. Colors are approximate.`);return;}
+ askDividerConfirmation('Keep the border colors?',`You changed the frame, divider or fascia color before. Keep those colors, or make them match ${color.name}? Deck layout and stairs do not change.`,'Match New Color',
+  ()=>{const p={...old,...base};for(const k of Object.values(ROLE_KEY))delete p[k];done(p,`${label} selected; borders now match.`);},'Keep Border Colors',
+  ()=>{const p={...old,...base};for(const k of Object.values(ROLE_KEY))if(p[k]===color.id)delete p[k];done(p,`${label} selected; border colors kept.`);});
+}
 const COLLECTION_INFO={'TimberTech Terrain':{brand:'TimberTech',short:'Terrain',kind:'capped composite'},'TimberTech Advanced PVC':{brand:'TimberTech',short:'Advanced PVC',kind:'PVC'}};
 // V5.3 C7 release fixes (owner authorization, B1/B2): DISPLAY NAMES ONLY. The stored values in designs and
 // saved files (collection, decking, border, railStyle, railColor) are unchanged, so saved projects, geometry,
@@ -5011,13 +5153,14 @@ const stockText=x=>Object.entries(x.stockBoards).filter(([,n])=>n).map(([l,n])=>
 function reviewRailing(q){const stairRails=q.staircases.some(s=>s.rails?.left||s.rails?.right);
  if(!q.railEdges.length&&!stairRails)return 'None';
  const where=[q.railEdges.length?plural(q.railEdges.length,'deck edge'):'',stairRails?'stairs':''].filter(Boolean).join(' + ');
+ if(railCatalog(q)){const {base,own}=railSummaryCatalog(q);return `${esc(base)}${own.map(x=>`<small>${esc(x)}</small>`).join('')}<small>On ${where}</small><small>Approximate finish color shown</small>`;}
  const own=Object.keys(q.railOverrides||{}).map(Number).filter(k=>q.railEdges.includes(k)).sort((a,b)=>a-b).map(k=>{const f=core.railFinish(q,k);return `Edge ${k+1}: ${f.railStyle===q.railStyle?'':esc(railSty(f.railStyle))+' · '}${esc(railCol(f.railColor))}`;});
  return `${esc(railSty(q.railStyle))} · ${esc(railCol(q.railColor))}${own.map(t=>`<small>${t}</small>`).join('')}<small>On ${where}</small>`;}
 function reviewSelections(q,m){const st=m.stats,c=m.counts,rows=[];
  rows.push(rvRow('deck','Deck',`${esc(SHAPE_NAMES[q.shape]||q.shape)} · ${fmt(q.width)} × ${fmt(q.depth)}<small>${fmt(q.height)} above grade</small>`));
- rows.push(rvRow('decking','Decking',`${esc(deckMat(q.collection))} · ${esc(deckCol(q.decking))}<small>Concept color · product confirmed by AOS</small><small>${esc(BOARD_DIRECTIONS[m.geometry.deckLineResolved]||q.deckLine)} boards</small>`));
- rows.push(rvRow('frame','Picture frame',q.borderCount?`${q.borderCount===2?'Double':'Single'} · ${esc(deckCol(q.border))}${q.frameHouseWalls?'<small>including house walls</small>':''}`:'None'));
- if(st.dividerRowCount)rows.push(rvRow('dividers','Divider boards',`${plural(st.dividerRowCount,'row')} · ${esc(deckCol(q.border))}`));
+ rows.push(rvRow('decking','Decking',`${esc(deckProductLabel(q))}<small>${deckSel(q)?'Approximate color shown · confirm with a physical sample':'Concept color · product confirmed by AOS'}</small><small>${esc(BOARD_DIRECTIONS[m.geometry.deckLineResolved]||q.deckLine)} boards</small>`));
+ rows.push(rvRow('frame','Picture frame',q.borderCount?`${q.borderCount===2?'Double':'Single'} · ${esc(frameLabel(q))}${q.frameHouseWalls?'<small>including house walls</small>':''}`:'None'));
+ if(st.dividerRowCount)rows.push(rvRow('dividers','Divider boards',`${plural(st.dividerRowCount,'row')} · ${esc(dividerLabel(q))}`));
  rows.push(rvRow('railing','Railing',reviewRailing(q)));
  if(q.staircases.length){const L=st.landings||[];
    rows.push(rvRow('stairs','Stairs',`${plural(q.staircases.length,'staircase')} · ${q.staircases.map(s=>fmt(s.width)).join(', ')} wide${L.length?`<small>${L.map(l=>`Landing ${fmt(l.widthFt)} × ${fmt(l.depthFt)}${l.turn&&l.turn!=='straight'?`, turns ${esc(l.turn)}`:''}`).join('; ')}</small>`:''}`));}
@@ -5106,10 +5249,22 @@ function reviewFraming(q,m){const c=m.counts,st=m.stats,alerts=m.alerts||[],warn
 // C7 release fixes B1/B2: internal record of the stored (legacy) product selections and what still needs AOS
 // product confirmation. Internal mode only; never in the customer Review, PDF or concept file.
 function productConfirmation(q){const items=[],accent=q.borderCount||(state.model?.stats?.dividerRowCount)||q.staircases.length;
- items.push({key:'decking',text:`Decking: shown as “${deckMat(q.collection)} · ${deckCol(q.decking)}”. Saved selection “${q.collection} · ${q.decking}” is a legacy name, not a verified product/color; requires product confirmation.`});
- if(accent)items.push({key:'accent',text:`Accent (frame, dividers, fascia, stairs): shown as “${deckCol(q.border)}”. Saved selection “${q.border}” is a legacy name; requires product confirmation.`});
+ const dsel=deckSel(q);
+ if(dsel){const l=dsel.line;items.push({key:'decking',text:`Decking: ${deckProductLabel(q)} (library v1.2 IDs saved). ${l.listing==='listed-with-notice'?(l.reason||'Confirm local availability before quoting.')+' ':''}Color shown is approximate (${dsel.color.look.tier==='C'?'name only; sample pending':'from the manufacturer description'}); board profiles, fasteners and quantities are not yet product-specific.`});
+  if(!l.fascia)items.push({key:'fascia',text:`Fascia: no matching fascia is listed for ${dsel.brand.name} ${l.name}; choose a compatible fascia (technical review).`});}
+ else items.push({key:'decking',text:`Decking: shown as “${deckMat(q.collection)} · ${deckCol(q.decking)}”. Saved selection “${q.collection} · ${q.decking}” is a legacy name, not a verified product/color; requires product confirmation.`});
+ if(accent&&!dsel)items.push({key:'accent',text:`Accent (frame, dividers, fascia, stairs): shown as “${deckCol(q.border)}”. Saved selection “${q.border}” is a legacy name; requires product confirmation.`});
  const railed=q.railEdges.length||q.staircases.some(s=>s.rails?.left||s.rails?.right);
- if(railed){const used=new Map();const add=(f,where)=>{const k=`${f.railStyle}|${f.railColor}`;if(!used.has(k))used.set(k,{f,where:[]});used.get(k).where.push(where);};
+ if(railed&&railCatalog(q)){const r=railCatalog(q),{edges,stairs}=railTargets(q),seen=new Set();
+  for(const [sel,wh] of [[pickRail(r),''],...edges.filter(e=>r.edges?.[e.i]).map(e=>[pickRail(r.edges[e.i]),` (edge ${e.i+1})`]),...stairs.filter(x=>r.stairs?.[x.s.id]).map(x=>[pickRail(r.stairs[x.s.id]),` (stair ${x.i+1})`])]){
+   const k=JSON.stringify(sel)+wh;if(seen.has(k))continue;seen.add(k);const i=railInfo(sel);
+   if(!i){items.push({key:'rail-none',text:`Railing${wh}: no product selected; AOS to choose before quoting.`});continue;}
+   if(!i.f)items.push({key:'rail-finish',text:`Railing${wh}: ${railLabelOf(sel)}: choose a finish before quoting.`});
+   if(i.s.listing==='listed-with-notice')items.push({key:'rail-notice',text:`Railing${wh}: ${i.s.name}: ${i.s.reason}`});
+   const rn=railRenderNote(sel);if(rn)items.push({key:'rail-render',text:`Railing${wh}: ${rn}`});
+   if(i.b.id==='aos-wood-railing')items.push({key:'rail-wood',text:`Railing${wh}: AOS wood railing (${(sel.mounting||'in-deck')==='in-deck'?'in-deck 4×4 posts inside the rim':'face-mounted posts outside the rim'}): post connections, blocking, hold-downs and code review pending.`});
+   if(i.s.id==='rdi-avalon')items.push({key:'rail-avalon',text:`Railing${wh}: RDI Avalon top rail (Pellinore or Tristan) not yet chosen; RDI names no standard.`});}}
+ else if(railed){const used=new Map();const add=(f,where)=>{const k=`${f.railStyle}|${f.railColor}`;if(!used.has(k))used.set(k,{f,where:[]});used.get(k).where.push(where);};
   if(!q.railEdges.length||q.railEdges.some(i=>!q.railOverrides?.[i]))add({railStyle:q.railStyle,railColor:q.railColor},'default');
   for(const i of q.railEdges)if(q.railOverrides?.[i])add(core.railFinish(q,i),`edge ${i+1}`);
   for(const {f,where} of used.values()){const wh=where.includes('default')?'':` (${where.join(', ')})`;
@@ -5188,13 +5343,15 @@ function pdfTitle(pg,project,sub){const lines=pdfWrap(project,'B',18,PDF_PAGE.w-
 // Customer selections (the same facts as Review's Customer panel).
 function pdfSelections(q,m){const st=m.stats,c=m.counts,rows=[];
  rows.push(['Deck',[`${SHAPE_NAMES[q.shape]||q.shape} · ${pdfFt(q.width)} × ${pdfFt(q.depth)}`],[`${pdfFt(q.height)} above grade`]]);
- rows.push(['Decking',[`${deckMat(q.collection)} · ${deckCol(q.decking)}`],['Concept color · product confirmed by AOS',`${BOARD_DIRECTIONS[m.geometry.deckLineResolved]||q.deckLine} boards`]]);
- rows.push(['Picture frame',[q.borderCount?`${q.borderCount===2?'Double':'Single'} · ${deckCol(q.border)}`:'None'],q.borderCount&&q.frameHouseWalls?['Including house walls']:[]]);
- if(st.dividerRowCount)rows.push(['Divider boards',[`${plural(st.dividerRowCount,'row')} · ${deckCol(q.border)}`],[]]);
+ rows.push(['Decking',[deckProductLabel(q)],[deckSel(q)?'Approximate color shown · confirm with a physical sample':'Concept color · product confirmed by AOS',`${BOARD_DIRECTIONS[m.geometry.deckLineResolved]||q.deckLine} boards`]]);
+ rows.push(['Picture frame',[q.borderCount?`${q.borderCount===2?'Double':'Single'} · ${frameLabel(q)}`:'None'],q.borderCount&&q.frameHouseWalls?['Including house walls']:[]]);
+ if(st.dividerRowCount)rows.push(['Divider boards',[`${plural(st.dividerRowCount,'row')} · ${dividerLabel(q)}`],[]]);
  const stairRails=q.staircases.some(s=>s.rails?.left||s.rails?.right);
  if(!q.railEdges.length&&!stairRails)rows.push(['Railing',['None'],[]]);
  else{const own=Object.keys(q.railOverrides||{}).map(Number).filter(k=>q.railEdges.includes(k)).sort((a,b)=>a-b).map(k=>{const f=core.railFinish(q,k);return `Edge ${k+1}: ${f.railStyle===q.railStyle?'':railSty(f.railStyle)+' · '}${railCol(f.railColor)}`;});
-   rows.push(['Railing',[`${railSty(q.railStyle)} · ${railCol(q.railColor)}`],[...own,`On ${[q.railEdges.length?plural(q.railEdges.length,'deck edge'):'',stairRails?'stairs':''].filter(Boolean).join(' + ')}`]]);}
+   const onWhere=`On ${[q.railEdges.length?plural(q.railEdges.length,'deck edge'):'',stairRails?'stairs':''].filter(Boolean).join(' + ')}`;
+   if(railCatalog(q)){const c=railSummaryCatalog(q),ph=[pickRail(railCatalog(q)),...Object.values(railCatalog(q).edges||{}),...Object.values(railCatalog(q).stairs||{})].some(x=>railRenderNote(pickRail(x)).startsWith('Not drawn'));rows.push(['Railing',[c.base],[...c.own,onWhere,ph?'Illustration shows a generic railing for some products':'Approximate finish color shown']]);}
+   else rows.push(['Railing',[`${railSty(q.railStyle)} · ${railCol(q.railColor)}`],[...own,onWhere]]);}
  if(q.staircases.length){const L=st.landings||[];rows.push(['Stairs',[`${plural(q.staircases.length,'staircase')} · ${q.staircases.map(s=>pdfFt(s.width)).join(', ')} wide`],L.map(l=>`Landing ${pdfFt(l.widthFt)} × ${pdfFt(l.depthFt)}${l.turn&&l.turn!=='straight'?`, turns ${l.turn}`:''}`)]);}
  if(q.houseEdges.length){const hl=m.geometry.house||{},look=core.SIDING_STYLES[hl.siding||q.siding]?.label;const op=[c.doors?plural(c.doors,'door'):'',c.patioDoors?plural(c.patioDoors,'patio door'):'',c.windows?plural(c.windows,'window'):''].filter(Boolean).join(', ');
    rows.push(['House',[`${look?look+' · ':''}${hl.colorName||q.houseColor||''}`],op?[op]:[]]);}
@@ -5522,7 +5679,7 @@ function finishReview(){requestCustomerOutput('pdf');}
 // step, tab or editing mode starts at the top.
 let panelScrollKey=null;
 function panelKeyNow(){return [state.step,state.houseTab,state.layoutTab,state.finishTab,state.railTab,state.framingDetails?1:0,state.selectedEdge!==null?1:0,state.selectedCorner!==null?1:0,state.freeDraw?1:0,state.intent?1:0,state.reviewMode,state.reviewTab,state.reviewReturn?1:0].join('|');}
-function renderPanelNow(){const s=state.step,q=state.intent;const inspector=document.querySelector('.inspector');inspector.classList.toggle('divider-editing',s===3&&state.layoutTab==='border');
+function renderPanelNow(){const s=state.step,q=state.intent;{const pn=$('productNote');if(pn)pn.hidden=!(q&&(appearance.deckPick(q)||appearance.rail(q,{})));}const inspector=document.querySelector('.inspector');inspector.classList.toggle('divider-editing',s===3&&state.layoutTab==='border');
  inspector.classList.toggle('shape-edit',s===0);inspector.classList.toggle('corner-active',s===0&&state.selectedCorner!==null);inspector.classList.toggle('stair-edit',s===2||s===1);
  // V5.1: clickable steps. Jumping never changes the design; it only opens another panel.
  state.visited=state.visited||new Set([0]);state.visited.add(s);
@@ -5559,24 +5716,30 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
    html=`${seg('finishTab',[['field','Main decking'],['accent','Border / stair accent']],state.finishTab)}`;
    // V5.3 C6: the current choice is always named first; picking a product changes only the decking choice.
    // C7 release fixes B1: concept material and color names; no manufacturer is named (stored values unchanged).
-   html+=finishCard(state.finishTab==='field'?[['Main decking',core.PALETTES[q.decking],`${esc(mat)} · ${esc(deckCol(q.decking))}`,'concept color · product to be confirmed'],['Accent',core.PALETTES[q.border],esc(deckCol(q.border)),'border · dividers · fascia · stairs']]:[['Accent',core.PALETTES[q.border],esc(deckCol(q.border)),'border · dividers · fascia · stairs'],['Main decking',core.PALETTES[q.decking],`${esc(mat)} · ${esc(deckCol(q.decking))}`,'']]);
-   if(state.finishTab==='field')html+=`<div class="control-group"><p class="group-title">Decking material (concept)</p>${seg('collection',[['TimberTech Terrain',DECK_MATERIAL_SHORT['TimberTech Terrain']],['TimberTech Advanced PVC',DECK_MATERIAL_SHORT['TimberTech Advanced PVC']]],q.collection)}</div><p class="group-title">${nColors} concept colors · field color</p>${swatches('decking',core.PALETTES,q.decking,false,true,deckCol)}${CONCEPT_NOTE}${APPROX_NOTE}`;
-   else html+=`<p class="group-title">Picture frame · dividers · fascia · all stair finishes</p>${swatches('border',core.PALETTES,q.border,false,true,deckCol)}<div class="compact-status">Accent color is shared by all these components.</div>${CONCEPT_NOTE}${APPROX_NOTE}`;
+   // Product library v1.2: with a catalog product the cards show its approximate colors; otherwise the C7 concept controls are unchanged.
+   const sel=deckSel(q),hk=role=>appearance.deck(q,role);
+   if(sel)html+=finishCard(state.finishTab==='field'?[['Main decking',hk('field'),esc(deckProductLabel(q)),esc(colorTierNote(sel.color))],['Picture frame',hk('frame'),esc(frameLabel(q)),'dividers, fascia and stairs: see Border / stair accent']]:[['Picture frame',hk('frame'),esc(frameLabel(q)),''],['Main decking',hk('field'),esc(deckProductLabel(q)),'']]);
+   else html+=finishCard(state.finishTab==='field'?[['Main decking',core.PALETTES[q.decking],`${esc(mat)} · ${esc(deckCol(q.decking))}`,'concept color · product to be confirmed'],['Accent',core.PALETTES[q.border],esc(deckCol(q.border)),'border · dividers · fascia · stairs']]:[['Accent',core.PALETTES[q.border],esc(deckCol(q.border)),'border · dividers · fascia · stairs'],['Main decking',core.PALETTES[q.decking],`${esc(mat)} · ${esc(deckCol(q.decking))}`,'']]);
+   if(state.finishTab==='field'){html+=deckCatalogPanel(q);
+     if(!sel)html+=`<details class="cat-preview concept-controls" open><summary>Concept preview (no product selected)</summary><div class="control-group"><p class="group-title">Decking material (concept)</p>${seg('collection',[['TimberTech Terrain',DECK_MATERIAL_SHORT['TimberTech Terrain']],['TimberTech Advanced PVC',DECK_MATERIAL_SHORT['TimberTech Advanced PVC']]],q.collection)}</div><p class="group-title">${nColors} concept colors · field color</p>${swatches('decking',core.PALETTES,q.decking,false,true,deckCol)}${CONCEPT_NOTE}${APPROX_NOTE}</details>`;}
+   else html+=sel?deckRolesPanel(q):`<p class="group-title">Picture frame · dividers · fascia · all stair finishes</p>${swatches('border',core.PALETTES,q.border,false,true,deckCol)}<div class="compact-status">Accent color is shared by all these components.</div>${CONCEPT_NOTE}${APPROX_NOTE}`;
  }
  if(s===5&&q){html=`${seg('railTab',[['locations','Railing locations'],['finish','Railing finish']],state.railTab)}`;
    if(state.railTab==='locations')html+=`<div class="compact-intro">Tap deck edges to add or remove railings. Tap either stair side to toggle its railing.</div><div class="rail-summary">${q.railEdges.length} deck edges selected</div><div class="action-row"><button data-action="rails-all">Rail exposed edges</button><button data-action="rails-none">Remove deck rails</button></div>${q.staircases.length?`<div class="stair-picker"><button data-action="stair-prev" ${state.stairSelected<1?'disabled':''}>‹</button><strong>Stair ${state.stairSelected+1} of ${q.staircases.length}</strong><button data-action="stair-next" ${state.stairSelected>=q.staircases.length-1?'disabled':''}>›</button></div><div class="stair-rails"><button data-action="stair-rail" data-side="left" class="${currentStair()?.rails.left?'selected':''}">Left stair rail ${currentStair()?.rails.left?'✓':'+'}</button><button data-action="stair-rail" data-side="right" class="${currentStair()?.rails.right?'selected':''}">Right stair rail ${currentStair()?.rails.right?'✓':'+'}</button></div><div class="rail-side-note">Left/right as you walk down the stairs. Tap ✓ / + beside the stair on the plan to toggle a side.</div>`:''}`;
    else{
-     // V5.1 per-edge finish: choose "All railed edges" or one edge, then a product/color.
-     const es=core.edges(core.polygon(q)),railed=es.filter(e=>q.railEdges.includes(e.i)),ro=q.railOverrides||{};
-     if(state.railTarget!=='all'&&!q.railEdges.includes(state.railTarget))state.railTarget='all';
-     const t=state.railTarget,f=t==='all'?{railStyle:q.railStyle,railColor:q.railColor}:core.railFinish(q,t),nCustom=Object.keys(ro).length;
-     const chip=(val,label,colorName,custom)=>`<button type="button" data-action="rail-target" data-edge="${val}" class="${String(val)===String(t)?'selected':''}" aria-pressed="${String(val)===String(t)}"><span class="rail-dot" style="background-color:${core.RAILS[colorName]}"></span>${label}${custom?'<span class="rail-custom">Custom</span>':''}</button>`;
-     html+=railed.length?`<p class="group-title">Apply to</p><div class="rail-targets" role="group" aria-label="Railing edges">${chip('all','All railed edges',q.railColor,false)}${railed.map(e=>chip(e.i,`Edge ${e.i+1} · ${fmt(e.len)}`,core.railFinish(q,e.i).railColor,Boolean(ro[e.i]))).join('')}</div><div class="compact-status">${t==='all'?(nCustom?`Your choice applies to every railed edge, including ${nCustom===1?'1 edge':nCustom+' edges'} with a custom finish.`:'Tap an edge here or on the plan to give it its own finish.'):`Only Edge ${t+1} changes${q.staircases.some(s=>s.edge===t)?', including stair railings on this edge':''}.`}</div>`:`<div class="compact-intro">No deck edges have railings yet. Add them under Railing locations.</div>`;
-     // V5.3 C6: name the finish being edited and show an approximate picture of it (presentation only).
-     const stairsHere=t==='all'?q.staircases.length:q.staircases.filter(s=>s.edge===t).length;
-     html+=`<div class="finish-current rail-current" role="status"><div class="finish-row">${railPreview(core.RAILS[f.railColor],f.railStyle)}<span class="finish-text"><small>${t==='all'?'All railed edges':`Edge ${t+1} only`}${t!=='all'&&ro[t]?' · custom':''}</small><b>${esc(f.railStyle==='No rail product selected'?'Product not selected':railSty(f.railStyle))} · ${esc(railCol(f.railColor))}</b><em>${stairsHere?`Stair railings ${t==='all'?'follow their deck edge':'on this edge match'}`:'Deck railing'}</em></span></div></div>`;
-     html+=`<p class="group-title">Railing product</p>${seg('railStyle',[['Westbury Tuscany',RAIL_STYLE_LABEL['Westbury Tuscany']],['No rail product selected','Unspecified']],f.railStyle)}<p class="group-title">Railing finish</p>${swatches('railColor',core.RAILS,f.railColor,true,true,railCol)}<div class="approx-note">Approximate color preview, not a photo of the product. Confirm with a physical sample.</div>`;
-     if(t!=='all'&&ro[t])html+=`<div class="action-row"><button type="button" data-action="rail-match">Match other edges</button><button type="button" data-action="rail-everywhere">Use on all edges</button></div>`;
+     // Product library v1.2 (replaces the single Westbury product control): Westbury, RDI and AOS wood railing
+     // for all railings, one deck edge or one staircase. Existing designs show their mapped library product.
+     const {edges:railed,stairs:stairT}=railTargets(q),r=railCatalog(q),ro=q.railOverrides||{};
+     const valid=x=>x==='all'||(Number.isInteger(x)&&q.railEdges.includes(x))||(typeof x==='string'&&stairT.some(y=>'stair:'+y.s.id===x));
+     if(!valid(state.railTarget))state.railTarget='all';
+     const t=state.railTarget,cur=railSel(q,t);
+     const isCustom=x=>r?(Number.isInteger(x)?Boolean(r.edges?.[x]):Boolean(r.stairs?.[String(x).slice(6)])):Number.isInteger(x)&&Boolean(ro[x]);
+     const chip=(val,label)=>`<button type="button" data-action="rail-target" data-edge="${val}" class="${String(val)===String(t)?'selected':''}" aria-pressed="${String(val)===String(t)}"><span class="rail-dot" style="background-color:${railHex(railSel(q,val))}"></span>${label}${val!=='all'&&isCustom(val)?'<span class="rail-custom">Custom</span>':''}</button>`;
+     html+=(railed.length||stairT.length)?`<p class="group-title">Apply to</p><div class="rail-targets" role="group" aria-label="Railing edges and stairs">${chip('all','All railings')}${railed.map(e=>chip(e.i,`Edge ${e.i+1} · ${fmt(e.len)}`)).join('')}${stairT.map(x=>chip('stair:'+x.s.id,`Stair ${x.i+1}`)).join('')}</div>`:`<div class="compact-intro">No deck edges or stairs have railings yet. Add them under Railing locations.</div>`;
+     const where=t==='all'?'All railings':Number.isInteger(t)?`Edge ${t+1} only`:`Stair ${stairT.findIndex(x=>'stair:'+x.s.id===t)+1} only`;
+     html+=`<div class="finish-current rail-current" role="status"><div class="finish-row">${railPreview(railHex(cur),cur.systemId?'catalog':'No rail product selected')}<span class="finish-text"><small>${where}${t!=='all'&&isCustom(t)?' · custom':''}</small><b>${esc(railLabelOf(cur))}</b><em>${t==='all'?'Stairs follow their deck edge unless changed':Number.isInteger(t)?(q.staircases.some(x=>x.edge===t)?'Stairs on this edge follow it unless changed':'Deck railing'):'This staircase only'}</em></span></div></div>`;
+     html+=railCatalogPanel(q,t);
+     if(t!=='all'&&isCustom(t))html+=`<div class="action-row"><button type="button" data-action="rail-match">Match the other railings</button><button type="button" data-action="rail-everywhere">Use on all railings</button></div>`;
    }
  }
  if(s===6&&q){const m=state.model,ledgerCount=m.stats.ledgerCount;
@@ -5683,7 +5846,7 @@ async function listProjects(){const store=await projectStore.ready();let rows=[]
  return {store,rows:rows.filter(r=>r&&r.id&&r.design).sort((a,b)=>String(b.updated).localeCompare(String(a.updated)))};}
 const whenText=iso=>{const d=new Date(iso);if(isNaN(d))return '';const diff=(Date.now()-d)/60000;
  return diff<1?'just now':diff<60?`${Math.round(diff)} min ago`:diff<1440&&d.getDate()===new Date().getDate()?d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):d.toLocaleDateString([],{month:'short',day:'numeric',year:d.getFullYear()===new Date().getFullYear()?undefined:'numeric'});};
-function resetForProject(){closeDimEdit();closeBeta();state.betaFeedback=null;state.fixTarget=null;state.cutMode=false;state.framingNotice=null;state._stairFit=null;state.reviewReturn=false;state.posError=null;state.edgeError=null;state.freeDraw=false;state.freePts=[];state.shapePicker=false;state.selectedEdge=null;state.selectedCorner=null;state.railTarget='all';state.stairSelected=0;state.dividerSelected=0;state.featureSelected=null;state._fitted=false;}
+function resetForProject(){closeDimEdit();closeBeta();state.catalogDraft=null;state.railDraft=null;state.betaFeedback=null;state.fixTarget=null;state.cutMode=false;state.framingNotice=null;state._stairFit=null;state.reviewReturn=false;state.posError=null;state.edgeError=null;state.freeDraw=false;state.freePts=[];state.shapePicker=false;state.selectedEdge=null;state.selectedCorner=null;state.railTarget='all';state.stairSelected=0;state.dividerSelected=0;state.featureSelected=null;state._fitted=false;}
 function loadDesign(design,{id=null,created=null,name}={}){resetForProject();state.pendingPlanName='';state.savedRecord=null;
  const q=core.migrate({design}).intent;if(name)q.project=name;
  state.projectId=id;state.projectCreated=created;setProject(q,false);
@@ -5748,11 +5911,32 @@ function exportConcept(){if(!state.intent){toast('Choose a shape first.');return
  state.lastConceptExport={concept,faultedShown:(renderer3d.visibleParts||[]).filter(p=>p.structuralFault).length};
  if(concept){renderer3d.conceptOnly=false;renderer3d.setModel(state.model);}
  if(wasFrame)renderer3d.setStructureVisible(true);
- const html=`<!doctype html><html><head><meta charset="utf-8"><title>AOS Deck Concept</title><style>body{font:14px Arial,sans-serif;color:#24313b;margin:0;padding:35px;background:#f4f4f4}.wrap{max-width:960px;margin:auto;background:white;padding:30px;border-top:8px solid #c32e3c}h1{margin:0}.sub{color:#728090;margin:7px 0 23px}.images{display:grid;grid-template-columns:1fr 1fr;gap:12px}.images img{width:100%;border:1px solid #ddd;border-radius:8px}table{width:100%;margin:18px 0;border-collapse:collapse}td{padding:9px;border-bottom:1px solid #e7e7e7}.note{font-size:12px;color:#71808d;line-height:1.6;border-top:1px solid #ddd;padding-top:14px}@media(max-width:650px){.images{grid-template-columns:1fr}}@media print{body{padding:0;background:white}.wrap{padding:16px}}</style></head><body><div class="wrap"><h1><span style="color:#c32e3c">AOS</span> HOME SOLUTIONS</h1><div class="sub">Deck concept · ${esc(q.project)} · V5.3</div><div class="images">${pic3d?`<img alt="Finished 3D deck" src="${pic3d}">`:''}<img alt="Dimensioned 2D deck" src="${pic2d}"></div><table><tr><td>Shape / overall dimensions</td><td>${esc(q.shape.toUpperCase())} · ${fmt(q.width)} × ${fmt(q.depth)}</td></tr><tr><td>Deck / stairs / total SQ FT</td><td>${state.model.stats.deckArea.toFixed(1)} / ${state.model.stats.stairArea.toFixed(1)} / ${state.model.stats.totalArea.toFixed(1)}</td></tr><tr><td>Deck / stair / total railing LF</td><td>${state.model.stats.deckRailLF.toFixed(1)} / ${state.model.stats.stairRailLF.toFixed(1)} / ${state.model.stats.totalRailLF.toFixed(1)}</td></tr><tr><td>House connections</td><td>${q.houseEdges.length} wall side(s); ${state.model.stats.ledgerCount} preliminary ledgers (edges ${state.model.stats.ledgerEdges.map(i=>i+1).join(', ')||'none'})</td></tr><tr><td>Decking</td><td>${esc(deckMat(q.collection))} · ${esc(deckCol(q.decking))} (concept color; product confirmed by AOS)</td></tr><tr><td>Board direction</td><td>${esc(({horizontal:'Horizontal',vertical:'Vertical','diagonal-left':'Diagonal left','diagonal-right':'Diagonal right'})[state.model.geometry.deckLineResolved]||q.deckLine)}</td></tr><tr><td>Picture frame</td><td>${q.borderCount===2?'Double':q.borderCount===1?'Single':'None'} · ${esc(deckCol(q.border))}${q.borderCount&&q.frameHouseWalls?' · including house walls':''}</td></tr><tr><td>Stairs</td><td>${q.staircases.length?q.staircases.length+' independent staircases ('+q.staircases.map(s=>fmt(s.width)).join(', ')+')':'None'}</td></tr><tr><td>Railing</td><td>${esc(railSummary(q))}</td></tr></table><p class="note">PRELIMINARY SALES CONCEPT. Visual materials are approximate. Framing, footing layouts, span calculations, hardware, railing anchorage, stair requirements, quantities, code compliance and pricing have not been approved for construction. Structural review and site verification required. No customer pricing is included.</p></div></body></html>`;
+ const html=`<!doctype html><html><head><meta charset="utf-8"><title>AOS Deck Concept</title><style>body{font:14px Arial,sans-serif;color:#24313b;margin:0;padding:35px;background:#f4f4f4}.wrap{max-width:960px;margin:auto;background:white;padding:30px;border-top:8px solid #c32e3c}h1{margin:0}.sub{color:#728090;margin:7px 0 23px}.images{display:grid;grid-template-columns:1fr 1fr;gap:12px}.images img{width:100%;border:1px solid #ddd;border-radius:8px}table{width:100%;margin:18px 0;border-collapse:collapse}td{padding:9px;border-bottom:1px solid #e7e7e7}.note{font-size:12px;color:#71808d;line-height:1.6;border-top:1px solid #ddd;padding-top:14px}@media(max-width:650px){.images{grid-template-columns:1fr}}@media print{body{padding:0;background:white}.wrap{padding:16px}}</style></head><body><div class="wrap"><h1><span style="color:#c32e3c">AOS</span> HOME SOLUTIONS</h1><div class="sub">Deck concept · ${esc(q.project)} · V5.3</div><div class="images">${pic3d?`<img alt="Finished 3D deck" src="${pic3d}">`:''}<img alt="Dimensioned 2D deck" src="${pic2d}"></div><table><tr><td>Shape / overall dimensions</td><td>${esc(q.shape.toUpperCase())} · ${fmt(q.width)} × ${fmt(q.depth)}</td></tr><tr><td>Deck / stairs / total SQ FT</td><td>${state.model.stats.deckArea.toFixed(1)} / ${state.model.stats.stairArea.toFixed(1)} / ${state.model.stats.totalArea.toFixed(1)}</td></tr><tr><td>Deck / stair / total railing LF</td><td>${state.model.stats.deckRailLF.toFixed(1)} / ${state.model.stats.stairRailLF.toFixed(1)} / ${state.model.stats.totalRailLF.toFixed(1)}</td></tr><tr><td>House connections</td><td>${q.houseEdges.length} wall side(s); ${state.model.stats.ledgerCount} preliminary ledgers (edges ${state.model.stats.ledgerEdges.map(i=>i+1).join(', ')||'none'})</td></tr><tr><td>Decking</td><td>${esc(deckProductLabel(q))} (${deckSel(q)?'approximate color shown; confirm with a physical sample':'concept color; product confirmed by AOS'})</td></tr><tr><td>Board direction</td><td>${esc(({horizontal:'Horizontal',vertical:'Vertical','diagonal-left':'Diagonal left','diagonal-right':'Diagonal right'})[state.model.geometry.deckLineResolved]||q.deckLine)}</td></tr><tr><td>Picture frame</td><td>${q.borderCount===2?'Double':q.borderCount===1?'Single':'None'} · ${esc(deckCol(q.border))}${q.borderCount&&q.frameHouseWalls?' · including house walls':''}</td></tr><tr><td>Stairs</td><td>${q.staircases.length?q.staircases.length+' independent staircases ('+q.staircases.map(s=>fmt(s.width)).join(', ')+')':'None'}</td></tr><tr><td>Railing</td><td>${esc(railSummary(q))}</td></tr></table><p class="note">PRELIMINARY SALES CONCEPT. Visual materials are approximate. Framing, footing layouts, span calculations, hardware, railing anchorage, stair requirements, quantities, code compliance and pricing have not been approved for construction. Structural review and site verification required. No customer pricing is included.</p></div></body></html>`;
  offerFile(`${filename()}_AOS_Concept.html`,html,'text/html');
 }
 $('fileInput').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let dat=JSON.parse(await f.text()),q=dat.design||dat.intent||dat;if(!Number.isFinite(Number(q.width))||!Number.isFinite(Number(q.depth)))throw Error('Invalid deck file');await flushSave();loadDesign(q,{});checkFramingRecalc(dat,q);state.betaFeedback=dat&&typeof dat.betaFeedback==='object'?dat.betaFeedback:null;renderPanel();closeProjects();saveProject(false);toast(state.betaFeedback?`Beta file opened: feedback from ${String(state.betaFeedback.tester||'tester').slice(0,40)} is in Review › Internal.`:'File opened as a new project.');}catch(err){toast('Unable to open design: '+err.message);}e.target.value='';});
 $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;
+ // Product library v1.2 decking: brand and collection only browse; a color completes the pick.
+ if(b.hasAttribute('data-catalog-brand')){state.catalogDraft={brandId:b.dataset.catalogBrand,lineId:null};renderPanel();return;}
+ if(b.hasAttribute('data-catalog-line')){const brand=deckBrandById(state.catalogDraft?.brandId||deckSel(state.intent)?.brand.id),line=brand?.lines.find(x=>x.id===b.dataset.catalogLine);
+  if(!line?.selectable)return;state.catalogDraft={brandId:brand.id,lineId:line.id};renderPanel();return;}
+ if(b.hasAttribute('data-catalog-color')){const cur=deckSel(state.intent),d=state.catalogDraft||{brandId:cur?.brand.id,lineId:cur?.line.id};
+  const brand=deckBrandById(d.brandId),line=brand?.lines.find(x=>x.id===d.lineId),color=line?.colors.find(x=>x.id===b.dataset.catalogColor);
+  if(!line?.selectable||!color?.selectable)return;pickDeckColor(brand,line,color);return;}
+ if(b.hasAttribute('data-deck-role')){const [role,id]=b.dataset.deckRole.split('|'),sel=deckSel(state.intent),key=ROLE_KEY[role];if(!sel||!key)return;
+  const q=structuredClone(state.intent);if(id===sel.color.id)delete q.catalogDecking[key];else q.catalogDecking[key]=id;setProject(q);return;}
+ if(b.hasAttribute('data-stair-finish')){const [sid,part,v]=b.dataset.stairFinish.split('|');if(!deckSel(state.intent)||!['tread','riser'].includes(part))return;
+  const q=structuredClone(state.intent),p=q.catalogDecking;p.stairs=p.stairs||{};p.stairs[sid]={...(p.stairs[sid]||{}),[part]:v==='frame'?'frame':'main'};setProject(q);return;}
+ if(b.hasAttribute('data-rail-brand')||b.hasAttribute('data-rail-system')||b.hasAttribute('data-rail-model')||b.hasAttribute('data-rail-finish')||b.hasAttribute('data-rail-mount')){
+  const q=state.intent,t=state.railTarget,cur=railSel(q,t),d=state.railDraft&&state.railDraft.target===String(t)?state.railDraft:null,base={...cur,...(d||{})};delete base.target;
+  if(b.hasAttribute('data-rail-brand')){const id=b.dataset.railBrand;if(id===cur.brandId&&!d)return;const sel=railBrandDefault(q,id);applyRail(t,sel,`${railLabelOf(sel)} (${railBrandById(id).short} default).`);return;}
+  if(b.hasAttribute('data-rail-system')){const br=railBrandById(base.brandId),sys=br?.systems.find(x=>x.id===b.dataset.railSystem);if(!sys?.selectable)return;
+   const sel=railSystemDefault(q,br.id,sys.id,cur);if(!sel.finishId){state.railDraft={target:String(t),...sel};renderPanel();return;}applyRail(t,sel,`${railLabelOf(sel)} selected.`);return;}
+  if(b.hasAttribute('data-rail-model')){const sel={...base,modelId:b.dataset.railModel};if(!sel.finishId){state.railDraft={target:String(t),...sel};renderPanel();return;}applyRail(t,pickRail(sel),`${railLabelOf(sel)} selected.`);return;}
+  if(b.hasAttribute('data-rail-finish')){const sel=pickRail({...base,finishId:b.dataset.railFinish});applyRail(t,sel,`${railLabelOf(sel)} selected.`);return;}
+  if(b.hasAttribute('data-rail-mount')){if(base.brandId!=='aos-wood-railing')return;const sel=pickRail({...base,mounting:b.dataset.railMount});applyRail(t,sel,b.dataset.railMount==='in-deck'?'In-deck 4×4 posts (inside the rim).':'Face-mounted posts (outside the rim).');return;}
+ }
+ if(b.dataset.action==='catalog-clear'){askDividerConfirmation('Use the concept preview?','The selected decking product is removed from this design and the concept colors are shown again. Deck layout, stairs and railings do not change.','Use Concept Preview',()=>{const q=structuredClone(state.intent);delete q.catalogDecking;state.catalogDraft=null;setProject(q);},'Keep Product');return;}
  if(b.dataset.shape){selectShape(b.dataset.shape);return;}
  const act=b.dataset.action;if(act==='beta-finish'){openBeta();return;}if(act==='fix-design'){if(!fixInDesign(b.dataset.check))toast('This item is no longer reported.');return;}if(act==='fix-stop'){state.fixTarget=null;renderPanel();planDraw();return;}if(act==='framing-notice-ok'){state.framingNotice=null;renderPanel();return;}if(act==='apply-edge-length'){const field=$('stepContent').querySelector('input[data-edge-field="length"]');if(field)updateEdgeDimension(field.value);return;}if(act==='done-edge'){selectionClear();renderPanel();planDraw();return;}if(act==='choose-shape'){state.shapePicker=true;showOverlay();return;}
  // V5.3 C3: quick adjustments open the existing editor; Return to Review comes back to Step 9 (Customer).
@@ -5919,7 +6103,11 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
  if(act==='rails-none'){const n=state.intent.railEdges.length,c=Object.keys(state.intent.railOverrides||{}).map(Number).filter(k=>state.intent.railEdges.includes(k)).length;
   if(!n){toast('No deck edges have railings to remove.');return;}
   askDividerConfirmation('Remove all deck railings?',`This removes railings from all ${n} deck edge${n>1?'s':''}.${c?` Custom finishes on ${c} edge${c>1?'s':''} are cleared too.`:''} Stair railings and your railing product and color stay as they are.`,'Remove Railings',()=>patch('railEdges',[]),'Keep Railings');return;}
- if(act==='rail-target'){const v=b.dataset.edge;state.railTarget=v==='all'?'all':Number(v);renderPanel();planDraw();return;}
+ if(act==='rail-target'){const v=b.dataset.edge;state.railTarget=v==='all'?'all':v.startsWith('stair:')?v:Number(v);state.railDraft=null;renderPanel();planDraw();return;}
+ if(act==='rail-match'&&(railCatalog(state.intent)||typeof state.railTarget==='string')){const t=state.railTarget,q=structuredClone(state.intent),r=q.catalogRailing;if(!r)return;
+  if(Number.isInteger(t))delete r.edges?.[t];else delete r.stairs?.[String(t).slice(6)];setProject(q);toast('This railing now matches the others.');return;}
+ if(act==='rail-everywhere'&&(railCatalog(state.intent)||typeof state.railTarget==='string')){const t=state.railTarget,sel=railSel(state.intent,t),q=structuredClone(state.intent),r=q.catalogRailing;if(!r)return;
+  Object.assign(r,sel);r.edges={};r.stairs={};state.railTarget='all';setProject(q);toast(`${railLabelOf(sel)} applied to all railings.`);return;}
  if(act==='rail-match'){const t=state.railTarget;if(typeof t!=='number')return;const q=structuredClone(state.intent);if(q.railOverrides)delete q.railOverrides[t];setProject(q);toast(`Edge ${t+1} now matches the other edges.`);return;}
  if(act==='rail-everywhere'){const t=state.railTarget;if(typeof t!=='number')return;const q=structuredClone(state.intent),f=core.railFinish(q,t);q.railStyle=f.railStyle;q.railColor=f.railColor;q.railOverrides={};state.railTarget='all';setProject(q);toast(`${f.railColor} railing applied to all edges.`);return;}
  if(act==='download-json'){saveDesign();return;}if(act==='export-concept'){requestCustomerOutput('concept');return;}
@@ -6495,7 +6683,7 @@ function planDraw(){state.planLabelBoxes=[];const {w,h}=canvasSize(),sc=state.pl
     ctx.beginPath();ctx.arc(center[0],center[1],11,0,Math.PI*2);ctx.fillStyle=(state.step===6?house&&q.supportMode==='ledger'&&q.ledgerEdges.includes(e.i):state.step===1?house:state.step===2?stair:rail)?'#c32e3c':'#fff';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=house&&state.step!==1?'#b8bec5':'#c32e3c';ctx.stroke();ctx.fillStyle=(state.step===6?house&&q.supportMode==='ledger'&&q.ledgerEdges.includes(e.i):state.step===1?house:state.step===2?stair:rail)?'#fff':'#c32e3c';ctx.font='800 13px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(status,center[0],center[1]+.4);
   }
   if(state.step===5&&state.railTab==='finish')for(const e of es){if(!q.railEdges.includes(e.i))continue;
-    const c=xy(e.mid[0],e.mid[1]),sel=state.railTarget===e.i,col=core.RAILS[core.railFinish(q,e.i).railColor]||'#20272c';
+    const c=xy(e.mid[0],e.mid[1]),sel=state.railTarget===e.i,col=railCatalog(q)?railHex(railSel(q,e.i)):core.RAILS[core.railFinish(q,e.i).railColor]||'#20272c';
     if(sel){ctx.beginPath();ctx.moveTo(...xy(e.a[0],e.a[1]));ctx.lineTo(...xy(e.b[0],e.b[1]));ctx.lineWidth=8;ctx.lineCap='round';ctx.strokeStyle='rgba(195,46,60,.5)';ctx.stroke();ctx.lineCap='butt';}
     ctx.beginPath();ctx.arc(c[0],c[1],sel?14:12,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();ctx.lineWidth=sel?3.5:2;ctx.strokeStyle=sel?'#c32e3c':'#fff';ctx.stroke();
     ctx.fillStyle=core.railFinish(q,e.i).railColor==='White'?'#17212d':'#fff';ctx.font='800 12px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(e.i+1),c[0],c[1]+.4);
