@@ -1,0 +1,6142 @@
+{
+ "meta": {
+  "dataset": "aos-3d-material-colors",
+  "version": "0.1-research-draft",
+  "date": "2026-11-16",
+  "libraryVersion": "2026-11-11.1",
+  "status": "RESEARCH DRAFT - not integrated. Every value is an approximate estimate; none is manufacturer-published or calibrated.",
+  "colorSpace": "sRGB (gamma-encoded HEX). Convert to linear before lighting in the renderer.",
+  "tiers": {
+   "B": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "C": "provisional estimate from color name / color family only",
+   "G": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "A (none yet)": "verified: manufacturer-published value or calibrated physical sample"
+  },
+  "noImagery": "No manufacturer photographs, swatch images, BIM textures or 3D assets are included or required.",
+  "counts": {
+   "total": 148,
+   "C": 55,
+   "B": 74,
+   "G": 19,
+   "decking": 116,
+   "finishes": 32
+  }
+ },
+ "materials": {
+  "aos-treated-brown--brown-treated": {
+   "category": "decking",
+   "library": "treated-wood",
+   "brand": "Pressure-Treated Wood (AOS)",
+   "lineId": "aos-treated-brown",
+   "line": "Brown Treated",
+   "name": "Brown Treated",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "aos-decision",
+   "base": "#8a6545",
+   "variations": {
+    "highlight": "#a27651",
+    "lowlight": "#725439"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "Rough sawn pine; color depends on supplier and weathers quickly."
+   },
+   "material": {
+    "roughness": 0.9,
+    "metalness": 0.0,
+    "specular": 0.15,
+    "grain": {
+     "type": "sawn-softwood",
+     "contrast": 0.65,
+     "scale": 0.55,
+     "direction": "along board"
+    },
+    "normalStrength": 0.55
+   },
+   "source": {
+    "url": null,
+    "secondaryUrl": null,
+    "officialQuote": "Generic brown-tinted treated pine; no supplier product selected",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "aos-treated-green--green-treated": {
+   "category": "decking",
+   "library": "treated-wood",
+   "brand": "Pressure-Treated Wood (AOS)",
+   "lineId": "aos-treated-green",
+   "line": "Green Treated",
+   "name": "Green Treated",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "aos-decision",
+   "base": "#a7996c",
+   "variations": {
+    "highlight": "#b4a882",
+    "lowlight": "#96875a",
+    "streak": "#8f8a5c"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "Rough sawn pine; color depends on supplier and weathers quickly."
+   },
+   "material": {
+    "roughness": 0.9,
+    "metalness": 0.0,
+    "specular": 0.15,
+    "grain": {
+     "type": "sawn-softwood",
+     "contrast": 0.65,
+     "scale": 0.55,
+     "direction": "along board"
+    },
+    "normalStrength": 0.55
+   },
+   "source": {
+    "url": null,
+    "secondaryUrl": null,
+    "officialQuote": "Generic fresh green (copper) treated southern pine; no supplier product selected",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "aos-wood--brown-treated": {
+   "category": "finish",
+   "library": "aos-wood-railing",
+   "brand": "AOS Built",
+   "name": "Brown Treated (railing lumber)",
+   "base": "#8a6545",
+   "variations": {
+    "highlight": "#946c4a",
+    "lowlight": "#805e40"
+   },
+   "material": {
+    "roughness": 0.92,
+    "metalness": 0.0,
+    "specular": 0.14,
+    "texture": "sawn-softwood",
+    "sheen": "rough sawn",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": null,
+    "officialQuote": "Railing lumber, brown treated (no supplier product)",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "aos-wood--green-treated": {
+   "category": "finish",
+   "library": "aos-wood-railing",
+   "brand": "AOS Built",
+   "name": "Green Treated (railing lumber)",
+   "base": "#a7996c",
+   "variations": {
+    "highlight": "#ada076",
+    "lowlight": "#a19262"
+   },
+   "material": {
+    "roughness": 0.92,
+    "metalness": 0.0,
+    "specular": 0.14,
+    "texture": "sawn-softwood",
+    "sheen": "rough sawn",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": null,
+    "officialQuote": "Railing lumber, green treated (no supplier product)",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "aos-wood-baluster--black-aluminum": {
+   "category": "finish",
+   "library": "aos-wood-railing",
+   "brand": "AOS Built",
+   "name": "Black (round aluminum balusters and connectors)",
+   "base": "#1e1e1f",
+   "variations": {},
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "texture": "smooth",
+    "sheen": "not stated",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": null,
+    "officialQuote": "Round black aluminum balusters (product not selected)",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "aos-wood-handrail--satin-black": {
+   "category": "finish",
+   "library": "aos-wood-railing",
+   "brand": "AOS Built",
+   "name": "Satin Black (metal handrail and brackets)",
+   "base": "#1f1f20",
+   "variations": {},
+   "material": {
+    "roughness": 0.5,
+    "metalness": 0.0,
+    "specular": 0.35,
+    "texture": "smooth",
+    "sheen": "satin",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": null,
+    "officialQuote": "Satin black handrail (product not selected)",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "deckorators-altitude--highland": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-altitude",
+   "line": "Altitude",
+   "name": "Highland",
+   "salesListing": "hold",
+   "libraryColorStatus": "verified",
+   "base": "#897a69",
+   "variations": {
+    "highlight": "#9a8c7b",
+    "lowlight": "#75685a"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "No color copy found (held line)."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.deckorators.com/cdn/shop/files/15799_2026DeckingOverviewBrochure_Final_LR_3.pdf",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-altitude--sequoia": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-altitude",
+   "line": "Altitude",
+   "name": "Sequoia",
+   "salesListing": "hold",
+   "libraryColorStatus": "verified",
+   "base": "#794c37",
+   "variations": {
+    "highlight": "#925b42",
+    "lowlight": "#603d2c"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "No color copy found (held line)."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.deckorators.com/cdn/shop/files/15799_2026DeckingOverviewBrochure_Final_LR_3.pdf",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-altitude--trailstone": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-altitude",
+   "line": "Altitude",
+   "name": "Trailstone",
+   "salesListing": "hold",
+   "libraryColorStatus": "verified",
+   "base": "#8b8780",
+   "variations": {
+    "highlight": "#9c9993",
+    "lowlight": "#79756e"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "No color copy found (held line)."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.deckorators.com/cdn/shop/files/15799_2026DeckingOverviewBrochure_Final_LR_3.pdf",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-elevate--basin-brown": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-elevate",
+   "line": "Elevate (2027)",
+   "name": "Basin Brown",
+   "salesListing": "coming-soon",
+   "libraryColorStatus": "verified",
+   "base": "#6e5441",
+   "variations": {
+    "highlight": "#84654e",
+    "lowlight": "#584334"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "2027 launch: names only (coming soon)."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://finviz.com/news/401865/deckorators-introduces-faster-to-install-railing-and-two-new-decking-collections-for-2027",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-elevate--ridge-gray": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-elevate",
+   "line": "Elevate (2027)",
+   "name": "Ridge Gray",
+   "salesListing": "coming-soon",
+   "libraryColorStatus": "verified",
+   "base": "#86847f",
+   "variations": {
+    "highlight": "#979691",
+    "lowlight": "#74726d"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "2027 launch: names only (coming soon)."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://finviz.com/news/401865/deckorators-introduces-faster-to-install-railing-and-two-new-decking-collections-for-2027",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-meridian--catalina": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-meridian",
+   "line": "Meridian (2027)",
+   "name": "Catalina",
+   "salesListing": "coming-soon",
+   "libraryColorStatus": "verified",
+   "base": "#9f9689",
+   "variations": {
+    "highlight": "#afa89d",
+    "lowlight": "#8f8475"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "2027 launch: names only (coming soon)."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://finviz.com/news/401865/deckorators-introduces-faster-to-install-railing-and-two-new-decking-collections-for-2027",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-meridian--hudson": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-meridian",
+   "line": "Meridian (2027)",
+   "name": "Hudson",
+   "salesListing": "coming-soon",
+   "libraryColorStatus": "verified",
+   "base": "#7c7974",
+   "variations": {
+    "highlight": "#8e8b86",
+    "lowlight": "#6a6763"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "2027 launch: names only (coming soon)."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://finviz.com/news/401865/deckorators-introduces-faster-to-install-railing-and-two-new-decking-collections-for-2027",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-meridian--newport": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-meridian",
+   "line": "Meridian (2027)",
+   "name": "Newport",
+   "salesListing": "coming-soon",
+   "libraryColorStatus": "verified",
+   "base": "#8d8e8b",
+   "variations": {
+    "highlight": "#9fa09d",
+    "lowlight": "#7b7c79"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "2027 launch: names only (coming soon)."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://finviz.com/news/401865/deckorators-introduces-faster-to-install-railing-and-two-new-decking-collections-for-2027",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-meridian--sonoma": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-meridian",
+   "line": "Meridian (2027)",
+   "name": "Sonoma",
+   "salesListing": "coming-soon",
+   "libraryColorStatus": "verified",
+   "base": "#8e6a4d",
+   "variations": {
+    "highlight": "#a57b5a",
+    "lowlight": "#775940"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "2027 launch: names only (coming soon)."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://finviz.com/news/401865/deckorators-introduces-faster-to-install-railing-and-two-new-decking-collections-for-2027",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-picture-frame--dark-slate": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-picture-frame",
+   "line": "Dark Slate Picture Frame Board",
+   "name": "Dark Slate",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#4e4d4b",
+   "variations": {
+    "highlight": "#575654",
+    "lowlight": "#454442"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "No color copy found."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/picture-frame-board",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-summit--boulder": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-summit",
+   "line": "Summit",
+   "name": "Boulder",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#7c756d",
+   "variations": {
+    "highlight": "#8e877f",
+    "lowlight": "#69635c"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'the look of variegated natural wood'; low-gloss."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "vertical",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/summit-decking",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-summit--cliffside": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-summit",
+   "line": "Summit",
+   "name": "Cliffside",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#8a7d6e",
+   "variations": {
+    "highlight": "#9b8f81",
+    "lowlight": "#766b5e"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'the look of variegated natural wood'; low-gloss."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "vertical",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/summit-decking",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-summit--glacier": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-summit",
+   "line": "Summit",
+   "name": "Glacier",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#a7a7a3",
+   "variations": {
+    "highlight": "#b8b8b5",
+    "lowlight": "#969691"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'the look of variegated natural wood'; low-gloss."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "vertical",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/summit-decking",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-venture--saltwater": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-venture",
+   "line": "Venture",
+   "name": "Saltwater",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#9d9b96",
+   "variations": {
+    "highlight": "#a6a49f",
+    "lowlight": "#94928d"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'Natural wood-grain finish'."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/venture-decking",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-venture--sandbar": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-venture",
+   "line": "Venture",
+   "name": "Sandbar",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#a79170",
+   "variations": {
+    "highlight": "#ae9a7b",
+    "lowlight": "#a08865"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'Natural wood-grain finish'."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/venture-decking",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-venture--shoreline": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-venture",
+   "line": "Venture",
+   "name": "Shoreline",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#7e7469",
+   "variations": {
+    "highlight": "#887d71",
+    "lowlight": "#746b61"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'Natural wood-grain finish'."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/venture-decking",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-vista--driftwood": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-vista",
+   "line": "Vista",
+   "name": "Driftwood",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#948d84",
+   "variations": {
+    "highlight": "#a59f97",
+    "lowlight": "#837b72"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'Grain ... to look like exotic hardwood'."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "exotic",
+     "contrast": 0.4,
+     "scale": 0.4,
+     "direction": "along board"
+    },
+    "normalStrength": 0.4
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/vista-decking",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-vista--dunewood": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-vista",
+   "line": "Vista",
+   "name": "Dunewood",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#a48b6d",
+   "variations": {
+    "highlight": "#b29c83",
+    "lowlight": "#92795b"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'Grain ... to look like exotic hardwood'."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "exotic",
+     "contrast": 0.4,
+     "scale": 0.4,
+     "direction": "along board"
+    },
+    "normalStrength": 0.4
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/vista-decking",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-vista--ironwood": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-vista",
+   "line": "Vista",
+   "name": "Ironwood",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#5b4a3e",
+   "variations": {
+    "highlight": "#705b4c",
+    "lowlight": "#463930"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'Grain ... to look like exotic hardwood'."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "exotic",
+     "contrast": 0.4,
+     "scale": 0.4,
+     "direction": "along board"
+    },
+    "normalStrength": 0.4
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/vista-decking",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-vista--silverwood": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-vista",
+   "line": "Vista",
+   "name": "Silverwood",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#a2a09b",
+   "variations": {
+    "highlight": "#b3b2ad",
+    "lowlight": "#918e89"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'Grain ... to look like exotic hardwood'."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "exotic",
+     "contrast": 0.4,
+     "scale": 0.4,
+     "direction": "along board"
+    },
+    "normalStrength": 0.4
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/vista-decking",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-voyage--costa": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-voyage",
+   "line": "Voyage",
+   "name": "Costa",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#99734a",
+   "variations": {
+    "highlight": "#b58f66",
+    "lowlight": "#735738"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'bold vertical grain variegation'; micro-embossed."
+   },
+   "material": {
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "specular": 0.2,
+    "grain": {
+     "type": "vertical",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/voyage-decking",
+    "secondaryUrl": "https://www.probuilder.com/products/article/55228591/deckorators-expands-voyage-composite-decking-line-with-khaya-varied-plank-decking",
+    "officialQuote": "golden brown (ProBuilder launch article, secondary)",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "deckorators-voyage--khaya": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-voyage",
+   "line": "Voyage",
+   "name": "Khaya",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#694a36",
+   "variations": {
+    "highlight": "#8e6449",
+    "lowlight": "#443023"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'bold vertical grain variegation'; micro-embossed."
+   },
+   "material": {
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "specular": 0.2,
+    "grain": {
+     "type": "vertical",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/voyage-decking",
+    "secondaryUrl": "https://www.probuilder.com/products/article/55228591/deckorators-expands-voyage-composite-decking-line-with-khaya-varied-plank-decking",
+    "officialQuote": "true brown; a darker brown (ProBuilder, secondary)",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "deckorators-voyage--mesa": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-voyage",
+   "line": "Voyage",
+   "name": "Mesa",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#7a4a35",
+   "variations": {
+    "highlight": "#a16246",
+    "lowlight": "#533224"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'bold vertical grain variegation'; micro-embossed."
+   },
+   "material": {
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "specular": 0.2,
+    "grain": {
+     "type": "vertical",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/voyage-decking",
+    "secondaryUrl": "https://www.probuilder.com/products/article/55228591/deckorators-expands-voyage-composite-decking-line-with-khaya-varied-plank-decking",
+    "officialQuote": "red brown (ProBuilder, secondary)",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "deckorators-voyage--sedona": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-voyage",
+   "line": "Voyage",
+   "name": "Sedona",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#8a5e44",
+   "variations": {
+    "highlight": "#ad7859",
+    "lowlight": "#644431"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'bold vertical grain variegation'; micro-embossed."
+   },
+   "material": {
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "specular": 0.2,
+    "grain": {
+     "type": "vertical",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/voyage-decking",
+    "secondaryUrl": "https://www.probuilder.com/products/article/55228591/deckorators-expands-voyage-composite-decking-line-with-khaya-varied-plank-decking",
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "deckorators-voyage--sierra": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-voyage",
+   "line": "Voyage",
+   "name": "Sierra",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#5e5b57",
+   "variations": {
+    "highlight": "#7b7772",
+    "lowlight": "#413f3c"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'bold vertical grain variegation'; micro-embossed."
+   },
+   "material": {
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "specular": 0.2,
+    "grain": {
+     "type": "vertical",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/voyage-decking",
+    "secondaryUrl": "https://www.probuilder.com/products/article/55228591/deckorators-expands-voyage-composite-decking-line-with-khaya-varied-plank-decking",
+    "officialQuote": "dark gray (ProBuilder, secondary)",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "deckorators-voyage--tundra": {
+   "category": "decking",
+   "library": "deckorators",
+   "brand": "Deckorators",
+   "lineId": "deckorators-voyage",
+   "line": "Voyage",
+   "name": "Tundra",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#8a8782",
+   "variations": {
+    "highlight": "#a5a39f",
+    "lowlight": "#6d6b66"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'bold vertical grain variegation'; micro-embossed."
+   },
+   "material": {
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "specular": 0.2,
+    "grain": {
+     "type": "vertical",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.deckorators.com/products/voyage-decking",
+    "secondaryUrl": "https://www.probuilder.com/products/article/55228591/deckorators-expands-voyage-composite-decking-line-with-khaya-varied-plank-decking",
+    "officialQuote": "gray (ProBuilder, secondary)",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "moistureshield-elevate--alpine-gray": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-elevate",
+   "line": "Elevate",
+   "name": "Alpine Gray",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#8d8a85",
+   "variations": {
+    "highlight": "#9e9c97",
+    "lowlight": "#7b7873"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "Classic colors solid; premium colors variegated."
+   },
+   "material": {
+    "roughness": 0.75,
+    "metalness": 0.0,
+    "specular": 0.225,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/elevate/",
+    "secondaryUrl": "https://www.moistureshield.com/about/newsroom/moistureshield-elevate-capped-wood-composite-decking-launches-new-variegated-colors/",
+    "officialQuote": "premium variegated; tone not stated beyond name",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "moistureshield-elevate--canoe": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-elevate",
+   "line": "Elevate",
+   "name": "Canoe",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#6b503a",
+   "variations": {
+    "highlight": "#826147",
+    "lowlight": "#543f2d"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "Classic colors solid; premium colors variegated."
+   },
+   "material": {
+    "roughness": 0.75,
+    "metalness": 0.0,
+    "specular": 0.225,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/elevate/",
+    "secondaryUrl": "https://www.moistureshield.com/about/newsroom/moistureshield-elevate-capped-wood-composite-decking-launches-new-variegated-colors/",
+    "officialQuote": "a forest brown (classic solid) - 2020 newsroom",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "moistureshield-elevate--lake-fog": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-elevate",
+   "line": "Elevate",
+   "name": "Lake Fog",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#999995",
+   "variations": {
+    "highlight": "#ababa7",
+    "lowlight": "#878783"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "Classic colors solid; premium colors variegated."
+   },
+   "material": {
+    "roughness": 0.75,
+    "metalness": 0.0,
+    "specular": 0.225,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/elevate/",
+    "secondaryUrl": "https://www.moistureshield.com/about/newsroom/moistureshield-elevate-capped-wood-composite-decking-launches-new-variegated-colors/",
+    "officialQuote": "a soft gray shade (classic solid) - 2020 newsroom",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "moistureshield-elevate--riverbank": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-elevate",
+   "line": "Elevate",
+   "name": "Riverbank",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#845f41",
+   "variations": {
+    "highlight": "#9c704d",
+    "lowlight": "#6c4e35"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "Classic colors solid; premium colors variegated."
+   },
+   "material": {
+    "roughness": 0.75,
+    "metalness": 0.0,
+    "specular": 0.225,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/elevate/",
+    "secondaryUrl": "https://www.moistureshield.com/about/newsroom/moistureshield-elevate-capped-wood-composite-decking-launches-new-variegated-colors/",
+    "officialQuote": "premium variegated; 'similar to rich, tropical hardwoods' - tone not stated",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "moistureshield-meridian--catalina": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-meridian",
+   "line": "Meridian",
+   "name": "Catalina",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#9f9689",
+   "variations": {
+    "highlight": "#b8b2a8",
+    "lowlight": "#847a6c"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'rich color variegation'; 'low-profile wood grain'."
+   },
+   "material": {
+    "roughness": 0.75,
+    "metalness": 0.0,
+    "specular": 0.225,
+    "grain": {
+     "type": "low-profile",
+     "contrast": 0.3,
+     "scale": 0.25,
+     "direction": "along board"
+    },
+    "normalStrength": 0.25
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/meridian/",
+    "secondaryUrl": "https://extremehowto.com/moistureshield-introduces-new-catalina-color-to-meridian-line-of-capped-composite-decking/",
+    "officialQuote": "soft 'greige' shade reminiscent of aged shiplap (press release, secondary)",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "moistureshield-meridian--citadel": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-meridian",
+   "line": "Meridian",
+   "name": "Citadel",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#898b8a",
+   "variations": {
+    "highlight": "#a5a7a6",
+    "lowlight": "#6d6f6e"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'rich color variegation'; 'low-profile wood grain'."
+   },
+   "material": {
+    "roughness": 0.75,
+    "metalness": 0.0,
+    "specular": 0.225,
+    "grain": {
+     "type": "low-profile",
+     "contrast": 0.3,
+     "scale": 0.25,
+     "direction": "along board"
+    },
+    "normalStrength": 0.25
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/meridian/",
+    "secondaryUrl": "https://extremehowto.com/moistureshield-introduces-new-catalina-color-to-meridian-line-of-capped-composite-decking/",
+    "officialQuote": "a cool Atlantic gray with a subtle patina (press release, secondary)",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "moistureshield-meridian--mariner": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-meridian",
+   "line": "Meridian",
+   "name": "Mariner",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#5a3f30",
+   "variations": {
+    "highlight": "#7f5944",
+    "lowlight": "#35251c"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'rich color variegation'; 'low-profile wood grain'."
+   },
+   "material": {
+    "roughness": 0.75,
+    "metalness": 0.0,
+    "specular": 0.225,
+    "grain": {
+     "type": "low-profile",
+     "contrast": 0.3,
+     "scale": 0.25,
+     "direction": "along board"
+    },
+    "normalStrength": 0.25
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/meridian/",
+    "secondaryUrl": "https://extremehowto.com/moistureshield-introduces-new-catalina-color-to-meridian-line-of-capped-composite-decking/",
+    "officialQuote": "a timeless dark brown with rich undertones (press release, secondary)",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "moistureshield-meridian--shoal": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-meridian",
+   "line": "Meridian",
+   "name": "Shoal",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#aaa190",
+   "variations": {
+    "highlight": "#c2bcb0",
+    "lowlight": "#928670"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'rich color variegation'; 'low-profile wood grain'."
+   },
+   "material": {
+    "roughness": 0.75,
+    "metalness": 0.0,
+    "specular": 0.225,
+    "grain": {
+     "type": "low-profile",
+     "contrast": 0.3,
+     "scale": 0.25,
+     "direction": "along board"
+    },
+    "normalStrength": 0.25
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/meridian/",
+    "secondaryUrl": "https://extremehowto.com/moistureshield-introduces-new-catalina-color-to-meridian-line-of-capped-composite-decking/",
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "moistureshield-meridian--shoreside": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-meridian",
+   "line": "Meridian",
+   "name": "Shoreside",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#b39c7b",
+   "variations": {
+    "highlight": "#c7b79f",
+    "lowlight": "#9c815a"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'rich color variegation'; 'low-profile wood grain'."
+   },
+   "material": {
+    "roughness": 0.75,
+    "metalness": 0.0,
+    "specular": 0.225,
+    "grain": {
+     "type": "low-profile",
+     "contrast": 0.3,
+     "scale": 0.25,
+     "direction": "along board"
+    },
+    "normalStrength": 0.25
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/meridian/",
+    "secondaryUrl": "https://extremehowto.com/moistureshield-introduces-new-catalina-color-to-meridian-line-of-capped-composite-decking/",
+    "officialQuote": "a subtly variegated golden sandy blonde (press release, secondary)",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "moistureshield-vantage--bridle": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-vantage",
+   "line": "Vantage",
+   "name": "Bridle",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#6d4f3b",
+   "variations": {
+    "highlight": "#795741",
+    "lowlight": "#614735"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'Matte finish'; weathers to final color in about 6 months."
+   },
+   "material": {
+    "roughness": 0.88,
+    "metalness": 0.0,
+    "specular": 0.16,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/vantage/",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "moistureshield-vantage--cape-cod-gray": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-vantage",
+   "line": "Vantage",
+   "name": "Cape Cod Gray",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#8e8b85",
+   "variations": {
+    "highlight": "#97948e",
+    "lowlight": "#85827c"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'Matte finish'; weathers to final color in about 6 months."
+   },
+   "material": {
+    "roughness": 0.88,
+    "metalness": 0.0,
+    "specular": 0.16,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/vantage/",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "moistureshield-vantage--earthtone": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-vantage",
+   "line": "Vantage",
+   "name": "Earthtone",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#7e6651",
+   "variations": {
+    "highlight": "#896f58",
+    "lowlight": "#735d4a"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'Matte finish'; weathers to final color in about 6 months."
+   },
+   "material": {
+    "roughness": 0.88,
+    "metalness": 0.0,
+    "specular": 0.16,
+    "grain": {
+     "type": "wood",
+     "contrast": 0.35,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/vantage/",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "moistureshield-vision--cathedral-stone": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-vision",
+   "line": "Vision",
+   "name": "Cathedral Stone",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#8e867b",
+   "variations": {
+    "highlight": "#a8a299",
+    "lowlight": "#716a60"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "Line: 'modern, variegated appearance' (launch article)."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "hardwood",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/vision/",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "moistureshield-vision--cold-brew": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-vision",
+   "line": "Vision",
+   "name": "Cold Brew",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#49352a",
+   "variations": {
+    "highlight": "#6d4f3e",
+    "lowlight": "#251b16"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "Line: 'modern, variegated appearance' (launch article)."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "hardwood",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/vision/",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "moistureshield-vision--mochaccino": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-vision",
+   "line": "Vision",
+   "name": "Mochaccino",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#694d3b",
+   "variations": {
+    "highlight": "#8d674f",
+    "lowlight": "#453327"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "Line: 'modern, variegated appearance' (launch article)."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "hardwood",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/vision/",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "moistureshield-vision--sandstone": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-vision",
+   "line": "Vision",
+   "name": "Sandstone",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#a48c6f",
+   "variations": {
+    "highlight": "#baa791",
+    "lowlight": "#867055"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "Line: 'modern, variegated appearance' (launch article)."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "hardwood",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/vision/",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "moistureshield-vision--smokey-gray": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-vision",
+   "line": "Vision",
+   "name": "Smokey Gray",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#7f7a75",
+   "variations": {
+    "highlight": "#9a9692",
+    "lowlight": "#625e5a"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "Line: 'modern, variegated appearance' (launch article)."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "hardwood",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/vision/",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "moistureshield-vision--spanish-leather": {
+   "category": "decking",
+   "library": "moistureshield",
+   "brand": "MoistureShield",
+   "lineId": "moistureshield-vision",
+   "line": "Vision",
+   "name": "Spanish Leather",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#795237",
+   "variations": {
+    "highlight": "#a06c49",
+    "lowlight": "#523825"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "Line: 'modern, variegated appearance' (launch article)."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "hardwood",
+     "contrast": 0.4,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.moistureshield.com/products/composite-decking/vision/",
+    "secondaryUrl": null,
+    "officialQuote": null,
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "rdi--clay": {
+   "category": "finish",
+   "library": "rdi-railing",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "Clay",
+   "base": "#cabda5",
+   "variations": {},
+   "material": {
+    "roughness": 0.38,
+    "metalness": 0.0,
+    "specular": 0.41,
+    "texture": "smooth",
+    "sheen": "smooth vinyl",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Clay",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "rdi--matte-black": {
+   "category": "finish",
+   "library": "rdi-railing",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "Matte Black",
+   "base": "#1e1e1f",
+   "variations": {},
+   "material": {
+    "roughness": 0.86,
+    "metalness": 0.0,
+    "specular": 0.17,
+    "texture": "smooth",
+    "sheen": "matte",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Matte Black (powder coat)",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "rdi--matte-bronze": {
+   "category": "finish",
+   "library": "rdi-railing",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "Matte Bronze",
+   "base": "#4a3d32",
+   "variations": {},
+   "material": {
+    "roughness": 0.86,
+    "metalness": 0.0,
+    "specular": 0.17,
+    "texture": "smooth",
+    "sheen": "matte",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Matte Bronze (powder coat)",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "rdi--satin-black": {
+   "category": "finish",
+   "library": "rdi-railing",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "Satin Black",
+   "base": "#1f1f20",
+   "variations": {},
+   "material": {
+    "roughness": 0.5,
+    "metalness": 0.0,
+    "specular": 0.35,
+    "texture": "light-texture",
+    "sheen": "satin",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Satin Black (acrylic-capped composite; 'lightly textured')",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "rdi--satin-white": {
+   "category": "finish",
+   "library": "rdi-railing",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "Satin White",
+   "base": "#ecebe6",
+   "variations": {},
+   "material": {
+    "roughness": 0.5,
+    "metalness": 0.0,
+    "specular": 0.35,
+    "texture": "light-texture",
+    "sheen": "satin",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Satin White (Transform: 'look of painted wood')",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "rdi--white": {
+   "category": "finish",
+   "library": "rdi-railing",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "White",
+   "base": "#f1f1ed",
+   "variations": {},
+   "material": {
+    "roughness": 0.38,
+    "metalness": 0.0,
+    "specular": 0.41,
+    "texture": "smooth",
+    "sheen": "smooth vinyl",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "White (vinyl / vinyl cap: 'smooth, durable finish')",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "rdi-privacy--matte-black": {
+   "category": "finish",
+   "library": "rdi-privacy",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "Matte Black",
+   "base": "#1e1e1f",
+   "variations": {},
+   "material": {
+    "roughness": 0.86,
+    "metalness": 0.0,
+    "specular": 0.17,
+    "texture": "smooth",
+    "sheen": "matte",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Privacy Rail frame Matte Black (powder coat)",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "rdi-privacy--white": {
+   "category": "finish",
+   "library": "rdi-privacy",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "White",
+   "base": "#efefeb",
+   "variations": {},
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "texture": "smooth",
+    "sheen": "powder coat",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Privacy Rail frame White (powder coat)",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "rdi-privacy-infill--clay": {
+   "category": "finish",
+   "library": "rdi-privacy",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "Clay",
+   "base": "#c8bba3",
+   "variations": {},
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "texture": "smooth",
+    "sheen": "not stated",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Privacy Rail infill Clay",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "rdi-privacy-infill--coastal-cedar": {
+   "category": "finish",
+   "library": "rdi-privacy",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "Coastal Cedar",
+   "base": "#9a6e4c",
+   "variations": {
+    "highlight": "#a47551",
+    "lowlight": "#906747"
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "texture": "wood",
+    "sheen": "not stated",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Privacy Rail infill Coastal Cedar",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "rdi-privacy-infill--sand": {
+   "category": "finish",
+   "library": "rdi-privacy",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "Sand",
+   "base": "#c4b18e",
+   "variations": {},
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "texture": "smooth",
+    "sheen": "not stated",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Privacy Rail infill Sand",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "rdi-privacy-infill--slate-gray": {
+   "category": "finish",
+   "library": "rdi-privacy",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "Slate Gray",
+   "base": "#6e6f71",
+   "variations": {},
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "texture": "smooth",
+    "sheen": "not stated",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Privacy Rail infill Slate Gray",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "rdi-privacy-infill--white": {
+   "category": "finish",
+   "library": "rdi-privacy",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "White",
+   "base": "#ecebe6",
+   "variations": {},
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "texture": "smooth",
+    "sheen": "not stated",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Privacy Rail infill White",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "rdi-screen--black": {
+   "category": "finish",
+   "library": "rdi-privacy",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "Black",
+   "base": "#222222",
+   "variations": {},
+   "material": {
+    "roughness": 0.88,
+    "metalness": 0.0,
+    "specular": 0.16,
+    "texture": "fine-texture",
+    "sheen": "matte textured",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Freestyle panel Black ('matte, textured finish')",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "rdi-screen--umber": {
+   "category": "finish",
+   "library": "rdi-privacy",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "Umber",
+   "base": "#594535",
+   "variations": {},
+   "material": {
+    "roughness": 0.88,
+    "metalness": 0.0,
+    "specular": 0.16,
+    "texture": "fine-texture",
+    "sheen": "matte textured",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Freestyle panel Umber ('matte, textured finish')",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "rdi-screen--white": {
+   "category": "finish",
+   "library": "rdi-privacy",
+   "brand": "RDI (Barrette Outdoor Living)",
+   "name": "White",
+   "base": "#ebeae6",
+   "variations": {},
+   "material": {
+    "roughness": 0.88,
+    "metalness": 0.0,
+    "specular": 0.16,
+    "texture": "fine-texture",
+    "sheen": "matte textured",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+    "officialQuote": "Freestyle panel White ('matte, textured finish')",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-harvest--brownstone": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-harvest",
+   "line": "Harvest",
+   "name": "Brownstone",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#896a51",
+   "variations": {
+    "highlight": "#947358",
+    "lowlight": "#7e614a"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'soft, solid colors'; 'cathedral grain'."
+   },
+   "material": {
+    "roughness": 0.75,
+    "metalness": 0.0,
+    "specular": 0.225,
+    "grain": {
+     "type": "cathedral",
+     "contrast": 0.45,
+     "scale": 0.4,
+     "direction": "along board"
+    },
+    "normalStrength": 0.4
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/azek-harvest-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "warm, earthy brown wood",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-harvest--kona": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-harvest",
+   "line": "Harvest",
+   "name": "Kona",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#5d4434",
+   "variations": {
+    "highlight": "#684c3a",
+    "lowlight": "#523c2e"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'soft, solid colors'; 'cathedral grain'."
+   },
+   "material": {
+    "roughness": 0.75,
+    "metalness": 0.0,
+    "specular": 0.225,
+    "grain": {
+     "type": "cathedral",
+     "contrast": 0.45,
+     "scale": 0.4,
+     "direction": "along board"
+    },
+    "normalStrength": 0.4
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/azek-harvest-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "deep, rich brown tones",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-harvest--slate-gray": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-harvest",
+   "line": "Harvest",
+   "name": "Slate Gray",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#7e7b76",
+   "variations": {
+    "highlight": "#87847f",
+    "lowlight": "#75726d"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'soft, solid colors'; 'cathedral grain'."
+   },
+   "material": {
+    "roughness": 0.75,
+    "metalness": 0.0,
+    "specular": 0.225,
+    "grain": {
+     "type": "cathedral",
+     "contrast": 0.45,
+     "scale": 0.4,
+     "direction": "along board"
+    },
+    "normalStrength": 0.4
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/azek-harvest-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "weathered gray hardwood",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-harvest-plus--timber-gray": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-harvest-plus",
+   "line": "Harvest+",
+   "name": "Timber Gray",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#89847d",
+   "variations": {
+    "highlight": "#9a9690",
+    "lowlight": "#77726c"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'softly blended tones'; 'soft, low-gloss'."
+   },
+   "material": {
+    "roughness": 0.75,
+    "metalness": 0.0,
+    "specular": 0.225,
+    "grain": {
+     "type": "cathedral",
+     "contrast": 0.45,
+     "scale": 0.4,
+     "direction": "along board"
+    },
+    "normalStrength": 0.4
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/harvest-plus-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "No individual description; color family tag: gray",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "timbertech-harvest-plus--toasted-wheat": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-harvest-plus",
+   "line": "Harvest+",
+   "name": "Toasted Wheat",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#b29777",
+   "variations": {
+    "highlight": "#bfa88e",
+    "lowlight": "#a58660"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'softly blended tones'; 'soft, low-gloss'."
+   },
+   "material": {
+    "roughness": 0.75,
+    "metalness": 0.0,
+    "specular": 0.225,
+    "grain": {
+     "type": "cathedral",
+     "contrast": 0.45,
+     "scale": 0.4,
+     "direction": "along board"
+    },
+    "normalStrength": 0.4
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/harvest-plus-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "A light decking with a warm hue ... patina of lightly sun-bleached teak or cedar (colors page alt text)",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-landmark--american-walnut": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-landmark",
+   "line": "Landmark",
+   "name": "American Walnut",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#6d4e3a",
+   "variations": {
+    "highlight": "#92684d",
+    "lowlight": "#483427"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'dramatic highlights and lowlights for bold board-to-board variation'; 'clean matte'."
+   },
+   "material": {
+    "roughness": 0.85,
+    "metalness": 0.0,
+    "specular": 0.175,
+    "grain": {
+     "type": "cathedral-rough",
+     "contrast": 0.6,
+     "scale": 0.5,
+     "direction": "along board"
+    },
+    "normalStrength": 0.5
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/azek-landmark-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "rich, warm walnut tones",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-landmark--boardwalk": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-landmark",
+   "line": "Landmark",
+   "name": "Boardwalk",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#a2998c",
+   "variations": {
+    "highlight": "#bbb5ab",
+    "lowlight": "#887d6e"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'dramatic highlights and lowlights for bold board-to-board variation'; 'clean matte'."
+   },
+   "material": {
+    "roughness": 0.85,
+    "metalness": 0.0,
+    "specular": 0.175,
+    "grain": {
+     "type": "cathedral-rough",
+     "contrast": 0.6,
+     "scale": 0.5,
+     "direction": "along board"
+    },
+    "normalStrength": 0.5
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/azek-landmark-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "soft, sun-faded coastal wood",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-landmark--castle-gate": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-landmark",
+   "line": "Landmark",
+   "name": "Castle Gate",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#6d6862",
+   "variations": {
+    "highlight": "#8a847d",
+    "lowlight": "#4f4c47"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'dramatic highlights and lowlights for bold board-to-board variation'; 'clean matte'."
+   },
+   "material": {
+    "roughness": 0.85,
+    "metalness": 0.0,
+    "specular": 0.175,
+    "grain": {
+     "type": "cathedral-rough",
+     "contrast": 0.6,
+     "scale": 0.5,
+     "direction": "along board"
+    },
+    "normalStrength": 0.5
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/azek-landmark-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "deeper, gray-toned hardwood",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-landmark--french-white-oak": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-landmark",
+   "line": "Landmark",
+   "name": "French White Oak",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#b2a08a",
+   "variations": {
+    "highlight": "#c8bbac",
+    "lowlight": "#9c8568"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'dramatic highlights and lowlights for bold board-to-board variation'; 'clean matte'."
+   },
+   "material": {
+    "roughness": 0.85,
+    "metalness": 0.0,
+    "specular": 0.175,
+    "grain": {
+     "type": "cathedral-rough",
+     "contrast": 0.6,
+     "scale": 0.5,
+     "direction": "along board"
+    },
+    "normalStrength": 0.5
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/azek-landmark-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "light, weathered white oak",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-legacy--ashwood": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-legacy",
+   "line": "Legacy",
+   "name": "Ashwood",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#8d867e",
+   "variations": {
+    "highlight": "#a7a29c",
+    "lowlight": "#706a63"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'hand-scraped finish and cascading, multitonal coloring'."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "hand-scraped",
+     "contrast": 0.6,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/pro-legacy-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "cool, grayed natural tones",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-legacy--espresso": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-legacy",
+   "line": "Legacy",
+   "name": "Espresso",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#4a3428",
+   "variations": {
+    "highlight": "#6e4e3c",
+    "lowlight": "#261a14"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'hand-scraped finish and cascading, multitonal coloring'."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "hand-scraped",
+     "contrast": 0.6,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/pro-legacy-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "deep, dark roasted wood",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-legacy--mocha": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-legacy",
+   "line": "Legacy",
+   "name": "Mocha",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#7b5a43",
+   "variations": {
+    "highlight": "#9f7557",
+    "lowlight": "#573f2f"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'hand-scraped finish and cascading, multitonal coloring'."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "hand-scraped",
+     "contrast": 0.6,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/pro-legacy-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "rich medium brown",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-legacy--pecan": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-legacy",
+   "line": "Legacy",
+   "name": "Pecan",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#a67c56",
+   "variations": {
+    "highlight": "#ba987a",
+    "lowlight": "#816043"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'hand-scraped finish and cascading, multitonal coloring'."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "hand-scraped",
+     "contrast": 0.6,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/pro-legacy-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "light, golden brown wood",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-legacy--tigerwood": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-legacy",
+   "line": "Legacy",
+   "name": "Tigerwood",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#9a6a41",
+   "variations": {
+    "highlight": "#b9865a",
+    "lowlight": "#734f30",
+    "streak": "#4f3220"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'hand-scraped finish and cascading, multitonal coloring'."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "hand-scraped",
+     "contrast": 0.6,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/pro-legacy-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "bold, streaked exotic hardwood",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-legacy--whitewash-cedar": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-legacy",
+   "line": "Legacy",
+   "name": "Whitewash Cedar",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#b2a490",
+   "variations": {
+    "highlight": "#c9bfb1",
+    "lowlight": "#9b896f"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'hand-scraped finish and cascading, multitonal coloring'."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "hand-scraped",
+     "contrast": 0.6,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/pro-legacy-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "soft, weathered cedar",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-premier--dark-teak": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-premier",
+   "line": "Premier",
+   "name": "Dark Teak",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#5e4335",
+   "variations": {
+    "highlight": "#694b3b",
+    "lowlight": "#533b2f"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'painted, opaque stained wood look'; 'subtle straight grain'."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "straight",
+     "contrast": 0.3,
+     "scale": 0.2,
+     "direction": "along board"
+    },
+    "normalStrength": 0.2
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/edge-premier-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "deep, rich brown wood stain",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-premier--maritime-gray": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-premier",
+   "line": "Premier",
+   "name": "Maritime Gray",
+   "salesListing": "listed-with-notice",
+   "libraryColorStatus": "verified",
+   "base": "#84827e",
+   "variations": {
+    "highlight": "#8d8b87",
+    "lowlight": "#7b7975"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'painted, opaque stained wood look'; 'subtle straight grain'."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "straight",
+     "contrast": 0.3,
+     "scale": 0.2,
+     "direction": "along board"
+    },
+    "normalStrength": 0.2
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/edge-premier-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "cool, weathered gray",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-premier-plus--natural-oak": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-premier-plus",
+   "line": "Premier+",
+   "name": "Natural Oak",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#a48a6b",
+   "variations": {
+    "highlight": "#b29b81",
+    "lowlight": "#92785a"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "No official color copy found."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "subtle",
+     "contrast": 0.3,
+     "scale": 0.2,
+     "direction": "along board"
+    },
+    "normalStrength": 0.2
+   },
+   "source": {
+    "url": "https://www.timbertech.com/colors",
+    "secondaryUrl": null,
+    "officialQuote": "No official color copy found on timbertech.com",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "timbertech-prime--dark-teak": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-prime",
+   "line": "Prime",
+   "name": "Dark Teak",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#5e4335",
+   "variations": {
+    "highlight": "#694b3b",
+    "lowlight": "#533b2f"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'painted, opaque stained wood look'; 'subtle straight grain'."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "straight",
+     "contrast": 0.3,
+     "scale": 0.2,
+     "direction": "along board"
+    },
+    "normalStrength": 0.2
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/edge-prime-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "deep, rich brown wood stain",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-prime--maritime-gray": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-prime",
+   "line": "Prime",
+   "name": "Maritime Gray",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#84827e",
+   "variations": {
+    "highlight": "#8d8b87",
+    "lowlight": "#7b7975"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'painted, opaque stained wood look'; 'subtle straight grain'."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "straight",
+     "contrast": 0.3,
+     "scale": 0.2,
+     "direction": "along board"
+    },
+    "normalStrength": 0.2
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/edge-prime-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "cool, weathered gray",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-prime-plus--coconut-husk": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-prime-plus",
+   "line": "Prime+",
+   "name": "Coconut Husk",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#9b7451",
+   "variations": {
+    "highlight": "#ad8662",
+    "lowlight": "#846245"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'textured straight grain and natural, moderately blended coloring'."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "straight",
+     "contrast": 0.3,
+     "scale": 0.2,
+     "direction": "along board"
+    },
+    "normalStrength": 0.2
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/edge-prime-plus-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "A warm, golden brown.",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-prime-plus--dark-cocoa": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-prime-plus",
+   "line": "Prime+",
+   "name": "Dark Cocoa",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#594134",
+   "variations": {
+    "highlight": "#705141",
+    "lowlight": "#423127"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'textured straight grain and natural, moderately blended coloring'."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "straight",
+     "contrast": 0.3,
+     "scale": 0.2,
+     "direction": "along board"
+    },
+    "normalStrength": 0.2
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/edge-prime-plus-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "A deep, rich brown.",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-prime-plus--sea-salt-gray": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-prime-plus",
+   "line": "Prime+",
+   "name": "Sea Salt Gray",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#9a968f",
+   "variations": {
+    "highlight": "#aba8a2",
+    "lowlight": "#89847c"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'textured straight grain and natural, moderately blended coloring'."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "straight",
+     "contrast": 0.3,
+     "scale": 0.2,
+     "direction": "along board"
+    },
+    "normalStrength": 0.2
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/edge-prime-plus-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "A soft, weathered gray.",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-reserve--antique-leather": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-reserve",
+   "line": "Reserve",
+   "name": "Antique Leather",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#76583f",
+   "variations": {
+    "highlight": "#9b7353",
+    "lowlight": "#513d2b"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'bold, multitonal reclaimed wood look'; low-gloss."
+   },
+   "material": {
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "specular": 0.2,
+    "grain": {
+     "type": "wire-brushed",
+     "contrast": 0.55,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/pro-reserve-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "rich, broken-in brown",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-reserve--dark-roast": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-reserve",
+   "line": "Reserve",
+   "name": "Dark Roast",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#4e392d",
+   "variations": {
+    "highlight": "#725342",
+    "lowlight": "#2a1f18"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'bold, multitonal reclaimed wood look'; low-gloss."
+   },
+   "material": {
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "specular": 0.2,
+    "grain": {
+     "type": "wire-brushed",
+     "contrast": 0.55,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/pro-reserve-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "deep, roasted dark wood",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-reserve--driftwood": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-reserve",
+   "line": "Reserve",
+   "name": "Driftwood",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#99948b",
+   "variations": {
+    "highlight": "#b3b0a9",
+    "lowlight": "#7e786e"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'bold, multitonal reclaimed wood look'; low-gloss."
+   },
+   "material": {
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "specular": 0.2,
+    "grain": {
+     "type": "wire-brushed",
+     "contrast": 0.55,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/pro-reserve-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "soft, sun-weathered gray",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-reserve--reclaimed-chestnut": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-reserve",
+   "line": "Reserve",
+   "name": "Reclaimed Chestnut",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#8f5e42",
+   "variations": {
+    "highlight": "#b27857",
+    "lowlight": "#694530"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'bold, multitonal reclaimed wood look'; low-gloss."
+   },
+   "material": {
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "specular": 0.2,
+    "grain": {
+     "type": "wire-brushed",
+     "contrast": 0.55,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/pro-reserve-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "warm, rustic reclaimed wood tones",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-terrain--brown-oak": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-terrain",
+   "line": "Terrain",
+   "name": "Brown Oak",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#84634b",
+   "variations": {
+    "highlight": "#9b7458",
+    "lowlight": "#6d523e"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'subtle, natural color variation'; embossed cathedral grain."
+   },
+   "material": {
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "specular": 0.2,
+    "grain": {
+     "type": "cathedral-rough",
+     "contrast": 0.6,
+     "scale": 0.5,
+     "direction": "along board"
+    },
+    "normalStrength": 0.5
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/pro-terrain-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "warm, classic oak browns",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-terrain--silver-maple": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-terrain",
+   "line": "Terrain",
+   "name": "Silver Maple",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#95928c",
+   "variations": {
+    "highlight": "#a6a49f",
+    "lowlight": "#848079"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'subtle, natural color variation'; embossed cathedral grain."
+   },
+   "material": {
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "specular": 0.2,
+    "grain": {
+     "type": "cathedral-rough",
+     "contrast": 0.6,
+     "scale": 0.5,
+     "direction": "along board"
+    },
+    "normalStrength": 0.5
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/pro-terrain-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "soft, cool gray wood",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-terrain-plus--dark-oak": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-terrain-plus",
+   "line": "Terrain+",
+   "name": "Dark Oak",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#5e4436",
+   "variations": {
+    "highlight": "#755443",
+    "lowlight": "#473429"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'subtle wood grain and sophisticated, cascading color'; 'low-gloss matte'."
+   },
+   "material": {
+    "roughness": 0.82,
+    "metalness": 0.0,
+    "specular": 0.19,
+    "grain": {
+     "type": "subtle",
+     "contrast": 0.3,
+     "scale": 0.2,
+     "direction": "along board"
+    },
+    "normalStrength": 0.2
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/composite-terrain-plus-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "Deep, rich brown.",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-terrain-plus--natural-white-oak": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-terrain-plus",
+   "line": "Terrain+",
+   "name": "Natural White Oak",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#b39e82",
+   "variations": {
+    "highlight": "#c0af98",
+    "lowlight": "#a68d6c"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'subtle wood grain and sophisticated, cascading color'; 'low-gloss matte'."
+   },
+   "material": {
+    "roughness": 0.82,
+    "metalness": 0.0,
+    "specular": 0.19,
+    "grain": {
+     "type": "subtle",
+     "contrast": 0.3,
+     "scale": 0.2,
+     "direction": "along board"
+    },
+    "normalStrength": 0.2
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/composite-terrain-plus-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "Light, clean oak.",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-terrain-plus--weathered-oak": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-terrain-plus",
+   "line": "Terrain+",
+   "name": "Weathered Oak",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#90857a",
+   "variations": {
+    "highlight": "#a0978d",
+    "lowlight": "#7e7369"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'subtle wood grain and sophisticated, cascading color'; 'low-gloss matte'."
+   },
+   "material": {
+    "roughness": 0.82,
+    "metalness": 0.0,
+    "specular": 0.19,
+    "grain": {
+     "type": "subtle",
+     "contrast": 0.3,
+     "scale": 0.2,
+     "direction": "along board"
+    },
+    "normalStrength": 0.2
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/composite-terrain-plus-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "Soft, sun-aged gray-brown.",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-vintage--coastline": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-vintage",
+   "line": "Vintage",
+   "name": "Coastline",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#99938a",
+   "variations": {
+    "highlight": "#b3afa8",
+    "lowlight": "#7d776d"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'Highly Color-Blended, With a Wire-Brushed Finish'; low-gloss."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "wire-brushed",
+     "contrast": 0.55,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/azek-vintage-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "weathered, driftwood-like coastal hardwood",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-vintage--cypress": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-vintage",
+   "line": "Vintage",
+   "name": "Cypress",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#92694b",
+   "variations": {
+    "highlight": "#b08565",
+    "lowlight": "#6d4e38"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'Highly Color-Blended, With a Wire-Brushed Finish'; low-gloss."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "wire-brushed",
+     "contrast": 0.55,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/azek-vintage-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "warm cypress coloration",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-vintage--dark-hickory": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-vintage",
+   "line": "Vintage",
+   "name": "Dark Hickory",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#5e5953",
+   "variations": {
+    "highlight": "#7c756d",
+    "lowlight": "#403d39"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'Highly Color-Blended, With a Wire-Brushed Finish'; low-gloss."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "wire-brushed",
+     "contrast": 0.55,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/azek-vintage-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "No description; color family tag: gray",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "timbertech-vintage--english-walnut": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-vintage",
+   "line": "Vintage",
+   "name": "English Walnut",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#694b38",
+   "variations": {
+    "highlight": "#8e654c",
+    "lowlight": "#443124",
+    "streak": "#4a3224"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'Highly Color-Blended, With a Wire-Brushed Finish'; low-gloss."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "wire-brushed",
+     "contrast": 0.55,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/azek-vintage-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "rich walnut browns",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-vintage--mahogany": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-vintage",
+   "line": "Vintage",
+   "name": "Mahogany",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#794a36",
+   "variations": {
+    "highlight": "#a06247",
+    "lowlight": "#523225",
+    "streak": "#5a2f22"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'Highly Color-Blended, With a Wire-Brushed Finish'; low-gloss."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "wire-brushed",
+     "contrast": 0.55,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/azek-vintage-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "mahogany-style hardwoods",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "timbertech-vintage--weathered-teak": {
+   "category": "decking",
+   "library": "timbertech",
+   "brand": "TimberTech",
+   "lineId": "timbertech-vintage",
+   "line": "Vintage",
+   "name": "Weathered Teak",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#a1896d",
+   "variations": {
+    "highlight": "#b7a58f",
+    "lowlight": "#826d54"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "'Highly Color-Blended, With a Wire-Brushed Finish'; low-gloss."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "wire-brushed",
+     "contrast": 0.55,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.timbertech.com/product/azek-vintage-collection/",
+    "secondaryUrl": null,
+    "officialQuote": "teak-inspired tones (family: tan)",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-enhance--cinnamon-cove": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-enhance",
+   "line": "Enhance",
+   "name": "Cinnamon Cove",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#83583c",
+   "variations": {
+    "highlight": "#8f6042",
+    "lowlight": "#775036"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'wood-like grain pattern'; Naturals blended, Basics solid."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/enhance/",
+    "secondaryUrl": null,
+    "officialQuote": "a warm, inviting mid-tone brown with rich undertones",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-enhance--clam-shell": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-enhance",
+   "line": "Enhance",
+   "name": "Clam Shell",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#8a857e",
+   "variations": {
+    "highlight": "#928e87",
+    "lowlight": "#817c75"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'wood-like grain pattern'; Naturals blended, Basics solid."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/enhance/",
+    "secondaryUrl": null,
+    "officialQuote": "an easy-to-match shade of medium grey",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-enhance--foggy-wharf": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-enhance",
+   "line": "Enhance",
+   "name": "Foggy Wharf",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#929497",
+   "variations": {
+    "highlight": "#9b9da0",
+    "lowlight": "#898b8e",
+    "streak": "#6b6966"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'wood-like grain pattern'; Naturals blended, Basics solid."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/enhance/",
+    "secondaryUrl": null,
+    "officialQuote": "blends salty grey hues with shades of dark silver",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-enhance--golden-hour": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-enhance",
+   "line": "Enhance",
+   "name": "Golden Hour",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#a77c50",
+   "variations": {
+    "highlight": "#b08559",
+    "lowlight": "#9b734a",
+    "streak": "#7d5635"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'wood-like grain pattern'; Naturals blended, Basics solid."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/enhance/",
+    "secondaryUrl": null,
+    "officialQuote": "A sun-kissed golden hue with rich coconut brown undertones",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-enhance--honey-grove": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-enhance",
+   "line": "Enhance",
+   "name": "Honey Grove",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#7f6753",
+   "variations": {
+    "highlight": "#8a705a",
+    "lowlight": "#745e4c",
+    "streak": "#2c2420"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'wood-like grain pattern'; Naturals blended, Basics solid."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/enhance/",
+    "secondaryUrl": null,
+    "officialQuote": "Browns, greys and onyx black streaks harmonize into a warm, essential color",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-enhance--pebble-beach": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-enhance",
+   "line": "Enhance",
+   "name": "Pebble Beach",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#a9a59f",
+   "variations": {
+    "highlight": "#b1aea8",
+    "lowlight": "#a19c96"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'wood-like grain pattern'; Naturals blended, Basics solid."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/enhance/",
+    "secondaryUrl": null,
+    "officialQuote": "a light-toned grey that echoes the smooth, weathered look of pebbles",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-enhance--rocky-harbor": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-enhance",
+   "line": "Enhance",
+   "name": "Rocky Harbor",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#7f7972",
+   "variations": {
+    "highlight": "#88827b",
+    "lowlight": "#76706a",
+    "streak": "#93856f"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'wood-like grain pattern'; Naturals blended, Basics solid."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/enhance/",
+    "secondaryUrl": null,
+    "officialQuote": "adds sandy undertones to a rustic slate grey",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-enhance--saddle": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-enhance",
+   "line": "Enhance",
+   "name": "Saddle",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#8b6a4c",
+   "variations": {
+    "highlight": "#977352",
+    "lowlight": "#7f6146"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'wood-like grain pattern'; Naturals blended, Basics solid."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/enhance/",
+    "secondaryUrl": null,
+    "officialQuote": "an easy-to-match shade of medium brown",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-enhance--tide-pool": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-enhance",
+   "line": "Enhance",
+   "name": "Tide Pool",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#767d7f",
+   "variations": {
+    "highlight": "#7f8688",
+    "lowlight": "#6d7476"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'wood-like grain pattern'; Naturals blended, Basics solid."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/enhance/",
+    "secondaryUrl": null,
+    "officialQuote": "No color specification ('inspiration from ... the gentle hand of the tides')",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "trex-enhance--toasted-sand": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-enhance",
+   "line": "Enhance",
+   "name": "Toasted Sand",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#9f8467",
+   "variations": {
+    "highlight": "#a68d72",
+    "lowlight": "#967b5f",
+    "streak": "#6a5240"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'wood-like grain pattern'; Naturals blended, Basics solid."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/enhance/",
+    "secondaryUrl": null,
+    "officialQuote": "a tawny seashell brown with subtle dark-brown splashes",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-refuge--martis-valley": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-refuge",
+   "line": "Refuge",
+   "name": "Martis Valley",
+   "salesListing": "hold",
+   "libraryColorStatus": "verified",
+   "base": "#b7a184",
+   "variations": {
+    "highlight": "#c4b29b",
+    "lowlight": "#aa906d",
+    "streak": "#c4a36d"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'wire-brushed grain pattern'."
+   },
+   "material": {
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "specular": 0.2,
+    "grain": {
+     "type": "wire-brushed",
+     "contrast": 0.55,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/refuge/",
+    "secondaryUrl": null,
+    "officialQuote": "An airy, sunlit beige ... between soft sand and sea-worn stone, with soft golden undertones",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-refuge--point-reyes": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-refuge",
+   "line": "Refuge",
+   "name": "Point Reyes",
+   "salesListing": "hold",
+   "libraryColorStatus": "verified",
+   "base": "#999995",
+   "variations": {
+    "highlight": "#ababa7",
+    "lowlight": "#878783"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'wire-brushed grain pattern'."
+   },
+   "material": {
+    "roughness": 0.8,
+    "metalness": 0.0,
+    "specular": 0.2,
+    "grain": {
+     "type": "wire-brushed",
+     "contrast": 0.55,
+     "scale": 0.45,
+     "direction": "along board"
+    },
+    "normalStrength": 0.45
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/refuge/",
+    "secondaryUrl": null,
+    "officialQuote": "A misty coastal grey ... with cool undertones",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-select--malted-barley": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-select",
+   "line": "Select",
+   "name": "Malted Barley",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#8e7a67",
+   "variations": {
+    "highlight": "#978370",
+    "lowlight": "#84715f",
+    "streak": "#7d7872"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'refined grain patterns'; 'wood-like grain'."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/select/",
+    "secondaryUrl": null,
+    "officialQuote": "blend of earthy browns and soft greys",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-select--millstone": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-select",
+   "line": "Select",
+   "name": "Millstone",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#7a7774",
+   "variations": {
+    "highlight": "#83807d",
+    "lowlight": "#716e6b",
+    "streak": "#55534f"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'refined grain patterns'; 'wood-like grain'."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/select/",
+    "secondaryUrl": null,
+    "officialQuote": "A weathered grey with charcoal undertones",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-select--pebble-grey": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-select",
+   "line": "Select",
+   "name": "Pebble Grey",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#a5a19c",
+   "variations": {
+    "highlight": "#aeaaa5",
+    "lowlight": "#9c9893"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'refined grain patterns'; 'wood-like grain'."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/select/",
+    "secondaryUrl": null,
+    "officialQuote": "a light heather grey with an easy-to-maintain, wood-like grain pattern",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-select--saddle": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-select",
+   "line": "Select",
+   "name": "Saddle",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#8d6a4b",
+   "variations": {
+    "highlight": "#997351",
+    "lowlight": "#816145"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'refined grain patterns'; 'wood-like grain'."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/select/",
+    "secondaryUrl": null,
+    "officialQuote": "a sunny medium brown with an easy-to-maintain, wood-like grain pattern",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-select--whiskey-barrel": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-select",
+   "line": "Select",
+   "name": "Whiskey Barrel",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#6d4a33",
+   "variations": {
+    "highlight": "#795239",
+    "lowlight": "#61422d"
+   },
+   "variegation": {
+    "level": "low",
+    "boardToBoard": 0.021,
+    "withinBoard": 0.035,
+    "lineCopy": "'refined grain patterns'; 'wood-like grain'."
+   },
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "grain": {
+     "type": "wood-like",
+     "contrast": 0.4,
+     "scale": 0.3,
+     "direction": "along board"
+    },
+    "normalStrength": 0.3
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/select/",
+    "secondaryUrl": null,
+    "officialQuote": "A warm, rich brown ... steeped in the spirit of aged oak",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-signature--ocracoke": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-signature",
+   "line": "Signature",
+   "name": "Ocracoke",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#9b8366",
+   "variations": {
+    "highlight": "#a9947c",
+    "lowlight": "#867157"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "Line copy gives no color/finish detail."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "fine",
+     "contrast": 0.35,
+     "scale": 0.25,
+     "direction": "along board"
+    },
+    "normalStrength": 0.25
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/signature/",
+    "secondaryUrl": null,
+    "officialQuote": "Marketing only: 'sandy dunes and marshy shores'",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "trex-signature--whidbey": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-signature",
+   "line": "Signature",
+   "name": "Whidbey",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#8e8a84",
+   "variations": {
+    "highlight": "#9f9c97",
+    "lowlight": "#7c7872"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "Line copy gives no color/finish detail."
+   },
+   "material": {
+    "roughness": 0.72,
+    "metalness": 0.0,
+    "specular": 0.24,
+    "grain": {
+     "type": "fine",
+     "contrast": 0.35,
+     "scale": 0.25,
+     "direction": "along board"
+    },
+    "normalStrength": 0.25
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/signature/",
+    "secondaryUrl": null,
+    "officialQuote": "Marketing only: 'misty cliffs, where salt-washed fog rolls in'",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "trex-transcend--havana-gold": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-transcend",
+   "line": "Transcend",
+   "name": "Havana Gold",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#a1784c",
+   "variations": {
+    "highlight": "#b9946c",
+    "lowlight": "#7b5c3a",
+    "streak": "#c08f5a"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "Page: all colors 'multi-tonal'."
+   },
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "grain": {
+     "type": "embossed",
+     "contrast": 0.45,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/transcend/",
+    "secondaryUrl": null,
+    "officialQuote": "A covetable blend of caramel and honey hues ... a warm brown color that mimics tropical teak",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-transcend--island-mist": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-transcend",
+   "line": "Transcend",
+   "name": "Island Mist",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#a2a19c",
+   "variations": {
+    "highlight": "#bdbcb9",
+    "lowlight": "#87867f",
+    "streak": "#8a8883"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "Page: all colors 'multi-tonal'."
+   },
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "grain": {
+     "type": "embossed",
+     "contrast": 0.45,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/transcend/",
+    "secondaryUrl": null,
+    "officialQuote": "A cool medley of calming silver tones ... mimics the weathered look of driftwood",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-transcend--lava-rock": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-transcend",
+   "line": "Transcend",
+   "name": "Lava Rock",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#5b3a2e",
+   "variations": {
+    "highlight": "#805241",
+    "lowlight": "#36221b",
+    "streak": "#2f1f1a"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "Page: all colors 'multi-tonal'."
+   },
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "grain": {
+     "type": "embossed",
+     "contrast": 0.45,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/transcend/",
+    "secondaryUrl": null,
+    "officialQuote": "rich reddish-black undertones ... looks and feels like magnificent redwood",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-transcend--rope-swing": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-transcend",
+   "line": "Transcend",
+   "name": "Rope Swing",
+   "salesListing": "listed",
+   "libraryColorStatus": "conflict",
+   "base": "#a08a72",
+   "variations": {
+    "highlight": "#b7a694",
+    "lowlight": "#826e58"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "Page: all colors 'multi-tonal'."
+   },
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "grain": {
+     "type": "embossed",
+     "contrast": 0.45,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/transcend/",
+    "secondaryUrl": null,
+    "officialQuote": "Not on the current Transcend page (library: conflict, held)",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "trex-transcend--spiced-rum": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-transcend",
+   "line": "Transcend",
+   "name": "Spiced Rum",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#6a4630",
+   "variations": {
+    "highlight": "#916041",
+    "lowlight": "#432d1f",
+    "streak": "#231915"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "Page: all colors 'multi-tonal'."
+   },
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "grain": {
+     "type": "embossed",
+     "contrast": 0.45,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/transcend/",
+    "secondaryUrl": null,
+    "officialQuote": "A burnt umber with onyx black lowlights, Spiced Rum resembles tropical ipe",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-transcend--tiki-torch": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-transcend",
+   "line": "Transcend",
+   "name": "Tiki Torch",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#9a7452",
+   "variations": {
+    "highlight": "#b39071",
+    "lowlight": "#75583f",
+    "streak": "#b07e4d"
+   },
+   "variegation": {
+    "level": "high",
+    "boardToBoard": 0.066,
+    "withinBoard": 0.11,
+    "lineCopy": "Page: all colors 'multi-tonal'."
+   },
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "grain": {
+     "type": "embossed",
+     "contrast": 0.45,
+     "scale": 0.35,
+     "direction": "along board"
+    },
+    "normalStrength": 0.35
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/transcend/",
+    "secondaryUrl": null,
+    "officialQuote": "hints of nutmeg and ginger ... an easygoing light brown designed to mimic tropical teak",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-transcend-lineage--biscayne": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-transcend-lineage",
+   "line": "Transcend Lineage",
+   "name": "Biscayne",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#8f7a66",
+   "variations": {
+    "highlight": "#a08c79",
+    "lowlight": "#7a6857"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'refined grain pattern'; 'subtle movement'."
+   },
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "grain": {
+     "type": "refined",
+     "contrast": 0.3,
+     "scale": 0.25,
+     "direction": "along board"
+    },
+    "normalStrength": 0.25
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/lineage/",
+    "secondaryUrl": null,
+    "officialQuote": "warm taupe base and subtle movement",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-transcend-lineage--carmel": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-transcend-lineage",
+   "line": "Transcend Lineage",
+   "name": "Carmel",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#ab947c",
+   "variations": {
+    "highlight": "#b9a692",
+    "lowlight": "#9d8266",
+    "streak": "#857b70"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'refined grain pattern'; 'subtle movement'."
+   },
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "grain": {
+     "type": "refined",
+     "contrast": 0.3,
+     "scale": 0.25,
+     "direction": "along board"
+    },
+    "normalStrength": 0.25
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/lineage/",
+    "secondaryUrl": null,
+    "officialQuote": "A soft, creamy taupe with toasty brown and grey undertones",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-transcend-lineage--hatteras": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-transcend-lineage",
+   "line": "Transcend Lineage",
+   "name": "Hatteras",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#8a7159",
+   "variations": {
+    "highlight": "#9e8369",
+    "lowlight": "#745f4b"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'refined grain pattern'; 'subtle movement'."
+   },
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "grain": {
+     "type": "refined",
+     "contrast": 0.3,
+     "scale": 0.25,
+     "direction": "along board"
+    },
+    "normalStrength": 0.25
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/lineage/",
+    "secondaryUrl": null,
+    "officialQuote": "A neutral brown born from windswept dunes",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-transcend-lineage--island-mist": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-transcend-lineage",
+   "line": "Transcend Lineage",
+   "name": "Island Mist",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#9a9b99",
+   "variations": {
+    "highlight": "#acadab",
+    "lowlight": "#888987"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'refined grain pattern'; 'subtle movement'."
+   },
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "grain": {
+     "type": "refined",
+     "contrast": 0.3,
+     "scale": 0.25,
+     "direction": "along board"
+    },
+    "normalStrength": 0.25
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/lineage/",
+    "secondaryUrl": null,
+    "officialQuote": "A cool medley of calming silver tones",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-transcend-lineage--jasper": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-transcend-lineage",
+   "line": "Transcend Lineage",
+   "name": "Jasper",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#5d4737",
+   "variations": {
+    "highlight": "#735844",
+    "lowlight": "#47362a",
+    "streak": "#4a3426"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'refined grain pattern'; 'subtle movement'."
+   },
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "grain": {
+     "type": "refined",
+     "contrast": 0.3,
+     "scale": 0.25,
+     "direction": "along board"
+    },
+    "normalStrength": 0.25
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/lineage/",
+    "secondaryUrl": null,
+    "officialQuote": "A deep shade of mocha with rich umber hue and delicate streaking",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-transcend-lineage--rainier": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-transcend-lineage",
+   "line": "Transcend Lineage",
+   "name": "Rainier",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#aaa9a5",
+   "variations": {
+    "highlight": "#bbbbb7",
+    "lowlight": "#999793"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'refined grain pattern'; 'subtle movement'."
+   },
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "grain": {
+     "type": "refined",
+     "contrast": 0.3,
+     "scale": 0.25,
+     "direction": "along board"
+    },
+    "normalStrength": 0.25
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/lineage/",
+    "secondaryUrl": null,
+    "officialQuote": "An airy, mountain grey with subtle silver tones and delicate grain pattern",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "trex-transcend-lineage--salt-flat": {
+   "category": "decking",
+   "library": "trex",
+   "brand": "Trex",
+   "lineId": "trex-transcend-lineage",
+   "line": "Transcend Lineage",
+   "name": "Salt Flat",
+   "salesListing": "listed",
+   "libraryColorStatus": "verified",
+   "base": "#b8b4ac",
+   "variations": {
+    "highlight": "#c8c5bf",
+    "lowlight": "#a8a399"
+   },
+   "variegation": {
+    "level": "medium",
+    "boardToBoard": 0.042,
+    "withinBoard": 0.07,
+    "lineCopy": "'refined grain pattern'; 'subtle movement'."
+   },
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "grain": {
+     "type": "refined",
+     "contrast": 0.3,
+     "scale": 0.25,
+     "direction": "along board"
+    },
+    "normalStrength": 0.25
+   },
+   "source": {
+    "url": "https://www.trex.com/products/decking/lineage/",
+    "secondaryUrl": null,
+    "officialQuote": "A natural symphony of silvers, whites and greys",
+    "read": "2026-11-16"
+   },
+   "tier": "B",
+   "method": "description-derived estimate (manufacturer's written color description; no swatch measured)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "westbury--black-fine-texture": {
+   "category": "finish",
+   "library": "westbury",
+   "brand": "Westbury",
+   "name": "Black Fine Texture",
+   "base": "#1c1c1d",
+   "variations": {},
+   "material": {
+    "roughness": 0.78,
+    "metalness": 0.0,
+    "specular": 0.21,
+    "texture": "fine-texture",
+    "sheen": "fine texture",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://diggerspecialties.com/products/railing/aluminum-railing/tuscany-aluminum-railing/",
+    "officialQuote": "Black Fine Texture",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "westbury--bronze-fine-texture": {
+   "category": "finish",
+   "library": "westbury",
+   "brand": "Westbury",
+   "name": "Bronze Fine Texture",
+   "base": "#4d4035",
+   "variations": {},
+   "material": {
+    "roughness": 0.76,
+    "metalness": 0.0,
+    "specular": 0.22,
+    "texture": "fine-texture",
+    "sheen": "fine texture",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://diggerspecialties.com/products/railing/aluminum-railing/tuscany-aluminum-railing/",
+    "officialQuote": "Bronze Fine Texture",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "westbury--brown-fine-texture": {
+   "category": "finish",
+   "library": "westbury",
+   "brand": "Westbury",
+   "name": "Brown Fine Texture",
+   "base": "#4e3b2d",
+   "variations": {},
+   "material": {
+    "roughness": 0.76,
+    "metalness": 0.0,
+    "specular": 0.22,
+    "texture": "fine-texture",
+    "sheen": "fine texture",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://diggerspecialties.com/products/railing/aluminum-railing/tuscany-aluminum-railing/",
+    "officialQuote": "Brown Fine Texture",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "westbury--chocolate": {
+   "category": "finish",
+   "library": "westbury",
+   "brand": "Westbury",
+   "name": "Chocolate",
+   "base": "#3d2e25",
+   "variations": {},
+   "material": {
+    "roughness": 0.55,
+    "metalness": 0.0,
+    "specular": 0.325,
+    "texture": "smooth",
+    "sheen": "not stated",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://diggerspecialties.com/products/railing/aluminum-railing/tuscany-aluminum-railing/",
+    "officialQuote": "Chocolate",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "westbury--gloss-beige": {
+   "category": "finish",
+   "library": "westbury",
+   "brand": "Westbury",
+   "name": "Gloss Beige",
+   "base": "#d8cbb1",
+   "variations": {},
+   "material": {
+    "roughness": 0.3,
+    "metalness": 0.0,
+    "specular": 0.45,
+    "texture": "smooth",
+    "sheen": "gloss",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://diggerspecialties.com/products/railing/aluminum-railing/tuscany-aluminum-railing/",
+    "officialQuote": "Gloss Beige",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "westbury--gloss-white": {
+   "category": "finish",
+   "library": "westbury",
+   "brand": "Westbury",
+   "name": "Gloss White",
+   "base": "#f1f1ee",
+   "variations": {},
+   "material": {
+    "roughness": 0.3,
+    "metalness": 0.0,
+    "specular": 0.45,
+    "texture": "smooth",
+    "sheen": "gloss",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://diggerspecialties.com/products/railing/aluminum-railing/tuscany-aluminum-railing/",
+    "officialQuote": "Gloss White",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "westbury--grey-fine-texture": {
+   "category": "finish",
+   "library": "westbury",
+   "brand": "Westbury",
+   "name": "Grey Fine Texture",
+   "base": "#7b7e7f",
+   "variations": {},
+   "material": {
+    "roughness": 0.76,
+    "metalness": 0.0,
+    "specular": 0.22,
+    "texture": "fine-texture",
+    "sheen": "fine texture",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://diggerspecialties.com/products/railing/aluminum-railing/tuscany-aluminum-railing/",
+    "officialQuote": "Grey Fine Texture",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "westbury--ninety-bronze": {
+   "category": "finish",
+   "library": "westbury",
+   "brand": "Westbury",
+   "name": "Ninety Bronze",
+   "base": "#4a3c30",
+   "variations": {},
+   "material": {
+    "roughness": 0.55,
+    "metalness": 0.0,
+    "specular": 0.325,
+    "texture": "smooth",
+    "sheen": "not stated",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://diggerspecialties.com/products/railing/aluminum-railing/tuscany-aluminum-railing/",
+    "officialQuote": "Ninety Bronze",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "westbury--sandy-shore": {
+   "category": "finish",
+   "library": "westbury",
+   "brand": "Westbury",
+   "name": "Sandy Shore",
+   "base": "#c6b597",
+   "variations": {},
+   "material": {
+    "roughness": 0.55,
+    "metalness": 0.0,
+    "specular": 0.325,
+    "texture": "smooth",
+    "sheen": "not stated",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://diggerspecialties.com/products/railing/aluminum-railing/tuscany-aluminum-railing/",
+    "officialQuote": "Sandy Shore",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "westbury--satin-black": {
+   "category": "finish",
+   "library": "westbury",
+   "brand": "Westbury",
+   "name": "Satin Black",
+   "base": "#1d1d1e",
+   "variations": {},
+   "material": {
+    "roughness": 0.5,
+    "metalness": 0.0,
+    "specular": 0.35,
+    "texture": "smooth",
+    "sheen": "satin",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://diggerspecialties.com/products/railing/aluminum-railing/tuscany-aluminum-railing/",
+    "officialQuote": "Satin Black",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  },
+  "westbury--speckled-walnut": {
+   "category": "finish",
+   "library": "westbury",
+   "brand": "Westbury",
+   "name": "Speckled Walnut",
+   "base": "#59412f",
+   "variations": {
+    "highlight": "#634834",
+    "lowlight": "#4f3a2a"
+   },
+   "material": {
+    "roughness": 0.7,
+    "metalness": 0.0,
+    "specular": 0.25,
+    "texture": "speckle",
+    "sheen": "speckled",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://diggerspecialties.com/products/railing/aluminum-railing/tuscany-aluminum-railing/",
+    "officialQuote": "Speckled Walnut",
+    "read": "2026-11-16"
+   },
+   "tier": "C",
+   "method": "provisional estimate from color name / color family only",
+   "confidence": "very-low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "do not show as the product color until sampled"
+  },
+  "westbury--white-fine-texture": {
+   "category": "finish",
+   "library": "westbury",
+   "brand": "Westbury",
+   "name": "White Fine Texture",
+   "base": "#ebebe8",
+   "variations": {},
+   "material": {
+    "roughness": 0.76,
+    "metalness": 0.0,
+    "specular": 0.22,
+    "texture": "fine-texture",
+    "sheen": "fine texture",
+    "note": "Powder coat, vinyl and acrylic caps are painted surfaces: render as dielectric (metalness 0)."
+   },
+   "source": {
+    "url": "https://diggerspecialties.com/products/railing/aluminum-railing/tuscany-aluminum-railing/",
+    "officialQuote": "White Fine Texture",
+    "read": "2026-11-16"
+   },
+   "tier": "G",
+   "method": "generic finish estimate (common appearance of this finish type; no product-specific data)",
+   "confidence": "low",
+   "approximate": true,
+   "needsPhysicalSample": true,
+   "customerUse": "approximate label required"
+  }
+ }
+}

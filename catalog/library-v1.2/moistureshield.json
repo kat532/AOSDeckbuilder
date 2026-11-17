@@ -1,0 +1,1082 @@
+{
+  "meta": {
+    "schema": "aos-product-library",
+    "schemaVersion": "1.2.0",
+    "libraryId": "moistureshield",
+    "category": "decking",
+    "libraryVersion": "2026-11-11.1",
+    "verifiedAsOf": "2026-11-06",
+    "useLimits": "Sales-design reference. Not purchase-ready SKUs, not engineering or code approval. Rules are reference-only and must not be enforced or ordered from without production verification.",
+    "notes": [
+      "All lines marked 'transitioning': confirm with the AOS supplier that MoistureShield-branded products remain orderable in 2027."
+    ],
+    "revisedAsOf": "2026-11-11",
+    "changesV1_1": [
+      "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular.",
+      "CoolDeck colors confirmed: Vision = Cathedral Stone, Cold Brew, Mochaccino (also the only marine-grade colors, 24 in span); Meridian = Citadel, Catalina, Shoal, Shoreside.",
+      "Shared decking standard (owner, 11 Nov 2026) referenced; brand exception report added (5 items).",
+      "Complete decking standards (11 Nov, second package): RD-01, RD-04 applied; quoteEligible added (listing vs quote eligibility kept separate)."
+    ],
+    "statusModel": {
+      "basis": {
+        "manufacturer": "Manufacturer product data",
+        "code": "Building code text",
+        "industry-standard": "Industry guide (AWPA, AWC DCA 6)",
+        "aos-design": "AOS design concept or AOS choice; not a manufacturer product",
+        "retail-example": "Seen at a retailer; not manufacturer data",
+        "earlier-research": "Carried from AOS planning research; not re-checked"
+      },
+      "status": {
+        "verified": "Confirmed against an official primary source in this pass",
+        "listed-unconfirmed": "Appears in an official source but ambiguous or incomplete",
+        "conflict": "Official sources disagree",
+        "secondary-source": "Matches a secondary summary; primary text not read",
+        "unverified": "Not confirmed in this pass",
+        "aos-decision": "AOS design decision still to be made or confirmed. No manufacturer data exists",
+        "owner-approved": "AOS design choice approved by the owner (sales design). Not construction approval",
+        "pending-verification": "Structural, hardware, supplier or code detail that must be verified before construction use"
+      },
+      "fieldStatus": "Overrides status for individual fields of a record (e.g. a profile whose width is verified but thickness is not).",
+      "salesListing": {
+        "listed": "Shown to James",
+        "listed-with-notice": "Shown with a short notice (availability, restriction or code note)",
+        "hold": "Not shown until the stated reason is resolved"
+      },
+      "salesPriority": "Optional AOS ordering for frequently used products (sorted first). Never hides products."
+    },
+    "changesV1_2": [
+      "v1.2 (11 Nov 2026): owner decision closure D-01..D-08 recorded where it applies; version labels updated. No product IDs removed or renamed."
+    ]
+  },
+  "brand": {
+    "id": "moistureshield",
+    "name": "MoistureShield",
+    "manufacturer": "Decking assets acquired by UFP Industries (Deckorators) from Oldcastle APG, announced 2026-04-06"
+  },
+  "sources": [
+    {
+      "id": "ms-2026-catalog",
+      "title": "MoistureShield 2026 Catalog",
+      "url": "https://www.moistureshield.com/wp-content/uploads/2019/12/MPN-7039-2026-MoistureShield-Catalog-02-26-MS25-D-497800.pdf",
+      "revision": "Revised 02/2026 (internal code read as MS24-D-497800 / MPN-7254; filename says MPN-7039 / MS25-D-497800)",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "ms-tech",
+      "title": "MoistureShield Decking Technical Specifications",
+      "url": "https://www.moistureshield.com/wp-content/uploads/2021/07/MoistureShield-Decking-Technical-Specifications-2025_1017.pdf",
+      "revision": "Version date 2025-10-20",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "ms-fasteners",
+      "title": "MoistureShield Approved Fastener Cut Sheet",
+      "url": "https://www.moistureshield.com/wp-content/uploads/2020/07/MS26-D-612500-Approved-Fastener-Cut-Sheet.pdf",
+      "revision": "MS26-D-612500 (no date printed)",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "ms-install",
+      "title": "MoistureShield Installation & Maintenance Guide",
+      "url": "https://www.moistureshield.com/wp-content/uploads/2024/06/MoistureShield-Installation-Guide-March-2021-from-the-web-4.1.24-PFS-markup83-1.pdf",
+      "revision": "March 2021, MS21-130; web file revised 2024",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "ufp-acq",
+      "title": "UFP Industries Expands Deckorators Composite Decking Capacity Through Acquisition",
+      "url": "https://ufpi.com/ufp-industries-expands-deckorators-composite-decking-capacity-through-acquisition/",
+      "revision": "press release 2026-04-06",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "ms-vision-sheet",
+      "title": "MoistureShield Vision Sell Sheet",
+      "url": "https://www.moistureshield.com/wp-content/uploads/2020/10/MoistureShield_Vision-Sell-Sheet_04-26.pdf",
+      "revision": "04-26 (in filename)",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "ms-meridian-sheet",
+      "title": "MoistureShield Meridian Sell Sheet",
+      "url": "https://www.moistureshield.com/wp-content/uploads/2023/02/MoistureShield_Meridian-Sell-Sheet_04-26-1.pdf",
+      "revision": "04-26 (in filename)",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-decking-standard-2026-11-11",
+      "title": "AOS Decking Standards (owner, TimberTech questionnaire)",
+      "url": "Claude Project doc claude/aos-decking-standards-owner-2026-11-11.md (package: owner-specs/AOS_Decking_Standards_2026-11-11.md and .pdf)",
+      "revision": "2026-11-11; md SHA-256 73bda22ffffad0ac7f848993c99f3d29262ee07c6010173d678fb42ed9bb722e",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-decking-complete-2026-11-11",
+      "title": "AOS Complete Decking Sales Standards and Brand Exceptions (owner)",
+      "url": "Claude Project doc claude/aos-decking-complete-standards-2026-11-11.md (package: owner-specs/AOS_Decking_Complete_Standards_2026-11-11.md and .pdf)",
+      "revision": "2026-11-11; md SHA-256 02457d6a2f6cc36fb80b4bb0bfb129dba7e5ed1ab4c11f4ead6bdfb8d7569817; pdf SHA-256 debdd0bed1f6ba68b7fd506c3a5793ffdeb11d022be1aceb395ffb31e597a81a",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    }
+  ],
+  "lines": [
+    {
+      "id": "moistureshield-vision",
+      "name": "Vision",
+      "material": "capped-composite",
+      "availability": "transitioning",
+      "manufacturerTier": "$$$$",
+      "status": "verified",
+      "src": [
+        "ms-2026-catalog"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "moistureshield-vision--smokey-gray",
+          "name": "Smokey Gray",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog",
+            "ms-vision-sheet"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null,
+          "coolDeck": false
+        },
+        {
+          "id": "moistureshield-vision--spanish-leather",
+          "name": "Spanish Leather",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog",
+            "ms-vision-sheet"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null,
+          "coolDeck": false
+        },
+        {
+          "id": "moistureshield-vision--sandstone",
+          "name": "Sandstone",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog",
+            "ms-vision-sheet"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null,
+          "coolDeck": false
+        },
+        {
+          "id": "moistureshield-vision--cathedral-stone",
+          "name": "Cathedral Stone",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog",
+            "ms-vision-sheet"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null,
+          "coolDeck": true
+        },
+        {
+          "id": "moistureshield-vision--mochaccino",
+          "name": "Mochaccino",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog",
+            "ms-vision-sheet"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null,
+          "coolDeck": true
+        },
+        {
+          "id": "moistureshield-vision--cold-brew",
+          "name": "Cold Brew",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog",
+            "ms-vision-sheet"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null,
+          "coolDeck": true
+        }
+      ],
+      "profiles": [
+        {
+          "id": "moistureshield-vision--1x5-4-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.4,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "moistureshield-vision--1x5-4-solid",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.4,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "moistureshield-vision--marine-2x6-solid",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 1.4,
+          "actualWidthIn": 5.4,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": [
+            "moistureshield-vision--cathedral-stone",
+            "moistureshield-vision--cold-brew",
+            "moistureshield-vision--mochaccino"
+          ],
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog",
+            "ms-vision-sheet"
+          ],
+          "note": "Marine grade rated for 24 in joist span (Vision sell sheet).",
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "ms-fascia"
+      ],
+      "features": [
+        "50-yr structural / 50-yr fade & stain",
+        "ASTM E84 flame spread 110 (Class C)",
+        "WUI pass with 1/8 in edge gap"
+      ],
+      "notes": [],
+      "basis": "manufacturer",
+      "salesListing": "listed-with-notice",
+      "salesListingReason": "Owner RD-04: confirm availability. Current catalog status is not confirmed 2027 supply.",
+      "salesPriority": null,
+      "quoteEligible": "confirm-availability"
+    },
+    {
+      "id": "moistureshield-meridian",
+      "name": "Meridian",
+      "material": "capped-composite",
+      "availability": "transitioning",
+      "manufacturerTier": "$$$",
+      "status": "verified",
+      "src": [
+        "ms-2026-catalog"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "moistureshield-meridian--shoal",
+          "name": "Shoal",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog",
+            "ms-meridian-sheet"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null,
+          "coolDeck": true
+        },
+        {
+          "id": "moistureshield-meridian--citadel",
+          "name": "Citadel",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog",
+            "ms-meridian-sheet"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null,
+          "coolDeck": true
+        },
+        {
+          "id": "moistureshield-meridian--catalina",
+          "name": "Catalina",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog",
+            "ms-meridian-sheet"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null,
+          "coolDeck": true
+        },
+        {
+          "id": "moistureshield-meridian--shoreside",
+          "name": "Shoreside",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog",
+            "ms-meridian-sheet"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null,
+          "coolDeck": true
+        },
+        {
+          "id": "moistureshield-meridian--mariner",
+          "name": "Mariner",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog",
+            "ms-meridian-sheet"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null,
+          "coolDeck": false
+        }
+      ],
+      "profiles": [
+        {
+          "id": "moistureshield-meridian--1x5-4-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.4,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "moistureshield-meridian--1x5-4-solid",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.4,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "ms-fascia"
+      ],
+      "features": [
+        "50-yr structural / 40-yr fade & stain",
+        "Flame spread 115 (Class C)",
+        "WUI pass"
+      ],
+      "notes": [
+        "Name also used by Deckorators Meridian (Jan 2027). Different color list; keep separate."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed-with-notice",
+      "salesListingReason": "Owner RD-04: confirm availability. Current catalog status is not confirmed 2027 supply.",
+      "salesPriority": null,
+      "quoteEligible": "confirm-availability"
+    },
+    {
+      "id": "moistureshield-elevate",
+      "name": "Elevate",
+      "material": "capped-composite",
+      "availability": "transitioning",
+      "manufacturerTier": "$",
+      "status": "verified",
+      "src": [
+        "ms-2026-catalog"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "moistureshield-elevate--canoe",
+          "name": "Canoe",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "moistureshield-elevate--lake-fog",
+          "name": "Lake Fog",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "moistureshield-elevate--riverbank",
+          "name": "Riverbank",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "moistureshield-elevate--alpine-gray",
+          "name": "Alpine Gray",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "moistureshield-elevate--1x5-4-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": "scalloped",
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.4,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "moistureshield-elevate--1x5-4-solid",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": "scalloped",
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.4,
+          "lengthsFt": [
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "ms-fascia"
+      ],
+      "features": [
+        "50-yr structural / 30-yr fade & stain",
+        "Flame spread 120 (Class C)"
+      ],
+      "notes": [
+        "Name also used by Deckorators Elevate (Jan 2027). Keep separate.",
+        "2021 install guide says hidden clips are not compatible with Elevate, but the 2026 catalog sells a grooved Elevate board. Unresolved."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed-with-notice",
+      "salesListingReason": "Owner RD-04: confirm availability. Current catalog status is not confirmed 2027 supply.",
+      "salesPriority": null,
+      "quoteEligible": "confirm-availability"
+    },
+    {
+      "id": "moistureshield-vantage",
+      "name": "Vantage",
+      "material": "uncapped-composite",
+      "availability": "transitioning",
+      "manufacturerTier": "$$",
+      "status": "verified",
+      "src": [
+        "ms-2026-catalog"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "moistureshield-vantage--bridle",
+          "name": "Bridle",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "moistureshield-vantage--earthtone",
+          "name": "Earthtone",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "moistureshield-vantage--cape-cod-gray",
+          "name": "Cape Cod Gray",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "statusNote": "Marked NEW in 2026 catalog.",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "moistureshield-vantage--1x5-4-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.4,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "moistureshield-vantage--1x5-4-solid",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.4,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "moistureshield-vantage--marine-2x4-solid",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 1.5,
+          "actualWidthIn": 3.5,
+          "lengthsFt": [
+            16
+          ],
+          "colorIds": [
+            "moistureshield-vantage--cape-cod-gray"
+          ],
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "note": "Rated for 16 in joist span.",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "moistureshield-vantage--marine-2x6-solid",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 1.4,
+          "actualWidthIn": 5.4,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "moistureshield-vantage--marine-2x8-solid",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 1.4,
+          "actualWidthIn": 7.25,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": [
+            "moistureshield-vantage--cape-cod-gray"
+          ],
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "ms-fascia"
+      ],
+      "features": [
+        "50-yr transferable structural; no fade & stain warranty",
+        "Uncapped; weathers to final color in about 3-6 months"
+      ],
+      "notes": [
+        "Visual must show weathered/lighter appearance or be labeled 'color changes as it weathers'."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed-with-notice",
+      "salesListingReason": "Owner RD-04: confirm availability. Current catalog status is not confirmed 2027 supply.",
+      "salesPriority": null,
+      "quoteEligible": "confirm-availability"
+    }
+  ],
+  "accessories": [
+    {
+      "id": "ms-fascia",
+      "kind": "fascia",
+      "actualThicknessIn": 0.67,
+      "actualWidthIn": 11.25,
+      "lengthsFt": [
+        12
+      ],
+      "note": "All collections; installed under the deck overhang, not flush; no separate riser product (fascia is ripped for risers).",
+      "status": "verified",
+      "src": [
+        "ms-2026-catalog",
+        "ms-install"
+      ],
+      "basis": "manufacturer"
+    }
+  ],
+  "rules": [
+    {
+      "id": "ms-joists",
+      "topic": "joist-spacing",
+      "appliesTo": [
+        "moistureshield-vision",
+        "moistureshield-meridian",
+        "moistureshield-elevate",
+        "moistureshield-vantage"
+      ],
+      "value": {
+        "1x5.4": {
+          "perpendicularOc": 16,
+          "angledOc": 12
+        },
+        "2x8": {
+          "perpendicularOc": 24,
+          "angledOc": 16
+        }
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "ms-install"
+      ],
+      "note": "Marine-grade rows of the span chart are poorly aligned in the source; verify 2x values.",
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "ms-stairs",
+      "topic": "stair-tread-support",
+      "appliesTo": [
+        "moistureshield-vision",
+        "moistureshield-meridian",
+        "moistureshield-elevate",
+        "moistureshield-vantage"
+      ],
+      "value": {
+        "moistureshield-vision": 9,
+        "moistureshield-meridian": 9,
+        "moistureshield-elevate": 8,
+        "moistureshield-vantage": 9
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "ms-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "ms-gap",
+      "topic": "gapping",
+      "appliesTo": [
+        "moistureshield-vision",
+        "moistureshield-meridian",
+        "moistureshield-elevate",
+        "moistureshield-vantage"
+      ],
+      "value": {
+        "sideIn": "3/16-1/4",
+        "endMinIn": 0.125,
+        "stairToStructureIn": 0.25,
+        "overhang": {
+          "solidBottomMaxIn": 1.5,
+          "scallopBottomMaxIn": 0.25,
+          "minToHideRimIn": 0.1875
+        }
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "ms-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "ms-fasteners",
+      "topic": "fastening",
+      "appliesTo": [
+        "moistureshield-vision",
+        "moistureshield-meridian",
+        "moistureshield-elevate",
+        "moistureshield-vantage"
+      ],
+      "value": {
+        "grooved": [
+          "Aegis Clip",
+          "MoistureShield Deck Clip",
+          "EasyClip",
+          "Tiger Claw TC-G",
+          "CAMO Edge Clip",
+          "CAMO WedgeClip",
+          "Fiberon Phantom",
+          "Trex Hideaway (1/4 in gap)"
+        ],
+        "solid": [
+          "HIDfast (1/8 in gap)",
+          "Starborn PRO PLUG (not Elevate)",
+          "Starborn CAP-TOR xd",
+          "FastenMaster Cortex"
+        ],
+        "fascia": [
+          "Starborn PRO PLUG Fascia",
+          "Starborn Fascia",
+          "FastenMaster TrapEase"
+        ]
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "ms-fasteners"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "ms-elevate-conflict",
+      "topic": "fastening",
+      "appliesTo": [
+        "moistureshield-elevate"
+      ],
+      "value": "Hidden clips: 2021 guide says not compatible; 2026 catalog sells grooved Elevate.",
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "conflict",
+      "src": [
+        "ms-install",
+        "ms-2026-catalog"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    }
+  ],
+  "gaps": [
+    "2027 supply after the April 2026 sale to UFP/Deckorators",
+    "Elevate hidden-fastener conflict (2021 guide vs 2026 grooved board)",
+    "Vantage marine-grade span values",
+    "Per-color SKUs and AOS stock",
+    "Licensed or measured swatches/textures"
+  ],
+  "aosSalesConfig": {
+    "basis": "aos-design",
+    "status": "owner-approved",
+    "src": [
+      "aos-decking-standard-2026-11-11"
+    ],
+    "inheritsStandard": "decking-sales-standard.json (owner-approved 11 Nov 2026)",
+    "selections": [],
+    "defaults": {},
+    "exceptionReport": {
+      "basis": "manufacturer",
+      "reuseUnchanged": "All 16 standard rules, with the availability notice.",
+      "exceptions": [
+        {
+          "topic": "Q11 risers",
+          "finding": "No riser product; the installation guide describes ripping fascia for risers.",
+          "status": "verified",
+          "src": [
+            "ms-install",
+            "ms-2026-catalog"
+          ],
+          "salesBehavior": "Riser in main or frame color shown as ripped fascia per manufacturer guidance; confirm in technical review."
+        },
+        {
+          "topic": "Q09 fascia",
+          "finding": "Fascia 0.67 x 11.25 x 12 in every collection color; installed under the deck overhang, not flush.",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog",
+            "ms-install"
+          ]
+        },
+        {
+          "topic": "Q05 Elevate field profile",
+          "finding": "Conflict: the 2021 guide says hidden clips are not compatible with Elevate, but the 2026 catalog sells grooved Elevate. Solid-edge Elevate is 20 ft only.",
+          "status": "conflict",
+          "src": [
+            "ms-install",
+            "ms-2026-catalog"
+          ],
+          "salesBehavior": "Visual unaffected; fastening role flagged for technical review."
+        },
+        {
+          "topic": "Q15 Vantage appearance",
+          "finding": "Uncapped; weathers to its final color in about 3-6 months.",
+          "status": "verified",
+          "src": [
+            "ms-2026-catalog"
+          ],
+          "salesBehavior": "Label the preview 'color changes as it weathers'."
+        },
+        {
+          "topic": "Availability",
+          "finding": "All lines transitioning after the April 2026 sale to UFP/Deckorators.",
+          "status": "verified",
+          "src": [
+            "ufp-acq"
+          ]
+        }
+      ],
+      "aosDecisions": [],
+      "note": "Exception-only review per the owner directive. Research status only; nothing implemented."
+    },
+    "remainingDecisions": [
+      {
+        "id": "RD-01",
+        "field": "global_start",
+        "ownerEntry": "none",
+        "decision": "No brand or collection preselected on a new deck; James chooses brand, collection, then color.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-decking-complete-2026-11-11"
+        ]
+      },
+      {
+        "id": "RD-04",
+        "field": "ms_transition",
+        "ownerEntry": "notice",
+        "decision": "MoistureShield current verified lines shown with a confirm-availability notice; catalog status is not confirmed 2027 supply.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-decking-complete-2026-11-11"
+        ]
+      }
+    ]
+  }
+}

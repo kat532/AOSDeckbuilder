@@ -1,0 +1,501 @@
+{
+  "meta": {
+    "schema": "aos-product-library",
+    "schemaVersion": "1.2.0",
+    "libraryId": "treated-wood",
+    "category": "decking",
+    "libraryVersion": "2026-11-11.1",
+    "verifiedAsOf": "2026-11-06",
+    "useLimits": "Sales-design reference. Not purchase-ready SKUs, not engineering or code approval. Rules are reference-only and must not be enforced or ordered from without production verification.",
+    "notes": [
+      "No manufacturer catalog. Green/Brown are AOS appearance choices."
+    ],
+    "revisedAsOf": "2026-11-11",
+    "changesV1_1": [
+      "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular.",
+      "Treated wood: appearance choices marked aos-design; profiles marked retail-example (not verified).",
+      "Shared decking standard (owner, 11 Nov 2026) referenced; brand exception report added (3 items).",
+      "Complete decking standards (11 Nov, second package): RD-01, RD-07, RD-08 applied; quoteEligible added (listing vs quote eligibility kept separate)."
+    ],
+    "statusModel": {
+      "basis": {
+        "manufacturer": "Manufacturer product data",
+        "code": "Building code text",
+        "industry-standard": "Industry guide (AWPA, AWC DCA 6)",
+        "aos-design": "AOS design concept or AOS choice; not a manufacturer product",
+        "retail-example": "Seen at a retailer; not manufacturer data",
+        "earlier-research": "Carried from AOS planning research; not re-checked"
+      },
+      "status": {
+        "verified": "Confirmed against an official primary source in this pass",
+        "listed-unconfirmed": "Appears in an official source but ambiguous or incomplete",
+        "conflict": "Official sources disagree",
+        "secondary-source": "Matches a secondary summary; primary text not read",
+        "unverified": "Not confirmed in this pass",
+        "aos-decision": "AOS design decision still to be made or confirmed. No manufacturer data exists",
+        "owner-approved": "AOS design choice approved by the owner (sales design). Not construction approval",
+        "pending-verification": "Structural, hardware, supplier or code detail that must be verified before construction use"
+      },
+      "fieldStatus": "Overrides status for individual fields of a record (e.g. a profile whose width is verified but thickness is not).",
+      "salesListing": {
+        "listed": "Shown to James",
+        "listed-with-notice": "Shown with a short notice (availability, restriction or code note)",
+        "hold": "Not shown until the stated reason is resolved"
+      },
+      "salesPriority": "Optional AOS ordering for frequently used products (sorted first). Never hides products."
+    },
+    "changesV1_2": [
+      "v1.2 (11 Nov 2026): owner decision closure D-01..D-08 recorded where it applies; version labels updated. No product IDs removed or renamed."
+    ]
+  },
+  "brand": {
+    "id": "aos-treated",
+    "name": "Pressure-Treated Wood (AOS)",
+    "manufacturer": null
+  },
+  "sources": [
+    {
+      "id": "awpa-infographic",
+      "title": "AWPA Residential Use Category Infographic",
+      "url": "https://awpa.com/images/standards/ResidentialInfographic2021.pdf",
+      "revision": "no edition printed; refers to current AWPA Book of Standards",
+      "kind": "industry-standard",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "irc-2018-r317-3",
+      "title": "2018 IRC R317.3 (ICC excerpt)",
+      "url": "https://www.iccsafe.org/wp-content/uploads/2018SC-IRC_R317.3.pdf",
+      "revision": "2018 IRC",
+      "kind": "code",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-research-v1",
+      "title": "AOS treated-wood planning catalog v1 (retail examples: Menards AC2/CedarTone, Lowe's Severe Weather)",
+      "url": "AOS_Treated_Wood_Sales_Catalog_Planning_v1.json",
+      "revision": "2026-11-05",
+      "kind": "aos-research",
+      "accessed": "2026-11-06",
+      "tier": "secondary"
+    },
+    {
+      "id": "aos-decking-standard-2026-11-11",
+      "title": "AOS Decking Standards (owner, TimberTech questionnaire)",
+      "url": "Claude Project doc claude/aos-decking-standards-owner-2026-11-11.md (package: owner-specs/AOS_Decking_Standards_2026-11-11.md and .pdf)",
+      "revision": "2026-11-11; md SHA-256 73bda22ffffad0ac7f848993c99f3d29262ee07c6010173d678fb42ed9bb722e",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-decking-complete-2026-11-11",
+      "title": "AOS Complete Decking Sales Standards and Brand Exceptions (owner)",
+      "url": "Claude Project doc claude/aos-decking-complete-standards-2026-11-11.md (package: owner-specs/AOS_Decking_Complete_Standards_2026-11-11.md and .pdf)",
+      "revision": "2026-11-11; md SHA-256 02457d6a2f6cc36fb80b4bb0bfb129dba7e5ed1ab4c11f4ead6bdfb8d7569817; pdf SHA-256 debdd0bed1f6ba68b7fd506c3a5793ffdeb11d022be1aceb395ffb31e597a81a",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    }
+  ],
+  "lines": [
+    {
+      "id": "aos-treated-green",
+      "name": "Green Treated",
+      "material": "pressure-treated-lumber",
+      "availability": "current",
+      "manufacturerTier": null,
+      "status": "aos-decision",
+      "src": [
+        "aos-research-v1"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "aos-treated-green--green-treated",
+          "name": "Green Treated",
+          "status": "aos-decision",
+          "src": [
+            "aos-research-v1"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "statusNote": "Appearance choice, not a manufacturer color. Wood color varies board to board.",
+          "basis": "aos-design",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "aos-treated-green--5-4x6",
+          "kind": "deck-board",
+          "edge": "square-eased",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            8
+          ],
+          "colorIds": null,
+          "status": "unverified",
+          "src": [
+            "aos-research-v1"
+          ],
+          "nominal": "5/4x6",
+          "note": "Retail example dimensions; lengths are only those seen in retail examples, not a full length list. AOS supplier, grade and stock lengths not selected.",
+          "basis": "retail-example",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "aos-treated-green--5-4x6-thick",
+          "kind": "deck-board",
+          "edge": "square-eased",
+          "core": null,
+          "actualThicknessIn": 1.15625,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            6,
+            8,
+            10,
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "unverified",
+          "src": [
+            "aos-research-v1"
+          ],
+          "nominal": "5/4x6 thick",
+          "note": "Retail example dimensions; lengths are only those seen in retail examples, not a full length list. AOS supplier, grade and stock lengths not selected.",
+          "basis": "retail-example",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "aos-treated-green--5-4x4",
+          "kind": "deck-board",
+          "edge": "square-eased",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 3.5,
+          "lengthsFt": [
+            6,
+            8,
+            12,
+            16
+          ],
+          "colorIds": null,
+          "status": "unverified",
+          "src": [
+            "aos-research-v1"
+          ],
+          "nominal": "5/4x4",
+          "note": "Retail example dimensions; lengths are only those seen in retail examples, not a full length list. AOS supplier, grade and stock lengths not selected.",
+          "basis": "retail-example",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "aos-treated-green--2x6",
+          "kind": "deck-board",
+          "edge": "square-eased",
+          "core": null,
+          "actualThicknessIn": 1.5,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            6,
+            10,
+            16
+          ],
+          "colorIds": null,
+          "status": "unverified",
+          "src": [
+            "aos-research-v1"
+          ],
+          "nominal": "2x6",
+          "note": "Retail example dimensions; lengths are only those seen in retail examples, not a full length list. AOS supplier, grade and stock lengths not selected.",
+          "basis": "retail-example",
+          "salesListing": "hold",
+          "salesListingReason": "Owner RD-07: nominal 2x6 offered only where the actual supplier product is confirmed.",
+          "salesPriority": null
+        }
+      ],
+      "trim": [],
+      "features": [],
+      "notes": [
+        "Color does not indicate use category, grade, thickness or availability."
+      ],
+      "basis": "aos-design",
+      "salesListing": "listed-with-notice",
+      "salesPriority": null,
+      "salesListingReason": "Profiles and lengths are retail examples until AOS names its supplier.",
+      "aosDefaultProfile": {
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-decking-complete-2026-11-11"
+        ],
+        "decision": "RD-07",
+        "nominal": "5/4x6 appearance",
+        "profileId": null,
+        "note": "Nominal 5/4 decking appearance by default. The exact 5/4 profile (standard or thick) depends on the supplier product; not chosen."
+      },
+      "quoteEligible": "confirm-availability"
+    },
+    {
+      "id": "aos-treated-brown",
+      "name": "Brown Treated",
+      "material": "pressure-treated-lumber",
+      "availability": "current",
+      "manufacturerTier": null,
+      "status": "aos-decision",
+      "src": [
+        "aos-research-v1"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "aos-treated-brown--brown-treated",
+          "name": "Brown Treated",
+          "status": "aos-decision",
+          "src": [
+            "aos-research-v1"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "statusNote": "Appearance choice, not a manufacturer color. Wood color varies board to board.",
+          "basis": "aos-design",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "aos-treated-brown--5-4x6-thick",
+          "kind": "deck-board",
+          "edge": "square-eased",
+          "core": null,
+          "actualThicknessIn": 1.15625,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            8,
+            10,
+            12,
+            14,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "unverified",
+          "src": [
+            "aos-research-v1"
+          ],
+          "nominal": "5/4x6 thick",
+          "note": "Retail example dimensions; lengths are only those seen in retail examples, not a full length list. AOS supplier, grade and stock lengths not selected.",
+          "basis": "retail-example",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "aos-treated-brown--5-4x6",
+          "kind": "deck-board",
+          "edge": "square-eased",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            16
+          ],
+          "colorIds": null,
+          "status": "unverified",
+          "src": [
+            "aos-research-v1"
+          ],
+          "nominal": "5/4x6",
+          "note": "Retail example dimensions; lengths are only those seen in retail examples, not a full length list. AOS supplier, grade and stock lengths not selected.",
+          "basis": "retail-example",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "trim": [],
+      "features": [],
+      "notes": [
+        "Color does not indicate use category, grade, thickness or availability."
+      ],
+      "basis": "aos-design",
+      "salesListing": "listed-with-notice",
+      "salesPriority": null,
+      "salesListingReason": "Profiles and lengths are retail examples until AOS names its supplier.",
+      "aosDefaultProfile": {
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-decking-complete-2026-11-11"
+        ],
+        "decision": "RD-07",
+        "nominal": "5/4x6 appearance",
+        "profileId": null,
+        "note": "Nominal 5/4 decking appearance by default. The exact 5/4 profile (standard or thick) depends on the supplier product; not chosen."
+      },
+      "quoteEligible": "confirm-availability"
+    }
+  ],
+  "accessories": [],
+  "rules": [
+    {
+      "id": "awpa-uc",
+      "topic": "treatment-use-category",
+      "appliesTo": [
+        "aos-treated-*"
+      ],
+      "value": {
+        "deckBoards": "UC3B",
+        "railings": "UC3B",
+        "stairs": "UC3B or UC4A",
+        "posts": "UC4A",
+        "ledgers": "UC4A",
+        "joistsBeams": "UC3B or UC4A; ground contact may be required where hard to replace or structurally critical"
+      },
+      "ruleSource": "industry-standard",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "awpa-infographic"
+      ],
+      "basis": "industry-standard",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "irc-r317-3",
+      "topic": "fastener-corrosion",
+      "appliesTo": [
+        "aos-treated-*",
+        "aos-wood-railing"
+      ],
+      "value": "Fasteners in preservative-treated wood: hot-dip galvanized, stainless, silicon bronze or copper; connectors per manufacturer or G185.",
+      "ruleSource": "code",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "irc-2018-r317-3"
+      ],
+      "basis": "code",
+      "sourceTier": "primary"
+    }
+  ],
+  "gaps": [
+    "Supplier confirmation from the owner's candidates 'KBS or Pine island lumber': species, grade, treatment product, stocked lengths and widths",
+    "Brown treatment product",
+    "Whether nominal 2x6 decking is stocked (RD-07)",
+    "AOS standard joist spacing for 5/4 and 2x6",
+    "Measured wood textures"
+  ],
+  "aosSalesConfig": {
+    "basis": "aos-design",
+    "status": "owner-approved",
+    "src": [
+      "aos-decking-standard-2026-11-11"
+    ],
+    "inheritsStandard": "decking-sales-standard.json (owner-approved 11 Nov 2026)",
+    "selections": [],
+    "defaults": {},
+    "exceptionReport": {
+      "basis": "manufacturer",
+      "reuseUnchanged": "Q01-Q04 adapt to a material choice (green or brown treated) instead of collections; Q05-Q16 apply.",
+      "exceptions": [
+        {
+          "topic": "Q03 grouping",
+          "finding": "No manufacturer collections. Choice is material: green treated or brown treated.",
+          "status": "aos-decision",
+          "src": [
+            "aos-research-v1"
+          ]
+        },
+        {
+          "topic": "Q09/Q11 fascia and risers",
+          "finding": "No fascia or riser products; these would be cut from treated lumber (AOS practice, not verified).",
+          "status": "aos-decision",
+          "src": [
+            "aos-research-v1"
+          ],
+          "salesBehavior": "Fascia and risers in the same treated color, marked as AOS lumber items pending supplier confirmation."
+        },
+        {
+          "topic": "Supplier",
+          "finding": "Owner entries from the D4 form: '#2 Pressure Treated Lumber', 'Northern crossarm Co' (unverified). Species, grade, stock lengths and brown product still to confirm.",
+          "status": "aos-decision",
+          "src": [
+            "aos-research-v1"
+          ]
+        }
+      ],
+      "aosDecisions": [
+        "Name the treated-lumber supplier and products (D7)."
+      ],
+      "note": "Exception-only review per the owner directive. Research status only; nothing implemented."
+    },
+    "remainingDecisions": [
+      {
+        "id": "RD-01",
+        "field": "global_start",
+        "ownerEntry": "none",
+        "decision": "No brand or collection preselected on a new deck; James chooses brand, collection, then color.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-decking-complete-2026-11-11"
+        ]
+      },
+      {
+        "id": "RD-07",
+        "field": "pt_profile",
+        "ownerEntry": "fivequarter",
+        "decision": "Green/brown treated: nominal 5/4 decking board appearance by default; nominal 2x6 offered only where the actual supplier product is confirmed.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-decking-complete-2026-11-11"
+        ]
+      },
+      {
+        "id": "RD-08",
+        "field": "pt_supplier",
+        "ownerEntry": "KBS or Pine island lumber",
+        "decision": "Treated-lumber supplier candidates named by the owner. Stocked species, grade, treatment, lengths and widths to confirm. Not verified; the Northern Crossarm note from the wood-railing form is not applied to treated decking.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-decking-complete-2026-11-11"
+        ]
+      }
+    ]
+  },
+  "supplierCandidates": {
+    "basis": "aos-design",
+    "status": "owner-approved",
+    "src": [
+      "aos-decking-complete-2026-11-11"
+    ],
+    "decision": "RD-08",
+    "ownerEntry": "KBS or Pine island lumber",
+    "verification": {
+      "status": "pending-verification",
+      "note": "Stocked species, grade, treatment product, lengths and widths not provided; not verified."
+    },
+    "notApplied": "The 'Northern crossarm Co' entry from the wood-railing form is not applied to treated decking product identity."
+  }
+}

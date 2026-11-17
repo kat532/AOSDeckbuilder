@@ -1,0 +1,330 @@
+{
+  "applicationRailingDefaults": {
+    "basis": "aos-design",
+    "status": "owner-approved",
+    "decided": "2026-11-11",
+    "source": "owner-specs/AOS_Railing_Default_Hierarchy_Clarification_2026-11-11.md (Claude Project: claude/aos-owner-decisions-d1-d8.md, section 'Railing default hierarchy')",
+    "hierarchy": [
+      {
+        "level": 1,
+        "scope": "global (whole application)",
+        "library": "westbury",
+        "systemId": "westbury-tuscany",
+        "modelId": "westbury-tuscany--c10",
+        "finishId": "westbury--black-fine-texture",
+        "label": "Westbury Tuscany C10, square vertical pickets, Black Fine Texture"
+      },
+      {
+        "level": 2,
+        "scope": "Westbury category",
+        "library": "westbury",
+        "systemId": "westbury-tuscany",
+        "modelId": "westbury-tuscany--c10",
+        "finishId": "westbury--black-fine-texture"
+      },
+      {
+        "level": 3,
+        "scope": "RDI category",
+        "library": "rdi-railing",
+        "systemId": "rdi-avalon",
+        "modelId": "rdi-avalon--square-balusters",
+        "finishId": "rdi--matte-black",
+        "note": "Avalon, Matte Black, vertical square-baluster panel (D-03). Top rail not set: RDI names no standard; assembly pending verification.",
+        "topRail": null
+      },
+      {
+        "level": 4,
+        "scope": "AOS wood railing",
+        "library": "aos-wood-railing",
+        "rule": "Follow the D4 specification; starting preset T-top 2x6 flat cap with round black aluminum balusters (D-01), in-deck posts (D-02).",
+        "systemId": "aos-wood-railing",
+        "modelId": "aos-wood-railing--ttop-alum",
+        "mountingId": "in-deck"
+      }
+    ],
+    "whenApplied": {
+      "newDeckWithoutRailingSelection": "global default (Westbury Tuscany C10, Black Fine Texture)",
+      "jamesSwitchesManufacturerToRDI": "RDI category default (Avalon, black) as the initial RDI selection",
+      "jamesSwitchesManufacturerToWestbury": "Westbury category default (Tuscany C10, Black Fine Texture)",
+      "jamesSwitchesToAOSWood": "D4 defaults"
+    },
+    "neverOverrides": [
+      "existing per-edge overrides",
+      "staircase selections",
+      "saved designs",
+      "geometry"
+    ],
+    "rule": "Defaults apply only where no selection exists yet. Changing catalog defaults never resets existing selections. Avalon never replaces Westbury C10 as the overall default.",
+    "revisions": [
+      {
+        "date": "2026-11-11",
+        "source": "aos-owner-closure-2026-11-11",
+        "change": "Levels 3 and 4 filled from D-01..D-03. Level 1 (global) unchanged."
+      }
+    ]
+  },
+  "applicationDeckingDefaults": {
+    "brand": null,
+    "collection": null,
+    "color": null,
+    "decision": "RD-01",
+    "rule": "New deck: no brand, collection or color preselected. James chooses brand, then collection, then color before preview."
+  },
+  "deckingSalesStandard": "decking-sales-standard.json",
+  "schema": "aos-product-library",
+  "customerPdfPolicy": {
+    "productQuantities": {
+      "decking": false,
+      "privacy": false
+    },
+    "decision": "D-08",
+    "basis": "aos-design",
+    "status": "owner-approved",
+    "shows": [
+      "product identity (brand, collection/system, model)",
+      "selected color/style",
+      "2D/3D visual",
+      "privacy selections"
+    ],
+    "internalOutputsUnaffected": "Takeoffs, material calculations and production exports stay in internal/construction outputs (developer to confirm at integration).",
+    "supersedes": "PS-Q16 preliminary privacy quantities"
+  },
+  "schemaVersion": "1.2.0",
+  "libraryVersion": "2026-11-11.1",
+  "verifiedAsOf": "2026-11-06",
+  "revisedAsOf": "2026-11-11",
+  "libraries": [
+    {
+      "libraryId": "trex",
+      "category": "decking",
+      "file": "trex.json",
+      "brand": "Trex",
+      "counts": {
+        "lines": 6,
+        "colors": 32,
+        "profiles": 15,
+        "systems": 0,
+        "models": 0,
+        "finishes": 0,
+        "rules": 6
+      },
+      "statusBreakdown": {
+        "color:manufacturer:conflict": 1,
+        "color:manufacturer:verified": 31,
+        "profile:manufacturer:listed-unconfirmed": 1,
+        "profile:manufacturer:verified": 14,
+        "rule:manufacturer:verified": 6
+      },
+      "salesListing": {
+        "listed": 5,
+        "hold": 1
+      },
+      "gaps": 10
+    },
+    {
+      "libraryId": "timbertech",
+      "category": "decking",
+      "file": "timbertech.json",
+      "brand": "TimberTech",
+      "counts": {
+        "lines": 12,
+        "colors": 38,
+        "profiles": 30,
+        "systems": 0,
+        "models": 0,
+        "finishes": 0,
+        "rules": 11
+      },
+      "statusBreakdown": {
+        "color:manufacturer:verified": 38,
+        "profile:manufacturer:listed-unconfirmed": 1,
+        "profile:manufacturer:verified": 29,
+        "rule:manufacturer:verified": 11
+      },
+      "salesListing": {
+        "listed": 11,
+        "listed-with-notice": 1
+      },
+      "gaps": 5
+    },
+    {
+      "libraryId": "moistureshield",
+      "category": "decking",
+      "file": "moistureshield.json",
+      "brand": "MoistureShield",
+      "counts": {
+        "lines": 4,
+        "colors": 18,
+        "profiles": 12,
+        "systems": 0,
+        "models": 0,
+        "finishes": 0,
+        "rules": 5
+      },
+      "statusBreakdown": {
+        "color:manufacturer:verified": 18,
+        "profile:manufacturer:verified": 12,
+        "rule:manufacturer:conflict": 1,
+        "rule:manufacturer:verified": 4
+      },
+      "salesListing": {
+        "listed-with-notice": 4
+      },
+      "gaps": 5
+    },
+    {
+      "libraryId": "deckorators",
+      "category": "decking",
+      "file": "deckorators.json",
+      "brand": "Deckorators",
+      "counts": {
+        "lines": 8,
+        "colors": 26,
+        "profiles": 23,
+        "systems": 0,
+        "models": 0,
+        "finishes": 0,
+        "rules": 7
+      },
+      "statusBreakdown": {
+        "color:manufacturer:verified": 26,
+        "profile:manufacturer:unverified": 6,
+        "profile:manufacturer:verified": 17,
+        "rule:manufacturer:verified": 7
+      },
+      "salesListing": {
+        "listed": 5,
+        "hold": 1,
+        "coming-soon": 2
+      },
+      "gaps": 7
+    },
+    {
+      "libraryId": "treated-wood",
+      "category": "decking",
+      "file": "treated-wood.json",
+      "brand": "Pressure-Treated Wood (AOS)",
+      "counts": {
+        "lines": 2,
+        "colors": 2,
+        "profiles": 6,
+        "systems": 0,
+        "models": 0,
+        "finishes": 0,
+        "rules": 2
+      },
+      "statusBreakdown": {
+        "color:aos-design:aos-decision": 2,
+        "profile:retail-example:unverified": 6,
+        "rule:code:verified": 1,
+        "rule:industry-standard:verified": 1
+      },
+      "salesListing": {
+        "listed-with-notice": 2
+      },
+      "gaps": 5
+    },
+    {
+      "libraryId": "westbury",
+      "category": "railing",
+      "file": "westbury.json",
+      "brand": "Westbury",
+      "counts": {
+        "lines": 0,
+        "colors": 0,
+        "profiles": 0,
+        "systems": 7,
+        "models": 22,
+        "finishes": 12,
+        "rules": 2
+      },
+      "statusBreakdown": {
+        "model:manufacturer:listed-unconfirmed": 1,
+        "model:manufacturer:verified": 21,
+        "rule:manufacturer:listed-unconfirmed": 1,
+        "rule:manufacturer:verified": 1,
+        "system:manufacturer:verified": 7
+      },
+      "salesListing": {
+        "listed": 3,
+        "hold": 1,
+        "listed-with-notice": 3
+      },
+      "gaps": 12
+    },
+    {
+      "libraryId": "rdi-railing",
+      "category": "railing",
+      "file": "rdi-railing.json",
+      "brand": "RDI (Barrette Outdoor Living)",
+      "counts": {
+        "lines": 0,
+        "colors": 0,
+        "profiles": 0,
+        "systems": 9,
+        "models": 25,
+        "finishes": 6,
+        "rules": 0
+      },
+      "statusBreakdown": {
+        "model:manufacturer:verified": 25,
+        "system:manufacturer:verified": 9
+      },
+      "salesListing": {
+        "listed": 6,
+        "listed-with-notice": 3
+      },
+      "gaps": 12
+    },
+    {
+      "libraryId": "rdi-privacy",
+      "category": "privacy",
+      "file": "rdi-privacy.json",
+      "brand": "RDI (Barrette Outdoor Living)",
+      "counts": {
+        "lines": 0,
+        "colors": 0,
+        "profiles": 0,
+        "systems": 2,
+        "models": 0,
+        "finishes": 10,
+        "rules": 2
+      },
+      "statusBreakdown": {
+        "rule:aos-design:aos-decision": 1,
+        "rule:manufacturer:verified": 1,
+        "system:manufacturer:verified": 2
+      },
+      "salesListing": {
+        "listed-with-notice": 2
+      },
+      "gaps": 9
+    },
+    {
+      "libraryId": "aos-wood-railing",
+      "category": "railing",
+      "file": "aos-wood-railing.json",
+      "brand": "AOS Built",
+      "counts": {
+        "lines": 0,
+        "colors": 0,
+        "profiles": 0,
+        "systems": 1,
+        "models": 4,
+        "finishes": 4,
+        "rules": 8
+      },
+      "statusBreakdown": {
+        "model:aos-design:owner-approved": 4,
+        "rule:code:secondary-source": 4,
+        "rule:code:verified": 3,
+        "rule:industry-standard:verified": 1,
+        "system:aos-design:owner-approved": 1
+      },
+      "salesListing": {
+        "listed-with-notice": 1
+      },
+      "gaps": 7
+    }
+  ]
+}

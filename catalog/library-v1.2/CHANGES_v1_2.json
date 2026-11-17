@@ -1,0 +1,375 @@
+[
+  {
+    "library": "rdi-railing",
+    "decision": "D-03",
+    "field": "systems[rdi-avalon].models (added)",
+    "old": null,
+    "new": {
+      "id": "rdi-avalon--square-balusters",
+      "name": "Square balusters (pre-assembled panel)"
+    }
+  },
+  {
+    "library": "rdi-railing",
+    "decision": "D-03",
+    "field": "systems[rdi-avalon].models[rdi-avalon--square-balusters-2-to-3]",
+    "old": {
+      "id": "rdi-avalon--square-balusters-2-to-3",
+      "code": "square-balusters-2-to-3-",
+      "name": "Square balusters (2-to-3 rail adapter)",
+      "infill": "Square balusters (2-to-3 rail adapter)",
+      "status": "verified",
+      "basis": "manufacturer"
+    },
+    "new": {
+      "id": "rdi-avalon--square-balusters-2-to-3",
+      "code": "square-balusters-2-to-3-",
+      "name": "Square balusters (2-to-3 rail adapter)",
+      "infill": "Square balusters (2-to-3 rail adapter)",
+      "status": "verified",
+      "basis": "manufacturer",
+      "src": [
+        "rdi-2026"
+      ],
+      "note": "Catalog option 'Square Balusters with 2-to-3 Rail Adapter'. The 2-to-3 Rail Adapter is a separate part, Matte Black only (6 ft 73050438, 8 ft 73050439); the plain square-baluster panel is rdi-avalon--square-balusters. ID kept for stability. RDI 2026 catalog re-read 11 Nov 2026 for D-03/D-04.",
+      "adapterFinishIds": [
+        "rdi--matte-black"
+      ]
+    }
+  },
+  {
+    "library": "rdi-railing",
+    "decision": "D-03",
+    "field": "systems[rdi-avalon].topRailSelection (added)",
+    "old": null,
+    "new": {
+      "manufacturerStandard": null,
+      "options": [
+        "Pellinore",
+        "Tristan",
+        "Oberon"
+      ]
+    }
+  },
+  {
+    "library": "rdi-railing",
+    "decision": "D-03",
+    "field": "aosSalesConfig.defaults",
+    "old": {
+      "modelId": null,
+      "modelNote": "Q05: the system's manufacturer-standard model/infill. The Avalon page lists Cable Rail and Horizontal Rail infills (catalog also lists square balusters with a 2-to-3 rail adapter) but does not name a standard. Not inferred."
+    },
+    "new": {
+      "modelId": "rdi-avalon--square-balusters",
+      "topRail": null,
+      "assemblyStatus": "pending-verification",
+      "modelNote": "D-03 (11 Nov 2026): manufacturer-verified vertical pickets (Avalon pre-assembled 3/4 in square-baluster panel) with the corresponding standard top rail. The infill is verified. RDI names no standard top rail (Pellinore, Tristan; Oberon is level-only), so the top rail is not set and the assembly is not treated as verified until the exact top rail is identified. No SKU invented."
+    }
+  },
+  {
+    "library": "rdi-railing",
+    "decision": "D-03",
+    "field": "aosSalesConfig.selections[Q05].ownerClosure",
+    "old": null,
+    "new": "Manufacturer-verified vertical pickets and corresponding standard top rail (Avalon)"
+  },
+  {
+    "library": "rdi-railing",
+    "decision": "D-04",
+    "field": "aosSalesConfig.noBlackFinishDefault (added)",
+    "old": null,
+    "new": {
+      "rdi-bella-premier": null,
+      "rdi-endurance": "rdi--white",
+      "rdi-finyl-line": null
+    }
+  },
+  {
+    "library": "rdi-railing",
+    "decision": "D-04",
+    "field": "aosSalesConfig.selections[Q02].ownerClosure",
+    "old": null,
+    "new": "No-black families: verified manufacturer standard finish"
+  },
+  {
+    "library": "rdi-railing",
+    "decision": "D-03/D-04",
+    "field": "aosSalesConfig.compatibilityQuestions (2 moved to resolvedQuestions)",
+    "old": [
+      "No black finish exists for rdi-bella-premier, rdi-endurance, rdi-finyl-line (White/Clay only). Q02 forbids substitution, so what should the default finish be when James picks one of these?",
+      "Q05: RDI does not name a standard infill per system. Which Avalon infill (cable, horizontal rod, or square balusters with the 2-to-3 rail adapter) and top rail (Pellinore or Tristan) should start as the default?"
+    ],
+    "new": []
+  },
+  {
+    "library": "rdi-railing",
+    "decision": "D-03/D-04",
+    "field": "gaps",
+    "old": [
+      "Max post spacing per system",
+      "Guard code reports per system",
+      "Mounting/blocking for wood decks except Overlook (4x4 + sleeve)",
+      "Which systems the AOS distributor carries",
+      "Measured finish colors",
+      "Avalon standard infill and top rail (Q05)",
+      "Default finish for systems without black (Bella Premier, Endurance, Finyl Line)",
+      "Surface/base mount route per system, esp. Overlook and Transform cable (Q07)",
+      "Smallest approved post per height/span (Q08)",
+      "Gate, drink-rail/adapter, post-cap, lighting and corner compatibility (Q09, Q10, Q17, Q18)",
+      "Handrail diameter/brackets; black handrail for composite systems (Q14)",
+      "Supplier/distributor (blank)"
+    ],
+    "new": [
+      "Max post spacing per system",
+      "Guard code reports per system",
+      "Mounting/blocking for wood decks except Overlook (4x4 + sleeve)",
+      "Which systems the AOS distributor carries",
+      "Measured finish colors",
+      "Surface/base mount route per system, esp. Overlook and Transform cable (Q07)",
+      "Smallest approved post per height/span (Q08)",
+      "Gate, drink-rail/adapter, post-cap, lighting and corner compatibility (Q09, Q10, Q17, Q18)",
+      "Handrail diameter/brackets; black handrail for composite systems (Q14)",
+      "Supplier/distributor (blank)",
+      "Avalon top rail for the default square-baluster assembly: RDI names no standard (Pellinore or Tristan; Oberon level-only) (D-03)",
+      "RDI standard finish for Bella Premier and Finyl Line (White and Clay offered; none named standard) (D-04)"
+    ]
+  },
+  {
+    "library": "rdi-privacy",
+    "decision": "D-05",
+    "field": "aosSalesConfig.defaults.freestyle",
+    "old": {
+      "panelColor": null,
+      "panelColorNote": "Not decided by the owner form. Boardwalk 2x4 is sold in Black, White and Umber; not inferred."
+    },
+    "new": {
+      "panelColor": null,
+      "panelColorRule": "james-must-choose",
+      "panelColorNote": "D-05: no preselected panel color. James chooses a finish sold for the selected pattern and size. Separate from the Matte Black FRAME default, which is unchanged."
+    }
+  },
+  {
+    "library": "rdi-privacy",
+    "decision": "D-06",
+    "field": "systems[rdi-freestyle-screens].aosPlacement",
+    "old": {
+      "allowed": null,
+      "decision": null,
+      "status": "aos-decision",
+      "basis": "aos-design",
+      "src": [
+        "aos-privacy-screens-spec-2026-11-11"
+      ],
+      "note": "Not decided: whether PS-Q06 perimeter-only also applies to Freestyle."
+    },
+    "new": {
+      "allowed": [
+        "deck perimeter edges",
+        "interior deck locations"
+      ],
+      "interior": "only-with-verified-mounting",
+      "condition": "Each placement needs a manufacturer-verified mounting for the exact panel and frame kit. Unsupported installations require technical review and are never represented as buildable. No screen counts as a code-approved guard.",
+      "currentState": "No Freestyle deck mounting is verified yet (frame dimensions and deck mounting unpublished), so no placement is buildable today; PS-Q15 conceptual placement with acknowledgement still applies.",
+      "decision": "D-06",
+      "basis": "aos-design",
+      "status": "owner-approved",
+      "src": [
+        "aos-owner-closure-2026-11-11"
+      ]
+    }
+  },
+  {
+    "library": "rdi-privacy",
+    "decision": "D-07",
+    "field": "aosSalesConfig.workflow",
+    "old": {
+      "insertionPoint": null,
+      "note": "Approved preference for the future expansion; not authorization to change the nine-step workflow now. Insertion point and saved-project step migration decided at integration design review."
+    },
+    "new": {
+      "insertionPoint": "after-railings-before-patio-walkway",
+      "position": {
+        "after": "Railings (current Step 7)",
+        "before": "Patio & Walkway (current Step 8)"
+      },
+      "authorizedToImplement": false,
+      "note": "D-07 sets the position. Not authorization to change the nine-step workflow now: step order, step IDs, saved-project migration, undo/redo, UI census and regression review happen at integration."
+    }
+  },
+  {
+    "library": "rdi-privacy",
+    "decision": "D-08",
+    "field": "aosSalesConfig.selections[PS-Q16].behavior",
+    "old": "Privacy selections appear in 2D, 3D and the concept PDF; quantities marked preliminary; internal technical-review status preserved.",
+    "new": "Privacy selections appear in 2D, 3D and the customer concept PDF as product identity, selected style/color and visual; NO product quantities on the customer PDF (D-08). Takeoffs stay in internal/construction outputs; internal technical-review status preserved."
+  },
+  {
+    "library": "rdi-privacy",
+    "decision": "D-07",
+    "field": "aosSalesConfig.selections[PS-Q01].ownerClosure",
+    "old": null,
+    "new": "Step position: after Railings, before Patio & Walkway"
+  },
+  {
+    "library": "rdi-privacy",
+    "decision": "D-06",
+    "field": "aosSalesConfig.selections[PS-Q06].ownerClosure",
+    "old": null,
+    "new": "Freestyle may also use interior locations with verified mounting; Privacy Rail stays perimeter-only"
+  },
+  {
+    "library": "rdi-privacy",
+    "decision": "D-05",
+    "field": "aosSalesConfig.selections[PS-Q10].ownerClosure",
+    "old": null,
+    "new": "Boardwalk pattern has no preselected panel color"
+  },
+  {
+    "library": "rdi-privacy",
+    "decision": "D-08",
+    "field": "aosSalesConfig.designerInvariants[customer]",
+    "old": "Customers see design concepts and preliminary quantities, not implied installation or engineering certification.",
+    "new": "Customers see design concepts, product identity and selections without product quantities (D-08), and no implied installation or engineering certification."
+  },
+  {
+    "library": "rdi-privacy",
+    "decision": "D-05..D-08",
+    "field": "aosSalesConfig.openQuestions (4 moved to resolvedQuestions)",
+    "old": [
+      "Does the perimeter-only rule (PS-Q06, Privacy Rail) also apply to Freestyle screen placement? The owner form did not decide this; not assumed.",
+      "Default Freestyle panel color for Boardwalk 2x4 (Black, White or Umber)? Not decided by the form; not inferred.",
+      "Insertion point of the Privacy & Screens step in the expanded workflow, and how saved projects migrate.",
+      "Exact preliminary quantity/takeoff method and warning text for the customer PDF."
+    ],
+    "new": [
+      "Standard 6 ft Privacy Rail modules vs wind-load post spacing (3 ft / 30 in): in wind-exposed projects a full-height wall needs extra posts. Which projects count as advanced wind-load is a technical-review item."
+    ]
+  },
+  {
+    "library": "rdi-privacy",
+    "decision": "D-05..D-08",
+    "field": "gaps",
+    "old": [
+      "Freestyle frame outer dimensions, post size and mounting method (2x4 kit PDF REV 1.25 exists but could not be retrieved)",
+      "6x3 vertical frame kit SKU",
+      "Guard eligibility (manual: designed to IBC; does not say it may serve as a guard)",
+      "Minnesota wind conditions for full-height walls",
+      "Screen pattern shapes for 3D",
+      "Freestyle placement scope (perimeter-only or not) - owner question",
+      "Default Freestyle panel color - owner question",
+      "Privacy & Screens step insertion point and saved-project migration",
+      "Preliminary quantity method and PDF warning text",
+      "Supplier (blank)"
+    ],
+    "new": [
+      "Freestyle frame outer dimensions, post size and mounting method (2x4 kit PDF REV 1.25 exists but could not be retrieved)",
+      "6x3 vertical frame kit SKU",
+      "Guard eligibility (manual: designed to IBC; does not say it may serve as a guard)",
+      "Minnesota wind conditions for full-height walls",
+      "Screen pattern shapes for 3D",
+      "Supplier (blank)",
+      "Freestyle mounting by exact panel and frame kit for perimeter and interior locations: dimensions, loads, blocking, wind (D-06)",
+      "Privacy & Screens step migration: step IDs, saves, undo/redo, UI census (developer, at integration) (D-07)",
+      "Internal/production privacy takeoff method; customer PDF shows no quantities (D-08)"
+    ]
+  },
+  {
+    "library": "aos-wood-railing",
+    "decision": "D-01",
+    "field": "systems[aos-wood-railing].styleSelection",
+    "old": null,
+    "new": {
+      "default": "aos-wood-railing--ttop-alum",
+      "options": "all four presets"
+    }
+  },
+  {
+    "library": "aos-wood-railing",
+    "decision": "D-02",
+    "field": "systems[aos-wood-railing].mountingSelection",
+    "old": {
+      "default": null,
+      "note": "Both deck-edge post placements are owner-approved for all four presets; chosen per design. The specification names no default."
+    },
+    "new": {
+      "default": "in-deck",
+      "note": "D-02 (11 Nov 2026): in-deck posts inside the rim framing are the starting mount; outside-rim face-mounted posts stay available for all four presets. Sales-design default only: the in-deck connection is NOT structurally approved."
+    }
+  },
+  {
+    "library": "aos-wood-railing",
+    "decision": "D-02",
+    "field": "systems[aos-wood-railing].openItems",
+    "old": null,
+    "new": {
+      "id": "in-deck-detail",
+      "status": "pending-verification",
+      "item": "Reviewed in-deck 4x4 guard-post detail: blocking, hold-down hardware, clearances and post-to-rim connection. Do not reuse outside-rim (face-mount) details without review (D-02)."
+    }
+  },
+  {
+    "library": "decking-sales-standard",
+    "decision": "D-08",
+    "field": "rules[Q16].confirmedBy",
+    "old": null,
+    "new": {
+      "id": "D-08",
+      "date": "2026-11-11",
+      "decision": "No product quantities for decking or privacy on customer concept PDFs"
+    }
+  },
+  {
+    "library": "decking-sales-standard",
+    "decision": "closure",
+    "field": "proposedRoleMap.note / verificationOwner",
+    "old": "Proposed for Q05; depends on AOS's fastening standard (hidden fasteners vs face screws), which is not decided. Not applied until confirmed.",
+    "new": {
+      "note": "Proposed for Q05; depends on AOS's fastening standard (hidden fasteners vs face screws), which is not decided. Not applied until confirmed. Owner closure 11 Nov 2026: board-role profiles, fastening systems and SKUs are a developer/manufacturer verification item, not an open owner decision.",
+      "verificationOwner": "developer/manufacturer"
+    }
+  },
+  {
+    "library": "index",
+    "decision": "D-03",
+    "field": "applicationRailingDefaults.hierarchy[3]",
+    "old": {
+      "level": 3,
+      "scope": "RDI category",
+      "library": "rdi-railing",
+      "systemId": "rdi-avalon",
+      "modelId": null,
+      "finishId": "rdi--matte-black",
+      "note": "Avalon with its compatible black finish (Matte Black). Default infill/model still open (RDI Q05)."
+    },
+    "new": {
+      "level": 3,
+      "scope": "RDI category",
+      "library": "rdi-railing",
+      "systemId": "rdi-avalon",
+      "modelId": "rdi-avalon--square-balusters",
+      "finishId": "rdi--matte-black",
+      "note": "Avalon, Matte Black, vertical square-baluster panel (D-03). Top rail not set: RDI names no standard; assembly pending verification.",
+      "topRail": null
+    }
+  },
+  {
+    "library": "index",
+    "decision": "D-01/D-02",
+    "field": "applicationRailingDefaults.hierarchy[4]",
+    "old": {
+      "level": 4,
+      "scope": "AOS wood railing",
+      "library": "aos-wood-railing",
+      "rule": "Follow the separately approved D4 specification."
+    },
+    "new": {
+      "level": 4,
+      "scope": "AOS wood railing",
+      "library": "aos-wood-railing",
+      "rule": "Follow the D4 specification; starting preset T-top 2x6 flat cap with round black aluminum balusters (D-01), in-deck posts (D-02).",
+      "systemId": "aos-wood-railing",
+      "modelId": "aos-wood-railing--ttop-alum",
+      "mountingId": "in-deck"
+    }
+  }
+]

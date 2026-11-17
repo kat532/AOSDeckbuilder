@@ -1,0 +1,2181 @@
+{
+  "meta": {
+    "schema": "aos-product-library",
+    "schemaVersion": "1.2.0",
+    "libraryId": "timbertech",
+    "category": "decking",
+    "libraryVersion": "2026-11-11.1",
+    "verifiedAsOf": "2026-11-06",
+    "useLimits": "Sales-design reference. Not purchase-ready SKUs, not engineering or code approval. Rules are reference-only and must not be enforced or ordered from without production verification.",
+    "notes": [],
+    "revisedAsOf": "2026-11-11",
+    "changesV1_1": [
+      "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular.",
+      "SIDELoc conflict resolved: SIDELoc is for Advanced PVC square-shoulder boards only, so the composite-guide prohibition does not conflict.",
+      "Shared decking standard (owner, 11 Nov 2026) referenced; brand exception report added (5 items).",
+      "Complete decking standards (11 Nov, second package): RD-01 applied; quoteEligible added (listing vs quote eligibility kept separate)."
+    ],
+    "statusModel": {
+      "basis": {
+        "manufacturer": "Manufacturer product data",
+        "code": "Building code text",
+        "industry-standard": "Industry guide (AWPA, AWC DCA 6)",
+        "aos-design": "AOS design concept or AOS choice; not a manufacturer product",
+        "retail-example": "Seen at a retailer; not manufacturer data",
+        "earlier-research": "Carried from AOS planning research; not re-checked"
+      },
+      "status": {
+        "verified": "Confirmed against an official primary source in this pass",
+        "listed-unconfirmed": "Appears in an official source but ambiguous or incomplete",
+        "conflict": "Official sources disagree",
+        "secondary-source": "Matches a secondary summary; primary text not read",
+        "unverified": "Not confirmed in this pass",
+        "aos-decision": "AOS design decision still to be made or confirmed. No manufacturer data exists",
+        "owner-approved": "AOS design choice approved by the owner (sales design). Not construction approval",
+        "pending-verification": "Structural, hardware, supplier or code detail that must be verified before construction use"
+      },
+      "fieldStatus": "Overrides status for individual fields of a record (e.g. a profile whose width is verified but thickness is not).",
+      "salesListing": {
+        "listed": "Shown to James",
+        "listed-with-notice": "Shown with a short notice (availability, restriction or code note)",
+        "hold": "Not shown until the stated reason is resolved"
+      },
+      "salesPriority": "Optional AOS ordering for frequently used products (sorted first). Never hides products."
+    },
+    "changesV1_2": [
+      "v1.2 (11 Nov 2026): owner decision closure D-01..D-08 recorded where it applies; version labels updated. No product IDs removed or renamed."
+    ]
+  },
+  "brand": {
+    "id": "timbertech",
+    "name": "TimberTech",
+    "manufacturer": "AZEK Building Products LLC"
+  },
+  "sources": [
+    {
+      "id": "tt-collections",
+      "title": "TimberTech deck collections page",
+      "url": "https://www.timbertech.com/products/decking-overview/deck-collections/",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "tt-2026-guide",
+      "title": "TimberTech 2026 Product Guide",
+      "url": "https://assets.timbertech.com/content/dam/wp-content/TimberTech-AZEK-Exteriors-Product-Guide.pdf",
+      "revision": "LIT-PRODUCTGUIDE26-REV 09/25",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "tt-pvc-install",
+      "title": "TimberTech Advanced PVC Decking Installation Guide",
+      "url": "https://assets.timbertech.com/content/dam/wp-content/TimberTech-Advanced-PVC-Decking-Installation-Guide_ENG.pdf",
+      "revision": "REV 07/26 (also in AOS package)",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "tt-comp-install",
+      "title": "TimberTech Composite Installation Guide",
+      "url": "https://assets.timbertech.com/content/dam/document-library/TimberTech/installation-guides/decking/TimberTech-Composite-Installation-Guide-ENG.pdf",
+      "revision": "REV 09/23",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "tt-vintage-sheet",
+      "title": "TimberTech Advanced PVC Vintage tech sheet",
+      "url": "https://assets.timbertech.com/content/dam/wp-content/timbertech-adv-pvc-vintage-collection-tech-sheet.pdf",
+      "revision": "LIT-TECH-SHEET-ADVPVC 12/25",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "tt-sideloc",
+      "title": "SIDELoc for Advanced PVC (TimberTech shop page)",
+      "url": "https://shop.timbertech.com/product/azek-sideloc-fastener-pack/",
+      "revision": "web page, read 2026-11-10",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-decking-standard-2026-11-11",
+      "title": "AOS Decking Standards (owner, TimberTech questionnaire)",
+      "url": "Claude Project doc claude/aos-decking-standards-owner-2026-11-11.md (package: owner-specs/AOS_Decking_Standards_2026-11-11.md and .pdf)",
+      "revision": "2026-11-11; md SHA-256 73bda22ffffad0ac7f848993c99f3d29262ee07c6010173d678fb42ed9bb722e",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-decking-complete-2026-11-11",
+      "title": "AOS Complete Decking Sales Standards and Brand Exceptions (owner)",
+      "url": "Claude Project doc claude/aos-decking-complete-standards-2026-11-11.md (package: owner-specs/AOS_Decking_Complete_Standards_2026-11-11.md and .pdf)",
+      "revision": "2026-11-11; md SHA-256 02457d6a2f6cc36fb80b4bb0bfb129dba7e5ed1ab4c11f4ead6bdfb8d7569817; pdf SHA-256 debdd0bed1f6ba68b7fd506c3a5793ffdeb11d022be1aceb395ffb31e597a81a",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    }
+  ],
+  "lines": [
+    {
+      "id": "timbertech-vintage",
+      "name": "Vintage",
+      "material": "advanced-pvc",
+      "availability": "current",
+      "manufacturerTier": "$$$$",
+      "status": "verified",
+      "src": [
+        "tt-2026-guide",
+        "tt-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "timbertech-vintage--coastline",
+          "name": "Coastline",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-vintage--weathered-teak",
+          "name": "Weathered Teak",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-vintage--cypress",
+          "name": "Cypress",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-vintage--mahogany",
+          "name": "Mahogany",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-vintage--english-walnut",
+          "name": "English Walnut",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-vintage--dark-hickory",
+          "name": "Dark Hickory",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "timbertech-vintage--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-vintage--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "listed-unconfirmed",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections",
+            "tt-vintage-sheet"
+          ],
+          "note": "Product-guide text and Vintage tech sheet (5 of 6 length slots marked) both fit 16/20 ft square + 12/16/20 grooved, but the tables could not be read cell-by-cell. Confirm 12 ft square-shoulder with TimberTech.",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-vintage--1x4-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 3.5,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-vintage--1x8-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 7.25,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-vintage--max-2x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 1.5,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": [
+            "timbertech-vintage--coastline"
+          ],
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "tt-pvc-fascia",
+        "tt-pvc-riser"
+      ],
+      "features": [],
+      "notes": [
+        "Class A flame spread / WUI per Vintage tech sheet."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "timbertech-landmark",
+      "name": "Landmark",
+      "material": "advanced-pvc",
+      "availability": "current",
+      "manufacturerTier": "$$$$",
+      "status": "verified",
+      "src": [
+        "tt-2026-guide",
+        "tt-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "timbertech-landmark--french-white-oak",
+          "name": "French White Oak",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-landmark--american-walnut",
+          "name": "American Walnut",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-landmark--castle-gate",
+          "name": "Castle Gate",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-landmark--boardwalk",
+          "name": "Boardwalk",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "timbertech-landmark--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-landmark--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "tt-pvc-fascia",
+        "tt-pvc-riser"
+      ],
+      "features": [],
+      "notes": [],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "timbertech-harvest-plus",
+      "name": "Harvest+",
+      "material": "advanced-pvc",
+      "availability": "current",
+      "manufacturerTier": "$$$",
+      "status": "verified",
+      "src": [
+        "tt-2026-guide",
+        "tt-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "timbertech-harvest-plus--toasted-wheat",
+          "name": "Toasted Wheat",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-harvest-plus--timber-gray",
+          "name": "Timber Gray",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "timbertech-harvest-plus--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-harvest-plus--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "tt-pvc-fascia",
+        "tt-pvc-riser"
+      ],
+      "features": [],
+      "notes": [],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "timbertech-harvest",
+      "name": "Harvest",
+      "material": "advanced-pvc",
+      "availability": "current",
+      "manufacturerTier": "$$",
+      "status": "verified",
+      "src": [
+        "tt-2026-guide",
+        "tt-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "timbertech-harvest--slate-gray",
+          "name": "Slate Gray",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-harvest--kona",
+          "name": "Kona",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-harvest--brownstone",
+          "name": "Brownstone",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "timbertech-harvest--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": [
+            "timbertech-harvest--brownstone",
+            "timbertech-harvest--slate-gray"
+          ],
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-harvest--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": [
+            "timbertech-harvest--brownstone",
+            "timbertech-harvest--slate-gray"
+          ],
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-harvest--1x6-square-kona",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": [
+            "timbertech-harvest--kona"
+          ],
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-harvest--1x8-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 7.25,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": [
+            "timbertech-harvest--brownstone",
+            "timbertech-harvest--slate-gray"
+          ],
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-harvest--max-2x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 1.5,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": [
+            "timbertech-harvest--slate-gray"
+          ],
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "tt-pvc-fascia",
+        "tt-pvc-riser"
+      ],
+      "features": [],
+      "notes": [
+        "Kona is square-shoulder only (no grooved board)."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "timbertech-legacy",
+      "name": "Legacy",
+      "material": "composite",
+      "availability": "current",
+      "manufacturerTier": "$$$",
+      "status": "verified",
+      "src": [
+        "tt-2026-guide",
+        "tt-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "timbertech-legacy--whitewash-cedar",
+          "name": "Whitewash Cedar",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-legacy--ashwood",
+          "name": "Ashwood",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-legacy--pecan",
+          "name": "Pecan",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-legacy--tigerwood",
+          "name": "Tigerwood",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-legacy--mocha",
+          "name": "Mocha",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-legacy--espresso",
+          "name": "Espresso",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "timbertech-legacy--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-legacy--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "tt-comp-fascia",
+        "tt-comp-riser"
+      ],
+      "features": [],
+      "notes": [],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "timbertech-reserve",
+      "name": "Reserve",
+      "material": "composite",
+      "availability": "current",
+      "manufacturerTier": "$$$",
+      "status": "verified",
+      "src": [
+        "tt-2026-guide",
+        "tt-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "timbertech-reserve--antique-leather",
+          "name": "Antique Leather",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-reserve--dark-roast",
+          "name": "Dark Roast",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-reserve--driftwood",
+          "name": "Driftwood",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-reserve--reclaimed-chestnut",
+          "name": "Reclaimed Chestnut",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "timbertech-reserve--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-reserve--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "tt-comp-fascia",
+        "tt-comp-riser"
+      ],
+      "features": [],
+      "notes": [
+        "A Reserve Fire-Rated variant (-FR SKUs, same colors and profiles) is listed in the 2026 Product Guide; tracked as a separate future option."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "timbertech-terrain-plus",
+      "name": "Terrain+",
+      "material": "composite",
+      "availability": "current",
+      "manufacturerTier": "$$",
+      "status": "verified",
+      "src": [
+        "tt-2026-guide",
+        "tt-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "timbertech-terrain-plus--dark-oak",
+          "name": "Dark Oak",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-terrain-plus--natural-white-oak",
+          "name": "Natural White Oak",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-terrain-plus--weathered-oak",
+          "name": "Weathered Oak",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "timbertech-terrain-plus--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-terrain-plus--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "tt-comp-fascia",
+        "tt-comp-riser"
+      ],
+      "features": [],
+      "notes": [
+        "Cortex restricted for Terrain+ (composite install guide)."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "timbertech-terrain",
+      "name": "Terrain",
+      "material": "composite",
+      "availability": "current",
+      "manufacturerTier": "$$",
+      "status": "verified",
+      "src": [
+        "tt-2026-guide",
+        "tt-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "timbertech-terrain--silver-maple",
+          "name": "Silver Maple",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-terrain--brown-oak",
+          "name": "Brown Oak",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "timbertech-terrain--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-terrain--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "tt-comp-fascia",
+        "tt-comp-riser"
+      ],
+      "features": [],
+      "notes": [
+        "No Cortex and no L-brackets on Terrain; Cortex plugs not compatible.",
+        "Collections page text mentions five colors but lists two; product guide lists two."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "timbertech-premier-plus",
+      "name": "Premier+",
+      "material": "composite",
+      "availability": "current",
+      "manufacturerTier": "$$",
+      "status": "verified",
+      "src": [
+        "tt-2026-guide",
+        "tt-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "timbertech-premier-plus--natural-oak",
+          "name": "Natural Oak",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "timbertech-premier-plus--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.89,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-premier-plus--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 0.89,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "tt-comp-fascia",
+        "tt-comp-riser"
+      ],
+      "features": [],
+      "notes": [],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "timbertech-prime-plus",
+      "name": "Prime+",
+      "material": "composite",
+      "availability": "current",
+      "manufacturerTier": "$",
+      "status": "verified",
+      "src": [
+        "tt-2026-guide",
+        "tt-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "timbertech-prime-plus--sea-salt-gray",
+          "name": "Sea Salt Gray",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-prime-plus--coconut-husk",
+          "name": "Coconut Husk",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-prime-plus--dark-cocoa",
+          "name": "Dark Cocoa",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "timbertech-prime-plus--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-prime-plus--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "tt-comp-fascia",
+        "tt-comp-riser"
+      ],
+      "features": [],
+      "notes": [],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "timbertech-prime",
+      "name": "Prime",
+      "material": "composite",
+      "availability": "current",
+      "manufacturerTier": "$",
+      "status": "verified",
+      "src": [
+        "tt-2026-guide",
+        "tt-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "timbertech-prime--maritime-gray",
+          "name": "Maritime Gray",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-prime--dark-teak",
+          "name": "Dark Teak",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "timbertech-prime--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-prime--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "tt-comp-fascia",
+        "tt-comp-riser"
+      ],
+      "features": [],
+      "notes": [
+        "TimberTech states Prime uses the same colors as Premier (not a data error)."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "timbertech-premier",
+      "name": "Premier",
+      "material": "composite",
+      "availability": "regional",
+      "manufacturerTier": "$",
+      "status": "verified",
+      "src": [
+        "tt-2026-guide",
+        "tt-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "timbertech-premier--maritime-gray",
+          "name": "Maritime Gray",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "timbertech-premier--dark-teak",
+          "name": "Dark Teak",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "timbertech-premier--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.89,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "timbertech-premier--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 0.89,
+          "actualWidthIn": 5.36,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-collections"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "tt-comp-fascia",
+        "tt-comp-riser"
+      ],
+      "features": [],
+      "notes": [
+        "2026 Product Guide: availability varies by region."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed-with-notice",
+      "salesListingReason": "Confirm availability with supplier before quoting.",
+      "salesPriority": null,
+      "quoteEligible": "confirm-availability"
+    }
+  ],
+  "accessories": [
+    {
+      "id": "tt-pvc-fascia",
+      "kind": "fascia",
+      "material": "advanced-pvc",
+      "actualThicknessIn": 0.5,
+      "actualWidthIn": 11.75,
+      "lengthsFt": [
+        12
+      ],
+      "colorsNote": "Same colors as each Advanced PVC collection (incl. Kona)",
+      "status": "verified",
+      "src": [
+        "tt-2026-guide"
+      ],
+      "basis": "manufacturer"
+    },
+    {
+      "id": "tt-pvc-riser",
+      "kind": "riser",
+      "material": "advanced-pvc",
+      "actualThicknessIn": 0.75,
+      "actualWidthIn": 7.25,
+      "lengthsFt": [
+        12
+      ],
+      "status": "verified",
+      "src": [
+        "tt-2026-guide"
+      ],
+      "basis": "manufacturer"
+    },
+    {
+      "id": "tt-comp-fascia",
+      "kind": "fascia",
+      "material": "composite",
+      "actualThicknessIn": 0.575,
+      "actualWidthIn": 11.95,
+      "lengthsFt": [
+        12
+      ],
+      "colorsNote": "Same colors as each composite collection, incl. Premier+ Natural Oak",
+      "status": "verified",
+      "src": [
+        "tt-2026-guide"
+      ],
+      "basis": "manufacturer"
+    },
+    {
+      "id": "tt-comp-riser",
+      "kind": "riser",
+      "material": "composite",
+      "actualThicknessIn": 0.575,
+      "actualWidthIn": 7.25,
+      "lengthsFt": [
+        12
+      ],
+      "status": "verified",
+      "src": [
+        "tt-2026-guide"
+      ],
+      "basis": "manufacturer"
+    }
+  ],
+  "rules": [
+    {
+      "id": "tt-pvc-joists",
+      "topic": "joist-spacing",
+      "appliesTo": [
+        "timbertech-vintage",
+        "timbertech-landmark",
+        "timbertech-harvest-plus",
+        "timbertech-harvest"
+      ],
+      "value": {
+        "residentialMaxOc": 16,
+        "maxBoardMaxOc": 24,
+        "angledOrCommercialMaxOc": 12,
+        "angledMaxBoardOc": 16,
+        "nearGlassOc": "6-8"
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "tt-pvc-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "tt-pvc-blocking",
+      "topic": "framing",
+      "appliesTo": [
+        "timbertech-vintage",
+        "timbertech-landmark",
+        "timbertech-harvest-plus",
+        "timbertech-harvest"
+      ],
+      "value": "Solid wood blocking rows every 4-6 ft required.",
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "tt-pvc-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "tt-pvc-gap",
+      "topic": "gapping",
+      "appliesTo": [
+        "timbertech-vintage",
+        "timbertech-landmark",
+        "timbertech-harvest-plus",
+        "timbertech-harvest"
+      ],
+      "value": {
+        "sideIn": "1/8-1/4",
+        "buttJoints": "tight, no gap",
+        "maxOverhangIn": 0.5
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "tt-pvc-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "tt-pvc-fasten",
+      "topic": "fastening",
+      "appliesTo": [
+        "timbertech-vintage",
+        "timbertech-landmark",
+        "timbertech-harvest-plus",
+        "timbertech-harvest"
+      ],
+      "value": {
+        "grooved": "CONCEALoc",
+        "square": "Cortex or TOPLoc",
+        "minScrewsPerJoist": 2,
+        "wideBoards": "3 per joist recommended",
+        "nails": "not allowed"
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "tt-pvc-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "tt-pvc-fascia-install",
+      "topic": "fascia",
+      "appliesTo": [
+        "timbertech-vintage",
+        "timbertech-landmark",
+        "timbertech-harvest-plus",
+        "timbertech-harvest"
+      ],
+      "value": "Solid backer required; 3 TOPLoc PVC fascia screws per row; no Cortex on PVC fascia.",
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "tt-pvc-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "tt-pvc-stair",
+      "topic": "stair-tread-support",
+      "appliesTo": [
+        "timbertech-vintage",
+        "timbertech-landmark",
+        "timbertech-harvest-plus",
+        "timbertech-harvest"
+      ],
+      "value": {
+        "stringerOc": "10 in (Vintage tech sheet)",
+        "fastening": "top-down only on square-shoulder"
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "tt-pvc-install",
+        "tt-vintage-sheet"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "tt-comp-joists",
+      "topic": "joist-spacing",
+      "appliesTo": [
+        "timbertech-legacy",
+        "timbertech-reserve",
+        "timbertech-terrain-plus",
+        "timbertech-terrain",
+        "timbertech-premier-plus",
+        "timbertech-prime-plus",
+        "timbertech-prime",
+        "timbertech-premier"
+      ],
+      "value": {
+        "residentialMaxOc": 16,
+        "commercialMaxOc": 12,
+        "angledMaxOc": 12
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "tt-comp-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "tt-comp-stairs",
+      "topic": "stair-tread-support",
+      "appliesTo": [
+        "timbertech-legacy",
+        "timbertech-reserve",
+        "timbertech-terrain-plus",
+        "timbertech-terrain",
+        "timbertech-premier-plus",
+        "timbertech-prime-plus",
+        "timbertech-prime",
+        "timbertech-premier"
+      ],
+      "value": {
+        "timbertech-premier": 9,
+        "timbertech-premier-plus": 9,
+        "timbertech-terrain": 8,
+        "others": 10
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "tt-comp-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "tt-comp-gap",
+      "topic": "gapping",
+      "appliesTo": [
+        "timbertech-legacy",
+        "timbertech-reserve",
+        "timbertech-terrain-plus",
+        "timbertech-terrain",
+        "timbertech-premier-plus",
+        "timbertech-prime-plus",
+        "timbertech-prime",
+        "timbertech-premier"
+      ],
+      "value": {
+        "sideIn": "1/8-3/16",
+        "butt": {
+          "le32F": 0.1875,
+          "33to74F": 0.125,
+          "ge75F": 0.03125
+        },
+        "toStructuresIn": 0.1875,
+        "maxOverhangIn": 1
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "tt-comp-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "tt-comp-fasten",
+      "topic": "fastening",
+      "appliesTo": [
+        "timbertech-legacy",
+        "timbertech-reserve",
+        "timbertech-terrain-plus",
+        "timbertech-terrain",
+        "timbertech-premier-plus",
+        "timbertech-prime-plus",
+        "timbertech-prime",
+        "timbertech-premier"
+      ],
+      "value": {
+        "grooved": "CONCEALoc or FUSIONLoc (not on stairs)",
+        "square": "Cortex or TOPLoc",
+        "terrain": "no Cortex, no L-brackets"
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "tt-comp-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "tt-sideloc",
+      "topic": "fastening",
+      "appliesTo": [
+        "timbertech-vintage",
+        "timbertech-landmark",
+        "timbertech-harvest-plus",
+        "timbertech-harvest",
+        "timbertech-legacy",
+        "timbertech-reserve",
+        "timbertech-terrain-plus",
+        "timbertech-terrain",
+        "timbertech-premier-plus",
+        "timbertech-prime-plus",
+        "timbertech-prime",
+        "timbertech-premier"
+      ],
+      "value": {
+        "SIDELoc": "Advanced PVC square-shoulder boards only (narrow, standard, wide); not for composite; 2-3/8 in fasteners for MAX and Porch boards",
+        "composite": "Edge-driven fasteners void the composite warranty"
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "tt-comp-install",
+        "tt-sideloc"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    }
+  ],
+  "gaps": [
+    "Per-color SKUs and AOS stock",
+    "Licensed or measured swatches/textures",
+    "Vintage 1x6 square-shoulder 12 ft length",
+    "Premier availability in Minnesota",
+    "Reserve Fire-Rated, Porch and Multiwidth (future products)"
+  ],
+  "aosSalesConfig": {
+    "basis": "aos-design",
+    "status": "owner-approved",
+    "src": [
+      "aos-decking-standard-2026-11-11"
+    ],
+    "inheritsStandard": "decking-sales-standard.json (owner-approved 11 Nov 2026)",
+    "selections": [],
+    "defaults": {},
+    "exceptionReport": {
+      "basis": "manufacturer",
+      "reuseUnchanged": "All 16 standard rules.",
+      "exceptions": [
+        {
+          "topic": "Q05 profiles",
+          "finding": "Harvest Kona is square-shoulder only, so its field uses square-shoulder boards. MAX (1.5 in) boards exist only for Vintage Coastline and Harvest Slate Gray; the standard 1x6 stays the default.",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide"
+          ]
+        },
+        {
+          "topic": "Q09/Q11 fascia and risers",
+          "finding": "Matching fascia and riser exist for every collection color (Advanced PVC 0.50 x 11.75 fascia, 0.75 x 7.25 riser; composite 0.575 x 11.95 fascia, 0.575 x 7.25 riser). Standard applies fully.",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide"
+          ]
+        },
+        {
+          "topic": "Q06/Q07/Q10 borders and treads",
+          "finding": "Square-shoulder boards exist in every color, so picture frames and treads work in main or frame color. Advanced PVC stairs: top-down fastening on square-shoulder only.",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide",
+            "tt-pvc-install"
+          ]
+        },
+        {
+          "topic": "Contrast pairing",
+          "finding": "Advanced PVC boards are 1.0 in thick and composite 0.94 in (Premier/Premier+ 0.89 in). Mixing PVC and composite, or Premier with other composites, for a contrast frame creates a height difference.",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide"
+          ],
+          "salesBehavior": "Offer same-material contrast first; flag cross-material contrast for technical review."
+        },
+        {
+          "topic": "Availability",
+          "finding": "Premier: availability varies by region (listed with notice).",
+          "status": "verified",
+          "src": [
+            "tt-2026-guide"
+          ]
+        }
+      ],
+      "aosDecisions": [],
+      "note": "Exception-only review per the owner directive. Research status only; nothing implemented."
+    },
+    "remainingDecisions": [
+      {
+        "id": "RD-01",
+        "field": "global_start",
+        "ownerEntry": "none",
+        "decision": "No brand or collection preselected on a new deck; James chooses brand, collection, then color.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-decking-complete-2026-11-11"
+        ]
+      }
+    ]
+  }
+}

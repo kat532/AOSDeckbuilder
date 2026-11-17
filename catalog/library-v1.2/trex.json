@@ -1,0 +1,1673 @@
+{
+  "meta": {
+    "schema": "aos-product-library",
+    "schemaVersion": "1.2.0",
+    "libraryId": "trex",
+    "category": "decking",
+    "libraryVersion": "2026-11-11.1",
+    "verifiedAsOf": "2026-11-06",
+    "useLimits": "Sales-design reference. Not purchase-ready SKUs, not engineering or code approval. Rules are reference-only and must not be enforced or ordered from without production verification.",
+    "notes": [],
+    "revisedAsOf": "2026-11-11",
+    "changesV1_1": [
+      "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular.",
+      "Rope Swing changed from listed-unconfirmed to conflict and held: Transcend page and SKU document do not list it as decking.",
+      "Select 2x6: dimensions/lengths now confirmed by the Select page; colors limited to Pebble Grey and Saddle pending supplier confirmation.",
+      "Span chart resolved from Intertek CCRR-0301: all 1-in boards 16 in o.c. at 100 psf; 2x6 24 in at 100 psf or 16 in at 200 psf; Enhance stair treads 9 in o.c.",
+      "Shared decking standard (owner, 11 Nov 2026) referenced; brand exception report added (5 items).",
+      "Complete decking standards (11 Nov, second package): RD-01, RD-02, RD-03 applied; quoteEligible added (listing vs quote eligibility kept separate)."
+    ],
+    "statusModel": {
+      "basis": {
+        "manufacturer": "Manufacturer product data",
+        "code": "Building code text",
+        "industry-standard": "Industry guide (AWPA, AWC DCA 6)",
+        "aos-design": "AOS design concept or AOS choice; not a manufacturer product",
+        "retail-example": "Seen at a retailer; not manufacturer data",
+        "earlier-research": "Carried from AOS planning research; not re-checked"
+      },
+      "status": {
+        "verified": "Confirmed against an official primary source in this pass",
+        "listed-unconfirmed": "Appears in an official source but ambiguous or incomplete",
+        "conflict": "Official sources disagree",
+        "secondary-source": "Matches a secondary summary; primary text not read",
+        "unverified": "Not confirmed in this pass",
+        "aos-decision": "AOS design decision still to be made or confirmed. No manufacturer data exists",
+        "owner-approved": "AOS design choice approved by the owner (sales design). Not construction approval",
+        "pending-verification": "Structural, hardware, supplier or code detail that must be verified before construction use"
+      },
+      "fieldStatus": "Overrides status for individual fields of a record (e.g. a profile whose width is verified but thickness is not).",
+      "salesListing": {
+        "listed": "Shown to James",
+        "listed-with-notice": "Shown with a short notice (availability, restriction or code note)",
+        "hold": "Not shown until the stated reason is resolved"
+      },
+      "salesPriority": "Optional AOS ordering for frequently used products (sorted first). Never hides products."
+    },
+    "changesV1_2": [
+      "v1.2 (11 Nov 2026): owner decision closure D-01..D-08 recorded where it applies; version labels updated. No product IDs removed or renamed."
+    ]
+  },
+  "brand": {
+    "id": "trex",
+    "name": "Trex",
+    "manufacturer": "Trex Company, Inc."
+  },
+  "sources": [
+    {
+      "id": "trex-2026-guide",
+      "title": "2026 Trex Decking Installation Guide",
+      "url": "https://online.flippingbook.com/view/63974767/",
+      "revision": "2026 edition (no revision code printed); p10 boards, p11 fascia/2x, p22 spans, p24 gapping, p43 colors",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "trex-refuge-guide",
+      "title": "Trex Refuge Decking Installation Guide",
+      "url": "https://online.flippingbook.com/view/527420233/",
+      "revision": "footer XRINSTALL2026, (c) 2025",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "trex-lineup",
+      "title": "Trex decking lineup page",
+      "url": "https://www.trex.com/products/decking/",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "trex-rope-swing",
+      "title": "Trex Transcend Rope Swing page",
+      "url": "https://www.trex.com/products/decking/transcend/rope-swing/",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "trex-refuge-pr",
+      "title": "Trex Expands Refuge Decking Launch Into Northeast Markets",
+      "url": "https://www.trex.com/our-company/press/trex-expands-refuge-decking-launch-into-northeast-markets/",
+      "revision": "press release 2026-03-16",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "trex-ccrr-0301",
+      "title": "Intertek CCRR-0301 Trex Decking (all profiles)",
+      "url": "https://uk.trex.com/content/dam/trex/literature/evaluation-service-reports-and-stamped-documents/2024/CCRR-0301(Trex_Decking-All_Profiles)2024.pdf",
+      "revision": "Issued 2019-03-20, revised 2023-03-13, renewed 2024-03-31",
+      "kind": "code-report",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "trex-transcend-page",
+      "title": "Trex Transcend decking page",
+      "url": "https://www.trex.com/products/decking/transcend/",
+      "revision": "web page, read 2026-11-10",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "trex-select-page",
+      "title": "Trex Select decking page",
+      "url": "https://www.trex.com/products/decking/select/",
+      "revision": "web page, read 2026-11-10",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "trex-profiles-sku",
+      "title": "Trex Product Profiles & Measurements (SKU document)",
+      "url": "https://online.flippingbook.com/view/215305418/",
+      "revision": "no date printed; notes Beach Dune/Coastal Bluff discontinued Oct 2025",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "trex-fascia-page",
+      "title": "Trex fascia page",
+      "url": "https://www.trex.com/products/decking/fascia/",
+      "revision": "web page, read 2026-11-11",
+      "kind": "manufacturer",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-decking-standard-2026-11-11",
+      "title": "AOS Decking Standards (owner, TimberTech questionnaire)",
+      "url": "Claude Project doc claude/aos-decking-standards-owner-2026-11-11.md (package: owner-specs/AOS_Decking_Standards_2026-11-11.md and .pdf)",
+      "revision": "2026-11-11; md SHA-256 73bda22ffffad0ac7f848993c99f3d29262ee07c6010173d678fb42ed9bb722e",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-decking-complete-2026-11-11",
+      "title": "AOS Complete Decking Sales Standards and Brand Exceptions (owner)",
+      "url": "Claude Project doc claude/aos-decking-complete-standards-2026-11-11.md (package: owner-specs/AOS_Decking_Complete_Standards_2026-11-11.md and .pdf)",
+      "revision": "2026-11-11; md SHA-256 02457d6a2f6cc36fb80b4bb0bfb129dba7e5ed1ab4c11f4ead6bdfb8d7569817; pdf SHA-256 debdd0bed1f6ba68b7fd506c3a5793ffdeb11d022be1aceb395ffb31e597a81a",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    }
+  ],
+  "lines": [
+    {
+      "id": "trex-signature",
+      "name": "Signature",
+      "material": "composite",
+      "availability": "current",
+      "manufacturerTier": "Luxury",
+      "status": "verified",
+      "src": [
+        "trex-2026-guide",
+        "trex-lineup"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "trex-signature--whidbey",
+          "name": "Whidbey",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-signature--ocracoke",
+          "name": "Ocracoke",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "trex-signature--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "itemPattern": "XX0106{L}NS01",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "trex-signature--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "itemPattern": "XX0106{L}NG01",
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "trex-fascia-1x8",
+        "trex-fascia-1x12"
+      ],
+      "features": [
+        "50-yr limited residential fade & stain (Trex pro comparison page)"
+      ],
+      "notes": [],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "trex-transcend-lineage",
+      "name": "Transcend Lineage",
+      "material": "composite",
+      "availability": "current",
+      "manufacturerTier": "Best",
+      "status": "verified",
+      "src": [
+        "trex-2026-guide",
+        "trex-lineup"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "trex-transcend-lineage--salt-flat",
+          "name": "Salt Flat",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-transcend-lineage--hatteras",
+          "name": "Hatteras",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-transcend-lineage--rainier",
+          "name": "Rainier",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-transcend-lineage--carmel",
+          "name": "Carmel",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-transcend-lineage--island-mist",
+          "name": "Island Mist",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-transcend-lineage--biscayne",
+          "name": "Biscayne",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-transcend-lineage--jasper",
+          "name": "Jasper",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "trex-transcend-lineage--1x4-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 3.5,
+          "lengthsFt": [
+            16
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "itemPattern": "XX010416TLS01",
+          "note": "Not for overhang unless perpendicular to framing.",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "trex-transcend-lineage--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "itemPattern": "XX0106{L}TLS01",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "trex-transcend-lineage--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "trex-fascia-1x8",
+        "trex-fascia-1x12"
+      ],
+      "features": [
+        "SunComfortable heat mitigation (line marketing; color mapping not verified)"
+      ],
+      "notes": [
+        "'Island Mist' is a separate product from Transcend Tropicals Island Mist (different item suffix TLS vs TS)."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "trex-transcend",
+      "name": "Transcend",
+      "material": "composite",
+      "availability": "current",
+      "manufacturerTier": "Best",
+      "status": "verified",
+      "src": [
+        "trex-2026-guide",
+        "trex-lineup"
+      ],
+      "subgroups": [
+        "Tropicals",
+        "Earth Tones"
+      ],
+      "colors": [
+        {
+          "id": "trex-transcend--tiki-torch",
+          "name": "Tiki Torch",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Tropicals",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-transcend--island-mist",
+          "name": "Island Mist",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Tropicals",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-transcend--lava-rock",
+          "name": "Lava Rock",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Tropicals",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-transcend--havana-gold",
+          "name": "Havana Gold",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Tropicals",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-transcend--spiced-rum",
+          "name": "Spiced Rum",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Tropicals",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-transcend--rope-swing",
+          "name": "Rope Swing",
+          "status": "conflict",
+          "src": [
+            "trex-2026-guide",
+            "trex-rope-swing",
+            "trex-transcend-page",
+            "trex-profiles-sku"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Earth Tones",
+          "statusNote": "2026 installation guide lists Rope Swing (RS) in its decking tables, but the Transcend product page lists only five colors, and Trex's SKU document shows RS for railing components only. Most likely a railing/Earth Tones color, not a current decking board.",
+          "basis": "manufacturer",
+          "salesListing": "hold",
+          "salesPriority": null,
+          "salesListingReason": "Not confirmed as a decking board color."
+        }
+      ],
+      "profiles": [
+        {
+          "id": "trex-transcend--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "itemPattern": "XX0106{L}TS01",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "trex-transcend--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "trex-transcend--2x4-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 1.3,
+          "actualWidthIn": 3.4,
+          "lengthsFt": [
+            16
+          ],
+          "colorIds": [
+            "trex-transcend--tiki-torch",
+            "trex-transcend--island-mist",
+            "trex-transcend--lava-rock",
+            "trex-transcend--havana-gold",
+            "trex-transcend--spiced-rum"
+          ],
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "itemPattern": "XX020416TS01",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "trex-transcend--2x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 1.3,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": [
+            "trex-transcend--tiki-torch",
+            "trex-transcend--island-mist",
+            "trex-transcend--lava-rock",
+            "trex-transcend--havana-gold",
+            "trex-transcend--spiced-rum"
+          ],
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "itemPattern": "XX0206{L}TS01",
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "trex-fascia-1x8",
+        "trex-fascia-1x12"
+      ],
+      "features": [],
+      "notes": [],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "trex-select",
+      "name": "Select",
+      "material": "composite",
+      "availability": "current",
+      "manufacturerTier": "Better",
+      "status": "verified",
+      "src": [
+        "trex-2026-guide",
+        "trex-lineup"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "trex-select--saddle",
+          "name": "Saddle",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-select--malted-barley",
+          "name": "Malted Barley",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-select--whiskey-barrel",
+          "name": "Whiskey Barrel",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-select--millstone",
+          "name": "Millstone",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-select--pebble-grey",
+          "name": "Pebble Grey",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "trex-select--7-8x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 0.82,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "itemPattern": "XX0106{L}SS01",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "trex-select--7-8x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.82,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "itemPattern": "XX0106{L}SG01",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "trex-select--2x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 1.3,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": [
+            "trex-select--pebble-grey",
+            "trex-select--saddle"
+          ],
+          "status": "listed-unconfirmed",
+          "src": [
+            "trex-2026-guide",
+            "trex-select-page",
+            "trex-profiles-sku"
+          ],
+          "note": "Select page confirms 1.3 x 5.5 in, 12/16/20 ft. Colors per profile are not published; the SKU document shows Pebble Grey (PG) and Saddle (SD). Treat other Select colors as unavailable in 2x6 until the supplier confirms.",
+          "basis": "manufacturer",
+          "itemPattern": "XX0206{L}SS01",
+          "fieldStatus": {
+            "colorIds": "listed-unconfirmed"
+          }
+        }
+      ],
+      "trim": [
+        "trex-fascia-1x8",
+        "trex-fascia-1x12"
+      ],
+      "features": [],
+      "notes": [
+        "Select boards are 0.82 in thick; Trex says do not combine with other Trex lines (trip hazard)."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "trex-enhance",
+      "name": "Enhance",
+      "material": "composite",
+      "availability": "current",
+      "manufacturerTier": "Good",
+      "status": "verified",
+      "src": [
+        "trex-2026-guide",
+        "trex-lineup"
+      ],
+      "subgroups": [
+        "Naturals",
+        "Basics"
+      ],
+      "colors": [
+        {
+          "id": "trex-enhance--foggy-wharf",
+          "name": "Foggy Wharf",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Naturals",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-enhance--rocky-harbor",
+          "name": "Rocky Harbor",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Naturals",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-enhance--toasted-sand",
+          "name": "Toasted Sand",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Naturals",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-enhance--golden-hour",
+          "name": "Golden Hour",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Naturals",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-enhance--cinnamon-cove",
+          "name": "Cinnamon Cove",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Naturals",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-enhance--honey-grove",
+          "name": "Honey Grove",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Naturals",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-enhance--clam-shell",
+          "name": "Clam Shell",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Basics",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-enhance--pebble-beach",
+          "name": "Pebble Beach",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Basics",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-enhance--saddle",
+          "name": "Saddle",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Basics",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-enhance--tide-pool",
+          "name": "Tide Pool",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "subgroup": "Basics",
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "trex-enhance--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": "scalloped",
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "itemPattern": "XX0106{L}E2S01",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "trex-enhance--1x6-grooved",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": "scalloped",
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "trex-2026-guide"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "trex-fascia-1x8",
+        "trex-fascia-1x12"
+      ],
+      "features": [
+        "Heat-mitigating colors per Trex lineup page: Cinnamon Cove, Golden Hour, Honey Grove, Tide Pool, Pebble Beach"
+      ],
+      "notes": [
+        "Saddle exists in both Select and Enhance Basics; distinct products."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "trex-refuge",
+      "name": "Refuge",
+      "material": "cellular-pvc",
+      "availability": "regional",
+      "manufacturerTier": "Specialty (ignition-resistant)",
+      "status": "verified",
+      "src": [
+        "trex-refuge-guide",
+        "trex-refuge-pr"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "trex-refuge--martis-valley",
+          "name": "Martis Valley",
+          "status": "verified",
+          "src": [
+            "trex-refuge-guide",
+            "trex-refuge-pr"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "trex-refuge--point-reyes",
+          "name": "Point Reyes",
+          "status": "verified",
+          "src": [
+            "trex-refuge-guide",
+            "trex-refuge-pr"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "trex-refuge--1x6-square",
+          "kind": "deck-board",
+          "edge": "square",
+          "core": null,
+          "actualThicknessIn": 0.94,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "trex-refuge-guide"
+          ],
+          "itemPattern": "MV/PR0106{L}RS01",
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "trex-fascia-1x8",
+        "trex-fascia-1x12"
+      ],
+      "features": [],
+      "notes": [
+        "Jan 2026 limited release in fire-code regions; NE US from late Mar 2026. Midwest/Minnesota not mentioned. Hidden until AOS supplier confirms.",
+        "Trex says compatible with existing Trex fascia; a color match is not established."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "hold",
+      "salesListingReason": "Owner RD-02: held from ordinary Minnesota new-deck sales until regional supply is verified. Kept in research data.",
+      "salesPriority": null,
+      "quoteEligible": false
+    }
+  ],
+  "accessories": [
+    {
+      "id": "trex-fascia-1x8",
+      "kind": "fascia",
+      "actualThicknessIn": 0.56,
+      "actualWidthIn": 7.25,
+      "lengthsFt": [
+        12
+      ],
+      "itemPattern": "XX010812{suffix}",
+      "colorsNote": "Per Trex fascia page (11 Nov 2026): 28 deck colors plus Universal White. Not listed: Transcend Tropicals Island Mist, Refuge colors.",
+      "status": "verified",
+      "src": [
+        "trex-2026-guide",
+        "trex-fascia-page"
+      ],
+      "basis": "manufacturer",
+      "colorsListed": [
+        "Foggy Wharf",
+        "Rocky Harbor",
+        "Clam Shell",
+        "Pebble Grey",
+        "Island Mist (Lineage)",
+        "Toasted Sand",
+        "Biscayne",
+        "Rainier",
+        "Saddle",
+        "Saddle (Select)",
+        "Tiki Torch",
+        "Havana Gold",
+        "Spiced Rum",
+        "Lava Rock",
+        "Jasper",
+        "Carmel",
+        "Ocracoke",
+        "Whidbey",
+        "Honey Grove",
+        "Tide Pool",
+        "Hatteras",
+        "Salt Flat",
+        "Cinnamon Cove",
+        "Whiskey Barrel",
+        "Malted Barley",
+        "Millstone",
+        "Pebble Beach",
+        "Golden Hour",
+        "Universal White"
+      ]
+    },
+    {
+      "id": "trex-fascia-1x12",
+      "kind": "fascia",
+      "actualThicknessIn": 0.56,
+      "actualWidthIn": 11.375,
+      "lengthsFt": [
+        12
+      ],
+      "itemPattern": "XX011212{suffix}",
+      "colorsNote": "Per Trex fascia page (11 Nov 2026): 28 deck colors plus Universal White. Not listed: Transcend Tropicals Island Mist, Refuge colors.",
+      "status": "verified",
+      "src": [
+        "trex-2026-guide",
+        "trex-fascia-page"
+      ],
+      "basis": "manufacturer",
+      "colorsListed": [
+        "Foggy Wharf",
+        "Rocky Harbor",
+        "Clam Shell",
+        "Pebble Grey",
+        "Island Mist (Lineage)",
+        "Toasted Sand",
+        "Biscayne",
+        "Rainier",
+        "Saddle",
+        "Saddle (Select)",
+        "Tiki Torch",
+        "Havana Gold",
+        "Spiced Rum",
+        "Lava Rock",
+        "Jasper",
+        "Carmel",
+        "Ocracoke",
+        "Whidbey",
+        "Honey Grove",
+        "Tide Pool",
+        "Hatteras",
+        "Salt Flat",
+        "Cinnamon Cove",
+        "Whiskey Barrel",
+        "Malted Barley",
+        "Millstone",
+        "Pebble Beach",
+        "Golden Hour",
+        "Universal White"
+      ]
+    },
+    {
+      "id": "trex-refuge-face-screw",
+      "kind": "fastener",
+      "name": "Trex color-match composite screw #10 x 2.5 in",
+      "skus": [
+        "TCM25BC75",
+        "TCM25IM75"
+      ],
+      "appliesTo": [
+        "trex-refuge"
+      ],
+      "status": "verified",
+      "src": [
+        "trex-refuge-guide"
+      ],
+      "basis": "manufacturer"
+    },
+    {
+      "id": "trex-refuge-plug",
+      "kind": "fastener",
+      "name": "Trex Hideaway deck plugs (Refuge colors)",
+      "skus": [
+        "TDPLGMV80",
+        "TDPLGPR80",
+        "TDPLGMV400",
+        "TDPLGPR400"
+      ],
+      "appliesTo": [
+        "trex-refuge"
+      ],
+      "status": "verified",
+      "src": [
+        "trex-refuge-guide"
+      ],
+      "basis": "manufacturer"
+    }
+  ],
+  "rules": [
+    {
+      "id": "trex-joist-angle",
+      "topic": "joist-spacing-angle-reduction",
+      "appliesTo": [
+        "trex-*"
+      ],
+      "value": {
+        "90deg": "per chart",
+        "60deg": "chart - 2 in",
+        "45deg": "chart - 4 in",
+        "30deg": "chart / 2"
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "trex-2026-guide"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "trex-gap",
+      "topic": "gapping",
+      "appliesTo": [
+        "trex-signature",
+        "trex-transcend",
+        "trex-transcend-lineage",
+        "trex-select",
+        "trex-enhance"
+      ],
+      "value": {
+        "sideMinIn": 0.1875,
+        "sideWoodedIn": 0.375,
+        "sideMaxIn": 0.5,
+        "endToEnd": {
+          "above40F": 0.125,
+          "below40F": 0.1875
+        },
+        "abutting": {
+          "above40F": 0.25,
+          "below40F": 0.5
+        },
+        "maxOverhangIn": 0.75
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "trex-2026-guide"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "trex-refuge-gap",
+      "topic": "gapping",
+      "appliesTo": [
+        "trex-refuge"
+      ],
+      "value": {
+        "sideMinIn": 0.1875,
+        "sideMaxIn": 0.5,
+        "endToEnd": {
+          "above40F": 0.1875,
+          "below40F": 0.3125
+        },
+        "abutting": {
+          "above40F": 0.3125,
+          "below40F": 0.5625
+        },
+        "maxOverhangIn": 0.75,
+        "screwsPerJoist": 2,
+        "stairStringersOc": "12 in"
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "trex-refuge-guide"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "trex-select-no-mix",
+      "topic": "compatibility",
+      "appliesTo": [
+        "trex-select"
+      ],
+      "value": "Do not combine Select (0.82 in) with other Trex lines (0.94 in).",
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "trex-2026-guide",
+        "trex-lineup"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "trex-joist-span",
+      "topic": "joist-spacing",
+      "appliesTo": [
+        "trex-signature",
+        "trex-transcend",
+        "trex-transcend-lineage",
+        "trex-select",
+        "trex-enhance"
+      ],
+      "value": {
+        "1in-boards": {
+          "maxOcIn": 16,
+          "atPsf": 100
+        },
+        "2x6 (Transcend, Select)": {
+          "maxOcIn": 24,
+          "atPsf": 100,
+          "or": {
+            "maxOcIn": 16,
+            "atPsf": 200
+          }
+        }
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "trex-ccrr-0301"
+      ],
+      "note": "Lineage 1x4 and Refuge are not covered by CCRR-0301; use the installation guide recommendation of 16 in o.c. Angled boards need reduced spacing so the board span never exceeds these values.",
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "trex-stair-span",
+      "topic": "stair-tread-support",
+      "appliesTo": [
+        "trex-signature",
+        "trex-transcend",
+        "trex-transcend-lineage",
+        "trex-select",
+        "trex-enhance"
+      ],
+      "value": {
+        "trex-enhance": 9,
+        "1in-others": 12,
+        "2x6": 16,
+        "minimumSpans": 2
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "trex-ccrr-0301"
+      ],
+      "note": "Enhance treads need stringers at 9 in o.c. (CCRR-0301). The 2026 guide values for other lines agree.",
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    }
+  ],
+  "gaps": [
+    "Per-color SKUs (only XX item patterns published)",
+    "AOS supplier stock",
+    "Licensed or measured swatches/textures",
+    "Select 2x6 colors beyond Pebble Grey and Saddle",
+    "Rope Swing as a decking color (conflict; held)",
+    "Refuge availability in Minnesota (held)",
+    "Lineage 1x4 span (not in CCRR-0301; guide recommends 16 in)",
+    "Riser product (none published; fascia-as-riser unconfirmed)",
+    "Fascia for Transcend Tropicals Island Mist (not listed)",
+    "Complete Trex legacy/discontinued list (no official Trex list; 2 confirmed)"
+  ],
+  "aosSalesConfig": {
+    "basis": "aos-design",
+    "status": "owner-approved",
+    "src": [
+      "aos-decking-standard-2026-11-11"
+    ],
+    "inheritsStandard": "decking-sales-standard.json (owner-approved 11 Nov 2026)",
+    "selections": [],
+    "defaults": {},
+    "exceptionReport": {
+      "basis": "manufacturer",
+      "reuseUnchanged": "All 16 standard rules.",
+      "exceptions": [
+        {
+          "topic": "Q09 fascia",
+          "finding": "Fascia 1x8 and 1x12 (0.56 in thick, 12 ft) listed in 28 deck colors plus Universal White. Transcend Tropicals Island Mist has no listed fascia (only the Lineage Island Mist), and Refuge has none.",
+          "status": "verified",
+          "src": [
+            "trex-fascia-page",
+            "trex-2026-guide"
+          ],
+          "salesBehavior": "For Transcend Island Mist, show 'no matching fascia' and let James choose a compatible fascia (technical review)."
+        },
+        {
+          "topic": "Q11 risers",
+          "finding": "No separate Trex riser board is published; the fascia page mentions 'Fascia Riser Boards' in its description only.",
+          "status": "listed-unconfirmed",
+          "src": [
+            "trex-fascia-page"
+          ],
+          "salesBehavior": "Use 1x8 fascia as the riser visual, marked 'selection/technical review required'."
+        },
+        {
+          "topic": "Q07/Q08 contrast",
+          "finding": "Select boards are 0.82 in thick; Trex says not to combine Select with other Trex lines (0.94 in). Contrast frames/dividers for Select must come from Select colors.",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide",
+            "trex-lineup"
+          ]
+        },
+        {
+          "topic": "Q06/Q10 borders and treads",
+          "finding": "Every listed color has a square-edge board. Lineage 1x4 is not for overhang unless perpendicular. Enhance treads need stringers at 9 in o.c.",
+          "status": "verified",
+          "src": [
+            "trex-2026-guide",
+            "trex-ccrr-0301"
+          ]
+        },
+        {
+          "topic": "Availability",
+          "finding": "Refuge (regional) and Rope Swing (conflict) held.",
+          "status": "verified",
+          "src": [
+            "trex-refuge-pr",
+            "trex-transcend-page"
+          ]
+        }
+      ],
+      "aosDecisions": [],
+      "note": "Exception-only review per the owner directive. Research status only; nothing implemented."
+    },
+    "remainingDecisions": [
+      {
+        "id": "RD-01",
+        "field": "global_start",
+        "ownerEntry": "none",
+        "decision": "No brand or collection preselected on a new deck; James chooses brand, collection, then color.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-decking-complete-2026-11-11"
+        ]
+      },
+      {
+        "id": "RD-02",
+        "field": "trex_refuge",
+        "ownerEntry": "hold",
+        "decision": "Trex Refuge held from ordinary Minnesota new-deck sales until regional supply is verified; kept in research data.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-decking-complete-2026-11-11"
+        ]
+      },
+      {
+        "id": "RD-03",
+        "field": "trex_legacy",
+        "ownerEntry": "legacy",
+        "decision": "Trex legacy/discontinued products in a separate, clearly labeled legacy/replacement catalog; not ordinary new-deck selections.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-decking-complete-2026-11-11"
+        ]
+      }
+    ]
+  },
+  "legacyCatalog": {
+    "basis": "aos-design",
+    "status": "owner-approved",
+    "src": [
+      "aos-decking-complete-2026-11-11"
+    ],
+    "decision": "RD-03",
+    "label": "Legacy / replacement — not for new decks",
+    "entries": [
+      {
+        "id": "trex-enhance--beach-dune",
+        "name": "Beach Dune",
+        "line": "Enhance",
+        "status": "verified",
+        "basis": "manufacturer",
+        "src": [
+          "trex-profiles-sku"
+        ],
+        "note": "Discontinued October 2025 per Trex's Product Profiles & Measurements document."
+      },
+      {
+        "id": "trex-enhance--coastal-bluff",
+        "name": "Coastal Bluff",
+        "line": "Enhance",
+        "status": "verified",
+        "basis": "manufacturer",
+        "src": [
+          "trex-profiles-sku"
+        ],
+        "note": "Discontinued October 2025 per Trex's Product Profiles & Measurements document."
+      }
+    ],
+    "completeness": "Incomplete. Trex publishes no official discontinued-products list; only these two are confirmed by a Trex document. Other legacy colors are added only when a Trex source confirms them.",
+    "use": "For matching or replacing existing decks; not quote-eligible for new decks."
+  }
+}

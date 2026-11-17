@@ -1,0 +1,186 @@
+{
+  "basis": "aos-design",
+  "status": "owner-approved",
+  "decided": "2026-11-11",
+  "source": "owner-specs/AOS_Decking_Standards_2026-11-11.md (+ .pdf); Claude Project: claude/aos-decking-standards-owner-2026-11-11.md. SHA-256 md 73bda22f...722e, pdf 91694c17...577a",
+  "appliesTo": [
+    "timbertech",
+    "trex",
+    "moistureshield",
+    "deckorators",
+    "treated-wood"
+  ],
+  "directive": "Keep all decking lines using similar selections to the completed TimberTech form unless a brand/product has a unique requirement. Do not repeat the general questions per brand.",
+  "rules": [
+    {
+      "id": "Q01",
+      "rule": "No collection preselected; James chooses."
+    },
+    {
+      "id": "Q02",
+      "rule": "James chooses a color before preview; no automatic first or last-used color."
+    },
+    {
+      "id": "Q03",
+      "rule": "Group by the brand's real material/product families (TimberTech: Advanced PVC / Composite), then collection. No invented categories."
+    },
+    {
+      "id": "Q04",
+      "rule": "No favorites or recent list; full verified catalog."
+    },
+    {
+      "id": "Q05",
+      "rule": "Auto-select a compatible board profile for each role (field, border, divider, stair, fascia); James can review."
+    },
+    {
+      "id": "Q06",
+      "rule": "Single picture-frame border by default on NEW decks only, rendered only with compatible boards. Saved decks unchanged."
+    },
+    {
+      "id": "Q07",
+      "rule": "Picture frame starts matching the main deck color; compatible contrast allowed."
+    },
+    {
+      "id": "Q08",
+      "rule": "Dividers start matching the field color; compatible contrast allowed; divider count and locations preserved."
+    },
+    {
+      "id": "Q09",
+      "rule": "Fascia starts matching the selected collection/color, only where a real matching fascia exists."
+    },
+    {
+      "id": "Q10",
+      "rule": "James chooses a compatible stair tread color per staircase; options are the main deck color or the picture-frame color where the product exists."
+    },
+    {
+      "id": "Q11",
+      "rule": "Closed risers default to the main deck color where a matching riser exists; picture-frame color also offered."
+    },
+    {
+      "id": "Q12",
+      "rule": "Attached landings inherit the main decking, with independent override; landing geometry preserved."
+    },
+    {
+      "id": "Q13",
+      "rule": "Product/color selection first; profile-driven board layout and quantities in a later tested phase. No silent quantity or board-width changes."
+    },
+    {
+      "id": "Q14",
+      "rule": "When the main decking changes, ask whether to keep or replace border/divider color overrides. Never alter geometry, stairs or placement."
+    },
+    {
+      "id": "Q15",
+      "rule": "Approximate color previews allowed if clearly labeled; replace with measured/licensed assets when available."
+    },
+    {
+      "id": "Q16",
+      "rule": "Customer concept PDF: manufacturer, collection, color and visual only; no preliminary quantities. Internal estimating independent.",
+      "confirmedBy": {
+        "id": "D-08",
+        "date": "2026-11-11",
+        "decision": "No product quantities for decking or privacy on customer concept PDFs"
+      }
+    }
+  ],
+  "ownerNotes": [
+    {
+      "ownerEntry": "Defalt devider fascia and pictuerframe all the same color",
+      "treatment": "Picture frame, divider and fascia start coordinated, normally in the main deck color. Stored as separate choices; editing one does not change the others unless an 'apply accent to all' interaction is approved."
+    },
+    {
+      "ownerEntry": "stairstreds and risers ether main decking or pictuer frame color",
+      "treatment": "Offer the main-deck and picture-frame colors for treads and risers where the compatible product exists; otherwise show 'selection/technical review required'."
+    }
+  ],
+  "proposedRoleMap": {
+    "basis": "aos-design",
+    "status": "aos-decision",
+    "note": "Proposed for Q05; depends on AOS's fastening standard (hidden fasteners vs face screws), which is not decided. Not applied until confirmed. Owner closure 11 Nov 2026: board-role profiles, fastening systems and SKUs are a developer/manufacturer verification item, not an open owner decision.",
+    "roles": {
+      "field": "grooved where offered (hidden fasteners), else square/solid",
+      "pictureFrame": "square/solid edge",
+      "divider": "square/solid edge",
+      "stairTread": "manufacturer stair tread if offered, else square/solid-edge deck board",
+      "fascia": "manufacturer fascia",
+      "riser": "manufacturer riser if offered; else manufacturer-described practice, else technical review"
+    },
+    "verificationOwner": "developer/manufacturer"
+  },
+  "persistence": [
+    "Saved projects keep current board sizing and selections until an approved, tested migration.",
+    "Product changes never alter deck shape, dimensions, stairs, railings, dividers, picture-frame locations, landing geometry or unrelated selections.",
+    "Manufacturer incompatibilities are surfaced and resolved explicitly; no silent substitution or reset."
+  ],
+  "notDecided": [
+    "Accent linking after a manual change.",
+    "Supplier and stock for every brand."
+  ],
+  "unchanged": "Overall railing default remains Westbury Tuscany C10, Black Fine Texture.",
+  "globalDefault": {
+    "brand": null,
+    "collection": null,
+    "color": null,
+    "decision": "RD-01",
+    "rule": "New deck: no brand, collection or color preselected. James chooses brand, then collection, then color before preview."
+  },
+  "remainingBrandDecisions": [
+    {
+      "id": "RD-01",
+      "field": "global_start",
+      "ownerEntry": "none",
+      "decision": "No brand or collection preselected on a new deck; James chooses brand, collection, then color."
+    },
+    {
+      "id": "RD-02",
+      "field": "trex_refuge",
+      "ownerEntry": "hold",
+      "decision": "Trex Refuge held from ordinary Minnesota new-deck sales until regional supply is verified; kept in research data."
+    },
+    {
+      "id": "RD-03",
+      "field": "trex_legacy",
+      "ownerEntry": "legacy",
+      "decision": "Trex legacy/discontinued products in a separate, clearly labeled legacy/replacement catalog; not ordinary new-deck selections."
+    },
+    {
+      "id": "RD-04",
+      "field": "ms_transition",
+      "ownerEntry": "notice",
+      "decision": "MoistureShield current verified lines shown with a confirm-availability notice; catalog status is not confirmed 2027 supply."
+    },
+    {
+      "id": "RD-05",
+      "field": "decor_2027",
+      "ownerEntry": "coming",
+      "decision": "Deckorators announced 2027 lines in a Coming Soon browse-only area until release, profiles and availability are verified; distinct from MoistureShield Meridian/Elevate."
+    },
+    {
+      "id": "RD-06",
+      "field": "decor_altitude",
+      "ownerEntry": "hold",
+      "decision": "Deckorators Altitude held from normal Minnesota sales until region-specific supply is verified."
+    },
+    {
+      "id": "RD-07",
+      "field": "pt_profile",
+      "ownerEntry": "fivequarter",
+      "decision": "Green/brown treated: nominal 5/4 decking board appearance by default; nominal 2x6 offered only where the actual supplier product is confirmed."
+    },
+    {
+      "id": "RD-08",
+      "field": "pt_supplier",
+      "ownerEntry": "KBS or Pine island lumber",
+      "decision": "Treated-lumber supplier candidates named by the owner. Stocked species, grade, treatment, lengths and widths to confirm. Not verified; the Northern Crossarm note from the wood-railing form is not applied to treated decking."
+    }
+  ],
+  "listingVsQuote": {
+    "rule": "Catalog visibility and quote/order eligibility are separate fields.",
+    "values": {
+      "listed": "browse and quote",
+      "listed-with-notice": "browse; quote after availability confirmation",
+      "coming-soon": "browse-only",
+      "hold": "not shown in normal sales"
+    }
+  },
+  "source2": "Claude Project doc claude/aos-decking-complete-standards-2026-11-11.md (package: owner-specs/AOS_Decking_Complete_Standards_2026-11-11.md and .pdf)"
+}

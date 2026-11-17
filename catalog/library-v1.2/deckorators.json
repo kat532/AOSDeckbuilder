@@ -1,0 +1,1806 @@
+{
+  "meta": {
+    "schema": "aos-product-library",
+    "schemaVersion": "1.2.0",
+    "libraryId": "deckorators",
+    "category": "decking",
+    "libraryVersion": "2026-11-11.1",
+    "verifiedAsOf": "2026-11-06",
+    "useLimits": "Sales-design reference. Not purchase-ready SKUs, not engineering or code approval. Rules are reference-only and must not be enforced or ordered from without production verification.",
+    "notes": [],
+    "revisedAsOf": "2026-11-11",
+    "changesV1_1": [
+      "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular.",
+      "Voyage and Dark Slate thickness 7/8 in now confirmed by product pages; Summit thickness still unverified (marked per field).",
+      "Added discontinued Deckorators lines (Vault, Distressed, Tropics, Trailhead, Pioneer) for reference only; not sold.",
+      "Shared decking standard (owner, 11 Nov 2026) referenced; brand exception report added (5 items).",
+      "Complete decking standards (11 Nov, second package): RD-01, RD-05, RD-06 applied; quoteEligible added (listing vs quote eligibility kept separate)."
+    ],
+    "statusModel": {
+      "basis": {
+        "manufacturer": "Manufacturer product data",
+        "code": "Building code text",
+        "industry-standard": "Industry guide (AWPA, AWC DCA 6)",
+        "aos-design": "AOS design concept or AOS choice; not a manufacturer product",
+        "retail-example": "Seen at a retailer; not manufacturer data",
+        "earlier-research": "Carried from AOS planning research; not re-checked"
+      },
+      "status": {
+        "verified": "Confirmed against an official primary source in this pass",
+        "listed-unconfirmed": "Appears in an official source but ambiguous or incomplete",
+        "conflict": "Official sources disagree",
+        "secondary-source": "Matches a secondary summary; primary text not read",
+        "unverified": "Not confirmed in this pass",
+        "aos-decision": "AOS design decision still to be made or confirmed. No manufacturer data exists",
+        "owner-approved": "AOS design choice approved by the owner (sales design). Not construction approval",
+        "pending-verification": "Structural, hardware, supplier or code detail that must be verified before construction use"
+      },
+      "fieldStatus": "Overrides status for individual fields of a record (e.g. a profile whose width is verified but thickness is not).",
+      "salesListing": {
+        "listed": "Shown to James",
+        "listed-with-notice": "Shown with a short notice (availability, restriction or code note)",
+        "hold": "Not shown until the stated reason is resolved"
+      },
+      "salesPriority": "Optional AOS ordering for frequently used products (sorted first). Never hides products."
+    },
+    "changesV1_2": [
+      "v1.2 (11 Nov 2026): owner decision closure D-01..D-08 recorded where it applies; version labels updated. No product IDs removed or renamed."
+    ]
+  },
+  "brand": {
+    "id": "deckorators",
+    "name": "Deckorators",
+    "manufacturer": "Deckorators, Inc. (UFP Industries)"
+  },
+  "sources": [
+    {
+      "id": "dk-collections",
+      "title": "Deckorators decking collections page",
+      "url": "https://www.deckorators.com/collections/decking-collections",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "dk-style-2026",
+      "title": "Deckorators 2026 Style Guide",
+      "url": "https://www.deckorators.com/cdn/shop/files/15818_2026StyleGuide_LR.pdf",
+      "revision": "15818_1/26",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "dk-2027-pr",
+      "title": "Deckorators introduces faster-to-install railing and two new decking collections for 2027",
+      "url": "https://www.deckorators.com/en-ca/pages/press-release/deckorators-introduces-faster-to-install-railing-and-two-new-decking-collections-for-2027",
+      "revision": "press release 2026-10-13",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "dk-vista",
+      "title": "Vista decking product page",
+      "url": "https://www.deckorators.com/products/vista-decking",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "dk-venture",
+      "title": "Venture decking product page",
+      "url": "https://www.deckorators.com/products/venture-decking",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "dk-surestone-install",
+      "title": "Deckorators Surestone decking installation",
+      "url": "https://www.deckorators.com/cdn/shop/files/8529-deckorators-surestone-technology-decking-installation-en.pdf",
+      "revision": "8529_11/25",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "dk-vista-install",
+      "title": "Vista decking installation instructions",
+      "url": "https://www.deckorators.com/cdn/shop/files/15557_VistaDeckingInstallationInstructions_EN_03.24.26_b4dfb171-467e-4472-959d-62cef5e436d4.pdf",
+      "revision": "15557_3/26",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-research-v1",
+      "title": "AOS Deckorators planning catalog v1",
+      "url": "AOS_Deckorators_Sales_Catalog_Planning_v1.json",
+      "revision": "2026-11-05",
+      "kind": "aos-research",
+      "accessed": "2026-11-06",
+      "tier": "secondary"
+    },
+    {
+      "id": "dk-voyage-page",
+      "title": "Voyage decking product page",
+      "url": "https://www.deckorators.com/products/voyage-decking",
+      "revision": "web page, read 2026-11-10",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "dk-voyage-sheet",
+      "title": "2026 Voyage Decking Sell Sheet",
+      "url": "https://www.deckorators.com/cdn/shop/files/15824_2026VoyageDeckingSellSheet_LR_1.pdf",
+      "revision": "15824_4/26",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "dk-frame-page",
+      "title": "Picture Frame Deck Board product page",
+      "url": "https://www.deckorators.com/products/picture-frame-board",
+      "revision": "web page, read 2026-11-10",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "dk-summit-page",
+      "title": "Summit decking product page",
+      "url": "https://www.deckorators.com/products/summit-decking",
+      "revision": "web page, read 2026-11-10",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "dk-2026-blog",
+      "title": "New for 2026: What's next in Deckorators decking",
+      "url": "https://www.deckorators.com/blogs/deck-design-ideas/new-for-2026-what-s-next-in-deckorators-decking-outdoor-living",
+      "revision": "Deckorators blog 2026-01-05",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "dk-overview-2026",
+      "title": "Deckorators 2026 Decking Overview Brochure",
+      "url": "https://www.deckorators.com/cdn/shop/files/15799_2026DeckingOverviewBrochure_Final_LR_3.pdf",
+      "revision": "15799_12/25",
+      "kind": "manufacturer",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-decking-standard-2026-11-11",
+      "title": "AOS Decking Standards (owner, TimberTech questionnaire)",
+      "url": "Claude Project doc claude/aos-decking-standards-owner-2026-11-11.md (package: owner-specs/AOS_Decking_Standards_2026-11-11.md and .pdf)",
+      "revision": "2026-11-11; md SHA-256 73bda22ffffad0ac7f848993c99f3d29262ee07c6010173d678fb42ed9bb722e",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-decking-complete-2026-11-11",
+      "title": "AOS Complete Decking Sales Standards and Brand Exceptions (owner)",
+      "url": "Claude Project doc claude/aos-decking-complete-standards-2026-11-11.md (package: owner-specs/AOS_Decking_Complete_Standards_2026-11-11.md and .pdf)",
+      "revision": "2026-11-11; md SHA-256 02457d6a2f6cc36fb80b4bb0bfb129dba7e5ed1ab4c11f4ead6bdfb8d7569817; pdf SHA-256 debdd0bed1f6ba68b7fd506c3a5793ffdeb11d022be1aceb395ffb31e597a81a",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    }
+  ],
+  "lines": [
+    {
+      "id": "deckorators-voyage",
+      "name": "Voyage",
+      "material": "mineral-composite (Surestone)",
+      "availability": "current",
+      "manufacturerTier": "premium",
+      "status": "verified",
+      "src": [
+        "dk-style-2026",
+        "dk-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "deckorators-voyage--costa",
+          "name": "Costa",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "deckorators-voyage--sierra",
+          "name": "Sierra",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "deckorators-voyage--khaya",
+          "name": "Khaya",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "deckorators-voyage--tundra",
+          "name": "Tundra",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "deckorators-voyage--sedona",
+          "name": "Sedona",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "deckorators-voyage--mesa",
+          "name": "Mesa",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "deckorators-voyage--grooved-3-5",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 3.5,
+          "lengthsFt": [
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-voyage-page"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "deckorators-voyage--grooved-5-5",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-voyage-page"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "deckorators-voyage--grooved-7-25",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 7.25,
+          "lengthsFt": [
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-voyage-page"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "deckorators-voyage--solid-3-5",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 3.5,
+          "lengthsFt": [
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-voyage-page"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "deckorators-voyage--solid-5-5",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-voyage-page"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "deckorators-voyage--solid-7-25",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 7.25,
+          "lengthsFt": [
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-voyage-page"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "deckorators-voyage--solid-9-25",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 9.25,
+          "lengthsFt": [
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-voyage-page"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "dk-fascia-8",
+        "dk-fascia-11-25",
+        "dk-step-tread"
+      ],
+      "features": [
+        "50-yr structural / 25-yr stain & fade / 25-yr removal & replacement (product page)",
+        "Fully submersible; ground/water installation warranted"
+      ],
+      "notes": [
+        "Varied-width layouts need a multi-width board generator."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "deckorators-summit",
+      "name": "Summit",
+      "material": "mineral-composite (Surestone)",
+      "availability": "current",
+      "manufacturerTier": "mid/premium",
+      "status": "verified",
+      "src": [
+        "dk-style-2026",
+        "dk-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "deckorators-summit--glacier",
+          "name": "Glacier",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "deckorators-summit--boulder",
+          "name": "Boulder",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "deckorators-summit--cliffside",
+          "name": "Cliffside",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "deckorators-summit--grooved-5-5",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-summit-page"
+          ],
+          "basis": "manufacturer",
+          "fieldStatus": {
+            "actualThicknessIn": "unverified"
+          }
+        },
+        {
+          "id": "deckorators-summit--solid-5-5",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-summit-page"
+          ],
+          "basis": "manufacturer",
+          "fieldStatus": {
+            "actualThicknessIn": "unverified"
+          }
+        }
+      ],
+      "trim": [
+        "dk-fascia-11-25"
+      ],
+      "features": [
+        "25-yr structural / 25-yr stain & fade (product page)"
+      ],
+      "notes": [],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "deckorators-vista",
+      "name": "Vista",
+      "material": "capped-composite",
+      "availability": "current",
+      "manufacturerTier": "midrange",
+      "status": "verified",
+      "src": [
+        "dk-style-2026",
+        "dk-collections",
+        "dk-vista"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "deckorators-vista--dunewood",
+          "name": "Dunewood",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-vista"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "deckorators-vista--driftwood",
+          "name": "Driftwood",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-vista"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "deckorators-vista--ironwood",
+          "name": "Ironwood",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-vista"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "deckorators-vista--silverwood",
+          "name": "Silverwood",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-vista"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "deckorators-vista--grooved-5-5",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-vista"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "deckorators-vista--solid-5-5",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-vista"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "dk-fascia-8",
+        "dk-fascia-11-25"
+      ],
+      "features": [
+        "25-yr structural / 25-yr stain & fade",
+        "ASTM E84 Class B; WUI compliant"
+      ],
+      "notes": [],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "deckorators-venture",
+      "name": "Venture",
+      "material": "capped-composite",
+      "availability": "current",
+      "manufacturerTier": "value",
+      "status": "verified",
+      "src": [
+        "dk-style-2026",
+        "dk-collections",
+        "dk-venture"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "deckorators-venture--saltwater",
+          "name": "Saltwater",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-venture"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "deckorators-venture--sandbar",
+          "name": "Sandbar",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-venture"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "deckorators-venture--shoreline",
+          "name": "Shoreline",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-venture"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "deckorators-venture--grooved-5-5",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": "scalloped",
+          "actualThicknessIn": 0.9375,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-venture"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "deckorators-venture--solid-5-5",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": "scalloped",
+          "actualThicknessIn": 0.9375,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-venture"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [
+        "dk-fascia-11-25"
+      ],
+      "features": [
+        "25-yr structural / 25-yr stain & fade",
+        "Spans 16 in o.c. (product page)"
+      ],
+      "notes": [
+        "Dark Slate picture frame board is NOT compatible with Venture."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    },
+    {
+      "id": "deckorators-altitude",
+      "name": "Altitude",
+      "material": "capped-composite",
+      "availability": "regional",
+      "manufacturerTier": "value/midrange",
+      "status": "verified",
+      "src": [
+        "dk-collections",
+        "dk-2026-blog"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "deckorators-altitude--sequoia",
+          "name": "Sequoia",
+          "status": "verified",
+          "src": [
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "deckorators-altitude--highland",
+          "name": "Highland",
+          "status": "verified",
+          "src": [
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        },
+        {
+          "id": "deckorators-altitude--trailstone",
+          "name": "Trailstone",
+          "status": "verified",
+          "src": [
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "deckorators-altitude--grooved-5-5",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": "scalloped",
+          "actualThicknessIn": 0.9375,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "unverified",
+          "src": [
+            "aos-research-v1"
+          ],
+          "basis": "manufacturer",
+          "fieldStatus": {}
+        },
+        {
+          "id": "deckorators-altitude--solid-5-5",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": "scalloped",
+          "actualThicknessIn": 0.9375,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "unverified",
+          "src": [
+            "aos-research-v1"
+          ],
+          "basis": "manufacturer",
+          "fieldStatus": {}
+        }
+      ],
+      "trim": [],
+      "features": [
+        "Fire-resistant core, Class B"
+      ],
+      "notes": [
+        "Collections page: 'Available in select western markets'. Not in 2026 Style Guide.",
+        "New for 2026 per Deckorators blog (Jan 2026); collections page limits it to select western markets."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "hold",
+      "salesListingReason": "Owner RD-06: held from normal Minnesota sales until region-specific supply is verified.",
+      "salesPriority": null,
+      "quoteEligible": false
+    },
+    {
+      "id": "deckorators-meridian",
+      "name": "Meridian (2027)",
+      "material": "capped-composite (CoolDeck)",
+      "availability": "announced",
+      "manufacturerTier": "upcoming",
+      "status": "verified",
+      "src": [
+        "dk-2027-pr",
+        "dk-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "deckorators-meridian--hudson",
+          "name": "Hudson",
+          "status": "verified",
+          "src": [
+            "dk-2027-pr",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "coming-soon",
+          "salesPriority": null,
+          "salesListingReason": "Browse-only until release (RD-05)."
+        },
+        {
+          "id": "deckorators-meridian--sonoma",
+          "name": "Sonoma",
+          "status": "verified",
+          "src": [
+            "dk-2027-pr",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "coming-soon",
+          "salesPriority": null,
+          "salesListingReason": "Browse-only until release (RD-05)."
+        },
+        {
+          "id": "deckorators-meridian--catalina",
+          "name": "Catalina",
+          "status": "verified",
+          "src": [
+            "dk-2027-pr",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "coming-soon",
+          "salesPriority": null,
+          "salesListingReason": "Browse-only until release (RD-05)."
+        },
+        {
+          "id": "deckorators-meridian--newport",
+          "name": "Newport",
+          "status": "verified",
+          "src": [
+            "dk-2027-pr",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "coming-soon",
+          "salesPriority": null,
+          "salesListingReason": "Browse-only until release (RD-05)."
+        }
+      ],
+      "profiles": [
+        {
+          "id": "deckorators-meridian--grooved-1in",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.4,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "unverified",
+          "src": [
+            "aos-research-v1"
+          ],
+          "note": "Only the 1-inch thickness is confirmed (press release).",
+          "basis": "manufacturer",
+          "fieldStatus": {}
+        },
+        {
+          "id": "deckorators-meridian--solid-1in",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 1.0,
+          "actualWidthIn": 5.4,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "unverified",
+          "src": [
+            "aos-research-v1"
+          ],
+          "basis": "manufacturer",
+          "fieldStatus": {}
+        }
+      ],
+      "trim": [],
+      "features": [],
+      "notes": [
+        "Available January 2027. First Deckorators collection after the MoistureShield asset acquisition."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "coming-soon",
+      "salesListingReason": "Owner RD-05: Coming Soon, browse-only until release, profiles and availability are verified (announced for January 2027). Not the MoistureShield lines of the same name.",
+      "salesPriority": null,
+      "comingSoon": {
+        "announcedAvailability": "January 2027",
+        "src": [
+          "dk-2027-pr"
+        ],
+        "browseOnly": true
+      },
+      "quoteEligible": false
+    },
+    {
+      "id": "deckorators-elevate",
+      "name": "Elevate (2027)",
+      "material": "capped-composite",
+      "availability": "announced",
+      "manufacturerTier": "upcoming",
+      "status": "verified",
+      "src": [
+        "dk-2027-pr",
+        "dk-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "deckorators-elevate--basin-brown",
+          "name": "Basin Brown",
+          "status": "verified",
+          "src": [
+            "dk-2027-pr",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "coming-soon",
+          "salesPriority": null,
+          "salesListingReason": "Browse-only until release (RD-05)."
+        },
+        {
+          "id": "deckorators-elevate--ridge-gray",
+          "name": "Ridge Gray",
+          "status": "verified",
+          "src": [
+            "dk-2027-pr",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "coming-soon",
+          "salesPriority": null,
+          "salesListingReason": "Browse-only until release (RD-05)."
+        }
+      ],
+      "profiles": [
+        {
+          "id": "deckorators-elevate--grooved-5-5",
+          "kind": "deck-board",
+          "edge": "grooved",
+          "core": "scalloped",
+          "actualThicknessIn": 0.9375,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            12,
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "unverified",
+          "src": [
+            "aos-research-v1"
+          ],
+          "basis": "manufacturer",
+          "fieldStatus": {}
+        },
+        {
+          "id": "deckorators-elevate--solid-5-5",
+          "kind": "deck-board",
+          "edge": "solid",
+          "core": "scalloped",
+          "actualThicknessIn": 0.9375,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            16,
+            20
+          ],
+          "colorIds": null,
+          "status": "unverified",
+          "src": [
+            "aos-research-v1"
+          ],
+          "basis": "manufacturer",
+          "fieldStatus": {}
+        }
+      ],
+      "trim": [],
+      "features": [],
+      "notes": [
+        "Available January 2027; ground and over-water installation per press release. Profiles unpublished."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "coming-soon",
+      "salesListingReason": "Owner RD-05: Coming Soon, browse-only until release, profiles and availability are verified (announced for January 2027). Not the MoistureShield lines of the same name.",
+      "salesPriority": null,
+      "comingSoon": {
+        "announcedAvailability": "January 2027",
+        "src": [
+          "dk-2027-pr"
+        ],
+        "browseOnly": true
+      },
+      "quoteEligible": false
+    },
+    {
+      "id": "deckorators-picture-frame",
+      "name": "Dark Slate Picture Frame Board",
+      "material": "mineral-composite (Surestone)",
+      "availability": "current",
+      "manufacturerTier": "accent",
+      "status": "verified",
+      "src": [
+        "dk-style-2026",
+        "dk-collections"
+      ],
+      "subgroups": null,
+      "colors": [
+        {
+          "id": "deckorators-picture-frame--dark-slate",
+          "name": "Dark Slate",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections"
+          ],
+          "visual": {
+            "swatchHex": null,
+            "texture": null,
+            "assetRights": "not-obtained",
+            "note": "No manufacturer image or texture licensed; swatch must be sampled from a physical board or a licensed asset."
+          },
+          "basis": "manufacturer",
+          "salesListing": "listed",
+          "salesPriority": null
+        }
+      ],
+      "profiles": [
+        {
+          "id": "deckorators-picture-frame--grooved-3-5",
+          "kind": "accent-board",
+          "edge": "grooved",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 3.5,
+          "lengthsFt": [
+            21
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-frame-page"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "deckorators-picture-frame--solid-3-5",
+          "kind": "accent-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 3.5,
+          "lengthsFt": [
+            21
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-frame-page"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "deckorators-picture-frame--solid-5-5",
+          "kind": "accent-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 5.5,
+          "lengthsFt": [
+            21
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-frame-page"
+          ],
+          "basis": "manufacturer"
+        },
+        {
+          "id": "deckorators-picture-frame--solid-7-25",
+          "kind": "accent-board",
+          "edge": "solid",
+          "core": null,
+          "actualThicknessIn": 0.875,
+          "actualWidthIn": 7.25,
+          "lengthsFt": [
+            21
+          ],
+          "colorIds": null,
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-collections",
+            "dk-frame-page"
+          ],
+          "basis": "manufacturer"
+        }
+      ],
+      "trim": [],
+      "features": [],
+      "notes": [
+        "Accent/border product. Deckorators says it complements Voyage and Vista (and Vault, now discontinued); the 2026 Style Guide says it pairs with all Deckorators decking except Venture.",
+        "21 ft lengths."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "quoteEligible": true
+    }
+  ],
+  "accessories": [
+    {
+      "id": "dk-fascia-8",
+      "kind": "fascia",
+      "actualWidthIn": 8,
+      "lengthsFt": [
+        12
+      ],
+      "appliesTo": [
+        "deckorators-voyage",
+        "deckorators-vista"
+      ],
+      "actualThicknessIn": null,
+      "status": "verified",
+      "src": [
+        "dk-style-2026",
+        "dk-overview-2026"
+      ],
+      "note": "Thickness by line from the 2026 Decking Overview Brochure (15799_12/25): Surestone 7/16 in, traditional composite 1/2 in.",
+      "basis": "manufacturer",
+      "actualThicknessInByLine": {
+        "deckorators-voyage": 0.4375,
+        "deckorators-vista": 0.5
+      }
+    },
+    {
+      "id": "dk-fascia-11-25",
+      "kind": "fascia",
+      "actualWidthIn": 11.25,
+      "lengthsFt": [
+        12
+      ],
+      "appliesTo": [
+        "deckorators-voyage",
+        "deckorators-summit",
+        "deckorators-vista",
+        "deckorators-venture"
+      ],
+      "actualThicknessIn": null,
+      "status": "verified",
+      "src": [
+        "dk-style-2026",
+        "dk-overview-2026"
+      ],
+      "basis": "manufacturer",
+      "actualThicknessInByLine": {
+        "deckorators-voyage": 0.4375,
+        "deckorators-summit": 0.4375,
+        "deckorators-vista": 0.5,
+        "deckorators-venture": 0.5
+      },
+      "note": "Thickness by line from the 2026 Decking Overview Brochure (15799_12/25): Surestone 7/16 in, traditional composite 1/2 in."
+    },
+    {
+      "id": "dk-step-tread",
+      "kind": "stair-tread",
+      "actualWidthIn": 11.25,
+      "lengthsFt": [
+        13
+      ],
+      "colorsNote": "Voyage Khaya, Voyage Tundra, Dark Slate",
+      "status": "verified",
+      "src": [
+        "dk-style-2026"
+      ],
+      "basis": "manufacturer"
+    }
+  ],
+  "rules": [
+    {
+      "id": "dk-surestone-joists",
+      "topic": "joist-spacing",
+      "appliesTo": [
+        "deckorators-voyage",
+        "deckorators-summit",
+        "deckorators-picture-frame"
+      ],
+      "value": {
+        "residentialOc": 16,
+        "pictureFrameOc": 16,
+        "diagonalOc": 12,
+        "commercialOc": 12
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "dk-surestone-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "dk-surestone-stairs",
+      "topic": "stair-tread-support",
+      "appliesTo": [
+        "deckorators-voyage",
+        "deckorators-summit",
+        "deckorators-picture-frame"
+      ],
+      "value": {
+        "stringerOc": 9,
+        "minStringers": 5,
+        "treadOverhangMaxIn": 0.5
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "dk-surestone-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "dk-surestone-gap",
+      "topic": "gapping",
+      "appliesTo": [
+        "deckorators-voyage",
+        "deckorators-summit",
+        "deckorators-picture-frame"
+      ],
+      "value": {
+        "side": {
+          "above32F": 0.125,
+          "below32F": 0.1875
+        },
+        "end": {
+          "above32F": 0.0625,
+          "below32F": 0.125
+        },
+        "toStructuresIn": 0.25,
+        "maxOverhangIn": 1
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "dk-surestone-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "dk-vista-joists",
+      "topic": "joist-spacing",
+      "appliesTo": [
+        "deckorators-vista"
+      ],
+      "value": {
+        "residentialOc": 16,
+        "commercialOc": 12,
+        "diagonalOc": 12
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "dk-vista-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "dk-vista-stairs",
+      "topic": "stair-tread-support",
+      "appliesTo": [
+        "deckorators-vista"
+      ],
+      "value": {
+        "unsupportedStringerOc": 8,
+        "riserSupportedOc": 16,
+        "commercialRiserSupportedOc": 8
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "dk-vista-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "dk-vista-gap",
+      "topic": "gapping",
+      "appliesTo": [
+        "deckorators-vista"
+      ],
+      "value": {
+        "sideIn": 0.25,
+        "end": {
+          "le32F": 0.3125,
+          "33to79F": 0.25,
+          "ge80F": 0.125
+        },
+        "toStructuresIn": 0.25,
+        "endOverhangMaxIn": 1
+      },
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "dk-vista-install"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "dk-frame-compat",
+      "topic": "compatibility",
+      "appliesTo": [
+        "deckorators-picture-frame"
+      ],
+      "value": "Pairs with all Deckorators decking except Venture.",
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "dk-style-2026"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    }
+  ],
+  "gaps": [
+    "Summit actual thickness",
+    "Meridian and Elevate 2027 profiles and lengths",
+    "Altitude availability (western markets only; held)",
+    "Venture and Altitude installation guides not read",
+    "Per-color SKUs and AOS stock",
+    "Licensed or measured swatches/textures",
+    "Riser product (none named; fascia-as-riser unconfirmed)"
+  ],
+  "discontinued": [
+    {
+      "id": "deckorators-vault",
+      "name": "Vault",
+      "colors": [
+        "Dusk",
+        "Mesquite"
+      ],
+      "status": "verified",
+      "basis": "manufacturer",
+      "src": [
+        "dk-2026-blog"
+      ],
+      "note": "Being phased out as of end of 2025; limited stock."
+    },
+    {
+      "id": "deckorators-distressed",
+      "name": "Distressed",
+      "colors": [
+        "Cherrywood"
+      ],
+      "status": "verified",
+      "basis": "manufacturer",
+      "src": [
+        "dk-2026-blog"
+      ],
+      "note": "Discontinued."
+    },
+    {
+      "id": "deckorators-tropics",
+      "name": "Tropics",
+      "colors": [
+        "Hana Brown",
+        "Tidal Gray"
+      ],
+      "status": "verified",
+      "basis": "manufacturer",
+      "src": [
+        "dk-2026-blog"
+      ],
+      "note": "Discontinued; limited availability through select dealers."
+    },
+    {
+      "id": "deckorators-trailhead",
+      "name": "Trailhead",
+      "colors": [
+        "Ridgeline",
+        "Pathway",
+        "Canyon"
+      ],
+      "status": "verified",
+      "basis": "manufacturer",
+      "src": [
+        "dk-2026-blog"
+      ],
+      "note": "Discontinued."
+    },
+    {
+      "id": "deckorators-pioneer",
+      "name": "Pioneer (Home Depot Canada exclusive)",
+      "colors": [
+        "Timberline Brown",
+        "Riverside Brown",
+        "Fieldstone Grey"
+      ],
+      "status": "verified",
+      "basis": "manufacturer",
+      "src": [
+        "dk-2026-blog"
+      ],
+      "note": "Being discontinued in 2026."
+    }
+  ],
+  "aosSalesConfig": {
+    "basis": "aos-design",
+    "status": "owner-approved",
+    "src": [
+      "aos-decking-standard-2026-11-11"
+    ],
+    "inheritsStandard": "decking-sales-standard.json (owner-approved 11 Nov 2026)",
+    "selections": [],
+    "defaults": {},
+    "exceptionReport": {
+      "basis": "manufacturer",
+      "reuseUnchanged": "All 16 standard rules.",
+      "exceptions": [
+        {
+          "topic": "Q09 fascia",
+          "finding": "Voyage 8 and 11-1/4 in, Summit 11-1/4 in (7/16 in thick); Vista 8 and 11-1/4 in, Venture 11-1/4 in (1/2 in thick); 12 ft; in each line's colors.",
+          "status": "verified",
+          "src": [
+            "dk-overview-2026",
+            "dk-style-2026"
+          ]
+        },
+        {
+          "topic": "Q11 risers",
+          "finding": "No riser board is named by Deckorators (retailers sell the 8 in fascia as 'fascia & riser'; not manufacturer-confirmed). Summit and Venture have no 8 in board.",
+          "status": "listed-unconfirmed",
+          "src": [
+            "dk-overview-2026"
+          ],
+          "salesBehavior": "Riser visual from fascia, marked 'selection/technical review required'."
+        },
+        {
+          "topic": "Q10 treads",
+          "finding": "Dedicated 11-1/4 in step treads only in Voyage Khaya, Voyage Tundra and Dark Slate. Other colors: solid-edge deck boards, which Deckorators calls ideal for stair treads.",
+          "status": "verified",
+          "src": [
+            "dk-overview-2026",
+            "dk-style-2026"
+          ]
+        },
+        {
+          "topic": "Q07 contrast",
+          "finding": "Dark Slate Picture Frame Board is an approved contrast border for all Deckorators decking except Venture. Venture is 15/16 in vs 7/8 in for the others.",
+          "status": "verified",
+          "src": [
+            "dk-style-2026",
+            "dk-venture"
+          ]
+        },
+        {
+          "topic": "Collections",
+          "finding": "Meridian and Elevate (Jan 2027) and Altitude (western markets) held; Vault, Distressed, Tropics, Trailhead and Pioneer discontinued (reference only for older decks).",
+          "status": "verified",
+          "src": [
+            "dk-2027-pr",
+            "dk-collections",
+            "dk-2026-blog"
+          ]
+        }
+      ],
+      "aosDecisions": [],
+      "note": "Exception-only review per the owner directive. Research status only; nothing implemented."
+    },
+    "remainingDecisions": [
+      {
+        "id": "RD-01",
+        "field": "global_start",
+        "ownerEntry": "none",
+        "decision": "No brand or collection preselected on a new deck; James chooses brand, collection, then color.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-decking-complete-2026-11-11"
+        ]
+      },
+      {
+        "id": "RD-05",
+        "field": "decor_2027",
+        "ownerEntry": "coming",
+        "decision": "Deckorators announced 2027 lines in a Coming Soon browse-only area until release, profiles and availability are verified; distinct from MoistureShield Meridian/Elevate.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-decking-complete-2026-11-11"
+        ]
+      },
+      {
+        "id": "RD-06",
+        "field": "decor_altitude",
+        "ownerEntry": "hold",
+        "decision": "Deckorators Altitude held from normal Minnesota sales until region-specific supply is verified.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-decking-complete-2026-11-11"
+        ]
+      }
+    ]
+  },
+  "discontinuedPolicy": {
+    "basis": "aos-design",
+    "status": "owner-approved",
+    "src": [
+      "aos-decking-complete-2026-11-11"
+    ],
+    "note": "Discontinued lines are reference only for matching older decks (consistent with RD-03 legacy handling)."
+  }
+}

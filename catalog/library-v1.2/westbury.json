@@ -1,0 +1,1616 @@
+{
+  "meta": {
+    "schema": "aos-product-library",
+    "schemaVersion": "1.2.0",
+    "libraryId": "westbury",
+    "category": "railing",
+    "libraryVersion": "2026-11-11.1",
+    "verifiedAsOf": "2026-11-06",
+    "useLimits": "Sales-design reference. Not purchase-ready SKUs, not engineering or code approval. Rules are reference-only and must not be enforced or ordered from without production verification.",
+    "notes": [],
+    "revisedAsOf": "2026-11-11",
+    "changesV1_1": [
+      "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular.",
+      "All Westbury families listed; restrictions shown as notices instead of hiding families. Added Tuscany install-instruction mount heights.",
+      "Owner selections W01-W16 (11 Nov 2026) added as aosSalesConfig: defaults Tuscany C10 / Black Fine Texture / 36 in / surface plate; Montego held (W04); Sorrento stairs suggest Tuscany with confirmation (W11); gates, drink rail, caps, lighting only once compatibility is verified; owner notes verbatim.",
+      "Owner 11 Nov: AOS stock colors are White, Black and Bronze Fine Texture; salesPriority 1 so they show first. Nothing hidden; inventory unverified.",
+      "Owner clarification 11 Nov: these defaults are the Westbury category default and also the global application default. Approved selections unchanged."
+    ],
+    "statusModel": {
+      "basis": {
+        "manufacturer": "Manufacturer product data",
+        "code": "Building code text",
+        "industry-standard": "Industry guide (AWPA, AWC DCA 6)",
+        "aos-design": "AOS design concept or AOS choice; not a manufacturer product",
+        "retail-example": "Seen at a retailer; not manufacturer data",
+        "earlier-research": "Carried from AOS planning research; not re-checked"
+      },
+      "status": {
+        "verified": "Confirmed against an official primary source in this pass",
+        "listed-unconfirmed": "Appears in an official source but ambiguous or incomplete",
+        "conflict": "Official sources disagree",
+        "secondary-source": "Matches a secondary summary; primary text not read",
+        "unverified": "Not confirmed in this pass",
+        "aos-decision": "AOS design decision still to be made or confirmed. No manufacturer data exists",
+        "owner-approved": "AOS design choice approved by the owner (sales design). Not construction approval",
+        "pending-verification": "Structural, hardware, supplier or code detail that must be verified before construction use"
+      },
+      "fieldStatus": "Overrides status for individual fields of a record (e.g. a profile whose width is verified but thickness is not).",
+      "salesListing": {
+        "listed": "Shown to James",
+        "listed-with-notice": "Shown with a short notice (availability, restriction or code note)",
+        "hold": "Not shown until the stated reason is resolved"
+      },
+      "salesPriority": "Optional AOS ordering for frequently used products (sorted first). Never hides products."
+    },
+    "changesV1_2": [
+      "v1.2 (11 Nov 2026): owner decision closure D-01..D-08 recorded where it applies; version labels updated. No product IDs removed or renamed."
+    ]
+  },
+  "brand": {
+    "id": "westbury",
+    "name": "Westbury",
+    "manufacturer": "Digger Specialties, Inc. (DSI)"
+  },
+  "sources": [
+    {
+      "id": "wb-overview",
+      "title": "Westbury railing overview (DSI)",
+      "url": "https://diggerspecialties.com/products/railing/",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "wb-tuscany",
+      "title": "Tuscany Aluminum Railing",
+      "url": "https://diggerspecialties.com/products/railing/aluminum-railing/tuscany-aluminum-railing/",
+      "revision": "web page; re-read 2026-11-11 for gates, drink rail, caps, lighting and post heights",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "wb-montego",
+      "title": "Montego Aluminum Railing",
+      "url": "https://diggerspecialties.com/products/railing/aluminum-railing/montego-aluminum-railing/",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "wb-riviera",
+      "title": "Riviera Aluminum Railing",
+      "url": "https://diggerspecialties.com/products/railing/aluminum-railing/riviera-aluminum-railing/",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "wb-verticable",
+      "title": "VertiCable Railing",
+      "url": "https://diggerspecialties.com/products/railing/cable-railing/verticle-cable-railing/",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "wb-bellacavo",
+      "title": "Bella Cavo Horizontal Cable Railing",
+      "url": "https://diggerspecialties.com/products/railing/cable-railing/horizontal-cable-railing/",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "wb-veranda",
+      "title": "Veranda Glass Railing",
+      "url": "https://diggerspecialties.com/products/railing/glass-railing/",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "wb-sorrento",
+      "title": "Sorrento Mesh Railing",
+      "url": "https://diggerspecialties.com/products/railing/mesh-railing/",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "wb-posts",
+      "title": "Westbury Aluminum Posts",
+      "url": "https://diggerspecialties.com/products/railing/aluminum-railing/westbury-aluminum-posts/",
+      "revision": "web page; re-read 2026-11-11 for gates, drink rail, caps, lighting and post heights",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "wb-code-reports",
+      "title": "Westbury code reports listed on Tuscany/Riviera pages",
+      "url": "https://diggerspecialties.com/products/railing/aluminum-railing/tuscany-aluminum-railing/",
+      "revision": "CCRR-0163 (2012/2015/2018 codes); CCRR-0530 (2018/2021 codes); Miami-Dade NOA 22-1128.02",
+      "kind": "code-report",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "wb-tuscany-install",
+      "title": "Tuscany & Montego (C10, C101, C20) Installation Instructions",
+      "url": "https://res.cloudinary.com/monsma-dam/image/upload/v1724853097/Westbury_C10_C101_C20_Installation_s9led1.pdf",
+      "revision": "DSI, dated 06/30/23 (hosted by a distributor's asset library)",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-westbury-spec-2026-11-11",
+      "title": "AOS Westbury Aluminum Railing Owner-Selected Sales/Design Specification",
+      "url": "Claude Project doc claude/aos-westbury-railing-owner-spec-2026-11-11.md (package: owner-specs/AOS_Westbury_Railing_Owner_Selections_2026-11-11.md)",
+      "revision": "Handoff 2026-11-11 from completed 5-page questionnaire; SHA-256 fa33976b2847df0c380cc5abe04119e2858a355569e8393a1709242ac4d33cc7",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    }
+  ],
+  "finishes": [
+    {
+      "id": "westbury--gloss-white",
+      "name": "Gloss White",
+      "status": "verified",
+      "src": [
+        "wb-riviera",
+        "wb-tuscany"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer",
+      "salesPriority": null
+    },
+    {
+      "id": "westbury--white-fine-texture",
+      "name": "White Fine Texture",
+      "status": "verified",
+      "src": [
+        "wb-riviera",
+        "wb-tuscany"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer",
+      "salesPriority": 1,
+      "aosStock": {
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "decided": "2026-11-11",
+        "note": "Owner-identified AOS stock color; supplier inventory not verified."
+      }
+    },
+    {
+      "id": "westbury--gloss-beige",
+      "name": "Gloss Beige",
+      "status": "verified",
+      "src": [
+        "wb-riviera",
+        "wb-tuscany"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer",
+      "salesPriority": null
+    },
+    {
+      "id": "westbury--sandy-shore",
+      "name": "Sandy Shore",
+      "status": "verified",
+      "src": [
+        "wb-riviera",
+        "wb-tuscany"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer",
+      "salesPriority": null
+    },
+    {
+      "id": "westbury--grey-fine-texture",
+      "name": "Grey Fine Texture",
+      "status": "verified",
+      "src": [
+        "wb-riviera",
+        "wb-tuscany"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer",
+      "salesPriority": null
+    },
+    {
+      "id": "westbury--ninety-bronze",
+      "name": "Ninety Bronze",
+      "status": "verified",
+      "src": [
+        "wb-riviera",
+        "wb-tuscany"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer",
+      "salesPriority": null
+    },
+    {
+      "id": "westbury--bronze-fine-texture",
+      "name": "Bronze Fine Texture",
+      "status": "verified",
+      "src": [
+        "wb-riviera",
+        "wb-tuscany"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer",
+      "salesPriority": 1,
+      "aosStock": {
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "decided": "2026-11-11",
+        "note": "Owner-identified AOS stock color; supplier inventory not verified."
+      }
+    },
+    {
+      "id": "westbury--speckled-walnut",
+      "name": "Speckled Walnut",
+      "status": "verified",
+      "src": [
+        "wb-riviera",
+        "wb-tuscany"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer",
+      "salesPriority": null
+    },
+    {
+      "id": "westbury--brown-fine-texture",
+      "name": "Brown Fine Texture",
+      "status": "verified",
+      "src": [
+        "wb-riviera",
+        "wb-tuscany"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer",
+      "salesPriority": null
+    },
+    {
+      "id": "westbury--chocolate",
+      "name": "Chocolate",
+      "status": "verified",
+      "src": [
+        "wb-riviera",
+        "wb-tuscany"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer",
+      "salesPriority": null
+    },
+    {
+      "id": "westbury--satin-black",
+      "name": "Satin Black",
+      "status": "verified",
+      "src": [
+        "wb-riviera",
+        "wb-tuscany"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer",
+      "salesPriority": null
+    },
+    {
+      "id": "westbury--black-fine-texture",
+      "name": "Black Fine Texture",
+      "status": "verified",
+      "src": [
+        "wb-riviera",
+        "wb-tuscany"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer",
+      "salesPriority": 1,
+      "aosStock": {
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "decided": "2026-11-11",
+        "note": "Owner-identified AOS stock color; supplier inventory not verified."
+      }
+    }
+  ],
+  "systems": [
+    {
+      "id": "westbury-tuscany",
+      "name": "Tuscany",
+      "family": "Westbury Aluminum",
+      "visualGeometry": "vertical-baluster",
+      "material": "aluminum",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "wb-tuscany"
+      ],
+      "models": [
+        {
+          "id": "westbury-tuscany--c10",
+          "code": "C10",
+          "name": "Square balusters",
+          "infill": "square-baluster-0.75",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-tuscany--c101",
+          "code": "C101",
+          "name": "Round balusters",
+          "infill": "round-baluster-0.75",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "boxed": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "assembled": [
+            5,
+            6,
+            7,
+            8
+          ]
+        },
+        "stairLengthsFt": {
+          "boxed": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "assembled": [
+            6,
+            8
+          ]
+        }
+      },
+      "finishIds": [
+        "westbury--gloss-white",
+        "westbury--white-fine-texture",
+        "westbury--gloss-beige",
+        "westbury--sandy-shore",
+        "westbury--grey-fine-texture",
+        "westbury--ninety-bronze",
+        "westbury--bronze-fine-texture",
+        "westbury--speckled-walnut",
+        "westbury--brown-fine-texture",
+        "westbury--chocolate",
+        "westbury--satin-black",
+        "westbury--black-fine-texture"
+      ],
+      "finishRestrictions": [
+        {
+          "appliesTo": "assembled sections",
+          "finishIds": [
+            "westbury--black-fine-texture",
+            "westbury--bronze-fine-texture",
+            "westbury--white-fine-texture",
+            "westbury--gloss-white"
+          ]
+        }
+      ],
+      "geometryData": {
+        "topRailIn": [
+          1.75,
+          1.375
+        ],
+        "bottomRailIn": [
+          1.75,
+          1.25
+        ],
+        "balusterIn": 0.75,
+        "balusterSpacingIn": {
+          "level": 3.875,
+          "stair": 3.625
+        },
+        "railSupportIncluded": "7 and 8 ft"
+      },
+      "gates": {
+        "singleOpeningIn": [
+          36,
+          48,
+          60
+        ],
+        "doubleOpeningIn": [
+          72,
+          96,
+          120
+        ],
+        "custom": true,
+        "salesAddOn": {
+          "decision": "W09",
+          "status": "pending-verification",
+          "note": "Offered as a separate add-on once compatibility is verified."
+        }
+      },
+      "codeReports": [
+        "CCRR-0163",
+        "CCRR-0530",
+        "Miami-Dade NOA 22-1128.02"
+      ],
+      "recommendedDefault": true,
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "installReference": {
+        "mountSpacingIn": {
+          "36": 32.625,
+          "42": 38.625
+        },
+        "measure": "top of bottom mount to top of top mount",
+        "firstBalusterToPostMinIn": 1.25,
+        "src": [
+          "wb-tuscany-install"
+        ],
+        "status": "verified",
+        "note": "Instructions give no maximum post spacing; the longest sold section (8 ft, with rail support) is the practical limit. Code-report spacing not read."
+      }
+    },
+    {
+      "id": "westbury-montego",
+      "name": "Montego",
+      "family": "Westbury Aluminum",
+      "visualGeometry": "vertical-baluster-curved",
+      "material": "aluminum",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "wb-montego"
+      ],
+      "models": [
+        {
+          "id": "westbury-montego--c20",
+          "code": "C20",
+          "name": "Montego",
+          "infill": "architectural-curved-baluster",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-montego--c23",
+          "code": "C23",
+          "name": "Montego II",
+          "infill": "architectural-curved-baluster",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "boxed": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        },
+        "stairLengthsFt": {
+          "boxed": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        }
+      },
+      "finishIds": [
+        "westbury--gloss-white",
+        "westbury--white-fine-texture",
+        "westbury--gloss-beige",
+        "westbury--sandy-shore",
+        "westbury--grey-fine-texture",
+        "westbury--ninety-bronze",
+        "westbury--bronze-fine-texture",
+        "westbury--speckled-walnut",
+        "westbury--brown-fine-texture",
+        "westbury--chocolate",
+        "westbury--satin-black",
+        "westbury--black-fine-texture"
+      ],
+      "codeStatus": "Manufacturer states: Montego Series has NOT been tested for any building codes.",
+      "gates": {
+        "matching": false,
+        "note": "Use Tuscany gate (C20) or Riviera gate (C23) per earlier research; not re-verified."
+      },
+      "basis": "manufacturer",
+      "salesListing": "hold",
+      "salesPriority": null,
+      "salesListingReason": "Owner decision W04: held until DSI's 'not tested for any building codes' caveat is cleared. Records kept for review."
+    },
+    {
+      "id": "westbury-riviera",
+      "name": "Riviera",
+      "family": "Westbury Aluminum",
+      "visualGeometry": "three-rail-baluster",
+      "material": "aluminum",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "wb-riviera"
+      ],
+      "models": [
+        {
+          "id": "westbury-riviera--c30",
+          "code": "C30",
+          "name": "Riviera, square",
+          "infill": "square-baluster-0.75",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-riviera--c301",
+          "code": "C301",
+          "name": "Riviera, round",
+          "infill": "round-baluster-0.75",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-riviera--c30r",
+          "code": "C30R",
+          "name": "Riviera R, square",
+          "infill": "square-baluster-0.75",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-riviera--c301r",
+          "code": "C301R",
+          "name": "Riviera R, round",
+          "infill": "round-baluster-0.75",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-riviera--c31",
+          "code": "C31",
+          "name": "Riviera I, square",
+          "infill": "square-baluster-0.75",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-riviera--c311",
+          "code": "C311",
+          "name": "Riviera I, round",
+          "infill": "round-baluster-0.75",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-riviera--c32",
+          "code": "C32",
+          "name": "Riviera II, square",
+          "infill": "square-baluster-0.75",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-riviera--c321",
+          "code": "C321",
+          "name": "Riviera II, round",
+          "infill": "round-baluster-0.75",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-riviera--c33",
+          "code": "C33",
+          "name": "Riviera III, square",
+          "infill": "square-baluster-0.75",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-riviera--c331",
+          "code": "C331",
+          "name": "Riviera III, round",
+          "infill": "round-baluster-0.75",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-riviera--c34",
+          "code": "C34",
+          "name": "Riviera IV, square",
+          "infill": "square-baluster-0.75",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-riviera--c341",
+          "code": "C341",
+          "name": "Riviera IV, round",
+          "infill": "round-baluster-0.75",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "boxed": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        },
+        "stairLengthsFt": {
+          "boxed": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        }
+      },
+      "finishIds": [
+        "westbury--gloss-white",
+        "westbury--white-fine-texture",
+        "westbury--gloss-beige",
+        "westbury--sandy-shore",
+        "westbury--grey-fine-texture",
+        "westbury--ninety-bronze",
+        "westbury--bronze-fine-texture",
+        "westbury--speckled-walnut",
+        "westbury--brown-fine-texture",
+        "westbury--chocolate",
+        "westbury--satin-black",
+        "westbury--black-fine-texture"
+      ],
+      "geometryData": {
+        "topRailIn": [
+          1.75,
+          1.375
+        ],
+        "midRailIn": [
+          1.75,
+          1.25
+        ],
+        "bottomRailIn": [
+          1.75,
+          1.25
+        ],
+        "balusterSpacingIn": {
+          "level": 3.875,
+          "stair": 3.625
+        },
+        "railSupportIncluded": "5-8 ft"
+      },
+      "gates": {
+        "singleOpeningIn": [
+          36,
+          48,
+          60
+        ],
+        "doubleOpeningIn": [
+          72,
+          96,
+          120
+        ],
+        "custom": true,
+        "salesAddOn": {
+          "decision": "W09",
+          "status": "pending-verification",
+          "note": "Offered as a separate add-on once compatibility is verified."
+        }
+      },
+      "codeReports": [
+        "CCRR-0163",
+        "Miami-Dade NOA 22-1128.02"
+      ],
+      "notes": [
+        "Riviera R/I/II/III/IV visual differences are not described in text; need manufacturer images before modeling each."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null
+    },
+    {
+      "id": "westbury-verticable",
+      "name": "VertiCable",
+      "family": "Westbury Cable",
+      "visualGeometry": "vertical-cable",
+      "material": "aluminum + 316 SS cable",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "wb-verticable"
+      ],
+      "models": [
+        {
+          "id": "westbury-verticable--c80",
+          "code": "C80",
+          "name": "VertiCable",
+          "infill": "vertical-cable-1/8 + 5/8 round baluster",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "boxed": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        },
+        "stairLengthsFt": {
+          "boxed": [
+            4,
+            5,
+            6
+          ],
+          "note": "5 ft stair not available as assembled section without mounts"
+        }
+      },
+      "finishIds": [
+        "westbury--gloss-white",
+        "westbury--white-fine-texture",
+        "westbury--gloss-beige",
+        "westbury--sandy-shore",
+        "westbury--grey-fine-texture",
+        "westbury--ninety-bronze",
+        "westbury--bronze-fine-texture",
+        "westbury--speckled-walnut",
+        "westbury--brown-fine-texture",
+        "westbury--chocolate",
+        "westbury--satin-black",
+        "westbury--black-fine-texture"
+      ],
+      "restrictions": [
+        "7 and 8 ft straight sections: 36 in height only",
+        "Assembled sections: 36 in only, in Black FT, Bronze FT, White FT, Gloss White"
+      ],
+      "finishRestrictions": [
+        {
+          "appliesTo": "assembled sections",
+          "finishIds": [
+            "westbury--black-fine-texture",
+            "westbury--bronze-fine-texture",
+            "westbury--white-fine-texture",
+            "westbury--gloss-white"
+          ]
+        }
+      ],
+      "gates": {
+        "singleOpeningIn": [
+          36,
+          48,
+          60
+        ],
+        "doubleOpeningIn": [
+          72,
+          96,
+          120
+        ],
+        "custom": true,
+        "salesAddOn": {
+          "decision": "W09",
+          "status": "pending-verification",
+          "note": "Offered as a separate add-on once compatibility is verified."
+        }
+      },
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null
+    },
+    {
+      "id": "westbury-bella-cavo",
+      "name": "Bella Cavo",
+      "family": "Westbury Cable",
+      "visualGeometry": "horizontal-cable",
+      "material": "aluminum + 316 SS cable",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "wb-bellacavo"
+      ],
+      "models": [
+        {
+          "id": "westbury-bella-cavo--c90",
+          "code": "C90",
+          "name": "Bella Cavo one-rail",
+          "infill": "horizontal-cable-1/8 @ 3 in o.c.",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-bella-cavo--c91",
+          "code": "C91",
+          "name": "Bella Cavo two-rail",
+          "infill": "horizontal-cable-1/8 @ 3 in o.c.",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "boxed": [
+            4,
+            6,
+            8
+          ]
+        },
+        "stairLengthsFt": {
+          "boxed": [
+            4,
+            6,
+            8
+          ]
+        }
+      },
+      "finishIds": [
+        "westbury--gloss-white",
+        "westbury--white-fine-texture",
+        "westbury--gloss-beige",
+        "westbury--sandy-shore",
+        "westbury--grey-fine-texture",
+        "westbury--ninety-bronze",
+        "westbury--bronze-fine-texture",
+        "westbury--speckled-walnut",
+        "westbury--brown-fine-texture",
+        "westbury--chocolate",
+        "westbury--satin-black",
+        "westbury--black-fine-texture"
+      ],
+      "restrictions": [
+        "Boxed kits do not include cable (sold in 250/500/1000 ft rolls)",
+        "Requires dedicated tension posts at ends, corners and stair ends"
+      ],
+      "gates": {
+        "singleOpeningIn": [
+          36,
+          48
+        ],
+        "doubleOpeningIn": [
+          72,
+          96
+        ],
+        "salesAddOn": {
+          "decision": "W09",
+          "status": "pending-verification",
+          "note": "Offered as a separate add-on once compatibility is verified."
+        }
+      },
+      "basis": "manufacturer",
+      "salesListing": "listed-with-notice",
+      "salesPriority": null,
+      "salesListingReason": "Cable sold separately; requires tension posts."
+    },
+    {
+      "id": "westbury-veranda",
+      "name": "Veranda",
+      "family": "Westbury Glass",
+      "visualGeometry": "glass-panel",
+      "material": "aluminum + tempered glass",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "wb-veranda"
+      ],
+      "models": [
+        {
+          "id": "westbury-veranda--c70",
+          "code": "C70",
+          "name": "Veranda",
+          "infill": "tempered-glass-0.25",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "boxed": [
+            4,
+            5,
+            6
+          ]
+        },
+        "stairLengthsFt": {
+          "specialOrder": true
+        }
+      },
+      "finishIds": [
+        "westbury--gloss-white",
+        "westbury--white-fine-texture",
+        "westbury--gloss-beige",
+        "westbury--sandy-shore",
+        "westbury--grey-fine-texture",
+        "westbury--ninety-bronze",
+        "westbury--bronze-fine-texture",
+        "westbury--speckled-walnut",
+        "westbury--brown-fine-texture",
+        "westbury--chocolate",
+        "westbury--satin-black",
+        "westbury--black-fine-texture"
+      ],
+      "restrictions": [
+        "1/4 in glass panels ordered separately",
+        "3/8 in rail kit: glass not available through DSI",
+        "All stair sections and stair glass special order",
+        "Grey/bronze glass special order"
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed-with-notice",
+      "salesPriority": null,
+      "salesListingReason": "Glass ordered separately; stair sections special order."
+    },
+    {
+      "id": "westbury-sorrento",
+      "name": "Sorrento",
+      "family": "Westbury Mesh",
+      "visualGeometry": "welded-mesh",
+      "material": "aluminum + stainless mesh",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "wb-sorrento"
+      ],
+      "models": [
+        {
+          "id": "westbury-sorrento--c60",
+          "code": "C60",
+          "name": "Sorrento 2-3/8 in mesh",
+          "infill": "mesh-2.375",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "westbury-sorrento--c61",
+          "code": "C61",
+          "name": "Sorrento 3-5/8 in mesh",
+          "infill": "mesh-3.625",
+          "status": "listed-unconfirmed",
+          "statusNote": "Page body says 3-5/8 in openings are 'coming soon'.",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "assembled": [
+            4,
+            5,
+            6
+          ]
+        },
+        "stairLengthsFt": null
+      },
+      "finishIds": [
+        "westbury--gloss-white",
+        "westbury--white-fine-texture",
+        "westbury--gloss-beige",
+        "westbury--sandy-shore",
+        "westbury--grey-fine-texture",
+        "westbury--ninety-bronze",
+        "westbury--bronze-fine-texture",
+        "westbury--speckled-walnut",
+        "westbury--brown-fine-texture",
+        "westbury--chocolate",
+        "westbury--satin-black",
+        "westbury--black-fine-texture"
+      ],
+      "stairFallback": {
+        "systemIds": [
+          "westbury-tuscany",
+          "westbury-verticable"
+        ],
+        "rule": "Manufacturer: no Sorrento stair sections; DSI suggests Tuscany or VertiCable stair sections.",
+        "aosBehavior": {
+          "suggest": "westbury-tuscany",
+          "requiresConfirmation": true,
+          "silentSubstitution": false,
+          "src": [
+            "aos-westbury-spec-2026-11-11"
+          ],
+          "decision": "W11"
+        }
+      },
+      "notes": [
+        "Rail and mesh colors can be mixed by special order; clear-coat mesh option."
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed-with-notice",
+      "salesPriority": null,
+      "salesListingReason": "No Sorrento stair sections. Deck Studio suggests Tuscany for stairs and asks James to confirm (W11)."
+    }
+  ],
+  "accessories": [
+    {
+      "id": "westbury-posts",
+      "kind": "post-family",
+      "status": "verified",
+      "src": [
+        "wb-posts"
+      ],
+      "sizesIn": {
+        "2 residential": 0.09,
+        "2 heavy duty": 0.093,
+        "2 fascia mount": 0.093,
+        "2.5 / power": 0.125,
+        "3": 0.095,
+        "4": 0.125,
+        "4 deco": "0.065/0.090",
+        "6": 0.125,
+        "6 deco": 0.11
+      },
+      "mounts": [
+        "post with plate (37/43/47/53 in)",
+        "crossover with plate (36/42)",
+        "core drill (45/51/55/61)",
+        "fascia mount (61; line/corner bracket kits)",
+        "assembled post kits 37/43 (crossover 36/42)",
+        "post sleeves 4/6/6 deco",
+        "support posts"
+      ],
+      "finishRestrictions": "Assembled post kits only in Black FT, Bronze FT, White FT, Gloss White",
+      "note": "No max post spacing, substrate or blocking on page; see DSI install PDFs.",
+      "basis": "manufacturer",
+      "salesMounting": {
+        "decision": "W06",
+        "initialRelease": [
+          "post with plate",
+          "crossover with plate (incl. corner crossover)"
+        ],
+        "researchOnly": [
+          "core drill",
+          "fascia mount",
+          "post sleeves",
+          "support posts"
+        ],
+        "src": [
+          "aos-westbury-spec-2026-11-11",
+          "wb-posts"
+        ]
+      },
+      "surfacePlateHeightsIn": {
+        "postWithPlate": [
+          37,
+          43,
+          47,
+          53
+        ],
+        "crossoverWithPlate": [
+          36,
+          42
+        ],
+        "status": "verified",
+        "src": [
+          "wb-posts"
+        ]
+      },
+      "approvals": {
+        "2in-heavy-duty": "IRC",
+        "2-1/2in-power": "IRC, IBC, Miami-Dade",
+        "status": "verified",
+        "src": [
+          "wb-posts"
+        ],
+        "note": "Family-to-post-size requirements not published (W07 pending)."
+      },
+      "caps": {
+        "options": [
+          "Flat Cap",
+          "Ball Cap"
+        ],
+        "flair": "two-piece",
+        "finishes": null,
+        "status": "verified",
+        "src": [
+          "wb-posts"
+        ],
+        "salesUse": "W16: only where compatibility is verified"
+      }
+    },
+    {
+      "id": "westbury-drink-rail",
+      "kind": "upgrade",
+      "status": "listed-unconfirmed",
+      "src": [
+        "wb-tuscany"
+      ],
+      "note": "Listed under 'Works Well With' on the Tuscany page; no dimensions or compatibility limits. Offered only once supported (W08).",
+      "basis": "manufacturer",
+      "name": "Deck Drink Rail Adapter"
+    },
+    {
+      "id": "westbury-ada-handrail",
+      "kind": "upgrade",
+      "status": "unverified",
+      "src": [
+        "wb-overview"
+      ],
+      "basis": "earlier-research"
+    },
+    {
+      "id": "westbury-lighting",
+      "kind": "upgrade",
+      "status": "listed-unconfirmed",
+      "src": [
+        "wb-tuscany",
+        "wb-posts"
+      ],
+      "basis": "manufacturer",
+      "note": "Tuscany 'available with Magena Star Lighting'; posts page lists deck post lights and Low Voltage LED Deck Lighting. Models and finishes not published (W16)."
+    }
+  ],
+  "rules": [
+    {
+      "id": "wb-montego-code",
+      "topic": "code-status",
+      "appliesTo": [
+        "westbury-montego"
+      ],
+      "value": "Not tested for any building codes (manufacturer).",
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "wb-montego"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "wb-reports",
+      "topic": "code-status",
+      "appliesTo": [
+        "westbury-tuscany",
+        "westbury-riviera"
+      ],
+      "value": "Listed reports: CCRR-0163, CCRR-0530, Miami-Dade NOA 22-1128.02. Model scope per report not verified.",
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "listed-unconfirmed",
+      "src": [
+        "wb-code-reports"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary"
+    }
+  ],
+  "gaps": [
+    "Max post spacing, mounting and blocking for wood decks (not in Tuscany instructions; code reports not read)",
+    "Scope of each code report by model",
+    "Riviera R / I / II / III / IV visual differences",
+    "SKUs and per-finish stock",
+    "Measured finish colors",
+    "Post size required per family/height/section/gate (W07)",
+    "Drink rail adapter compatibility (W08)",
+    "Gate hardware and compatibility (W09)",
+    "Tuscany stair-fallback transition parts (W11)",
+    "Corner post compatibility across families/finishes (W15)",
+    "Post cap and light finishes/compatibility (W16)",
+    "Supplier inventory for the AOS stock finishes (White, Black, Bronze Fine Texture); supplier/distributor (blank)"
+  ],
+  "aosSalesConfig": {
+    "basis": "aos-design",
+    "status": "owner-approved",
+    "src": [
+      "aos-westbury-spec-2026-11-11"
+    ],
+    "note": "Owner sales/design selections layered on the manufacturer records. They do not change manufacturer facts and are not manufacturer, code or supplier approval.",
+    "defaults": {
+      "systemId": "westbury-tuscany",
+      "modelId": "westbury-tuscany--c10",
+      "finishId": "westbury--black-fine-texture",
+      "heightIn": 36,
+      "heightOptionsIn": [
+        36,
+        42
+      ],
+      "postMount": "surface-plate"
+    },
+    "selections": [
+      {
+        "id": "W01",
+        "decision": "Starting railing style",
+        "behavior": "Westbury Tuscany C10 (square vertical pickets) is the initial/default Westbury selection; other eligible verified families remain available.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "W02",
+        "decision": "Default finish",
+        "behavior": "Black Fine Texture.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "src": [
+            "wb-tuscany"
+          ],
+          "note": "Black Fine Texture is one of the 12 boxed finishes and one of the 4 assembled-section finishes for Tuscany."
+        }
+      },
+      {
+        "id": "W03",
+        "decision": "Finish scope",
+        "behavior": "One default finish, with independent overrides by deck edge. Stairs inherit the adjoining railing by default and may be changed per stair (W10).",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "W04",
+        "decision": "Montego",
+        "behavior": "Held out of sales selections until cleared. Researched records kept for future review; not selectable for quotes.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "src": [
+            "wb-montego"
+          ],
+          "note": "DSI: Montego Series has NOT been tested for any building codes."
+        }
+      },
+      {
+        "id": "W05",
+        "decision": "Guard height",
+        "behavior": "36 in default; 42 in available, subject to model/configuration compatibility and project requirements.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "src": [
+            "wb-tuscany",
+            "wb-verticable"
+          ],
+          "note": "All families list 36/42; exceptions in library (e.g. VertiCable 7-8 ft sections and assembled sections 36 in only)."
+        }
+      },
+      {
+        "id": "W06",
+        "decision": "Post-mounting options",
+        "behavior": "Surface plate mounting only for the initial release. Fascia, core-drill and other types stay in the research catalog but are not initial sales options.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "src": [
+            "wb-posts"
+          ],
+          "note": "Surface-plate types exist: post with plate (37/43/47/53 in) and crossover/corner crossover with plate (36/42 in)."
+        }
+      },
+      {
+        "id": "W07",
+        "decision": "Post size",
+        "behavior": "Prefer 2 in posts where manufacturer-approved; upgrade as needed for family, section/span, height and connections. Never force a 2 in post on an incompatible assembly.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "pending-verification",
+          "note": "DSI's posts page does not state which post size each family, height, section length or gate requires. 2 in Heavy Duty and 2-1/2 in Power posts are marked IRC; 2-1/2 in Power also IBC and Miami-Dade."
+        }
+      },
+      {
+        "id": "W08",
+        "decision": "Drink rail / wide top",
+        "behavior": "Offer only when supported by manufacturer-approved components for the selected model/finish/configuration.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "pending-verification",
+          "note": "Tuscany page lists a 'Deck Drink Rail Adapter' under 'Works Well With' but gives no dimensions or compatibility limits; no wide top rail profile is listed."
+        }
+      },
+      {
+        "id": "W09",
+        "decision": "Railing gates",
+        "behavior": "Include verified compatible Westbury gates as a separate sales add-on.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "pending-verification",
+          "note": "Tuscany gates: single openings 36/48/60 in, double 72/96/120 in, adjustable, custom sizes. Gate hardware, post requirements and per-family/finish compatibility not verified."
+        }
+      },
+      {
+        "id": "W10",
+        "decision": "Stair railing style/finish",
+        "behavior": "Inherit the adjoining deck edge by default; allow per-stair overrides without altering the deck edge or other stairs.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "W11",
+        "decision": "Unsupported stair families",
+        "behavior": "Suggest Tuscany as a fallback and require James's confirmation. Never silently change a selected product; do not claim universal compatibility.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "pending-verification",
+          "note": "Transition hardware between a non-matching family and Tuscany stair sections (posts, rails, attachment) not verified."
+        }
+      },
+      {
+        "id": "W12",
+        "decision": "Stair railing sides",
+        "behavior": "Both sides on by default, with separate left/right controls per staircase. Regulatory guard/handrail requirements are verified separately.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "W13",
+        "decision": "Per-edge customization",
+        "behavior": "Independent Westbury system/model AND finish on each deck-edge section.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "W14",
+        "decision": "Main product change after customization",
+        "behavior": "Ask James each time whether to keep or replace existing manual overrides. Never silently overwrite and never auto-keep without asking. (Differs from AOS wood railing.)",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "W15",
+        "decision": "Corner posts",
+        "behavior": "Share one post at a corner only where the selected assemblies are compatible and the connection is approved; count one physical post once.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "pending-verification",
+          "note": "Corner post compatibility between different families/finishes and connection approval not verified."
+        }
+      },
+      {
+        "id": "W16",
+        "decision": "Post caps and lighting",
+        "behavior": "Offer only manufacturer-verified, compatible post-cap and lighting options; if uncertain, do not present as approved.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-westbury-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "pending-verification",
+          "note": "DSI lists Flat Cap and Ball Cap, two-piece flair, deck post lights and Low Voltage LED Deck Lighting; Tuscany 'available with Magena Star Lighting'. Cap/light finishes and per-post compatibility not published."
+        }
+      }
+    ],
+    "ownerNotes": [
+      {
+        "field": "Additional owner-written note",
+        "ownerEntry": "Stock colors, white black Bronz",
+        "status": "pending-verification",
+        "treatment": "AOS stock colors = White Fine Texture, Black Fine Texture, Bronze Fine Texture (owner-confirmed 11 Nov). Sorted first via salesPriority; all other verified finishes stay available. Supplier inventory, lead times and distribution still unverified.",
+        "resolvedAs": {
+          "finishIds": [
+            "westbury--white-fine-texture",
+            "westbury--black-fine-texture",
+            "westbury--bronze-fine-texture"
+          ],
+          "confirmedBy": "owner",
+          "date": "2026-11-11",
+          "statement": "The stock colors are the Fine Texture finishes; show them at the top."
+        }
+      },
+      {
+        "field": "Supplier/distributor",
+        "ownerEntry": "",
+        "status": "pending-verification",
+        "treatment": "Left blank; not inferred."
+      },
+      {
+        "field": "Additional preferred family/finish",
+        "ownerEntry": "",
+        "status": "pending-verification",
+        "treatment": "Left blank; not inferred."
+      }
+    ],
+    "openItems": [
+      "Exact model-to-finish/height/section combinations, certified post and mounting choices, max post spacing and current evaluation reports.",
+      "Whether 2 in posts are approved for each selected assembly, including gate loads and corner/stair junctions.",
+      "Tuscany fallback transitions for non-matching stair families.",
+      "Supplier availability, lead times, AOS stock colors (white/black/bronze) and exact finish names.",
+      "Drink-rail assemblies, gate components, post caps and lighting, including media/texture rights.",
+      "Structural guard connections, code requirements, warranty and installation instructions before construction/takeoff use."
+    ],
+    "behaviorRules": [
+      "James operates the app; keep selection simple and minimize scrolling.",
+      "Show the entire eligible verified lineup (except held or incompatible products) with Tuscany C10 / Black Fine Texture / 36 in / surface mount as initial defaults.",
+      "Track one default selection and finish plus per-edge system/model and finish overrides; stairs inherit the adjoining edge until overridden.",
+      "When the default Westbury product changes, ask James whether to keep or overwrite manual edge/stair overrides; preserve geometry, stairs, placement, selections and stair controls.",
+      "Gates are a separate compatible add-on; drink rails, lighting and post caps appear only where support is documented.",
+      "Shared posts are one physical component when approved; component mapping and takeoffs must not imply an unverified assembly is adequate.",
+      "A catalog record does not mean the product is implemented or tested in Deck Studio."
+    ],
+    "finishOrdering": {
+      "priority1": [
+        "westbury--white-fine-texture",
+        "westbury--black-fine-texture",
+        "westbury--bronze-fine-texture"
+      ],
+      "thenRest": "manufacturer order",
+      "hidesNothing": true,
+      "note": "All three are also Tuscany assembled-section finishes (with Gloss White)."
+    },
+    "defaultsScope": {
+      "scope": "category default",
+      "hierarchyLevel": 2,
+      "isApplicationDefault": true,
+      "note": "See index.json applicationRailingDefaults (owner clarification 11 Nov 2026). Approved selections unchanged.",
+      "basis": "aos-design",
+      "status": "owner-approved"
+    }
+  }
+}

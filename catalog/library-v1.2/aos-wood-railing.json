@@ -1,0 +1,1049 @@
+{
+  "meta": {
+    "schema": "aos-product-library",
+    "schemaVersion": "1.2.0",
+    "libraryId": "aos-wood-railing",
+    "category": "railing",
+    "libraryVersion": "2026-11-11.1",
+    "verifiedAsOf": "2026-11-06",
+    "useLimits": "Sales-design reference. Not purchase-ready SKUs, not engineering or code approval. Rules are reference-only and must not be enforced or ordered from without production verification.",
+    "notes": [
+      "Sales-design presets are owner-approved (D4 FINAL, 11 Nov 2026). Not construction-approved. Structural connections, manufacturer hardware and code compliance are pending verification."
+    ],
+    "revisedAsOf": "2026-11-11",
+    "changesV1_1": [
+      "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular.",
+      "D4: in-deck posts defined as wood posts inside the rim framing, extending through the decking with decking cut around them (not surface-mounted bases). Both face-mount and in-deck kept for all four presets as AOS design decisions; attachment, blocking, hold-downs and post spacing remain unverified.",
+      "Wood railing styles, finishes and mounting options re-labelled aos-design / aos-decision (were defaulting to verified). IRC numeric values marked secondary-source; MN adoption and guard trigger verified from MN Rules 1309.",
+      "D4 FINAL (11 Nov 2026): four presets fully specified (members, balusters, caps, posts, heights, spacing), corners, post caps (flat default / pyramid), stairs and separate 1-1/2 in satin-black handrail, sales behavior rules, owner-entered notes verbatim, open items and compatibility questions. Design choices owner-approved; structure, hardware and code pending verification."
+    ],
+    "statusModel": {
+      "basis": {
+        "manufacturer": "Manufacturer product data",
+        "code": "Building code text",
+        "industry-standard": "Industry guide (AWPA, AWC DCA 6)",
+        "aos-design": "AOS design concept or AOS choice; not a manufacturer product",
+        "retail-example": "Seen at a retailer; not manufacturer data",
+        "earlier-research": "Carried from AOS planning research; not re-checked"
+      },
+      "status": {
+        "verified": "Confirmed against an official primary source in this pass",
+        "listed-unconfirmed": "Appears in an official source but ambiguous or incomplete",
+        "conflict": "Official sources disagree",
+        "secondary-source": "Matches a secondary summary; primary text not read",
+        "unverified": "Not confirmed in this pass",
+        "aos-decision": "AOS design decision still to be made or confirmed. No manufacturer data exists",
+        "owner-approved": "AOS design choice approved by the owner (sales design). Not construction approval",
+        "pending-verification": "Structural, hardware, supplier or code detail that must be verified before construction use"
+      },
+      "fieldStatus": "Overrides status for individual fields of a record (e.g. a profile whose width is verified but thickness is not).",
+      "salesListing": {
+        "listed": "Shown to James",
+        "listed-with-notice": "Shown with a short notice (availability, restriction or code note)",
+        "hold": "Not shown until the stated reason is resolved"
+      },
+      "salesPriority": "Optional AOS ordering for frequently used products (sorted first). Never hides products."
+    },
+    "changesV1_2": [
+      "v1.2 (11 Nov 2026): owner decision closure D-01..D-08 recorded where it applies; version labels updated. No product IDs removed or renamed.",
+      "D-01: systems[aos-wood-railing].styleSelection changed (see CHANGES_v1_2.json)",
+      "D-02: systems[aos-wood-railing].mountingSelection changed (see CHANGES_v1_2.json)",
+      "D-02: systems[aos-wood-railing].openItems changed (see CHANGES_v1_2.json)"
+    ]
+  },
+  "brand": {
+    "id": "aos",
+    "name": "AOS Built",
+    "manufacturer": "AOS Home Solutions"
+  },
+  "sources": [
+    {
+      "id": "mn-dli-2025",
+      "title": "MN DLI 2024 International Model Codes Review (Nov 2025)",
+      "url": "https://dli.mn.gov/sites/default/files/pdf/2024-international-model-codes-review-nov-2025.pdf",
+      "revision": "Nov 2025: MN Residential Code adopts 2018 IRC with amendments; TAG recommends 2024 IRC",
+      "kind": "code",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "irc-2018-guards",
+      "title": "2018 IRC guard requirements (third-party summary)",
+      "url": "https://www.jaspector.com/codes/irc-2018/ch03-building-planning/guard-height-baluster-spacing-irc-2018/",
+      "revision": "2018 IRC R312",
+      "kind": "code",
+      "accessed": "2026-11-06",
+      "tier": "secondary"
+    },
+    {
+      "id": "irc-2018-handrails",
+      "title": "2018 IRC stair and handrail requirements (third-party summary)",
+      "url": "https://www.jaspector.com/codes/irc-2018/ch03-building-planning/stairway-tread-riser-handrail-details-irc-2018/",
+      "revision": "2018 IRC R311.7",
+      "kind": "code",
+      "accessed": "2026-11-06",
+      "tier": "secondary"
+    },
+    {
+      "id": "awc-dca6",
+      "title": "AWC DCA 6 Prescriptive Residential Wood Deck Construction Guide",
+      "url": "https://web-media.awc.org/wp-content/uploads/2022/02/17210514/AWC-DCA62015-DeckGuide-1804.pdf",
+      "revision": "2015 IRC basis, (c) 2018, 04-18",
+      "kind": "industry-standard",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-wood-notes",
+      "title": "AOS Built Wood Railing Planning Notes",
+      "url": "AOS_Built_Wood_Railing_Planning_Notes.md",
+      "revision": "planning",
+      "kind": "aos-research",
+      "accessed": "2026-11-06",
+      "tier": "secondary"
+    },
+    {
+      "id": "mn-rule-1309",
+      "title": "Minnesota Rules chapter 1309 (Minnesota Residential Code)",
+      "url": "https://www.revisor.mn.gov/rules/1309/full",
+      "revision": "1309.0010 adopts 2018 IRC; 1309.0312 amends R312; 1309.0507 amends R507 tables (published 2020-03-31)",
+      "kind": "code",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-d4-spec-2026-11-11",
+      "title": "AOS Wood Railing D4 Owner Specification (FINAL)",
+      "url": "Claude Project doc claude/aos-wood-railing-d4-owner-spec-2026-11-11.md (package: owner-specs/AOS_Wood_Railing_D4_FINAL_2026-11-11.md)",
+      "revision": "Handoff 2026-11-11; SHA-256 9a51520094fda3e38fd67f0fdd5b523967a971bc4142ec424f07e63a4403f9f5",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-owner-closure-2026-11-11",
+      "title": "AOS Owner Decision Closure D-01 to D-08",
+      "url": "Claude Project doc claude/aos-owner-decision-closure-2026-11-11.md (package: owner-specs/AOS_Owner_Decision_Closure_D01-D08_2026-11-11.md; completed form owner-specs/AOS_Owner_Decision_Closure_Completed_Form_2026-11-11.pdf)",
+      "revision": "Owner decisions 2026-11-11; md SHA-256 1ca9028afd34f303076fa6f8c215a582b715ca566ad9646310a6e0fcecbaa6d0; form SHA-256 375552aec6f0ad86bffab3ed2210d572714fde15ad08a82334f26851cf0b7754",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    }
+  ],
+  "finishes": [
+    {
+      "id": "aos-wood--green-treated",
+      "name": "Green Treated (railing lumber)",
+      "group": "lumber",
+      "basis": "aos-design",
+      "status": "owner-approved",
+      "src": [
+        "aos-d4-spec-2026-11-11"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      }
+    },
+    {
+      "id": "aos-wood--brown-treated",
+      "name": "Brown Treated (railing lumber)",
+      "group": "lumber",
+      "basis": "aos-design",
+      "status": "owner-approved",
+      "src": [
+        "aos-d4-spec-2026-11-11"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      }
+    },
+    {
+      "id": "aos-wood-baluster--black-aluminum",
+      "name": "Black (round aluminum balusters and connectors)",
+      "group": "baluster",
+      "basis": "aos-design",
+      "status": "owner-approved",
+      "src": [
+        "aos-d4-spec-2026-11-11"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      }
+    },
+    {
+      "id": "aos-wood-handrail--satin-black",
+      "name": "Satin Black (metal handrail and brackets)",
+      "group": "handrail",
+      "basis": "aos-design",
+      "status": "owner-approved",
+      "src": [
+        "aos-d4-spec-2026-11-11"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      }
+    }
+  ],
+  "systems": [
+    {
+      "id": "aos-wood-railing",
+      "name": "AOS Wood Railing",
+      "family": "AOS Built",
+      "visualGeometry": "wood-baluster",
+      "material": "pressure-treated wood (+ optional aluminum balusters)",
+      "availability": "current",
+      "status": "owner-approved",
+      "src": [
+        "aos-d4-spec-2026-11-11"
+      ],
+      "models": [
+        {
+          "id": "aos-wood-railing--ttop-wood",
+          "code": "ttop-wood",
+          "name": "T-top + wood balusters",
+          "style": "t-top",
+          "infill": "wood-2x2",
+          "members": {
+            "topCap": {
+              "nominal": "2x6",
+              "orientation": "flat"
+            },
+            "upperRail": {
+              "nominal": "2x4",
+              "orientation": "vertical (on edge)",
+              "note": "separate member under the cap"
+            },
+            "lowerRail": {
+              "nominal": "2x4",
+              "orientation": "vertical (on edge)"
+            },
+            "balusters": {
+              "material": "wood",
+              "nominal": "2x2",
+              "shape": "square",
+              "form": "straight",
+              "mountingOptions": [
+                {
+                  "id": "face-mounted",
+                  "label": "Face-mounted outside the upper/lower rails",
+                  "default": true
+                },
+                {
+                  "id": "between-rails",
+                  "label": "Between the rails",
+                  "default": false
+                }
+              ]
+            }
+          },
+          "supportedMountingIds": [
+            "face-mount",
+            "in-deck"
+          ],
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "src": [
+            "aos-d4-spec-2026-11-11"
+          ]
+        },
+        {
+          "id": "aos-wood-railing--ttop-alum",
+          "code": "ttop-alum",
+          "name": "T-top + aluminum balusters",
+          "style": "t-top",
+          "infill": "round-black-aluminum",
+          "members": {
+            "topCap": {
+              "nominal": "2x6",
+              "orientation": "flat"
+            },
+            "upperRail": {
+              "nominal": "2x4",
+              "orientation": "vertical (on edge)",
+              "note": "separate member under the cap"
+            },
+            "lowerRail": {
+              "nominal": "2x4",
+              "orientation": "vertical (on edge)"
+            },
+            "balusters": {
+              "material": "aluminum",
+              "shape": "round",
+              "color": "black",
+              "orientation": "vertical",
+              "connectors": "black connectors at the upper and lower wood rails",
+              "product": {
+                "status": "pending-verification",
+                "note": "Manufacturer, SKU, diameter and connector compatibility not identified (owner form field blank)."
+              }
+            }
+          },
+          "supportedMountingIds": [
+            "face-mount",
+            "in-deck"
+          ],
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "src": [
+            "aos-d4-spec-2026-11-11"
+          ]
+        },
+        {
+          "id": "aos-wood-railing--std-wood",
+          "code": "std-wood",
+          "name": "Standard + wood balusters",
+          "style": "standard",
+          "infill": "wood-2x2",
+          "members": {
+            "topCap": {
+              "nominal": "2x4",
+              "orientation": "flat"
+            },
+            "upperRail": {
+              "nominal": "2x4",
+              "orientation": "vertical (on edge)",
+              "note": "separate member under the cap"
+            },
+            "lowerRail": {
+              "nominal": "2x4",
+              "orientation": "vertical (on edge)"
+            },
+            "balusters": {
+              "material": "wood",
+              "nominal": "2x2",
+              "shape": "square",
+              "form": "straight",
+              "mountingOptions": [
+                {
+                  "id": "face-mounted",
+                  "label": "Face-mounted outside the upper/lower rails",
+                  "default": true
+                },
+                {
+                  "id": "between-rails",
+                  "label": "Between the rails",
+                  "default": false
+                }
+              ]
+            }
+          },
+          "supportedMountingIds": [
+            "face-mount",
+            "in-deck"
+          ],
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "src": [
+            "aos-d4-spec-2026-11-11"
+          ]
+        },
+        {
+          "id": "aos-wood-railing--std-alum",
+          "code": "std-alum",
+          "name": "Standard + aluminum balusters",
+          "style": "standard",
+          "infill": "round-black-aluminum",
+          "members": {
+            "topCap": {
+              "nominal": "2x4",
+              "orientation": "flat"
+            },
+            "upperRail": {
+              "nominal": "2x4",
+              "orientation": "vertical (on edge)",
+              "note": "separate member under the cap"
+            },
+            "lowerRail": {
+              "nominal": "2x4",
+              "orientation": "vertical (on edge)"
+            },
+            "balusters": {
+              "material": "aluminum",
+              "shape": "round",
+              "color": "black",
+              "orientation": "vertical",
+              "connectors": "black connectors at the upper and lower wood rails",
+              "product": {
+                "status": "pending-verification",
+                "note": "Manufacturer, SKU, diameter and connector compatibility not identified (owner form field blank)."
+              }
+            }
+          },
+          "supportedMountingIds": [
+            "face-mount",
+            "in-deck"
+          ],
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "src": [
+            "aos-d4-spec-2026-11-11"
+          ]
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "builtToLength": true
+      },
+      "finishIds": [
+        "aos-wood--green-treated",
+        "aos-wood--brown-treated",
+        "aos-wood-baluster--black-aluminum",
+        "aos-wood-handrail--satin-black"
+      ],
+      "heightNote": "Level guard overall height above finished decking to top of cap: 36 in default, 42 in option.",
+      "postMounting": [
+        {
+          "id": "face-mount",
+          "label": "Face-mounted (outside rim)",
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "definition": "Wood posts fastened to the outside face of the perimeter rim or end joist.",
+          "supportedModelIds": [
+            "aos-wood-railing--ttop-wood",
+            "aos-wood-railing--ttop-alum",
+            "aos-wood-railing--std-wood",
+            "aos-wood-railing--std-alum"
+          ],
+          "salesVisual": {
+            "postPosition": "outside the rim face",
+            "deckingAtPost": "decking runs to the edge; not cut around posts",
+            "note": "Presentation geometry only."
+          },
+          "productionOpenItems": [
+            {
+              "item": "structural attachment method",
+              "status": "pending-verification",
+              "note": "Requires verification before use in construction documents."
+            },
+            {
+              "item": "blocking",
+              "status": "pending-verification",
+              "note": "Requires verification before use in construction documents."
+            },
+            {
+              "item": "hold-down hardware",
+              "status": "pending-verification",
+              "note": "Requires verification before use in construction documents."
+            },
+            {
+              "item": "post spacing",
+              "status": "pending-verification",
+              "note": "Requires verification before use in construction documents."
+            },
+            {
+              "item": "fasteners and rail-span limits",
+              "status": "pending-verification",
+              "note": "Requires verification before use in construction documents."
+            }
+          ],
+          "reference": {
+            "src": [
+              "awc-dca6"
+            ],
+            "basis": "industry-standard",
+            "status": "verified",
+            "note": "DCA 6 Figs. 25/26 show posts on the outside joist or rim (>=4x4 posts, >=2x8 joists, >=1,800 lb hold-downs). Reference only; not an approved AOS detail."
+          },
+          "src": [
+            "aos-d4-spec-2026-11-11"
+          ]
+        },
+        {
+          "id": "in-deck",
+          "label": "In-deck (inside rim framing)",
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "definition": "Wood posts installed INSIDE the perimeter rim framing and extending upward through the decking, with the decking cut around each post. Not a surface-mounted post base.",
+          "decision": {
+            "id": "D4",
+            "confirmedBy": "owner",
+            "date": "2026-11-10",
+            "scope": "Definition and availability of the configuration only. Structural details remain open."
+          },
+          "supportedModelIds": [
+            "aos-wood-railing--ttop-wood",
+            "aos-wood-railing--ttop-alum",
+            "aos-wood-railing--std-wood",
+            "aos-wood-railing--std-alum"
+          ],
+          "salesVisual": {
+            "postPosition": "inside the rim framing, rising through the deck surface",
+            "deckingAtPost": "decking (and any picture-frame board) cut/notched around each post",
+            "note": "Presentation geometry only."
+          },
+          "productionOpenItems": [
+            {
+              "item": "structural attachment method",
+              "status": "pending-verification",
+              "note": "Requires verification before use in construction documents."
+            },
+            {
+              "item": "blocking",
+              "status": "pending-verification",
+              "note": "Requires verification before use in construction documents."
+            },
+            {
+              "item": "hold-down hardware",
+              "status": "pending-verification",
+              "note": "Requires verification before use in construction documents."
+            },
+            {
+              "item": "post spacing",
+              "status": "pending-verification",
+              "note": "Requires verification before use in construction documents."
+            },
+            {
+              "item": "fasteners and rail-span limits",
+              "status": "pending-verification",
+              "note": "Requires verification before use in construction documents."
+            }
+          ],
+          "reference": {
+            "src": [
+              "awc-dca6"
+            ],
+            "basis": "industry-standard",
+            "status": "verified",
+            "note": "DCA 6 does not include an inside-rim guard-post detail; an AOS-approved or engineered detail is required."
+          },
+          "src": [
+            "aos-d4-spec-2026-11-11"
+          ]
+        }
+      ],
+      "stairRule": "A flat wood cap is not presumed graspable; every staircase uses the separate 1-1/2 in round handrail.",
+      "basis": "aos-design",
+      "salesListing": "listed-with-notice",
+      "salesPriority": null,
+      "mountingSelection": {
+        "options": [
+          "face-mount",
+          "in-deck"
+        ],
+        "default": "in-deck",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-d4-spec-2026-11-11",
+          "aos-owner-closure-2026-11-11"
+        ],
+        "note": "D-02 (11 Nov 2026): in-deck posts inside the rim framing are the starting mount; outside-rim face-mounted posts stay available for all four presets. Sales-design default only: the in-deck connection is NOT structurally approved.",
+        "decision": {
+          "id": "D-02",
+          "decision": "In-deck 4x4 wood posts inside the rim framing",
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "src": [
+            "aos-owner-closure-2026-11-11"
+          ],
+          "date": "2026-11-11"
+        }
+      },
+      "salesListingReason": "Owner-approved AOS design; structural connections, hardware products and code compliance pending verification.",
+      "sharedDefaults": {
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-d4-spec-2026-11-11"
+        ],
+        "post": {
+          "nominal": "4x4"
+        },
+        "postSpacingTargetFtOc": {
+          "value": 6,
+          "kind": "design target",
+          "status": "pending-verification",
+          "note": "Owner design target, not a verified structural span or spacing limit."
+        },
+        "balusterClearSpacingIn": {
+          "value": 3.75,
+          "measured": "surface to surface",
+          "distribution": "evenly, including end openings, subject to governing rules"
+        },
+        "bottomRailClearanceIn": {
+          "value": 3,
+          "measured": "decking to underside of bottom 2x4 rail"
+        },
+        "guardHeightIn": {
+          "default": 36,
+          "options": [
+            36,
+            42
+          ],
+          "measured": "above finished decking to top of cap"
+        },
+        "capOverPosts": {
+          "default": "continuous",
+          "options": [
+            {
+              "id": "continuous",
+              "label": "Continuous cap over posts"
+            },
+            {
+              "id": "exposed-posts",
+              "label": "Exposed 4x4 post tops with individual wood caps",
+              "postCapStyles": [
+                {
+                  "id": "flat",
+                  "label": "Flat wood post cap",
+                  "default": true
+                },
+                {
+                  "id": "pyramid",
+                  "label": "Pyramid / beveled wood post cap",
+                  "default": false
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "corners": {
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-d4-spec-2026-11-11"
+        ],
+        "sharedPost": "Share one 4x4 at corners when structurally feasible: one physical post, one 3D instance, one material count; never overlapping duplicates (Q1).",
+        "mixedCapStyles": "Different top-cap styles meeting at a corner terminate at the shared post; no blended transition (Q2).",
+        "structuralFeasibility": {
+          "status": "pending-verification",
+          "note": "Shared corner post loading not assessed."
+        }
+      },
+      "stairs": {
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-d4-spec-2026-11-11"
+        ],
+        "inheritsFromAdjoiningDeckEdge": [
+          "style (T-top / standard)",
+          "infill (wood / aluminum balusters)",
+          "wood baluster mounting",
+          "guard height (36/42 in)",
+          "post-top finish (Q8)"
+        ],
+        "perStaircaseOverrides": [
+          "railing configuration",
+          "guard height"
+        ],
+        "slopedCap": {
+          "t-top": "2x6 flat cap",
+          "standard": "flat 2x4 cap",
+          "balusters": "remain vertical",
+          "atSharedTopPost": "sloped cap terminates against the shared top post (Q7)"
+        },
+        "sides": {
+          "left": true,
+          "right": true,
+          "independentlyToggleable": true,
+          "note": "A sales toggle does not waive applicable code requirements."
+        },
+        "posts": {
+          "topPost": "share the existing deck-edge post where geometry and a verified structural connection permit; otherwise a separate top post",
+          "bottomAndIntermediate": "separate 4x4 posts as needed",
+          "location": {
+            "default": "outside",
+            "options": [
+              "outside",
+              "inside"
+            ],
+            "relativeTo": "stair framing"
+          }
+        },
+        "guardHeightIn": {
+          "default": "matches adjacent deck guard (36 or 42)",
+          "measured": "vertically from nosings to top of sloped wood cap",
+          "overridablePerStaircase": true
+        },
+        "handrail": {
+          "requiredFor": "all four presets",
+          "separateFromGuard": true,
+          "profile": "1-1/2 in diameter round",
+          "material": "metal",
+          "finish": "satin black",
+          "heightIn": {
+            "value": 36,
+            "measured": "vertically above stair tread nosings to top of handrail"
+          },
+          "mounting": "inside faces of the 4x4 stair posts on black stand-off brackets, with additional approved supports as needed",
+          "ends": {
+            "default": "return-into-post",
+            "options": [
+              {
+                "id": "return-into-post",
+                "label": "Return into wood 4x4 posts"
+              },
+              {
+                "id": "rounded-safety-return",
+                "label": "Rounded safety returns"
+              }
+            ]
+          },
+          "product": {
+            "status": "pending-verification",
+            "ownerEntry": "Westburry",
+            "note": "Westbury (DSI) lists an 'ADA Handrail' (https://diggerspecialties.com/products/railing/ada-handrail/), but diameter, black finish, stand-off brackets and returns are not published. Confirm before assuming."
+          },
+          "flatCapNotGraspable": true
+        },
+        "technicalVerification": {
+          "status": "pending-verification",
+          "items": [
+            "grip clearance",
+            "graspability",
+            "bracket rating",
+            "handrail continuity and returns",
+            "stair openings",
+            "connections"
+          ]
+        }
+      },
+      "salesBehavior": {
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-d4-spec-2026-11-11"
+        ],
+        "rules": [
+          {
+            "id": "lumber-global",
+            "rule": "Wood railing lumber is one uniform global choice (green or brown pressure-treated) for all AOS wood deck-edge sections and staircases. No per-edge or per-stair lumber overrides."
+          },
+          {
+            "id": "lumber-default",
+            "rule": "Initial lumber default matches green or brown treated decking; with composite/PVC decking it defaults to brown treated. James may change the global railing lumber independently of decking."
+          },
+          {
+            "id": "lumber-manual-kept",
+            "rule": "If James chose the railing lumber manually, later decking changes preserve that choice (Q5)."
+          },
+          {
+            "id": "style-defaults",
+            "rule": "One deck-wide default style and baluster infill, with per-edge overrides (T-top/standard; wood/round black aluminum) and per-stair overrides. Lumber is never part of these overrides."
+          },
+          {
+            "id": "global-change-inheriting-only",
+            "rule": "Changing the global style updates only sections still inheriting defaults; customized edges and staircases are not reset."
+          },
+          {
+            "id": "apply-to-all",
+            "rule": "An explicit Apply to All action, with confirmation, is the only way to overwrite edge/stair customizations."
+          },
+          {
+            "id": "preserve-design",
+            "rule": "Product switches preserve deck shape, exact geometry, stairs, perimeter positions, railing locations and unrelated selections; compatible overrides are kept and conflicts are flagged, never silently deleted."
+          },
+          {
+            "id": "stable-shared-posts",
+            "rule": "Shared corner and top stair posts use stable component references and are counted once in the model and any later takeoff."
+          },
+          {
+            "id": "no-gates",
+            "rule": "Wood railing gates are a future, separately approved add-on; not included now (Q6)."
+          }
+        ]
+      },
+      "ownerEnteredNotes": [
+        {
+          "field": "Preferred pressure-treated lumber supplier",
+          "ownerEntry": "#2 Pressure Treated Lumber",
+          "status": "pending-verification",
+          "treatment": "Appears to state a grade/material, not a supplier. Vendor unconfirmed."
+        },
+        {
+          "field": "Brown-treated product / brand / grade",
+          "ownerEntry": "Northern crossarm Co",
+          "status": "pending-verification",
+          "treatment": "Verify exact brand/product, dimensions, treatment and AOS availability. (A 'Northern Crossarm' treated-wood manufacturer appears on lumber-dealer showroom sites; not verified.)"
+        },
+        {
+          "field": "Round black aluminum baluster/connector brand",
+          "ownerEntry": "",
+          "status": "pending-verification",
+          "treatment": "Manufacturer/SKU and connector compatibility still to identify."
+        },
+        {
+          "field": "Round satin-black handrail/bracket supplier",
+          "ownerEntry": "Westburry",
+          "status": "pending-verification",
+          "treatment": "Owner spelling preserved. Confirm intended brand and that a compatible 1-1/2 in round system and brackets exist."
+        },
+        {
+          "field": "Additional owner notes",
+          "ownerEntry": "",
+          "status": "pending-verification",
+          "treatment": "No extra exceptions recorded."
+        }
+      ],
+      "openItems": [
+        {
+          "id": "lumber",
+          "status": "pending-verification",
+          "item": "Lumber merchant/vendor, species, grade/species combinations, stock lengths, brown-treated product and treatment details."
+        },
+        {
+          "id": "aluminum-balusters",
+          "status": "pending-verification",
+          "item": "Round black aluminum baluster and matched connectors, finish and diameter."
+        },
+        {
+          "id": "handrail-product",
+          "status": "pending-verification",
+          "item": "1-1/2 in round satin-black graspable metal handrail product, mounting and return parts; whether 'Westburry' offers it."
+        },
+        {
+          "id": "structural",
+          "status": "pending-verification",
+          "item": "Post anchoring for outside-rim, inside-rim and inside/outside stair posts; blocking, hold-downs, fasteners, post-spacing and rail-span limits; shared corner and top stair post loading."
+        },
+        {
+          "id": "code",
+          "status": "pending-verification",
+          "item": "Guard and stair opening rules, post/guard loads, handrail height range, graspable clearance, terminations and stair-side requirements per current code and product approvals."
+        },
+        {
+          "id": "in-deck-detail",
+          "status": "pending-verification",
+          "item": "Reviewed in-deck 4x4 guard-post detail: blocking, hold-down hardware, clearances and post-to-rim connection. Do not reuse outside-rim (face-mount) details without review (D-02)."
+        }
+      ],
+      "compatibilityQuestions": [
+        "Aluminum connectors on a vertical 2x4 rail: the connectors would mount to the 1-1/2 in narrow edge. Confirm the chosen connector fits that face.",
+        "Handrail projection: Minnesota limits handrail projection into the stair to 4.5 in per side (MN Rule 1309.0311). The 4x4 post (plus inside stair-post placement, if chosen) and stand-off bracket depth together need checking against stair width.",
+        "Handrail product: Westbury's ADA Handrail page publishes no diameter, black finish or stand-off bracket, so the 1-1/2 in satin-black round spec is not yet matched to a product.",
+        "Shared top stair post: a face-mounted deck post and an outside- or inside-mounted stair post may sit in different planes. Sharing works only where geometry lines up; otherwise the spec's separate top post applies.",
+        "Stair guard height 36/42 in from nosings is within the commonly cited 34 in minimum for stair guards (secondary source); a 36 in handrail is within the commonly cited 34-38 in range. Confirm against the ICC text.",
+        "Stair openings: 3-3/4 in clear spacing is measured on level runs. On sloped stair runs, openings and the triangle under the bottom rail need checking against stair opening rules.",
+        "Exposed posts with a T-top 2x6 cap: the cap must break at each post, and post caps (flat or pyramid) sit above the cap line. The visual model needs to show this per section.",
+        "Brown default with composite/PVC decking assumes brown-treated railing lumber is available from the AOS supplier (see owner-entered notes).",
+        "Current app post geometry (R1 rail inset, core chat note claude/aos-v53-r1-railing-review-items-for-c7.md): 2.52 in posts standing on the decking 1-1/2 in inside the finished edge (RAIL_FACE_INSET). D4 wood posts are nominal 4x4 (about 3-1/2 in actual), either on the outside rim face or inside the rim framing through the decking, so wood railing needs its own post placement per mounting rather than the shared inset.",
+        "Stair clear width: the app already raises a review alert below 36 in between post faces on 3 ft stairs. Wider 4x4 posts (especially inside-mounted stair posts) plus the inside-face handrail on stand-off brackets reduce clear width further; check the 3 ft default stair against both."
+      ],
+      "lumberSelection": {
+        "scope": "global",
+        "options": [
+          "aos-wood--green-treated",
+          "aos-wood--brown-treated"
+        ],
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-d4-spec-2026-11-11"
+        ]
+      },
+      "styleSelection": {
+        "options": [
+          "aos-wood-railing--ttop-wood",
+          "aos-wood-railing--ttop-alum",
+          "aos-wood-railing--std-wood",
+          "aos-wood-railing--std-alum"
+        ],
+        "default": "aos-wood-railing--ttop-alum",
+        "scope": "AOS wood category default only; overall new-deck default stays Westbury Tuscany C10, Black Fine Texture",
+        "decision": {
+          "id": "D-01",
+          "decision": "T-top, nominal flat 2x6 cap, with round black aluminum balusters",
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "src": [
+            "aos-owner-closure-2026-11-11"
+          ],
+          "date": "2026-11-11"
+        },
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-owner-closure-2026-11-11"
+        ]
+      }
+    }
+  ],
+  "accessories": [],
+  "rules": [
+    {
+      "id": "irc-guard-trigger",
+      "topic": "guard-required",
+      "appliesTo": [
+        "aos-wood-railing"
+      ],
+      "value": "Guards required on open sides of floors, stairs, ramps and landings more than 30 in above the floor or grade below (MN Rule 1309.0312, amending IRC R312).",
+      "ruleSource": "code",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "mn-rule-1309"
+      ],
+      "basis": "code",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "irc-guard-height",
+      "topic": "guard-height",
+      "appliesTo": [
+        "aos-wood-railing"
+      ],
+      "value": {
+        "deckMinIn": 36,
+        "stairOpenSideMinIn": 34
+      },
+      "ruleSource": "code",
+      "enforcement": "reference-only",
+      "status": "secondary-source",
+      "src": [
+        "irc-2018-guards",
+        "mn-rule-1309"
+      ],
+      "basis": "code",
+      "sourceTier": "secondary",
+      "note": "2018 IRC is the adopted Minnesota code (MN Rule 1309.0010, primary). The numeric values were read from a third-party summary, not the ICC text."
+    },
+    {
+      "id": "irc-guard-openings",
+      "topic": "guard-openings",
+      "appliesTo": [
+        "aos-wood-railing"
+      ],
+      "value": {
+        "deckSphereIn": 4,
+        "stairSphereIn": 4.375,
+        "stairTriangleSphereIn": 6
+      },
+      "ruleSource": "code",
+      "enforcement": "reference-only",
+      "status": "secondary-source",
+      "src": [
+        "irc-2018-guards",
+        "mn-rule-1309"
+      ],
+      "basis": "code",
+      "sourceTier": "secondary",
+      "note": "2018 IRC is the adopted Minnesota code (MN Rule 1309.0010, primary). The numeric values were read from a third-party summary, not the ICC text."
+    },
+    {
+      "id": "irc-guard-loads",
+      "topic": "guard-loads",
+      "appliesTo": [
+        "aos-wood-railing"
+      ],
+      "value": {
+        "topRailConcentratedLb": 200,
+        "infillLbPerSqFt": 50
+      },
+      "ruleSource": "code",
+      "enforcement": "reference-only",
+      "status": "secondary-source",
+      "src": [
+        "awc-dca6"
+      ],
+      "basis": "code",
+      "sourceTier": "secondary",
+      "note": "Load values from DCA 6 commentary on IRC Table R301.5, not the ICC text."
+    },
+    {
+      "id": "irc-handrail",
+      "topic": "handrail",
+      "appliesTo": [
+        "aos-wood-railing"
+      ],
+      "value": {
+        "requiredAtRisers": 4,
+        "heightIn": [
+          34,
+          38
+        ],
+        "typeIRoundDiaIn": [
+          1.25,
+          2
+        ],
+        "typeIIPerimeterIn": "> 6.25 with finger recess"
+      },
+      "ruleSource": "code",
+      "enforcement": "reference-only",
+      "status": "secondary-source",
+      "src": [
+        "irc-2018-handrails",
+        "awc-dca6",
+        "mn-rule-1309"
+      ],
+      "basis": "code",
+      "sourceTier": "secondary",
+      "note": "2018 IRC is the adopted Minnesota code (MN Rule 1309.0010, primary). The numeric values were read from a third-party summary, not the ICC text."
+    },
+    {
+      "id": "dca6-guard-post",
+      "topic": "guard-post",
+      "appliesTo": [
+        "aos-wood-railing"
+      ],
+      "value": {
+        "minPost": "4x4 (Fb >= 1,100 psi)",
+        "minSupportingJoist": "2x8",
+        "holdDownLb": 1800,
+        "maxPostSpacing": "not given"
+      },
+      "ruleSource": "industry-standard",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "awc-dca6"
+      ],
+      "basis": "industry-standard",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mn-code-edition",
+      "topic": "code-edition",
+      "appliesTo": [
+        "aos-wood-railing"
+      ],
+      "value": "Minnesota Residential Code adopts the 2018 IRC with amendments (MN Rule 1309.0010). Nov 2025 DLI review recommends the 2024 IRC; no effective date.",
+      "ruleSource": "code",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "mn-rule-1309",
+        "mn-dli-2025"
+      ],
+      "basis": "code",
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mn-handrail-projection",
+      "topic": "handrail",
+      "appliesTo": [
+        "aos-wood-railing"
+      ],
+      "value": "Handrails may not project more than 4.5 in on either side of the stairway (MN Rule 1309.0311, amending R311.7.1).",
+      "ruleSource": "code",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "mn-rule-1309"
+      ],
+      "basis": "code",
+      "sourceTier": "primary"
+    }
+  ],
+  "gaps": [
+    "Lumber vendor, species, grade, stock lengths and brown-treated product (owner entries: '#2 Pressure Treated Lumber', 'Northern crossarm Co')",
+    "Round black aluminum baluster and connector product",
+    "1-1/2 in satin-black handrail and bracket product ('Westburry' to confirm)",
+    "Post anchoring, blocking, hold-downs, fasteners, post-spacing and rail-span limits (face-mount, in-deck, stair posts)",
+    "Shared corner and top stair post loading",
+    "Code checks: stair openings, handrail projection/clearance/returns, guard loads (ICC primary text)",
+    "Reviewed in-deck 4x4 post detail (D-02 default mount): blocking, hold-downs, clearances, post-to-rim connection"
+  ]
+}

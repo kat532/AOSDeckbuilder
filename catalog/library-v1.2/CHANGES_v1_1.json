@@ -1,0 +1,158 @@
+[
+  {
+    "library": "trex",
+    "change": "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular."
+  },
+  {
+    "library": "trex",
+    "change": "Rope Swing changed from listed-unconfirmed to conflict and held: Transcend page and SKU document do not list it as decking."
+  },
+  {
+    "library": "trex",
+    "change": "Select 2x6: dimensions/lengths now confirmed by the Select page; colors limited to Pebble Grey and Saddle pending supplier confirmation."
+  },
+  {
+    "library": "trex",
+    "change": "Span chart resolved from Intertek CCRR-0301: all 1-in boards 16 in o.c. at 100 psf; 2x6 24 in at 100 psf or 16 in at 200 psf; Enhance stair treads 9 in o.c."
+  },
+  {
+    "library": "trex",
+    "change": "Shared decking standard (owner, 11 Nov 2026) referenced; brand exception report added (5 items)."
+  },
+  {
+    "library": "trex",
+    "change": "Complete decking standards (11 Nov, second package): RD-01, RD-02, RD-03 applied; quoteEligible added (listing vs quote eligibility kept separate)."
+  },
+  {
+    "library": "timbertech",
+    "change": "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular."
+  },
+  {
+    "library": "timbertech",
+    "change": "SIDELoc conflict resolved: SIDELoc is for Advanced PVC square-shoulder boards only, so the composite-guide prohibition does not conflict."
+  },
+  {
+    "library": "timbertech",
+    "change": "Shared decking standard (owner, 11 Nov 2026) referenced; brand exception report added (5 items)."
+  },
+  {
+    "library": "timbertech",
+    "change": "Complete decking standards (11 Nov, second package): RD-01 applied; quoteEligible added (listing vs quote eligibility kept separate)."
+  },
+  {
+    "library": "moistureshield",
+    "change": "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular."
+  },
+  {
+    "library": "moistureshield",
+    "change": "CoolDeck colors confirmed: Vision = Cathedral Stone, Cold Brew, Mochaccino (also the only marine-grade colors, 24 in span); Meridian = Citadel, Catalina, Shoal, Shoreside."
+  },
+  {
+    "library": "moistureshield",
+    "change": "Shared decking standard (owner, 11 Nov 2026) referenced; brand exception report added (5 items)."
+  },
+  {
+    "library": "moistureshield",
+    "change": "Complete decking standards (11 Nov, second package): RD-01, RD-04 applied; quoteEligible added (listing vs quote eligibility kept separate)."
+  },
+  {
+    "library": "deckorators",
+    "change": "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular."
+  },
+  {
+    "library": "deckorators",
+    "change": "Voyage and Dark Slate thickness 7/8 in now confirmed by product pages; Summit thickness still unverified (marked per field)."
+  },
+  {
+    "library": "deckorators",
+    "change": "Added discontinued Deckorators lines (Vault, Distressed, Tropics, Trailhead, Pioneer) for reference only; not sold."
+  },
+  {
+    "library": "deckorators",
+    "change": "Shared decking standard (owner, 11 Nov 2026) referenced; brand exception report added (5 items)."
+  },
+  {
+    "library": "deckorators",
+    "change": "Complete decking standards (11 Nov, second package): RD-01, RD-05, RD-06 applied; quoteEligible added (listing vs quote eligibility kept separate)."
+  },
+  {
+    "library": "treated-wood",
+    "change": "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular."
+  },
+  {
+    "library": "treated-wood",
+    "change": "Treated wood: appearance choices marked aos-design; profiles marked retail-example (not verified)."
+  },
+  {
+    "library": "treated-wood",
+    "change": "Shared decking standard (owner, 11 Nov 2026) referenced; brand exception report added (3 items)."
+  },
+  {
+    "library": "treated-wood",
+    "change": "Complete decking standards (11 Nov, second package): RD-01, RD-07, RD-08 applied; quoteEligible added (listing vs quote eligibility kept separate)."
+  },
+  {
+    "library": "westbury",
+    "change": "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular."
+  },
+  {
+    "library": "westbury",
+    "change": "All Westbury families listed; restrictions shown as notices instead of hiding families. Added Tuscany install-instruction mount heights."
+  },
+  {
+    "library": "westbury",
+    "change": "Owner selections W01-W16 (11 Nov 2026) added as aosSalesConfig: defaults Tuscany C10 / Black Fine Texture / 36 in / surface plate; Montego held (W04); Sorrento stairs suggest Tuscany with confirmation (W11); gates, drink rail, caps, lighting only once compatibility is verified; owner notes verbatim."
+  },
+  {
+    "library": "westbury",
+    "change": "Owner 11 Nov: AOS stock colors are White, Black and Bronze Fine Texture; salesPriority 1 so they show first. Nothing hidden; inventory unverified."
+  },
+  {
+    "library": "westbury",
+    "change": "Owner clarification 11 Nov: these defaults are the Westbury category default and also the global application default. Approved selections unchanged."
+  },
+  {
+    "library": "rdi-railing",
+    "change": "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular."
+  },
+  {
+    "library": "rdi-railing",
+    "change": "All RDI systems listed; restrictions carried as notices. Added Overlook install reference (4x4 wood post + sleeve)."
+  },
+  {
+    "library": "rdi-railing",
+    "change": "Owner decisions Q01-Q19 (11 Nov 2026) added as aosSalesConfig: Avalon / Matte Black / 36 in / surface-base defaults; material-grouped picker; ask-each-time overrides; auto stair sides; RDI ADA handrails recorded; owner note verbatim; 6 compatibility questions."
+  },
+  {
+    "library": "rdi-railing",
+    "change": "Owner clarification 11 Nov: these defaults are the RDI category default only, used when James switches to RDI; Westbury Tuscany C10 remains the global default. Approved selections unchanged."
+  },
+  {
+    "library": "rdi-privacy",
+    "change": "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular."
+  },
+  {
+    "library": "rdi-privacy",
+    "change": "Privacy Rail installation data added (post spacing table, blocking, bolts, concrete, code statement). Freestyle: 6x3 vertical frame kit noted; frame dimensions still unpublished."
+  },
+  {
+    "library": "rdi-privacy",
+    "change": "Owner decisions PS-Q01-PS-Q16 (11 Nov 2026) added as aosSalesConfig: separate Privacy & Screens step (future), none by default, Matte Black frame / White infill, perimeter-only Privacy Rail, ask before touching existing railing, Freestyle 2x4 Boardwalk default with per-panel overrides, approved mounts only, technical-review acknowledgement, included in 2D/3D/PDF as preliminary."
+  },
+  {
+    "library": "aos-wood-railing",
+    "change": "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular."
+  },
+  {
+    "library": "aos-wood-railing",
+    "change": "D4: in-deck posts defined as wood posts inside the rim framing, extending through the decking with decking cut around them (not surface-mounted bases). Both face-mount and in-deck kept for all four presets as AOS design decisions; attachment, blocking, hold-downs and post spacing remain unverified."
+  },
+  {
+    "library": "aos-wood-railing",
+    "change": "Wood railing styles, finishes and mounting options re-labelled aos-design / aos-decision (were defaulting to verified). IRC numeric values marked secondary-source; MN adoption and guard trigger verified from MN Rules 1309."
+  },
+  {
+    "library": "aos-wood-railing",
+    "change": "D4 FINAL (11 Nov 2026): four presets fully specified (members, balusters, caps, posts, heights, spacing), corners, post caps (flat default / pyramid), stairs and separate 1-1/2 in satin-black handrail, sales behavior rules, owner-entered notes verbatim, open items and compatibility questions. Design choices owner-approved; structure, hardware and code pending verification."
+  }
+]

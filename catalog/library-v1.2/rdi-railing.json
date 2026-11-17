@@ -1,0 +1,1536 @@
+{
+  "meta": {
+    "schema": "aos-product-library",
+    "schemaVersion": "1.2.0",
+    "libraryId": "rdi-railing",
+    "category": "railing",
+    "libraryVersion": "2026-11-11.1",
+    "verifiedAsOf": "2026-11-06",
+    "useLimits": "Sales-design reference. Not purchase-ready SKUs, not engineering or code approval. Rules are reference-only and must not be enforced or ordered from without production verification.",
+    "notes": [
+      "Privacy Rail and Freestyle screens live in the separate rdi-privacy library."
+    ],
+    "revisedAsOf": "2026-11-11",
+    "changesV1_1": [
+      "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular.",
+      "All RDI systems listed; restrictions carried as notices. Added Overlook install reference (4x4 wood post + sleeve).",
+      "Owner decisions Q01-Q19 (11 Nov 2026) added as aosSalesConfig: Avalon / Matte Black / 36 in / surface-base defaults; material-grouped picker; ask-each-time overrides; auto stair sides; RDI ADA handrails recorded; owner note verbatim; 6 compatibility questions.",
+      "Owner clarification 11 Nov: these defaults are the RDI category default only, used when James switches to RDI; Westbury Tuscany C10 remains the global default. Approved selections unchanged."
+    ],
+    "statusModel": {
+      "basis": {
+        "manufacturer": "Manufacturer product data",
+        "code": "Building code text",
+        "industry-standard": "Industry guide (AWPA, AWC DCA 6)",
+        "aos-design": "AOS design concept or AOS choice; not a manufacturer product",
+        "retail-example": "Seen at a retailer; not manufacturer data",
+        "earlier-research": "Carried from AOS planning research; not re-checked"
+      },
+      "status": {
+        "verified": "Confirmed against an official primary source in this pass",
+        "listed-unconfirmed": "Appears in an official source but ambiguous or incomplete",
+        "conflict": "Official sources disagree",
+        "secondary-source": "Matches a secondary summary; primary text not read",
+        "unverified": "Not confirmed in this pass",
+        "aos-decision": "AOS design decision still to be made or confirmed. No manufacturer data exists",
+        "owner-approved": "AOS design choice approved by the owner (sales design). Not construction approval",
+        "pending-verification": "Structural, hardware, supplier or code detail that must be verified before construction use"
+      },
+      "fieldStatus": "Overrides status for individual fields of a record (e.g. a profile whose width is verified but thickness is not).",
+      "salesListing": {
+        "listed": "Shown to James",
+        "listed-with-notice": "Shown with a short notice (availability, restriction or code note)",
+        "hold": "Not shown until the stated reason is resolved"
+      },
+      "salesPriority": "Optional AOS ordering for frequently used products (sorted first). Never hides products."
+    },
+    "changesV1_2": [
+      "v1.2 (11 Nov 2026): owner decision closure D-01..D-08 recorded where it applies; version labels updated. No product IDs removed or renamed.",
+      "D-03: systems[rdi-avalon].models (added) changed (see CHANGES_v1_2.json)",
+      "D-03: systems[rdi-avalon].models[rdi-avalon--square-balusters-2-to-3] changed (see CHANGES_v1_2.json)",
+      "D-03: systems[rdi-avalon].topRailSelection (added) changed (see CHANGES_v1_2.json)",
+      "D-03: aosSalesConfig.defaults changed (see CHANGES_v1_2.json)",
+      "D-03: aosSalesConfig.selections[Q05].ownerClosure changed (see CHANGES_v1_2.json)",
+      "D-04: aosSalesConfig.noBlackFinishDefault (added) changed (see CHANGES_v1_2.json)",
+      "D-04: aosSalesConfig.selections[Q02].ownerClosure changed (see CHANGES_v1_2.json)",
+      "D-03/D-04: aosSalesConfig.compatibilityQuestions (2 moved to resolvedQuestions) changed (see CHANGES_v1_2.json)",
+      "D-03/D-04: gaps changed (see CHANGES_v1_2.json)"
+    ]
+  },
+  "brand": {
+    "id": "rdi",
+    "name": "RDI (Barrette Outdoor Living)",
+    "manufacturer": "Oldcastle APG (retains RDI after April 2026 MoistureShield asset sale)"
+  },
+  "sources": [
+    {
+      "id": "rdi-2026",
+      "title": "RDI 2026 Product Catalog",
+      "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+      "revision": "RDI25-D-520401 (MPN-7253), revised 05/2026",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "rdi-products",
+      "title": "RDI products listing",
+      "url": "https://rdirail.com/products/",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "ufp-acq",
+      "title": "UFP Industries acquisition release (Oldcastle APG retains RDI)",
+      "url": "https://ufpi.com/ufp-industries-expands-deckorators-composite-decking-capacity-through-acquisition/",
+      "revision": "press release 2026-04-06",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "rdi-overlook-install",
+      "title": "Overlook Level and Stair Installation Instructions",
+      "url": "https://rdirail.com/wp-content/uploads/sites/3/34118440_Overlook-Level-and-Stair-Instructions_WEB_RDI26-D-761150.pdf",
+      "revision": "34118440 / REV 07.26",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-rdi-spec-2026-11-11",
+      "title": "AOS RDI Railing Owner Decisions",
+      "url": "Claude Project doc claude/aos-rdi-railing-owner-decisions-2026-11-11.md (package: owner-specs/AOS_RDI_Railing_Owner_Decisions_2026-11-11.md)",
+      "revision": "2026-11-11 from 6-page questionnaire (19 items); SHA-256 72a837eaabc6205c4efc0b79164d1338b83f71b2b2ef3650e1c5a74f788272b0",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    },
+    {
+      "id": "rdi-avalon-page",
+      "title": "RDI Avalon product page",
+      "url": "https://rdirail.com/products/avalon/",
+      "revision": "web page, read 2026-11-11",
+      "kind": "manufacturer",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    },
+    {
+      "id": "rdi-ada-handrail",
+      "title": "RDI ADA Handrail sell sheet",
+      "url": "https://rdirail.com/wp-content/uploads/sites/3/ADA-Handrail-Sell-Sheet_WEB_03-26_RDI25-D-557400.pdf",
+      "revision": "RDI25-D-557400 / MPN-7062, revised 03/2026",
+      "kind": "manufacturer",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-owner-closure-2026-11-11",
+      "title": "AOS Owner Decision Closure D-01 to D-08",
+      "url": "Claude Project doc claude/aos-owner-decision-closure-2026-11-11.md (package: owner-specs/AOS_Owner_Decision_Closure_D01-D08_2026-11-11.md; completed form owner-specs/AOS_Owner_Decision_Closure_Completed_Form_2026-11-11.pdf)",
+      "revision": "Owner decisions 2026-11-11; md SHA-256 1ca9028afd34f303076fa6f8c215a582b715ca566ad9646310a6e0fcecbaa6d0; form SHA-256 375552aec6f0ad86bffab3ed2210d572714fde15ad08a82334f26851cf0b7754",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    }
+  ],
+  "finishes": [
+    {
+      "id": "rdi--satin-black",
+      "name": "Satin Black",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer"
+    },
+    {
+      "id": "rdi--satin-white",
+      "name": "Satin White",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer"
+    },
+    {
+      "id": "rdi--white",
+      "name": "White",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer"
+    },
+    {
+      "id": "rdi--clay",
+      "name": "Clay",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer"
+    },
+    {
+      "id": "rdi--matte-black",
+      "name": "Matte Black",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer"
+    },
+    {
+      "id": "rdi--matte-bronze",
+      "name": "Matte Bronze",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer"
+    }
+  ],
+  "systems": [
+    {
+      "id": "rdi-fusion",
+      "name": "Fusion",
+      "family": "RDI Composite",
+      "visualGeometry": "vertical-baluster",
+      "material": "composite",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "models": [
+        {
+          "id": "rdi-fusion--square-balusters-preasse",
+          "code": "square-balusters-preasse",
+          "name": "Square balusters (preassembled)",
+          "infill": "Square balusters (preassembled)",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "kit": [
+            6
+          ]
+        },
+        "stairLengthsFt": {
+          "kit": [
+            6
+          ]
+        }
+      },
+      "finishIds": [
+        "rdi--satin-black"
+      ],
+      "isNew": true,
+      "posts": "3x3 post kits 38/44/50 in",
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "materialGroup": "composite"
+    },
+    {
+      "id": "rdi-transform",
+      "name": "Transform",
+      "family": "RDI Composite",
+      "visualGeometry": "vertical-baluster",
+      "material": "composite",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "models": [
+        {
+          "id": "rdi-transform--square-balusters",
+          "code": "square-balusters",
+          "name": "Square balusters",
+          "infill": "Square balusters",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "rdi-transform--black-round-aluminum-bal",
+          "code": "black-round-aluminum-bal",
+          "name": "Black round aluminum balusters",
+          "infill": "Black round aluminum balusters",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "rdi-transform--cable-rail",
+          "code": "cable-rail",
+          "name": "Cable rail",
+          "infill": "Cable rail",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "kit": [
+            6,
+            8
+          ]
+        },
+        "stairLengthsFt": {
+          "kit": [
+            6
+          ]
+        }
+      },
+      "finishIds": [
+        "rdi--satin-white",
+        "rdi--satin-black"
+      ],
+      "topRails": [
+        "Presence",
+        "Emerge",
+        "Aspire",
+        "Graspable Stair"
+      ],
+      "restrictions": [
+        "Cable rail requires 4x4 wood posts",
+        "Not all lengths in all styles/colors/heights"
+      ],
+      "compatibleWith": [
+        "rdi-avalon"
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed-with-notice",
+      "salesPriority": null,
+      "salesListingReason": "Cable rail requires 4x4 wood posts; Not all lengths in all styles/colors/heights",
+      "materialGroup": "composite"
+    },
+    {
+      "id": "rdi-overlook",
+      "name": "Overlook",
+      "family": "RDI Composite",
+      "visualGeometry": "t-top-baluster",
+      "material": "composite",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "rdi-2026",
+        "rdi-products"
+      ],
+      "models": [
+        {
+          "id": "rdi-overlook--square-balusters",
+          "code": "square-balusters",
+          "name": "Square balusters",
+          "infill": "Square balusters",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "rdi-overlook--black-round-aluminum-bal",
+          "code": "black-round-aluminum-bal",
+          "name": "Black round aluminum balusters",
+          "infill": "Black round aluminum balusters",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "kit": [
+            6,
+            8
+          ]
+        },
+        "stairLengthsFt": {
+          "kit": [
+            6,
+            8
+          ]
+        }
+      },
+      "finishIds": [
+        "rdi--satin-black"
+      ],
+      "isNew": true,
+      "topRails": [
+        "T-Top"
+      ],
+      "posts": "4x4 post sleeves 39/45/108 in",
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "installReference": {
+        "posts": "Post sleeve over an existing wood 4x4, or RDI post install kit",
+        "8ftKits": "include two bottom-rail support bases (at 1/3 points)",
+        "maxPostSpacing": "not stated",
+        "src": [
+          "rdi-overlook-install"
+        ],
+        "status": "verified"
+      },
+      "materialGroup": "composite"
+    },
+    {
+      "id": "rdi-bella-premier",
+      "name": "Bella Premier",
+      "family": "RDI Composite",
+      "visualGeometry": "vertical-baluster",
+      "material": "composite",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "models": [
+        {
+          "id": "rdi-bella-premier--square-balusters",
+          "code": "square-balusters",
+          "name": "Square balusters",
+          "infill": "Square balusters",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "rdi-bella-premier--black-round-aluminum-bal",
+          "code": "black-round-aluminum-bal",
+          "name": "Black round aluminum balusters",
+          "infill": "Black round aluminum balusters",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "kit": [
+            6,
+            8,
+            10
+          ]
+        },
+        "stairLengthsFt": {
+          "kit": [
+            6,
+            8
+          ]
+        }
+      },
+      "finishIds": [
+        "rdi--white",
+        "rdi--clay"
+      ],
+      "topRails": [
+        "Standard",
+        "Deck board adapter"
+      ],
+      "restrictions": [
+        "42 in kits White only",
+        "10 ft level only"
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed-with-notice",
+      "salesPriority": null,
+      "salesListingReason": "42 in kits White only; 10 ft level only",
+      "materialGroup": "composite"
+    },
+    {
+      "id": "rdi-endurance",
+      "name": "Endurance Original Rail",
+      "family": "RDI Vinyl",
+      "visualGeometry": "vertical-baluster",
+      "material": "vinyl",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "models": [
+        {
+          "id": "rdi-endurance--square-balusters",
+          "code": "square-balusters",
+          "name": "Square balusters",
+          "infill": "Square balusters",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "rdi-endurance--black-round-aluminum-bal",
+          "code": "black-round-aluminum-bal",
+          "name": "Black round aluminum balusters",
+          "infill": "Black round aluminum balusters",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "rdi-endurance--turned-balusters",
+          "code": "turned-balusters",
+          "name": "Turned balusters",
+          "infill": "Turned balusters",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "rdi-endurance--glass-slats-level-only",
+          "code": "glass-slats-level-only",
+          "name": "Glass slats (level only)",
+          "infill": "Glass slats (level only)",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "kit": [
+            4,
+            6,
+            8,
+            10
+          ]
+        },
+        "stairLengthsFt": {
+          "kit": [
+            6,
+            8
+          ]
+        }
+      },
+      "finishIds": [
+        "rdi--white"
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "materialGroup": "vinyl"
+    },
+    {
+      "id": "rdi-finyl-line",
+      "name": "Finyl Line",
+      "family": "RDI Vinyl",
+      "visualGeometry": "vertical-baluster",
+      "material": "vinyl",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "models": [
+        {
+          "id": "rdi-finyl-line--square-balusters",
+          "code": "square-balusters",
+          "name": "Square balusters",
+          "infill": "Square balusters",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "rdi-finyl-line--black-round-aluminum-bal",
+          "code": "black-round-aluminum-bal",
+          "name": "Black round aluminum balusters",
+          "infill": "Black round aluminum balusters",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "rdi-finyl-line--turned-balusters",
+          "code": "turned-balusters",
+          "name": "Turned balusters",
+          "infill": "Turned balusters",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "rdi-finyl-line--chippendale-panel",
+          "code": "chippendale-panel",
+          "name": "Chippendale panel",
+          "infill": "Chippendale panel",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "rdi-finyl-line--freeport-panel",
+          "code": "freeport-panel",
+          "name": "Freeport panel",
+          "infill": "Freeport panel",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "rdi-finyl-line--3x6-decorative-screen-pa",
+          "code": "3x6-decorative-screen-pa",
+          "name": "3x6 decorative screen panel (T-Top only)",
+          "infill": "3x6 decorative screen panel (T-Top only)",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "kit": [
+            4,
+            5,
+            6,
+            8,
+            10
+          ]
+        },
+        "stairLengthsFt": {
+          "kit": [
+            6,
+            8,
+            10
+          ]
+        }
+      },
+      "finishIds": [
+        "rdi--white",
+        "rdi--clay"
+      ],
+      "topRails": [
+        "Deck Top",
+        "T-Top"
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "materialGroup": "vinyl"
+    },
+    {
+      "id": "rdi-elevation",
+      "name": "Elevation Rail",
+      "family": "RDI Aluminum",
+      "visualGeometry": "horizontal-cable",
+      "material": "aluminum + cable",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "models": [
+        {
+          "id": "rdi-elevation--prestrung-cable",
+          "code": "prestrung-cable",
+          "name": "Prestrung cable",
+          "infill": "Prestrung cable",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "kit": [
+            6,
+            8
+          ]
+        },
+        "stairLengthsFt": {
+          "kit": [
+            5
+          ]
+        }
+      },
+      "finishIds": [
+        "rdi--matte-black"
+      ],
+      "topRails": [
+        "Flat Top",
+        "Deck Top Adapter"
+      ],
+      "restrictions": [
+        "8 ft level 36 in only"
+      ],
+      "posts": "2x4 end/mid, 4x4 corner, 45/22.5 corner, 2x4 stair 38/44, 2x2.5 termination kit",
+      "warranty": "Cable fittings 10 yr; rails/posts transferable limited lifetime",
+      "basis": "manufacturer",
+      "salesListing": "listed-with-notice",
+      "salesPriority": null,
+      "salesListingReason": "8 ft level 36 in only",
+      "materialGroup": "aluminum"
+    },
+    {
+      "id": "rdi-avalon",
+      "name": "Avalon",
+      "family": "RDI Aluminum",
+      "visualGeometry": "vertical-baluster",
+      "material": "aluminum",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "rdi-2026",
+        "rdi-avalon-page"
+      ],
+      "models": [
+        {
+          "id": "rdi-avalon--square-balusters",
+          "code": "square-balusters",
+          "name": "Square balusters (pre-assembled panel)",
+          "infill": "3/4 in square balusters, vertical",
+          "visualGeometry": "vertical-baluster",
+          "status": "verified",
+          "basis": "manufacturer",
+          "src": [
+            "rdi-2026"
+          ],
+          "includes": [
+            "bracket kit",
+            "support foot"
+          ],
+          "topRail": "required, sold separately (Pellinore, Tristan or Oberon)",
+          "heightsIn": [
+            36,
+            42
+          ],
+          "lengthsFt": [
+            6,
+            8
+          ],
+          "finishIds": [
+            "rdi--white",
+            "rdi--matte-black",
+            "rdi--matte-bronze"
+          ],
+          "panelSkus": {
+            "6ft-36in-level": {
+              "rdi--white": "73019269",
+              "rdi--matte-black": "73019285",
+              "rdi--matte-bronze": "73019458"
+            },
+            "8ft-36in-level": {
+              "rdi--white": "73019270",
+              "rdi--matte-black": "73019286",
+              "rdi--matte-bronze": "73019464"
+            },
+            "6ft-36in-stair": {
+              "rdi--white": "73019271",
+              "rdi--matte-black": "73019287",
+              "rdi--matte-bronze": "73019466"
+            },
+            "8ft-36in-stair": {
+              "rdi--white": "73019272",
+              "rdi--matte-black": "73019288",
+              "rdi--matte-bronze": "73019468"
+            },
+            "6ft-42in-level": {
+              "rdi--white": "73019273",
+              "rdi--matte-black": "73019289",
+              "rdi--matte-bronze": "73019459"
+            },
+            "8ft-42in-level": {
+              "rdi--white": "73019274",
+              "rdi--matte-black": "73019290",
+              "rdi--matte-bronze": "73019465"
+            },
+            "6ft-42in-stair": {
+              "rdi--white": "73019275",
+              "rdi--matte-black": "73019291",
+              "rdi--matte-bronze": "73019467"
+            },
+            "8ft-42in-stair": {
+              "rdi--white": "73019276",
+              "rdi--matte-black": "73019292",
+              "rdi--matte-bronze": "73019469"
+            }
+          },
+          "note": "RDI 2026 catalog re-read 11 Nov 2026 for D-03/D-04."
+        },
+        {
+          "id": "rdi-avalon--square-balusters-2-to-3",
+          "code": "square-balusters-2-to-3-",
+          "name": "Square balusters (2-to-3 rail adapter)",
+          "infill": "Square balusters (2-to-3 rail adapter)",
+          "status": "verified",
+          "basis": "manufacturer",
+          "src": [
+            "rdi-2026"
+          ],
+          "note": "Catalog option 'Square Balusters with 2-to-3 Rail Adapter'. The 2-to-3 Rail Adapter is a separate part, Matte Black only (6 ft 73050438, 8 ft 73050439); the plain square-baluster panel is rdi-avalon--square-balusters. ID kept for stability. RDI 2026 catalog re-read 11 Nov 2026 for D-03/D-04.",
+          "adapterFinishIds": [
+            "rdi--matte-black"
+          ]
+        },
+        {
+          "id": "rdi-avalon--cable-rail",
+          "code": "cable-rail",
+          "name": "Cable rail",
+          "infill": "Cable rail",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "rdi-avalon--horizontal-rod-matte-bla",
+          "code": "horizontal-rod-matte-bla",
+          "name": "Horizontal rod (Matte Black only)",
+          "infill": "Horizontal rod (Matte Black only)",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "kit": [
+            6,
+            8
+          ]
+        },
+        "stairLengthsFt": {
+          "kit": [
+            6,
+            8
+          ]
+        }
+      },
+      "finishIds": [
+        "rdi--matte-black",
+        "rdi--matte-bronze",
+        "rdi--white"
+      ],
+      "topRails": [
+        "Pellinore",
+        "Tristan",
+        "Oberon (level only, Matte Black only)"
+      ],
+      "posts": "2.5x2.5 standard/heavy-duty/routed cable; 4.25x4.25; 2 in over-the-top",
+      "compatibleWith": [
+        "rdi-transform"
+      ],
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "materialGroup": "aluminum",
+      "gates": {
+        "matching": true,
+        "maxHeightIn": 48,
+        "status": "verified",
+        "src": [
+          "rdi-avalon-page"
+        ],
+        "salesAddOn": {
+          "decision": "Q10",
+          "status": "pending-verification"
+        }
+      },
+      "otherComponents": {
+        "listed": [
+          "posts",
+          "post caps",
+          "trim rings"
+        ],
+        "status": "verified",
+        "src": [
+          "rdi-avalon-page"
+        ]
+      },
+      "topRailSelection": {
+        "required": true,
+        "soldSeparately": true,
+        "manufacturerStandard": null,
+        "options": [
+          "Pellinore",
+          "Tristan",
+          "Oberon"
+        ],
+        "skus": {
+          "Pellinore": {
+            "6ft": {
+              "rdi--white": "73020442",
+              "rdi--matte-black": "73020448",
+              "rdi--matte-bronze": "73019456"
+            },
+            "8ft": {
+              "rdi--white": "73020443",
+              "rdi--matte-black": "73020449",
+              "rdi--matte-bronze": "73019462"
+            }
+          },
+          "Tristan": {
+            "6ft": {
+              "rdi--white": "73020446",
+              "rdi--matte-black": "73020452",
+              "rdi--matte-bronze": "73019457"
+            },
+            "8ft": {
+              "rdi--white": "73020447",
+              "rdi--matte-black": "73020453",
+              "rdi--matte-bronze": "73019463"
+            }
+          },
+          "Oberon": {
+            "6ft": {
+              "rdi--matte-black": "73032042"
+            },
+            "8ft": {
+              "rdi--matte-black": "73032050"
+            },
+            "restriction": "Level only; a deck board must be installed on top (drink/cocktail rail)."
+          }
+        },
+        "status": "verified",
+        "basis": "manufacturer",
+        "src": [
+          "rdi-2026",
+          "rdi-avalon-page"
+        ],
+        "note": "RDI: 'a top rail (3 styles available) is required and sold separately.' No top rail is named standard; the catalog does not pair top rails with infills. RDI 2026 catalog re-read 11 Nov 2026 for D-03/D-04."
+      }
+    },
+    {
+      "id": "rdi-excalibur",
+      "name": "MetalWorks Excalibur",
+      "family": "RDI Steel",
+      "visualGeometry": "vertical-baluster",
+      "material": "steel",
+      "availability": "current",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "models": [
+        {
+          "id": "rdi-excalibur--square-balusters-welded",
+          "code": "square-balusters-welded",
+          "name": "Square balusters (welded)",
+          "infill": "Square balusters (welded)",
+          "status": "verified",
+          "basis": "manufacturer"
+        },
+        {
+          "id": "rdi-excalibur--latitudes-horizontal-wel",
+          "code": "latitudes-horizontal-wel",
+          "name": "Latitudes horizontal (welded)",
+          "infill": "Latitudes horizontal (welded)",
+          "status": "verified",
+          "basis": "manufacturer"
+        }
+      ],
+      "heightsIn": [
+        36,
+        42
+      ],
+      "sections": {
+        "levelLengthsFt": {
+          "kit": [
+            6,
+            8,
+            10
+          ]
+        },
+        "stairLengthsFt": {
+          "kit": [
+            6,
+            8
+          ]
+        }
+      },
+      "finishIds": [
+        "rdi--matte-black"
+      ],
+      "posts": "2x2, 3x3; fascia posts 2 in only",
+      "warranty": "15-yr limited",
+      "basis": "manufacturer",
+      "salesListing": "listed",
+      "salesPriority": null,
+      "materialGroup": "steel"
+    }
+  ],
+  "accessories": [
+    {
+      "id": "rdi-ada-handrail-aluminum",
+      "kind": "handrail",
+      "name": "RDI Aluminum ADA Handrail",
+      "basis": "manufacturer",
+      "status": "verified",
+      "src": [
+        "rdi-ada-handrail"
+      ],
+      "colors": [
+        "Matte Black",
+        "Matte Bronze",
+        "White"
+      ],
+      "lengthsIn": [
+        80,
+        104,
+        120
+      ],
+      "pairsWith": [
+        "rdi-elevation",
+        "rdi-avalon",
+        "rdi-excalibur"
+      ],
+      "diameterIn": null,
+      "bracketType": null,
+      "includes": "handrail loops, lineals, joiners and mounting brackets",
+      "codeStatement": "Designed to meet IRC and IBC; consult local regulations"
+    },
+    {
+      "id": "rdi-ada-handrail-vinyl",
+      "kind": "handrail",
+      "name": "RDI Vinyl ADA Handrail",
+      "basis": "manufacturer",
+      "status": "verified",
+      "src": [
+        "rdi-ada-handrail"
+      ],
+      "colors": [
+        "White"
+      ],
+      "lengthsIn": [
+        80,
+        104,
+        120
+      ],
+      "pairsWith": [
+        "rdi-fusion",
+        "rdi-transform",
+        "rdi-overlook",
+        "rdi-bella-premier",
+        "rdi-endurance",
+        "rdi-finyl-line"
+      ],
+      "diameterIn": null,
+      "bracketType": null,
+      "includes": "handrail loops, lineals, joiners and mounting brackets",
+      "codeStatement": "Designed to meet IRC and IBC; consult local regulations"
+    }
+  ],
+  "rules": [],
+  "gaps": [
+    "Max post spacing per system",
+    "Guard code reports per system",
+    "Mounting/blocking for wood decks except Overlook (4x4 + sleeve)",
+    "Which systems the AOS distributor carries",
+    "Measured finish colors",
+    "Surface/base mount route per system, esp. Overlook and Transform cable (Q07)",
+    "Smallest approved post per height/span (Q08)",
+    "Gate, drink-rail/adapter, post-cap, lighting and corner compatibility (Q09, Q10, Q17, Q18)",
+    "Handrail diameter/brackets; black handrail for composite systems (Q14)",
+    "Supplier/distributor (blank)",
+    "Avalon top rail for the default square-baluster assembly: RDI names no standard (Pellinore or Tristan; Oberon level-only) (D-03)",
+    "RDI standard finish for Bella Premier and Finyl Line (White and Clay offered; none named standard) (D-04)"
+  ],
+  "aosSalesConfig": {
+    "basis": "aos-design",
+    "status": "owner-approved",
+    "src": [
+      "aos-rdi-spec-2026-11-11"
+    ],
+    "note": "Owner sales/design selections layered on the manufacturer records. Not manufacturer engineering approval and not code or supplier approval.",
+    "defaults": {
+      "systemId": "rdi-avalon",
+      "finishId": "rdi--matte-black",
+      "heightIn": 36,
+      "postMount": "surface/base",
+      "modelId": "rdi-avalon--square-balusters",
+      "modelNote": "D-03 (11 Nov 2026): manufacturer-verified vertical pickets (Avalon pre-assembled 3/4 in square-baluster panel) with the corresponding standard top rail. The infill is verified. RDI names no standard top rail (Pellinore, Tristan; Oberon is level-only), so the top rail is not set and the assembly is not treated as verified until the exact top rail is identified. No SKU invented.",
+      "topRail": null,
+      "assemblyStatus": "pending-verification"
+    },
+    "defaultBlackFinishBySystem": {
+      "rdi-fusion": "rdi--satin-black",
+      "rdi-transform": "rdi--satin-black",
+      "rdi-overlook": "rdi--satin-black",
+      "rdi-bella-premier": null,
+      "rdi-endurance": null,
+      "rdi-finyl-line": null,
+      "rdi-elevation": "rdi--matte-black",
+      "rdi-avalon": "rdi--matte-black",
+      "rdi-excalibur": "rdi--matte-black"
+    },
+    "systemsWithoutBlackFinish": [
+      "rdi-bella-premier",
+      "rdi-endurance",
+      "rdi-finyl-line"
+    ],
+    "pickerGroups": [
+      "aluminum",
+      "composite",
+      "vinyl",
+      "steel"
+    ],
+    "selections": [
+      {
+        "id": "Q01",
+        "decision": "Default starting system",
+        "behavior": "Avalon aluminum.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "note": "Avalon: 36/42 in, 6 and 8 ft level and stair sections, matching gates up to 48 in.",
+          "src": [
+            "rdi-avalon-page",
+            "rdi-2026"
+          ]
+        }
+      },
+      {
+        "id": "Q02",
+        "decision": "Default finish",
+        "behavior": "Black family: Matte Black or Satin Black, as each system offers. Never substitute an unavailable finish.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "note": "Avalon offers Matte Black. Systems with no black finish: rdi-bella-premier, rdi-endurance, rdi-finyl-line.",
+          "src": [
+            "rdi-2026"
+          ]
+        },
+        "ownerClosure": {
+          "id": "D-04",
+          "decision": "No-black families: verified manufacturer standard finish",
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "src": [
+            "aos-owner-closure-2026-11-11"
+          ],
+          "date": "2026-11-11"
+        }
+      },
+      {
+        "id": "Q03",
+        "decision": "Product finder",
+        "behavior": "Group families by material (aluminum, composite, vinyl, steel), with optional favorites first; full verified catalog stays accessible.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "Q04",
+        "decision": "Finish inheritance",
+        "behavior": "One default finish; individual railing-edge finish overrides allowed.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "Q05",
+        "decision": "Infill default",
+        "behavior": "Each system's manufacturer-standard model/infill by default; James may choose other manufacturer-supported configurations.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "pending-verification",
+          "note": "Infill verified: Avalon square-baluster panels (RDI 2026). Top rail: RDI names no standard; assembly pending-verification. Earlier note: RDI pages do not name a 'standard' infill per system (Avalon page lists Cable and Horizontal Rail).",
+          "src": [
+            "rdi-2026",
+            "rdi-avalon-page"
+          ]
+        },
+        "ownerClosure": {
+          "id": "D-03",
+          "decision": "Manufacturer-verified vertical pickets and corresponding standard top rail (Avalon)",
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "src": [
+            "aos-owner-closure-2026-11-11"
+          ],
+          "date": "2026-11-11"
+        }
+      },
+      {
+        "id": "Q06",
+        "decision": "Guard heights",
+        "behavior": "36 in default; 42 in only where supported for the chosen system/model.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "note": "Restrictions recorded: Bella Premier 42 in White only; Elevation 8 ft level 36 in only.",
+          "src": [
+            "rdi-2026"
+          ]
+        }
+      },
+      {
+        "id": "Q07",
+        "decision": "Post mounting",
+        "behavior": "Surface/base mounting only at first release; other configurations stay in research files, not active choices.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "pending-verification",
+          "note": "Overlook installs as a sleeve over a wood 4x4 (or an RDI post install kit) and Transform cable requires 4x4 wood posts, so those configurations may not qualify. Surface-mount base availability per system not verified.",
+          "src": [
+            "rdi-overlook-install",
+            "rdi-2026"
+          ]
+        }
+      },
+      {
+        "id": "Q08",
+        "decision": "Post size",
+        "behavior": "Smallest manufacturer-approved post for the system, height and span; larger approved posts where needed.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "pending-verification",
+          "note": "Post sizes per system are recorded from the catalog; the approved post per height/span is not published."
+        }
+      },
+      {
+        "id": "Q09",
+        "decision": "Drink rails / top adapters",
+        "behavior": "Offer manufacturer-verified, compatible drink-rail or deck-board cap accessories.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "pending-verification",
+          "note": "Avalon Oberon is a drink/cocktail top rail (level only, Matte Black only); Bella Premier and Elevation list deck-board top adapters. Compatibility per finish/height not otherwise verified.",
+          "src": [
+            "rdi-avalon-page",
+            "rdi-2026"
+          ]
+        }
+      },
+      {
+        "id": "Q10",
+        "decision": "Matching gates",
+        "behavior": "Offer manufacturer-verified compatible gates as a separate add-on.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "pending-verification",
+          "note": "Avalon page: matching gates up to 48 in. Gate models, hardware and per-system compatibility not verified.",
+          "src": [
+            "rdi-avalon-page"
+          ]
+        }
+      },
+      {
+        "id": "Q11",
+        "decision": "Stair product inheritance",
+        "behavior": "Inherit the adjoining edge's system/style and finish; independent per-stair customization.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "Q12",
+        "decision": "No matching stair kit",
+        "behavior": "Ask James to select an approved alternative and explicitly confirm. Never silently replace a system.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "note": "Systems without stair kits in the 2026 catalog: none found, but some styles/lengths/colors are not offered in stair kits (e.g. Endurance glass slats, Avalon Oberon).",
+          "src": [
+            "rdi-2026"
+          ]
+        }
+      },
+      {
+        "id": "Q13",
+        "decision": "Stair railing sides",
+        "behavior": "Recommend left/right sides automatically from stair geometry; James can override each side. (Differs from Westbury W12 and AOS wood, which start with both sides on.)",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "Q14",
+        "decision": "Graspable handrails",
+        "behavior": "Show available manufacturer-supported separate handrail options on every RDI staircase; show code requirements separately.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "note": "RDI Aluminum ADA Handrail (Matte Black, Matte Bronze, White; pairs with RDI aluminum and steel railing) and Vinyl ADA Handrail (White; pairs with RDI vinyl and composite). 80/104/120 in lengths; 'designed to meet' IRC/IBC. Diameter and bracket type not stated.",
+          "src": [
+            "rdi-ada-handrail"
+          ]
+        }
+      },
+      {
+        "id": "Q15",
+        "decision": "Per-edge selection",
+        "behavior": "Independent system/model and finish per deck edge.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "Q16",
+        "decision": "Main product changes",
+        "behavior": "Ask James every time whether to keep or replace custom overrides. Never silently erase or rewrite them.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "Q17",
+        "decision": "Same-system corners",
+        "behavior": "Share a corner post only when the specific system and hardware are manufacturer-verified compatible.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "pending-verification",
+          "note": "Corner post/hardware compatibility per system not verified."
+        }
+      },
+      {
+        "id": "Q18",
+        "decision": "Post caps / lighting",
+        "behavior": "Offer only verified, compatible RDI post caps and lighting.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "pending-verification",
+          "note": "Avalon page lists post caps and trim rings; no lighting listed. Per-system cap/lighting compatibility not verified.",
+          "src": [
+            "rdi-avalon-page"
+          ]
+        }
+      },
+      {
+        "id": "Q19",
+        "decision": "Different brands meeting",
+        "behavior": "Ask James to choose a transition and flag it for technical review. Do not assume RDI, Westbury and AOS wood components or posts are interchangeable.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-rdi-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      }
+    ],
+    "ownerNotes": [
+      {
+        "field": "Owner free-text note",
+        "ownerEntry": "Bigthing from RID isits privacy walls and other Featchers Wesbury dosnt have",
+        "status": "owner-approved",
+        "treatment": "Privacy Rail and Freestyle screens are a major reason AOS wants RDI. Plan them as a distinct follow-on privacy/screens add-on with its own owner questionnaire. Approves no specific privacy model or mounting."
+      },
+      {
+        "field": "Supplier / distributor",
+        "ownerEntry": "",
+        "status": "pending-verification",
+        "treatment": "Left blank; availability in the AOS service area unconfirmed."
+      }
+    ],
+    "compatibilityQuestions": [
+      "Q07 surface/base only: Overlook (sleeve over wood 4x4) and Transform cable (requires 4x4 wood posts) may have no surface-base route, so they could be unavailable at first release.",
+      "Q14 handrails: RDI's aluminum handrail pairs with aluminum and steel systems; for composite systems the paired handrail is the White vinyl one, so a black composite railing would get a white handrail unless another approved option exists.",
+      "Q13 differs from the Westbury and AOS wood workflows (auto-recommended sides vs both sides on). Confirm this difference is intended.",
+      "Avalon horizontal rod infill and the Oberon drink rail are Matte Black only, which fits the black default but not Matte Bronze or White edge overrides."
+    ],
+    "behaviorRules": [
+      "Store stable IDs for system, model, infill, finish, approved post, accessories and per-edge/per-stair overrides; migrate legacy values without loss.",
+      "Picker groups families by material; favorites may come first without hiding eligible verified products.",
+      "Stairs inherit their adjoining edge until overridden, without changing geometry or other stairs.",
+      "Changing the global RDI selection prompts keep-vs-replace for customized edges/stairs; undo/redo and save/reopen preserved.",
+      "Stair sides are auto-suggested from layout with left/right overrides; deselecting a side does not waive code requirements.",
+      "Products or accessories without a verified installation route are flagged and never presented as construction-approved.",
+      "Brand transitions are chosen by James and flagged for technical review."
+    ],
+    "followOn": {
+      "privacyAndScreens": "Next owner questionnaire: RDI Privacy Rail and Freestyle Decorative Screens (rdi-privacy library). Separate add-on category; not a guard."
+    },
+    "defaultsScope": {
+      "scope": "category default",
+      "hierarchyLevel": 3,
+      "isApplicationDefault": false,
+      "note": "See index.json applicationRailingDefaults (owner clarification 11 Nov 2026). Approved selections unchanged.",
+      "basis": "aos-design",
+      "status": "owner-approved"
+    },
+    "noBlackFinishDefault": {
+      "rule": "D-04: for an RDI family with no black finish, start with that family's verified manufacturer standard finish; never assign black or any finish the family does not offer. James may pick any other compatible finish.",
+      "decision": {
+        "id": "D-04",
+        "decision": "Use the particular family's verified manufacturer standard finish",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-owner-closure-2026-11-11"
+        ],
+        "date": "2026-11-11"
+      },
+      "basis": "aos-design",
+      "status": "owner-approved",
+      "src": [
+        "aos-owner-closure-2026-11-11"
+      ],
+      "bySystem": {
+        "rdi-bella-premier": {
+          "finishId": null,
+          "status": "pending-verification",
+          "basis": "manufacturer",
+          "src": [
+            "rdi-2026"
+          ],
+          "offered": [
+            "rdi--white",
+            "rdi--clay"
+          ],
+          "note": "RDI 2026 names no standard finish for this family. White is offered in every kit; Clay is restricted by height/style. Not inferred: confirm the standard finish with RDI. RDI 2026 catalog re-read 11 Nov 2026 for D-03/D-04."
+        },
+        "rdi-endurance": {
+          "finishId": "rdi--white",
+          "status": "verified",
+          "basis": "manufacturer",
+          "src": [
+            "rdi-2026"
+          ],
+          "note": "White is the only finish RDI offers for this family (rail, gate, accessory and glass-slat kits)."
+        },
+        "rdi-finyl-line": {
+          "finishId": null,
+          "status": "pending-verification",
+          "basis": "manufacturer",
+          "src": [
+            "rdi-2026"
+          ],
+          "offered": [
+            "rdi--white",
+            "rdi--clay"
+          ],
+          "note": "RDI 2026 names no standard finish for this family. White is offered in every kit; Clay is restricted by height/style. Not inferred: confirm the standard finish with RDI. RDI 2026 catalog re-read 11 Nov 2026 for D-03/D-04."
+        }
+      }
+    },
+    "resolvedQuestions": [
+      {
+        "question": "No black finish exists for rdi-bella-premier, rdi-endurance, rdi-finyl-line (White/Clay only). Q02 forbids substitution, so what should the default finish be when James picks one of these?",
+        "answeredBy": "D-04"
+      },
+      {
+        "question": "Q05: RDI does not name a standard infill per system. Which Avalon infill (cable, horizontal rod, or square balusters with the 2-to-3 rail adapter) and top rail (Pellinore or Tristan) should start as the default?",
+        "answeredBy": "D-03"
+      }
+    ]
+  }
+}

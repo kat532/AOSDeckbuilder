@@ -1,0 +1,1199 @@
+{
+  "meta": {
+    "schema": "aos-product-library",
+    "schemaVersion": "1.2.0",
+    "libraryId": "rdi-privacy",
+    "category": "privacy",
+    "libraryVersion": "2026-11-11.1",
+    "verifiedAsOf": "2026-11-06",
+    "useLimits": "Sales-design reference. Not purchase-ready SKUs, not engineering or code approval. Rules are reference-only and must not be enforced or ordered from without production verification.",
+    "notes": [],
+    "revisedAsOf": "2026-11-11",
+    "changesV1_1": [
+      "Added basis/sourceTier to every record; replaced salesVisibility (default/more-options/hidden) with salesListing (listed / listed-with-notice / hold) + salesPriority. No product is held back for being less popular.",
+      "Privacy Rail installation data added (post spacing table, blocking, bolts, concrete, code statement). Freestyle: 6x3 vertical frame kit noted; frame dimensions still unpublished.",
+      "Owner decisions PS-Q01-PS-Q16 (11 Nov 2026) added as aosSalesConfig: separate Privacy & Screens step (future), none by default, Matte Black frame / White infill, perimeter-only Privacy Rail, ask before touching existing railing, Freestyle 2x4 Boardwalk default with per-panel overrides, approved mounts only, technical-review acknowledgement, included in 2D/3D/PDF as preliminary."
+    ],
+    "statusModel": {
+      "basis": {
+        "manufacturer": "Manufacturer product data",
+        "code": "Building code text",
+        "industry-standard": "Industry guide (AWPA, AWC DCA 6)",
+        "aos-design": "AOS design concept or AOS choice; not a manufacturer product",
+        "retail-example": "Seen at a retailer; not manufacturer data",
+        "earlier-research": "Carried from AOS planning research; not re-checked"
+      },
+      "status": {
+        "verified": "Confirmed against an official primary source in this pass",
+        "listed-unconfirmed": "Appears in an official source but ambiguous or incomplete",
+        "conflict": "Official sources disagree",
+        "secondary-source": "Matches a secondary summary; primary text not read",
+        "unverified": "Not confirmed in this pass",
+        "aos-decision": "AOS design decision still to be made or confirmed. No manufacturer data exists",
+        "owner-approved": "AOS design choice approved by the owner (sales design). Not construction approval",
+        "pending-verification": "Structural, hardware, supplier or code detail that must be verified before construction use"
+      },
+      "fieldStatus": "Overrides status for individual fields of a record (e.g. a profile whose width is verified but thickness is not).",
+      "salesListing": {
+        "listed": "Shown to James",
+        "listed-with-notice": "Shown with a short notice (availability, restriction or code note)",
+        "hold": "Not shown until the stated reason is resolved"
+      },
+      "salesPriority": "Optional AOS ordering for frequently used products (sorted first). Never hides products."
+    },
+    "changesV1_2": [
+      "v1.2 (11 Nov 2026): owner decision closure D-01..D-08 recorded where it applies; version labels updated. No product IDs removed or renamed.",
+      "D-05: aosSalesConfig.defaults.freestyle changed (see CHANGES_v1_2.json)",
+      "D-06: systems[rdi-freestyle-screens].aosPlacement changed (see CHANGES_v1_2.json)",
+      "D-07: aosSalesConfig.workflow changed (see CHANGES_v1_2.json)",
+      "D-08: aosSalesConfig.selections[PS-Q16].behavior changed (see CHANGES_v1_2.json)",
+      "D-07: aosSalesConfig.selections[PS-Q01].ownerClosure changed (see CHANGES_v1_2.json)",
+      "D-06: aosSalesConfig.selections[PS-Q06].ownerClosure changed (see CHANGES_v1_2.json)",
+      "D-05: aosSalesConfig.selections[PS-Q10].ownerClosure changed (see CHANGES_v1_2.json)",
+      "D-08: aosSalesConfig.designerInvariants[customer] changed (see CHANGES_v1_2.json)",
+      "D-05..D-08: aosSalesConfig.openQuestions (4 moved to resolvedQuestions) changed (see CHANGES_v1_2.json)",
+      "D-05..D-08: gaps changed (see CHANGES_v1_2.json)"
+    ]
+  },
+  "brand": {
+    "id": "rdi",
+    "name": "RDI (Barrette Outdoor Living)",
+    "manufacturer": "Oldcastle APG"
+  },
+  "sources": [
+    {
+      "id": "rdi-2026",
+      "title": "RDI 2026 Product Catalog",
+      "url": "https://rdirail.com/wp-content/uploads/sites/3/2026-RDI-Product-Catalog-05-26_FULL-SPREADS_RDI25-D-520401.pdf",
+      "revision": "RDI25-D-520401 (MPN-7253), revised 05/2026",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "rdi-products",
+      "title": "RDI products listing",
+      "url": "https://rdirail.com/products/",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-06",
+      "tier": "primary"
+    },
+    {
+      "id": "rdi-privacy-install",
+      "title": "RDI Privacy Rail Installation Instructions",
+      "url": "https://rdirail.com/wp-content/uploads/sites/3/34111492_RDI_Privacy-Rail-Instructions_WEB_RDI25-D-562131.pdf",
+      "revision": "34111492 / RDI25-D-562131",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "rdi-privacy-faq",
+      "title": "RDI FAQ: Privacy Rail on concrete",
+      "url": "https://preview.rdirail.com/faqs/can-i-install-rdi-privacy-rail-aluminum-railing-on-concrete/",
+      "revision": "web page",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "rdi-frame-kit",
+      "title": "Freestyle Frame Kit product page",
+      "url": "https://rdirail.com/products/freestyle-complementary-accents/frame-kit/",
+      "revision": "web page, read 2026-11-10",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "ms-frame-kit",
+      "title": "Freestyle Decorative Screen Panel Frame Kit (MoistureShield-hosted product page)",
+      "url": "https://www.moistureshield.com/products/freestyle-frame-kit/",
+      "revision": "web page, read 2026-11-10",
+      "kind": "manufacturer",
+      "accessed": "2026-11-10",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-privacy-screens-spec-2026-11-11",
+      "title": "AOS RDI Privacy Rail & Freestyle Screens Owner Decisions",
+      "url": "Claude Project doc claude/aos-rdi-privacy-screens-owner-decisions-2026-11-11.md (package: owner-specs/AOS_RDI_Privacy_Screens_Owner_Decisions_2026-11-11.md)",
+      "revision": "2026-11-11 from 16-question owner form; SHA-256 c33ba0cf63b8785d5f8f7ee5933448cb64f63019552430216a70a36c41d6be2a",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    },
+    {
+      "id": "aos-owner-closure-2026-11-11",
+      "title": "AOS Owner Decision Closure D-01 to D-08",
+      "url": "Claude Project doc claude/aos-owner-decision-closure-2026-11-11.md (package: owner-specs/AOS_Owner_Decision_Closure_D01-D08_2026-11-11.md; completed form owner-specs/AOS_Owner_Decision_Closure_Completed_Form_2026-11-11.pdf)",
+      "revision": "Owner decisions 2026-11-11; md SHA-256 1ca9028afd34f303076fa6f8c215a582b715ca566ad9646310a6e0fcecbaa6d0; form SHA-256 375552aec6f0ad86bffab3ed2210d572714fde15ad08a82334f26851cf0b7754",
+      "kind": "owner-spec",
+      "accessed": "2026-11-11",
+      "tier": "primary"
+    }
+  ],
+  "finishes": [
+    {
+      "id": "rdi-privacy--white",
+      "name": "White",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer"
+    },
+    {
+      "id": "rdi-privacy--matte-black",
+      "name": "Matte Black",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer"
+    },
+    {
+      "id": "rdi-privacy-infill--white",
+      "name": "White",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "sku": "73042846",
+      "basis": "manufacturer"
+    },
+    {
+      "id": "rdi-privacy-infill--clay",
+      "name": "Clay",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "sku": "73054363",
+      "basis": "manufacturer"
+    },
+    {
+      "id": "rdi-privacy-infill--sand",
+      "name": "Sand",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "sku": "73043491",
+      "basis": "manufacturer"
+    },
+    {
+      "id": "rdi-privacy-infill--slate-gray",
+      "name": "Slate Gray",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "sku": "73055864",
+      "basis": "manufacturer"
+    },
+    {
+      "id": "rdi-privacy-infill--coastal-cedar",
+      "name": "Coastal Cedar",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "sku": "73056795",
+      "basis": "manufacturer"
+    },
+    {
+      "id": "rdi-screen--black",
+      "name": "Black",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer"
+    },
+    {
+      "id": "rdi-screen--white",
+      "name": "White",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer"
+    },
+    {
+      "id": "rdi-screen--umber",
+      "name": "Umber",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "visual": {
+        "swatchHex": null,
+        "texture": null,
+        "assetRights": "not-obtained"
+      },
+      "basis": "manufacturer"
+    }
+  ],
+  "systems": [
+    {
+      "id": "rdi-privacy-rail",
+      "name": "Privacy Rail",
+      "kind": "post-supported privacy wall",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "availability": "current",
+      "isGuard": "not-assumed",
+      "moduleWidthFt": 6,
+      "configurations": [
+        {
+          "id": "full-solid",
+          "label": "Full privacy (solid)",
+          "heightIn": 72,
+          "infillBoards": 11
+        },
+        {
+          "id": "full-screen-top",
+          "label": "Full with 3x6 decorative panel (top)",
+          "heightIn": 72,
+          "requires": "decorative panel adapter"
+        },
+        {
+          "id": "full-screen-bottom",
+          "label": "Full with 3x6 decorative panel (bottom)",
+          "heightIn": 72,
+          "requires": "decorative panel adapter"
+        },
+        {
+          "id": "half-42",
+          "label": "Half privacy 42 in",
+          "heightIn": 42,
+          "infillBoards": 6
+        },
+        {
+          "id": "half-36",
+          "label": "Half privacy 36 in (42 in posts cut down)",
+          "heightIn": 36,
+          "infillBoards": 5
+        }
+      ],
+      "frameFinishIds": [
+        "rdi-privacy--white",
+        "rdi-privacy--matte-black"
+      ],
+      "infillFinishIds": [
+        "rdi-privacy-infill--white",
+        "rdi-privacy-infill--clay",
+        "rdi-privacy-infill--sand",
+        "rdi-privacy-infill--slate-gray",
+        "rdi-privacy-infill--coastal-cedar"
+      ],
+      "skus": {
+        "railKit": {
+          "full": {
+            "White": "73042844",
+            "Matte Black": "73042828"
+          },
+          "half": {
+            "White": "73042845",
+            "Matte Black": "73042827"
+          }
+        },
+        "posts": {
+          "42-end": {
+            "White": "73042839",
+            "Matte Black": "73042834"
+          },
+          "42-mid": {
+            "White": "73042840",
+            "Matte Black": "73042832"
+          },
+          "42-corner": {
+            "White": "73042838",
+            "Matte Black": "73042833"
+          },
+          "72-end": {
+            "White": "73042842",
+            "Matte Black": "73042837"
+          },
+          "72-mid": {
+            "White": "73042843",
+            "Matte Black": "73042835"
+          },
+          "72-corner": {
+            "White": "73042841",
+            "Matte Black": "73042836"
+          }
+        },
+        "decorativePanelAdapter": {
+          "White": "73044016",
+          "Matte Black": "73044015"
+        },
+        "gates": {
+          "42": {
+            "White": "73045453",
+            "Matte Black": "73044980"
+          },
+          "72": {
+            "White": "73045454",
+            "Matte Black": "73044981"
+          }
+        },
+        "latches": {
+          "gravity": {
+            "White": "73025491",
+            "Matte Black": "73028060"
+          },
+          "twoSidedLocking": {
+            "White": "73050188",
+            "Matte Black": "73050187"
+          }
+        }
+      },
+      "posts": {
+        "endMidIn": [
+          2,
+          4
+        ],
+        "cornerIn": [
+          3.3,
+          3.3
+        ],
+        "mount": "surface mount"
+      },
+      "infillBoardIn": [
+        6,
+        66
+      ],
+      "infillPackCount": 6,
+      "gateOpeningIn": [
+        36,
+        48
+      ],
+      "gateBoards": {
+        "42": 6,
+        "72": 11
+      },
+      "basis": "manufacturer",
+      "salesListing": "listed-with-notice",
+      "salesPriority": null,
+      "installReference": {
+        "status": "verified",
+        "src": [
+          "rdi-privacy-install",
+          "rdi-privacy-faq"
+        ],
+        "postSpacingInsideToInsideMaxIn": {
+          "panel<=48": 64,
+          "48-54": 50,
+          "54-60": 38,
+          "66-72": 30
+        },
+        "spacingNote": "Manual gives inside-edge-to-inside-edge spacing; shorter spans 'may be needed' in wind-load areas per this table.",
+        "woodDeck": {
+          "blocking": "min. two 2x8 blocks under each post (min. 4 in solid blocking), each fastened with >=3 #10 x 3-1/2 in deck screws",
+          "bolts": "3/8 in stainless or hot-dip galvanized, min. 6 in long, through decking + blocking + 1/8 in sandwich plate"
+        },
+        "concrete": "3/8 in masonry anchors (sold separately); posts have attached mounting plates",
+        "codeStatement": "Manual: 'designed to meet IBC code requirements'. It does not state the product may serve as a guard.",
+        "heightsIn": {
+          "full": 72,
+          "half": 42,
+          "halfCut": 36
+        },
+        "railLengthIn": 66.875,
+        "infillBoardLengthIn": 66
+      },
+      "salesListingReason": "Privacy wall, not a guardrail. Not added by default (PS-Q02); concept placements need technical-review acknowledgement where details are unverified (PS-Q15).",
+      "addedByDefault": false,
+      "aosPlacement": {
+        "allowed": [
+          "deck perimeter edges"
+        ],
+        "interior": false,
+        "decision": "PS-Q06",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "note": "Unchanged by D-06: Privacy Rail stays perimeter-only at first."
+      },
+      "gates": {
+        "salesAddOn": {
+          "decision": "PS-Q14",
+          "status": "verified",
+          "src": [
+            "rdi-2026"
+          ],
+          "note": "Gate SKUs listed in skus.gates and skus.latches."
+        }
+      }
+    },
+    {
+      "id": "rdi-freestyle-screens",
+      "name": "Freestyle Decorative Screens",
+      "kind": "framed decorative screen",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "availability": "current",
+      "isGuard": "not-assumed",
+      "frameFinish": "Matte Black",
+      "panels": [
+        {
+          "id": "rdi-screen--boardwalk-2x4",
+          "pattern": "Boardwalk",
+          "size": "2x4",
+          "actualIn": [
+            23.88,
+            47.88,
+            0.3
+          ],
+          "colors": {
+            "Black": "73042822",
+            "White": "73042821",
+            "Umber": "73055917"
+          },
+          "status": "verified",
+          "src": [
+            "rdi-2026"
+          ]
+        },
+        {
+          "id": "rdi-screen--morse-2x4",
+          "pattern": "Morse",
+          "size": "2x4",
+          "actualIn": [
+            23.88,
+            47.88,
+            0.3
+          ],
+          "colors": {
+            "Black": "73004796",
+            "White": "73004795"
+          },
+          "status": "verified",
+          "src": [
+            "rdi-2026"
+          ]
+        },
+        {
+          "id": "rdi-screen--sprig-2x4",
+          "pattern": "Sprig",
+          "size": "2x4",
+          "actualIn": [
+            23.88,
+            47.88,
+            0.3
+          ],
+          "colors": {
+            "Black": "73004791",
+            "White": "73004790",
+            "Umber": "73055918"
+          },
+          "status": "verified",
+          "src": [
+            "rdi-2026"
+          ]
+        },
+        {
+          "id": "rdi-screen--sanibel-2x4",
+          "pattern": "Sanibel",
+          "size": "2x4",
+          "actualIn": [
+            23.88,
+            47.88,
+            0.3
+          ],
+          "colors": {
+            "Black": "73050358",
+            "Umber": "73050359"
+          },
+          "status": "verified",
+          "src": [
+            "rdi-2026"
+          ]
+        },
+        {
+          "id": "rdi-screen--aztek-2x4",
+          "pattern": "Aztek",
+          "size": "2x4",
+          "actualIn": [
+            23.88,
+            47.88,
+            0.3
+          ],
+          "colors": {
+            "Black": "73055263"
+          },
+          "status": "verified",
+          "src": [
+            "rdi-2026"
+          ]
+        },
+        {
+          "id": "rdi-screen--freesia-2x4",
+          "pattern": "Freesia",
+          "size": "2x4",
+          "actualIn": [
+            23.88,
+            47.88,
+            0.3
+          ],
+          "colors": {
+            "Black": "73055262"
+          },
+          "status": "verified",
+          "src": [
+            "rdi-2026"
+          ]
+        },
+        {
+          "id": "rdi-screen--boardwalk-3x6",
+          "pattern": "Boardwalk",
+          "size": "3x6",
+          "actualIn": [
+            34,
+            68,
+            0.3
+          ],
+          "colors": {
+            "Black": "73030561",
+            "White": "73045664"
+          },
+          "status": "verified",
+          "src": [
+            "rdi-2026"
+          ]
+        },
+        {
+          "id": "rdi-screen--sanibel-3x6",
+          "pattern": "Sanibel",
+          "size": "3x6",
+          "actualIn": [
+            34,
+            68,
+            0.3
+          ],
+          "colors": {
+            "Black": "73050460"
+          },
+          "status": "verified",
+          "src": [
+            "rdi-2026"
+          ]
+        },
+        {
+          "id": "rdi-screen--river-rock-3x6",
+          "pattern": "River Rock",
+          "size": "3x6",
+          "actualIn": [
+            34,
+            68,
+            0.3
+          ],
+          "colors": {
+            "Black": "73045667"
+          },
+          "status": "verified",
+          "src": [
+            "rdi-2026"
+          ]
+        },
+        {
+          "id": "rdi-screen--optic-3x6",
+          "pattern": "Optic",
+          "size": "3x6",
+          "actualIn": [
+            34,
+            68,
+            0.3
+          ],
+          "colors": {
+            "Black": "73050083"
+          },
+          "status": "verified",
+          "src": [
+            "rdi-2026"
+          ]
+        }
+      ],
+      "frames": [
+        {
+          "id": "fs-frame-2x4-kit",
+          "sku": "73050431",
+          "holds": "up to three 2x4 panels",
+          "postsIncluded": true
+        },
+        {
+          "id": "fs-frame-2x4",
+          "sku": "73055202",
+          "holds": "up to three 2x4 panels",
+          "postsIncluded": false
+        },
+        {
+          "id": "fs-frame-6x3-vertical",
+          "sku": null,
+          "holds": "3x6 panels vertically",
+          "status": "listed-unconfirmed",
+          "src": [
+            "rdi-frame-kit"
+          ],
+          "note": "Listed on the RDI frame-kit page (6' x 3' Vertical Frame Kit); not in the 2026 catalog SKU table."
+        },
+        {
+          "id": "fs-frame-3x6-kit",
+          "sku": "73050434",
+          "holds": "up to two 3x6 panels",
+          "postsIncluded": true
+        },
+        {
+          "id": "fs-line-post-2x4",
+          "sku": "73050432",
+          "purpose": "extend a 2x4 frame run"
+        },
+        {
+          "id": "fs-line-post-3x6",
+          "sku": "73050435",
+          "purpose": "extend a 3x6 frame run"
+        }
+      ],
+      "note": "Frame outer dimensions are not in the catalog; needed before accurate 3D modeling.",
+      "basis": "manufacturer",
+      "salesListing": "listed-with-notice",
+      "salesPriority": null,
+      "frameFacts": {
+        "status": "verified",
+        "src": [
+          "rdi-frame-kit",
+          "ms-frame-kit"
+        ],
+        "finish": "Matte Black, AAMA 2604 powder coat",
+        "cutToSize": true,
+        "outerDimensionsIn": null,
+        "note": "Outer dimensions, post size and mounting method are not published on product pages; the 2x4 frame-kit instruction PDF (REV 1.25) exists but could not be retrieved."
+      },
+      "salesListingReason": "Frame outer dimensions unpublished; 3D frame size is approximate. Not added by default (PS-Q02); concept placements need technical-review acknowledgement where details are unverified (PS-Q15).",
+      "addedByDefault": false,
+      "aosPlacement": {
+        "allowed": [
+          "deck perimeter edges",
+          "interior deck locations"
+        ],
+        "interior": "only-with-verified-mounting",
+        "condition": "Each placement needs a manufacturer-verified mounting for the exact panel and frame kit. Unsupported installations require technical review and are never represented as buildable. No screen counts as a code-approved guard.",
+        "currentState": "No Freestyle deck mounting is verified yet (frame dimensions and deck mounting unpublished), so no placement is buildable today; PS-Q15 conceptual placement with acknowledgement still applies.",
+        "decision": "D-06",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-owner-closure-2026-11-11"
+        ]
+      }
+    }
+  ],
+  "accessories": [],
+  "rules": [
+    {
+      "id": "rdi-privacy-wind",
+      "topic": "post-spacing",
+      "appliesTo": [
+        "rdi-privacy-rail"
+      ],
+      "value": "Where advanced wind-load requirements apply, full 6 ft privacy rail must have posts every 3 ft.",
+      "ruleSource": "manufacturer",
+      "enforcement": "reference-only",
+      "status": "verified",
+      "src": [
+        "rdi-2026"
+      ],
+      "basis": "manufacturer",
+      "sourceTier": "primary",
+      "note": "Catalog: 3 ft post spacing for advanced wind loads. Install manual gives a height-based table (30 in inside-to-inside for 66-72 in panels). Use the manual for production."
+    },
+    {
+      "id": "rdi-privacy-not-guard",
+      "topic": "code-status",
+      "appliesTo": [
+        "rdi-privacy-rail",
+        "rdi-freestyle-screens"
+      ],
+      "value": "Do not treat privacy walls or screens as code guards or stair railings without product-specific evaluation.",
+      "ruleSource": "aos-standard",
+      "enforcement": "reference-only",
+      "status": "aos-decision",
+      "src": [
+        "rdi-2026"
+      ],
+      "basis": "aos-design",
+      "sourceTier": "primary"
+    }
+  ],
+  "gaps": [
+    "Freestyle frame outer dimensions, post size and mounting method (2x4 kit PDF REV 1.25 exists but could not be retrieved)",
+    "6x3 vertical frame kit SKU",
+    "Guard eligibility (manual: designed to IBC; does not say it may serve as a guard)",
+    "Minnesota wind conditions for full-height walls",
+    "Screen pattern shapes for 3D",
+    "Supplier (blank)",
+    "Freestyle mounting by exact panel and frame kit for perimeter and interior locations: dimensions, loads, blocking, wind (D-06)",
+    "Privacy & Screens step migration: step IDs, saves, undo/redo, UI census (developer, at integration) (D-07)",
+    "Internal/production privacy takeoff method; customer PDF shows no quantities (D-08)"
+  ],
+  "aosSalesConfig": {
+    "basis": "aos-design",
+    "status": "owner-approved",
+    "src": [
+      "aos-privacy-screens-spec-2026-11-11"
+    ],
+    "note": "Owner planning preferences layered on the manufacturer records. Privacy Rail and Freestyle are separate systems; neither is an approved guard.",
+    "idPrefix": "PS- (to avoid confusion with RDI railing Q01-Q19)",
+    "defaults": {
+      "addedByDefault": false,
+      "privacyRail": {
+        "systemId": "rdi-privacy-rail",
+        "configurationId": null,
+        "frameFinishId": "rdi-privacy--matte-black",
+        "infillFinishId": "rdi-privacy-infill--white",
+        "placement": "perimeter edges only"
+      },
+      "freestyle": {
+        "systemId": "rdi-freestyle-screens",
+        "panelSize": "2x4",
+        "panelId": "rdi-screen--boardwalk-2x4",
+        "panelColor": null,
+        "frameFinish": "Matte Black",
+        "panelColorRule": "james-must-choose",
+        "panelColorDecision": {
+          "id": "D-05",
+          "decision": "No default panel color; James must choose an available finish",
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "src": [
+            "aos-owner-closure-2026-11-11"
+          ],
+          "date": "2026-11-11"
+        },
+        "panelColorNote": "D-05: no preselected panel color. James chooses a finish sold for the selected pattern and size. Separate from the Matte Black FRAME default, which is unchanged."
+      }
+    },
+    "workflow": {
+      "separateStep": true,
+      "label": "Privacy & Screens",
+      "insertionPoint": "after-railings-before-patio-walkway",
+      "note": "D-07 sets the position. Not authorization to change the nine-step workflow now: step order, step IDs, saved-project migration, undo/redo, UI census and regression review happen at integration.",
+      "position": {
+        "after": "Railings (current Step 7)",
+        "before": "Patio & Walkway (current Step 8)"
+      },
+      "decision": {
+        "id": "D-07",
+        "decision": "Separate design step immediately after Railings and before Patio & Walkway",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-owner-closure-2026-11-11"
+        ],
+        "date": "2026-11-11"
+      },
+      "authorizedToImplement": false
+    },
+    "selections": [
+      {
+        "id": "PS-Q01",
+        "group": "Privacy Rail / workflow",
+        "decision": "Separate Privacy & Screens step",
+        "behavior": "Keep privacy add-ons separate from Step 7 guard railing and Step 8 hardscape; insertion point decided at integration design review.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        },
+        "ownerClosure": {
+          "id": "D-07",
+          "decision": "Step position: after Railings, before Patio & Walkway",
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "src": [
+            "aos-owner-closure-2026-11-11"
+          ],
+          "date": "2026-11-11"
+        }
+      },
+      {
+        "id": "PS-Q02",
+        "group": "Privacy Rail / workflow",
+        "decision": "No privacy by default",
+        "behavior": "A new deck has no privacy panels until James adds one.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "PS-Q03",
+        "group": "Privacy Rail / workflow",
+        "decision": "James chooses the configuration",
+        "behavior": "No automatic full- or half-height choice; show manufacturer-supported choices and restrictions.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "note": "Five configurations: full 72 in solid, full with 3x6 screen top or bottom, half 42 in, half 36 in (42 in posts cut down).",
+          "src": [
+            "rdi-2026"
+          ]
+        }
+      },
+      {
+        "id": "PS-Q04",
+        "group": "Privacy Rail / workflow",
+        "decision": "Matte Black starting frame finish",
+        "behavior": "Default only where the configuration supports it.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "note": "Rail kits, posts, adapters and gates are all sold in Matte Black and White.",
+          "src": [
+            "rdi-2026"
+          ]
+        }
+      },
+      {
+        "id": "PS-Q05",
+        "group": "Privacy Rail / workflow",
+        "decision": "White starting infill-board color",
+        "behavior": "Other verified compatible infill colors remain available.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "note": "White infill pack 73042846; also Clay, Sand, Slate Gray, Coastal Cedar.",
+          "src": [
+            "rdi-2026"
+          ]
+        }
+      },
+      {
+        "id": "PS-Q06",
+        "group": "Privacy Rail / workflow",
+        "decision": "Perimeter-only placement initially",
+        "behavior": "Privacy Rail modules go along deck perimeter edges; interior placement not approved for the first sales workflow.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        },
+        "ownerClosure": {
+          "id": "D-06",
+          "decision": "Freestyle may also use interior locations with verified mounting; Privacy Rail stays perimeter-only",
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "src": [
+            "aos-owner-closure-2026-11-11"
+          ],
+          "date": "2026-11-11"
+        }
+      },
+      {
+        "id": "PS-Q07",
+        "group": "Privacy Rail / workflow",
+        "decision": "Ask about existing edge railing",
+        "behavior": "If a privacy wall occupies a guard-railing location, ask James whether to remove or move that railing; flag guard requirements; never silently replace a required guard.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "PS-Q08",
+        "group": "Privacy Rail / workflow",
+        "decision": "Multiple modular sections",
+        "behavior": "Multiple compatible sections at standard module sizes; no invented custom widths.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "src": [
+            "rdi-2026",
+            "rdi-privacy-install"
+          ],
+          "note": "Standard module: 6 ft panel (rail 66-7/8 in, infill boards 66 in). Where advanced wind loads apply, posts at 3 ft (catalog) / 30 in inside-to-inside for 66-72 in panels (install manual)."
+        }
+      },
+      {
+        "id": "PS-Q09",
+        "group": "Freestyle",
+        "decision": "2x4 panel-family default",
+        "behavior": "3x6 family stays accessible where available and verified.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "note": "2x4 = 23.88 x 47.88 x 0.3 in; 3x6 = 34 x 68 x 0.3 in.",
+          "src": [
+            "rdi-2026"
+          ]
+        }
+      },
+      {
+        "id": "PS-Q10",
+        "group": "Freestyle",
+        "decision": "Boardwalk starting pattern",
+        "behavior": "All other verified compatible patterns stay accessible; respect pattern/size availability.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "note": "Boardwalk exists in 2x4 (Black, White, Umber) and 3x6 (Black, White).",
+          "src": [
+            "rdi-2026"
+          ]
+        },
+        "ownerClosure": {
+          "id": "D-05",
+          "decision": "Boardwalk pattern has no preselected panel color",
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "src": [
+            "aos-owner-closure-2026-11-11"
+          ],
+          "date": "2026-11-11"
+        }
+      },
+      {
+        "id": "PS-Q11",
+        "group": "Freestyle",
+        "decision": "Default plus independent per-panel overrides",
+        "behavior": "Mix patterns and finishes across individual panels without changing other panels.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "PS-Q12",
+        "group": "Freestyle",
+        "decision": "Listed Matte Black frames and approved mounting kits only",
+        "behavior": "Only documented manufacturer frame/mount combinations are buildable; unverified deck mounting is never presented as approved.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "pending-verification",
+          "note": "Frames are Matte Black only (verified). Outer frame dimensions and the deck-mounting method are not published, so no Freestyle mounting currently qualifies as an approved buildable configuration; placements are conceptual under PS-Q15."
+        }
+      },
+      {
+        "id": "PS-Q13",
+        "group": "Changes / outputs",
+        "decision": "Ask on global-style changes",
+        "behavior": "Each time James changes the main privacy style, ask whether to keep or replace per-panel overrides.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "PS-Q14",
+        "group": "Changes / outputs",
+        "decision": "Privacy gates as a separate add-on",
+        "behavior": "Offer only verified compatible Privacy Rail gates as a distinct future add-on.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "verified",
+          "note": "Privacy Rail gates 42 in and 72 in, White and Matte Black, 36-48 in openings; gravity and two-sided locking latches.",
+          "src": [
+            "rdi-2026"
+          ]
+        }
+      },
+      {
+        "id": "PS-Q15",
+        "group": "Changes / outputs",
+        "decision": "Explicit technical-review acknowledgement",
+        "behavior": "Where mounting, blocking, wind-load or support details are unverified, James may place a concept only after acknowledging technical review; never represented as approved for quoting or building.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        }
+      },
+      {
+        "id": "PS-Q16",
+        "group": "Changes / outputs",
+        "decision": "Include in 2D, 3D and customer concept PDF",
+        "behavior": "Privacy selections appear in 2D, 3D and the customer concept PDF as product identity, selected style/color and visual; NO product quantities on the customer PDF (D-08). Takeoffs stay in internal/construction outputs; internal technical-review status preserved.",
+        "basis": "aos-design",
+        "status": "owner-approved",
+        "src": [
+          "aos-privacy-screens-spec-2026-11-11"
+        ],
+        "verification": {
+          "status": "not-required-for-sales-design"
+        },
+        "originalBehavior": "Privacy selections appear in 2D, 3D and the concept PDF; quantities marked preliminary; internal technical-review status preserved.",
+        "supersededBy": {
+          "id": "D-08",
+          "decision": "No product quantities for decking or privacy on customer concept PDFs",
+          "basis": "aos-design",
+          "status": "owner-approved",
+          "src": [
+            "aos-owner-closure-2026-11-11"
+          ],
+          "date": "2026-11-11"
+        }
+      }
+    ],
+    "interpretationQ12Q15": "PS-Q12 governs approved physical mounting (only manufacturer-supported frame/mount combinations are buildable). PS-Q15 allows an explicitly marked conceptual layout where mounting is unresolved, after James acknowledges technical review. A conceptual placement is not a verified installation, quote-ready detail or code-approved guard.",
+    "designerInvariants": [
+      "Adding, moving, editing or removing privacy modules never changes deck shape, edge geometry, stairs, guard selections outside the intentionally occupied section, patio/walkway or other saved choices.",
+      "Store individual privacy-panel IDs, system IDs, pattern/finish, locations and overrides; save/reopen and undo/redo preserve them.",
+      "Handle occupied perimeter edges explicitly; preview visibility is separate from authorization to remove a required guard.",
+      "Never conflate Privacy Rail with Freestyle screens, RDI or Westbury guard railings, or AOS wood railing.",
+      "Keep manufacturer sizes and restrictions; never invent dimensions, colors/patterns, connectors, span limits, wind capacities or mounting approval.",
+      "Customers see design concepts, product identity and selections without product quantities (D-08), and no implied installation or engineering certification."
+    ],
+    "ownerNotes": [
+      {
+        "field": "Supplier",
+        "ownerEntry": "",
+        "status": "pending-verification",
+        "treatment": "Left blank; not inferred."
+      },
+      {
+        "field": "Notes",
+        "ownerEntry": "",
+        "status": "pending-verification",
+        "treatment": "Left blank."
+      }
+    ],
+    "openQuestions": [
+      "Standard 6 ft Privacy Rail modules vs wind-load post spacing (3 ft / 30 in): in wind-exposed projects a full-height wall needs extra posts. Which projects count as advanced wind-load is a technical-review item."
+    ],
+    "researchItems": [
+      "Freestyle outer frame dimensions, deck attachment and structural requirements; manufacturer-approved mounting kits for wood framing.",
+      "Privacy Rail perimeter anchorage, post spacing by height, blocking and wind exposure per project; guard approval for any assembly (not assumed).",
+      "Manufacturer asset permissions, pattern/color imagery, AOS supplier stock.",
+      "Saved-project, step-ID, undo/redo and UI-census migration for the Privacy & Screens step at the D-07 position (developer, at integration)."
+    ],
+    "resolvedQuestions": [
+      {
+        "question": "Does the perimeter-only rule (PS-Q06, Privacy Rail) also apply to Freestyle screen placement? The owner form did not decide this; not assumed.",
+        "answeredBy": "D-06"
+      },
+      {
+        "question": "Default Freestyle panel color for Boardwalk 2x4 (Black, White or Umber)? Not decided by the form; not inferred.",
+        "answeredBy": "D-05"
+      },
+      {
+        "question": "Insertion point of the Privacy & Screens step in the expanded workflow, and how saved projects migrate.",
+        "answeredBy": "D-07"
+      },
+      {
+        "question": "Exact preliminary quantity/takeoff method and warning text for the customer PDF.",
+        "answeredBy": "D-08 (no customer quantities)"
+      }
+    ]
+  }
+}
