@@ -94,6 +94,6 @@ test('Stage D: AOS wood railing defaults (T-top + black aluminum, in-deck posts)
   await pick(page, '[data-rail-mount="face-mount"]');
   assert.equal((await intent(page)).catalogRailing.mounting, 'face-mount');
   await step(page, 7);
-  assert.match(await panelText(page), /AOS wood/);
+  assert.match(await panelText(page), /AOS Wood Railing · T-top \+ aluminum balusters · Brown Treated/i);
   assert.deepEqual(errors, []);
 });
