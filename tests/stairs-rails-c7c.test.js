@@ -135,9 +135,10 @@ test('C7 Gate C: the 1½ in. aluminum railing inset is preserved: posts, post ca
   }
 });
 
-test('C7 Gate C: owner-approved 3′ default stair width kept; new 3′ stairs get the finished-clearance warning', () => {
+test('C7 Gate C: 3′ stairs get the finished-clearance warning (new-stair default is 4′ since the C7 Beta Visible Finish build)', () => {
   const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  assert.match(src, /const NEW_STAIR_WIDTH=3;/);
+  // The C7 Beta Visible Finish build (4a43cf2, live beta) changed the new-stair default from 3 ft to 4 ft.
+  assert.match(src, /const NEW_STAIR_WIDTH=4;/);
   const m = build({ ...R, height: 4, staircases: [S({})] }), a = codes(m, 'stair-finished-clearance')[0];
   assert.ok(a, 'clearance alert on a new 3′ stair with both railings');
   assert.match(a.message, /about 28 in\. between the railing posts/);

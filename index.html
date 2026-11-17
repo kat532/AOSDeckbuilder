@@ -100,6 +100,9 @@
 .aos-confirm-panel h2{font-size:19px;margin:0 0 12px;line-height:1.3}
 .aos-confirm-panel p{font-size:13px;line-height:1.55;color:#526171;margin:0 0 18px}
 .aos-confirm-buttons{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.pdf-confirm .aos-confirm-panel{width:min(460px,100%);max-height:calc(100vh - 36px);overflow:auto}.pdf-confirm-tag{font-size:11px!important;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#a3262f!important;margin:0 0 6px!important}
+.pdf-confirm-list{margin:-8px 0 14px;padding-left:18px;font-size:13px;line-height:1.5;color:#26323d}.pdf-confirm-list li{margin:2px 0}.pdf-confirm-list b{font-variant-numeric:tabular-nums}
+.pdf-confirm .pdf-confirm-note{font-size:12px!important;background:#f7f4ec;border:1px solid #e8dcc0;border-radius:8px;padding:8px 10px;color:#594a2b!important}
 .aos-confirm-buttons button{min-height:46px;border-radius:9px;font-size:12px;font-weight:800;padding:10px 8px}
 .aos-confirm-buttons .cancel{border:1px solid #d9e0e5;background:#f5f7f8;color:#334557}
 .aos-confirm-buttons.three{grid-template-columns:1fr 1fr 1fr}.aos-confirm-buttons .primary{border:1px solid #1f2d3a;background:#253746;color:#fff}.textbtn.newplan{background:#ffffff12;color:#fff;border:1px solid #ffffff3d;padding:10px 13px}.textbtn.newplan:hover{background:#ffffff24}.np-short{display:none}@media(max-width:800px){.textbtn.newplan{padding:8px 9px;font-size:10px}.np-long{display:none}.np-short{display:inline}}.newplan-form{display:flex;flex-direction:column;gap:6px;width:min(340px,100%);text-align:left;margin-top:4px}.newplan-form label{font-size:10px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:#4f5d6e}.newplan-form input{min-height:44px;border:1px solid #c9d2d8;border-radius:9px;padding:0 12px;font-size:14px;background:#fff}.newplan-form input:focus{outline:2px solid #c32e3c55;border-color:#c32e3c}.newplan-error{min-height:14px;font-size:11px;font-weight:700;color:#b21d31}.newplan-actions{display:grid;grid-template-columns:1fr;gap:8px}.newplan-next{font-size:12px;font-weight:700;color:#344757}.panel-newplan{width:100%;margin:0 0 4px}.panel-newplan label em{font-style:normal;font-weight:700;letter-spacing:0;text-transform:none;color:#a9303d;margin-left:4px}.newplan-actions .start-btn{margin-top:0;min-height:46px}.open-existing{min-height:46px;border:1px solid #c9d2d8;border-radius:10px;background:#fff;color:#253746;font-size:12px;font-weight:800}.aos-confirm-buttons .danger{border:1px solid #ad2736;background:#c32e3c;color:#fff}
@@ -258,6 +261,35 @@
 
 /* V5.3 C4: customer PDF preview. */
 .rv-pdf{width:100%;border:0;border-radius:10px;background:var(--red);color:#fff;font-weight:850;font-size:12.5px;padding:11px 12px;cursor:pointer}.rv-pdf:hover{background:var(--red-dark)}
+.rv-confirm-list{margin:4px 0 6px;padding-left:18px;font-size:12.5px;line-height:1.45;color:#3c4954}.rv-confirm-list li{margin:3px 0}
+.stair-review{margin:8px 0 6px;padding:7px 10px;border:1px solid #f0c9a8;background:#fff7ef;border-radius:8px;font-size:12.5px;line-height:1.4;color:#5a3a1c}.stair-review-tag{display:block;font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#a3262f;margin-bottom:2px}.stair-review ul{margin:0;padding-left:17px}.stair-review li.warning{font-weight:700;color:#8a2b12}
+.framing-recalc{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid #e8c77d;background:#fff8e6;border-radius:8px;font-size:12px;line-height:1.35;color:#4f3d12}.framing-recalc small{display:block;color:#7a6630}.framing-recalc button{flex:none;padding:5px 10px;border-radius:6px;border:1px solid #c9a24a;background:#fff;font-weight:700}
+.cut-tool-row{display:flex;align-items:center;gap:10px;margin:8px 0 10px}.cut-tool-row span{font-size:11.5px;line-height:1.35;color:#5f6e7a}
+.cut-corner-btn{flex:none;min-height:40px;padding:8px 14px;border-radius:9px;border:2px solid #08795d;background:#ecf8f3;color:#065f49;font-weight:850;font-size:13.5px}
+.cut-instruction{margin:6px 0 8px;padding:9px 11px;border-radius:8px;background:#08795d;color:#fff;font-weight:800;font-size:13.5px}
+.cut-list .cut-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 0;border-top:1px solid #e5eaee;font-size:12px}.cut-list .cut-row span{flex:1 1 140px}.cut-list .cut-row button{min-height:32px;padding:4px 10px;border-radius:7px;border:1px solid #c9d3da;background:#fff;font-weight:750;font-size:11.5px}
+.cut-readout{display:grid;gap:2px;margin:6px 0 2px;padding:7px 9px;border-radius:8px;background:#f3f6f8;font-size:12px;line-height:1.35;color:#26323d}.cut-readout .cut-diag{color:#6b7985;font-size:11px}
+.fix-banner{display:flex;align-items:center;gap:8px;margin:0 0 8px;padding:8px 10px;border:2px solid #d97706;background:#fff7e6;border-radius:9px;font-size:12px;line-height:1.35;color:#5a3a06}.fix-banner b{display:block;font-size:12.5px}.fix-banner button{flex:none;min-height:32px;padding:4px 10px;border-radius:7px;border:1px solid #d97706;background:#fff;font-weight:750}
+.fix-focus{outline:3px solid #d97706!important;outline-offset:2px;border-radius:8px;box-shadow:0 0 0 6px rgba(245,158,11,.25)!important}
+.dc-group{margin:6px 0 10px;padding:8px 10px;border-radius:9px}.dc-group h4{display:flex;justify-content:space-between;margin:0 0 2px;font-size:12.5px}.dc-group h4 span{font-variant-numeric:tabular-nums}.dc-sub{margin:0 0 6px;font-size:11.5px;color:#5f6e7a}
+.dc-fix-group{background:#fff7e6;border:1px solid #f1c27a}.dc-aos-group{background:#f2f5f8;border:1px solid #d5dee6}.dc-aos-group h4{color:#334453}
+.dc-group ul{margin:0;padding:0;list-style:none}.dc-group li{display:grid;grid-template-columns:1fr auto;gap:2px 8px;align-items:center;padding:6px 0;border-top:1px solid rgba(0,0,0,.07);font-size:12px}.dc-group li .dc-title{font-weight:750}.dc-group li .dc-where{grid-column:1;color:#5f6e7a;font-size:11.5px}.dc-group li .dc-fix{grid-column:2;grid-row:1/span 2}.dc-group li details{grid-column:1/-1;font-size:11.5px;color:#4a5864}.dc-group li details p{margin:4px 0 0}
+.dc-aos-group>summary{cursor:pointer;list-style:none}.dc-aos-group>summary::-webkit-details-marker{display:none}.dc-aos-group>summary h4::after{content:' ▾'}.dc-aos-group[open]>summary h4::after{content:' ▴'}
+.dc-fix{min-height:34px;padding:5px 11px;border-radius:8px;border:2px solid #d97706;background:#fff;color:#8a4b00;font-weight:850;font-size:12px}
+.stair-review .sr-cat{margin:5px 0 1px;font-size:10.5px;font-weight:850;letter-spacing:.03em;text-transform:uppercase;color:#5a3a1c}.stair-review .sr-cat[data-category="aos"]{color:#334453}.stair-review li .dc-fix{min-height:30px;margin:3px 0 2px}
+.pdf-confirm-list .pc-group{list-style:none;margin:0 0 8px -18px}.pdf-confirm-list .pc-group ul{margin:3px 0 0;padding-left:18px;font-size:12.5px}
+.dim-edit{position:fixed;z-index:60;display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding:5px;border-radius:10px;background:#fff;border:2px solid #c32e3c;box-shadow:0 6px 20px rgba(16,28,38,.25);max-width:min(300px,calc(100vw - 16px))}
+.dim-edit[hidden]{display:none}.dim-edit label{font-size:10.5px;font-weight:850;letter-spacing:.03em;text-transform:uppercase;color:#a3262f;padding:0 2px;width:100%}
+.dim-edit input{width:116px;min-height:38px;padding:4px 8px;border:1px solid #9aa8b3;border-radius:7px;font:700 16px/1.2 system-ui;color:#1f2b36}
+.dim-edit button{min-width:38px;min-height:38px;border-radius:7px;border:1px solid #c9d3da;background:#fff;font-weight:900;font-size:15px}.dim-edit .dim-ok{background:#c32e3c;border-color:#c32e3c;color:#fff}
+.dim-edit .dim-err{width:100%;font-size:11.5px;line-height:1.3;color:#a3262f}.dim-edit .dim-err:empty{display:none}
+.beta-dialog .aos-confirm-panel{width:min(440px,100%);max-height:calc(100vh - 24px);overflow:auto}.beta-tag{font-size:11px!important;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#7a4b00!important;margin:0 0 4px!important}
+.beta-field{display:grid;gap:3px;margin:0 0 9px;font-size:12px;font-weight:750;color:#3c4954}.beta-field input,.beta-field textarea{width:100%;box-sizing:border-box;padding:8px 9px;border:1px solid #b9c5cd;border-radius:8px;font:500 15px/1.35 system-ui;color:#1f2b36;background:#fff}.beta-field input[readonly]{background:#f2f5f7;color:#4a5864}
+.beta-rating{border:0;margin:0 0 6px;padding:0}.beta-rating legend{font-size:12px;font-weight:750;color:#3c4954;margin-bottom:4px}.beta-rating div{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.beta-rating label{position:relative}.beta-rating input{position:absolute;opacity:0;inset:0}.beta-rating span{display:flex;align-items:center;justify-content:center;min-height:42px;border:1px solid #b9c5cd;border-radius:9px;font-weight:850;font-size:16px;background:#fff}.beta-rating input:checked+span{background:#c32e3c;border-color:#c32e3c;color:#fff}.beta-rating input:focus-visible+span{outline:3px solid #f4b400}
+.beta-error{min-height:0;margin:0 0 8px!important;font-size:12.5px!important;color:#a3262f!important}.beta-error:empty{display:none}.beta-done{font-weight:750}.beta-note{font-size:13px!important}.aos-confirm-buttons.one{grid-template-columns:1fr}
+.rv-beta{border:1px dashed #d4a64a;background:#fffaf0}.rv-beta .beta-btn{width:100%;min-height:42px;border-radius:9px;border:2px solid #b7791f;background:#fff;color:#7a4b00;font-weight:850;font-size:13.5px}
+.rv-beta-feedback dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:4px 0;font-size:12.5px}.rv-beta-feedback dt{font-weight:750;color:#4a5864}.rv-beta-feedback dd{margin:0;white-space:pre-wrap}
 .pdf-preview{position:fixed;inset:0;z-index:60;background:rgba(14,20,28,.94);display:flex;flex-direction:column}.pdf-preview[hidden]{display:none}
 .pdf-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;background:#151c26;color:#fff;flex:0 0 auto}
 .pdf-heading{min-width:0}.pdf-heading h2{margin:0;font-size:15px;font-weight:800}.pdf-heading span{display:block;font-size:11px;color:#aab4bd;margin-top:2px}
@@ -320,6 +352,7 @@ body.pdf-open{overflow:hidden}
       </div>
       <button class="structure-toggle" id="structureToggle" type="button" aria-pressed="false" hidden>⌗ Show framing</button>
       <canvas id="planCanvas" class="viewport-canvas visible" aria-label="2D deck plan; drag deck edges to resize"></canvas>
+      <form id="dimEdit" class="dim-edit" hidden autocomplete="off" aria-label="Edit measurement"><label id="dimEditLabel" for="dimEditInput">Edge</label><input id="dimEditInput" type="text" inputmode="text" enterkeyhint="done" spellcheck="false" autocapitalize="off" aria-describedby="dimEditError"><button type="submit" class="dim-ok" aria-label="Apply measurement">✓</button><button type="button" class="dim-cancel" id="dimEditCancel" aria-label="Cancel, keep the original measurement">✕</button><span id="dimEditError" class="dim-err" role="alert"></span></form>
       <canvas id="glCanvas" class="viewport-canvas" aria-label="3D deck view; rotate, move focus, or pinch to zoom"></canvas>
       <div class="placeholder" id="emptyOverlay"><div class="blank-graphic"><span class="shape-ghost"></span><span class="blank-dot a"></span><span class="blank-dot b"></span><span class="blank-dot c"></span><span class="blank-dot d"></span></div><strong>Start a new plan</strong><span>Name the plan and choose a deck shape in Step 01 · Shape &amp; Size.</span><div id="recentProjects" class="recent-projects" hidden></div></div>
       <div id="shapeOverlay" class="shape-overlay hidden" role="dialog" aria-label="Choose deck shape">
@@ -352,6 +385,34 @@ body.pdf-open{overflow:hidden}
       <button class="danger" type="button" id="dividerConfirmAccept">Remove All</button>
     </div>
   </div>
+</div>
+<div class="aos-confirm pdf-confirm" id="pdfConfirm" role="dialog" aria-modal="true" aria-labelledby="pdfConfirmTitle" aria-describedby="pdfConfirmSummary" hidden>
+  <div class="aos-confirm-panel">
+    <p class="pdf-confirm-tag">AOS internal · not shown to the customer</p>
+    <h2 id="pdfConfirmTitle">Unresolved design warnings</h2>
+    <p id="pdfConfirmSummary"></p>
+    <ul id="pdfConfirmList" class="pdf-confirm-list"></ul>
+    <p class="pdf-confirm-note">Continuing makes a preliminary concept only. It does not approve the design or clear these warnings; they stay open in Review › Internal (Design check). Return to fix the design items first.</p>
+    <div class="aos-confirm-buttons">
+      <button class="cancel" type="button" id="pdfConfirmBack">Return to design review</button>
+      <button class="primary" type="button" id="pdfConfirmGo">Continue with preliminary concept PDF</button>
+    </div>
+  </div>
+</div>
+<div class="aos-confirm beta-dialog" id="betaDialog" role="dialog" aria-modal="true" aria-labelledby="betaTitle" hidden>
+  <form class="aos-confirm-panel" id="betaForm" autocomplete="off" novalidate>
+    <p class="beta-tag">Internal beta · not shown to customers</p>
+    <h2 id="betaTitle">Finish Beta Test</h2>
+    <div id="betaFields">
+      <label class="beta-field">Tester name<input id="betaTester" maxlength="80" required autocomplete="name"></label>
+      <label class="beta-field">Design / project<input id="betaProject" readonly tabindex="-1"></label>
+      <label class="beta-field">Feedback<textarea id="betaText" rows="5" maxlength="6000" placeholder="What worked? What was confusing, missing, or broken?"></textarea></label>
+      <fieldset class="beta-rating"><legend>Ease of use (1 = hard, 5 = easy)</legend><div><label><input type="radio" name="betaRating" value="1"><span>1</span></label><label><input type="radio" name="betaRating" value="2"><span>2</span></label><label><input type="radio" name="betaRating" value="3"><span>3</span></label><label><input type="radio" name="betaRating" value="4"><span>4</span></label><label><input type="radio" name="betaRating" value="5"><span>5</span></label></div></fieldset>
+      <p class="beta-error" id="betaError" role="alert"></p>
+      <div class="aos-confirm-buttons"><button class="cancel" type="button" id="betaCancel">Cancel</button><button class="primary" type="submit" id="betaSave">Save Design &amp; Feedback</button></div>
+    </div>
+    <div id="betaDone" hidden><p class="beta-done" role="status"></p><p class="beta-note">Feedback has <b>not</b> been sent automatically. Please send this file to AOS (for example by email).</p><div class="aos-confirm-buttons one"><button class="primary" type="button" id="betaClose">Done</button></div></div>
+  </form>
 </div>
 <div class="aos-confirm" id="leaveDialog" role="dialog" aria-modal="true" aria-labelledby="leaveTitle" aria-describedby="leaveMessage" hidden>
   <div class="aos-confirm-panel">
@@ -1074,12 +1135,19 @@ function c7Bearing(j,bm){
  const r=[j.pA[0]-c[0],j.pA[1]-c[1]];slab(dot(r,d),dot(D,d),len/2);slab(dot(r,n),dot(D,n),C7.BEAM_HALF);
  if((iv[1]-iv[0])*L<C7.MIN_BEARING)return null;return j.a+(j.b-j.a)*(iv[0]+iv[1])/2;}
 // The span/cantilever screen used by buildForSize's final check, on a merged list of bearings.
-function c7RunReasons(j,sp,style,lim){
+// V5.3 C7 RC correction (owner, 13 Nov 2026): a flush bearing is the beam the joist ENDS at. Its centre lies half
+// the beam's crossing width from the joist end: BEAM_HALF for a header square to the joists (unchanged), and
+// BEAM_HALF / sin(angle) for an angled flush header along a cut corner. `half` lists that half-width per bearing.
+function c7HalfCross(j,beams){const D=[j.pB[0]-j.pA[0],j.pB[1]-j.pA[1]],L=Math.hypot(...D)||1,jd=[D[0]/L,D[1]/L],out=[];
+ for(const bm of beams||[]){const u=c7Bearing(j,bm);if(u===null)continue;const {d}=c7BeamFrame(bm),sn=Math.abs(jd[0]*d[1]-jd[1]*d[0]);out.push({u,h:C7.BEAM_HALF/Math.max(.38,sn)});}
+ return out;}
+function c7RunReasons(j,sp,style,lim,half=null){
  const reason=[];sp=[...sp].sort((a,b)=>a-b).filter((v,i,a)=>!i||v-a[i-1]>C7.MERGE);
+ const endHalf=u=>{const h=(half||[]).filter(x=>Math.abs(x.u-u)<C7.MERGE).map(x=>x.h);return h.length?Math.max(C7.BEAM_HALF,Math.min(...h)):C7.BEAM_HALF;};
  const spans=sp.slice(1).map((v,k)=>v-sp[k]),back=sp.length?sp[0]-j.a:j.b-j.a,front=sp.length?j.b-sp.at(-1):j.b-j.a;
  if(sp.length<2)reason.push('no verified pair of bearing locations');
  if(spans.some(x=>x>lim.span+.07))reason.push('joist span');
- if(style==='flush'){if(back>C7.BEAM_HALF+.06||front>C7.BEAM_HALF+.06)reason.push('flush end bearing');}
+ if(style==='flush'){if((sp.length&&back>endHalf(sp[0])+.06)||(!sp.length&&back>C7.BEAM_HALF+.06)||(sp.length&&front>endHalf(sp.at(-1))+.06)||(!sp.length&&front>C7.BEAM_HALF+.06))reason.push('flush end bearing');}
  else{if(back>2.01||front>2.01||back>lim.cant+.01||front>lim.cant+.01)reason.push('cantilever cap');
   if(back>.06&&!j.ledger&&spans.length&&back>spans[0]/4+.06)reason.push('backspan quarter');
   if(front>.06&&spans.length&&front>spans.at(-1)/4+.06)reason.push('frontspan quarter');}
@@ -1102,29 +1170,36 @@ function c7Rims(poly,joistD,opts){
 // A 5.5 in. post is 1 in. wider than the 4.5 in. beam it carries. Where the post centered on the beam
 // would project past the outline (beam face on the outline), it moves inward by up to 1/2 in. so its
 // face lines up with the beam face. Posts that are already inside never move.
-function c7PlacePost(poly,pt,n){const h=C7.POST_HALF,ok=p=>c7RectInside(poly,[[p[0]-h,p[1]-h],[p[0]+h,p[1]-h],[p[0]+h,p[1]+h],[p[0]-h,p[1]+h]]);
- if(ok(pt))return pt;const k=C7.POST_HALF-C7.BEAM_HALF+.002;for(const sgn of [1,-1]){const q=[pt[0]+n[0]*k*sgn,pt[1]+n[1]*k*sgn];if(ok(q))return q;}return pt;}
+// C7 RC correction (13 Nov 2026): a FLUSH header runs at the outline, so near an angled edge its post may also move
+// sideways up to the beam's half-width (it still stands under the beam, c7PostUnder). Dropped beams: unchanged.
+function c7PlacePost(poly,pt,n,wide=false){const h=C7.POST_HALF,ok=p=>c7RectInside(poly,[[p[0]-h,p[1]-h],[p[0]+h,p[1]-h],[p[0]+h,p[1]+h],[p[0]-h,p[1]+h]]);
+ if(ok(pt))return pt;for(const k of wide?[C7.POST_HALF-C7.BEAM_HALF+.002,.08,.12,.16,C7.BEAM_HALF]:[C7.POST_HALF-C7.BEAM_HALF+.002])for(const sgn of [1,-1]){const q=[pt[0]+n[0]*k*sgn,pt[1]+n[1]*k*sgn];if(ok(q))return q;}return pt;}
 // C7 (owner testing, 11 Nov): a post may serve a second beam only when it physically stands under that beam
 // (within the beam's 4.5 in. width and length). A post merely NEAR another beam's end does not support it.
 function c7PostUnder(pt,bm){const {len,d,n}=c7BeamFrame(bm),v=[pt[0]-bm.a[0],pt[1]-bm.a[1]],al=dot(v,d);return al>=-.05&&al<=len+.05&&Math.abs(dot(v,n))<=C7.BEAM_HALF+.02;}
 // Where beam A's end post falls within 0.6 ft of post q already carrying beam B, the one post may carry both
 // only if it stands under both. If q does not, it moves to the crossing of the two beam centerlines when that
 // point is under both beams and inside the outline; otherwise null (the junction is unsupported).
-function c7SharePost(q,B,A,poly){if(c7PostUnder(q,A)&&c7PostUnder(q,B))return q;
+function c7SharePost(q,B,A,poly,wide=false){if(c7PostUnder(q,A)&&c7PostUnder(q,B))return q;
  const t=crossing(B.a,B.b,A.a,A.b);let X=null;
  if(t!==null)X=[B.a[0]+(B.b[0]-B.a[0])*t,B.a[1]+(B.b[1]-B.a[1])*t];
  else{const {d:dA}=c7BeamFrame(A),{d:dB,len:lB}=c7BeamFrame(B),r=[B.b[0]-B.a[0],B.b[1]-B.a[1]],s2=[A.b[0]-A.a[0],A.b[1]-A.a[1]],den=r[0]*s2[1]-r[1]*s2[0];
   if(Math.abs(den)<1e-7||Math.abs(dot(dA,dB))>.999)return null;const tt=((A.a[0]-B.a[0])*s2[1]-(A.a[1]-B.a[1])*s2[0])/den;X=[B.a[0]+r[0]*tt,B.a[1]+r[1]*tt];void lB;}
  const h=C7.POST_HALF;if(Math.hypot(X[0]-q[0],X[1]-q[1])>.6||!c7PostUnder(X,A)||!c7PostUnder(X,B))return null;
- return c7RectInside(poly,[[X[0]-h,X[1]-h],[X[0]+h,X[1]-h],[X[0]+h,X[1]+h],[X[0]-h,X[1]+h]])?X:null;}
+ const inside=P=>c7RectInside(poly,[[P[0]-h,P[1]-h],[P[0]+h,P[1]-h],[P[0]+h,P[1]+h],[P[0]-h,P[1]+h]]);if(inside(X))return X;
+ // Flush headers meeting at the outline: the one post may move into the deck along the bisector of the two
+ // beams while it still stands under both (C7 RC correction, 13 Nov 2026).
+ if(wide){const cA=[(A.a[0]+A.b[0])/2,(A.a[1]+A.b[1])/2],cB=[(B.a[0]+B.b[0])/2,(B.a[1]+B.b[1])/2],u=v=>{const l=Math.hypot(...v)||1;return [v[0]/l,v[1]/l];},a=u([cA[0]-X[0],cA[1]-X[1]]),b=u([cB[0]-X[0],cB[1]-X[1]]),bis=u([a[0]+b[0],a[1]+b[1]]);
+  for(const dlt of [.04,.08,.12,.16,.2,.24]){const Y=[X[0]+bis[0]*dlt,X[1]+bis[1]*dlt];if(c7PostUnder(Y,A)&&c7PostUnder(Y,B)&&inside(Y))return Y;}}
+ return null;}
 function c7PostPoints(cand,style,FS,poly){
  const profile=style==='flush'&&cand.joistNominal<12?'3-2x10':'3-2x12',pts=[],owner=[],unsupportedEnds=[];let missing=0,shared=0;
  for(const bm of cand.beams){const len=bm.len,{d}=c7BeamFrame(bm);
   const pos=bm.postPositions||(FS.postsForBeam(len,bm.eq,style,profile,Boolean(bm.interior))||{}).positions;
   if(!pos){missing++;continue;}
   pos.forEach((p,i)=>{let along=p;if(style==='flush'){const r=5.5/24;along=i===0?r:i===pos.length-1?len-r:p;}
-   const pt=c7PlacePost(poly,[bm.a[0]+d[0]*along,bm.a[1]+d[1]*along],[-d[1],d[0]]),near=pts.find(q=>Math.hypot(q[0]-pt[0],q[1]-pt[1])<.6);
-   if(near){shared++;const k=pts.indexOf(near),X=c7SharePost(near,owner[k],bm,poly);if(X)pts[k]=X;else unsupportedEnds.push(pt);return;}pts.push(pt);owner.push(bm);});}
+   const pt=c7PlacePost(poly,[bm.a[0]+d[0]*along,bm.a[1]+d[1]*along],[-d[1],d[0]],style==='flush'),near=pts.find(q=>Math.hypot(q[0]-pt[0],q[1]-pt[1])<.6);
+   if(near){shared++;const k=pts.indexOf(near),X=c7SharePost(near,owner[k],bm,poly,style==='flush');if(X)pts[k]=X;else unsupportedEnds.push(pt);return;}pts.push(pt);owner.push(bm);});}
  return {pts,missing,shared,unsupportedEnds};}
 // Two dropped beams at the same elevation cannot pass through each other. Their physical bodies (4.5 in.
 // wide) may touch only where both END at one post that stands under both (a connection, flagged for review).
@@ -1146,7 +1221,7 @@ function c7BeamClashes(beams,pts){const out=[];
 function assessLayout(cand,runs,poly,joistD,spacing,style,FS,opts){
  const lim=FS.JOISTS[spacing][cand.joistNominal],beams=cand.beams||[];
  const bearingsFor=j=>{const sp=[...(j.ledger?[j.a]:[]),...(j.ledgerEnd?[j.b]:[])];for(const bm of beams){const u=c7Bearing(j,bm);if(u!==null)sp.push(u);}return sp;};
- const unsupported=[],okRuns=[];for(const j of runs){const r=c7RunReasons(j,bearingsFor(j),style,lim);if(r.reason.length)unsupported.push({t:j.t,role:j.role||'joist',reason:r.reason});else okRuns.push(j);}
+ const unsupported=[],okRuns=[];for(const j of runs){const r=c7RunReasons(j,bearingsFor(j),style,lim,style==='flush'?c7HalfCross(j,beams):null);if(r.reason.length)unsupported.push({t:j.t,role:j.role||'joist',reason:r.reason});else okRuns.push(j);}
  // A side rim is supported on its own bearings, or when it is fastened along its full length to a joist
  // or trimmer in the adjacent lane (within 3 in.) that itself passes this screen, or (R1-approved picture
  // frame) through the flat 2x6 blocking to that edge's picture-frame support joist (within 1.6 ft per course).
@@ -1154,7 +1229,7 @@ function assessLayout(cand,runs,poly,joistD,spacing,style,FS,opts){
  const backedBy=(rr,edge)=>okRuns.find(j=>{const dist=Math.abs((rr.pA[0]-j.pA[0])*joistD[1]-(rr.pA[1]-j.pA[1])*joistD[0]);
    return (dist<=.25||(j.role==='picture-support-joist'&&asm[edge]&&dist<=1.6*asm[edge]))&&j.a<=rr.a+.3&&j.b>=rr.b-.3;});
  const rims=c7Rims(poly,joistD,opts).map(r=>{if(!r.run)return {edge:r.edge,role:r.role,len:+r.len.toFixed(3),supported:null};
-   const c=c7RunReasons(r.run,bearingsFor(r.run),style,lim);if(!c.reason.length)return {edge:r.edge,role:r.role,len:+r.len.toFixed(3),supported:true,path:'own bearings'};
+   const c=c7RunReasons(r.run,bearingsFor(r.run),style,lim,style==='flush'?c7HalfCross(r.run,beams):null);if(!c.reason.length)return {edge:r.edge,role:r.role,len:+r.len.toFixed(3),supported:true,path:'own bearings'};
    const j=backedBy(r.run,r.edge);return j?{edge:r.edge,role:r.role,len:+r.len.toFixed(3),supported:true,path:j.role==='picture-support-joist'&&Math.abs((r.run.pA[0]-j.pA[0])*joistD[1]-(r.run.pA[1]-j.pA[1])*joistD[0])>.25?'picture-frame assembly (rim / flat 2x6 / support joist)':`fastened to adjacent ${j.role||'joist'}`}:{edge:r.edge,role:r.role,len:+r.len.toFixed(3),supported:false,reason:c.reason};});
  const outsideBeams=beams.filter(bm=>!c7RectInside(poly,c7BeamRect(bm))).length;
  const {pts,missing,shared,unsupportedEnds}=c7PostPoints(cand,style,FS,poly),h=C7.POST_HALF,clashes=c7BeamClashes(beams,pts);
@@ -1211,8 +1286,14 @@ function c7Posts(len,eq,fixedA,fixedB,FS){
 // joists cannot reach a main beam gets ONE beam parallel to that edge, set in so those joists cantilever
 // within the 2 ft cap and the 1/4-backspan rule. It runs from the main beam (one shared post where they
 // meet) out to the side rim, so it also carries the rim. Connections remain flagged for production review.
+// V5.3 C7 RC correction (owner, 13 Nov 2026): with FLUSH beams the corner joists along a cut edge are carried by
+// ONE angled flush header at their ends (joined to the R1 perimeter header), not by one local stub beam and post
+// per joist (the R1 flush planner groups joist ends only within 0.025 ft, so on an angled edge every joist became
+// its own group). Dropped beams are unchanged.
+
 function angledRimPlan(runs,poly,joistD,beamD,spacing,style,FS,size,opts,scale=1,extend=false,baseLayout=null){
- if(style!=='dropped'||!runs.length)return null;
+ if((style!=='dropped'&&style!=='flush')||!runs.length)return null;const flush=style==='flush';
+ if(flush&&(scale!==1||extend))return null;
  const angled=[];for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length],L=Math.hypot(b[0]-a[0],b[1]-a[1]);if(L<.3)continue;
   const t=[(b[0]-a[0])/L,(b[1]-a[1])/L],al=Math.abs(dot(t,joistD));if(al>.1&&al<.95)angled.push({i,a,b,t,len:L});}
  const lim=FS.JOISTS[spacing][size],cap=Math.min(2,lim.cant),area=poly.reduce((q,a,i)=>{const b=poly[(i+1)%poly.length];return q+a[0]*b[1]-a[1]*b[0];},0),inward=area>=0?1:-1;
@@ -1223,7 +1304,7 @@ function angledRimPlan(runs,poly,joistD,beamD,spacing,style,FS,size,opts,scale=1
  // A line whose width just grazes an edge running along it is first shifted sideways (<= 0.3 ft).
  // The `extend` variant runs each shared line to the ends of the deck stretch it lies under (local
  // repair beams are then left out: the extended line replaces them).
- const mains=[];for(const bm of base.beams.filter(b=>b.role==='shared-beam'||(!extend&&b.role==='local-support'))){const {len,d,n}=c7BeamFrame(bm);let best=null;
+ const mains=[];for(const bm of base.beams.filter(b=>flush?(b.role==='shared-beam'||b.role==='perimeter-header'):(b.role==='shared-beam'||(!extend&&b.role==='local-support')))){const {len,d,n}=c7BeamFrame(bm);let best=null;
   const clip=([g0,g1])=>extend?[g0,g1]:[Math.max(g0,0),Math.min(g1,len)];
   for(const off of [0,-.05,.05,-.1,.1,-.2,.2,-.3,.3]){const o=[bm.a[0]+n[0]*off,bm.a[1]+n[1]*off],segs=c7SafeSegments(poly,o,d,extend?-R:-.5,extend?len+R:len+.5).filter(([g0,g1])=>g1>=0&&g0<=len).map(clip).filter(([a,b])=>b-a>=1.5);
    const cover=segs.reduce((q,[a,b])=>q+b-a,0);if(!best||cover>best.cover+.5)best={o,segs,cover,off};}
@@ -1232,9 +1313,10 @@ function angledRimPlan(runs,poly,joistD,beamD,spacing,style,FS,size,opts,scale=1
  const rims=c7Rims(poly,joistD,opts).filter(r=>r.run).map(r=>r.run);
  const onEdge=(p,e)=>{const v=[p[0]-e.a[0],p[1]-e.a[1]],along=dot(v,e.t);return along>-.15&&along<e.len+.15&&Math.abs(v[0]*e.t[1]-v[1]*e.t[0])<.15;};
  const bear=(j,list)=>{const sp=[...(j.ledger?[j.a]:[]),...(j.ledgerEnd?[j.b]:[])];for(const bm of list){const u=c7Bearing(j,bm);if(u!==null)sp.push(u);}return sp;};
+ const half=(j,list)=>flush?c7HalfCross(j,list):null;
  // Members still lacking bearing on the main beams, grouped by the angled edge at their free end.
  const pend=new Map();
- for(const j of [...runs,...rims]){if(!c7RunReasons(j,bear(j,mains),style,lim).reason.length)continue;
+ for(const j of [...runs,...rims]){if(!c7RunReasons(j,bear(j,mains),style,lim,half(j,mains)).reason.length)continue;
   for(const [p,endB] of [[j.pB,true],[j.pA,false]]){if(endB?j.ledgerEnd:j.ledger)continue;const e=angled.find(e=>onEdge(p,e));if(!e)continue;
    const key=e.i+(endB?'b':'a');if(!pend.has(key))pend.set(key,{e,endB,items:[]});pend.get(key).items.push(j);}}
  const corner=[];
@@ -1247,7 +1329,9 @@ function angledRimPlan(runs,poly,joistD,beamD,spacing,style,FS,size,opts,scale=1
    const P=Math.min(...others.map(u=>Math.abs(end-u)));c=Math.min(c,P/5-.03);
    if(others.length===1){const ov=(endB?j.ledger:j.ledgerEnd)?0:Math.abs(far-others[0]);c=Math.min(c,P-4*ov-.05);}}
   c=Math.max(.5,c*scale);
-  const s=Math.abs(e.t[0]*joistD[1]-e.t[1]*joistD[0]),n=[-e.t[1]*inward,e.t[0]*inward],off=c*s,origin=[e.a[0]+n[0]*off,e.a[1]+n[1]*off];
+  const s=Math.abs(e.t[0]*joistD[1]-e.t[1]*joistD[0]);
+  if(flush)c=(C7.BEAM_HALF+.02)/Math.max(.2,s); // flush: the header's outer face on the cut edge, no overhang
+  const n=[-e.t[1]*inward,e.t[0]*inward],off=c*s,origin=[e.a[0]+n[0]*off,e.a[1]+n[1]*off];
   const crossS=items.map(j=>{const end=endB?j.pB:j.pA,dir=endB?[-joistD[0],-joistD[1]]:joistD,p=[end[0]+dir[0]*c,end[1]+dir[1]*c];return dot([p[0]-origin[0],p[1]-origin[1]],e.t);});
   const want=[Math.min(...crossS),Math.max(...crossS)],span=c7SafeSpan(poly,origin,e.t,-R,R,want);if(!span)continue;
   // Junction with the nearest main beam whose line meets this one inside both safe stretches.
@@ -1282,13 +1366,15 @@ function angledRimPlan(runs,poly,joistD,beamD,spacing,style,FS,size,opts,scale=1
    if(toCorner){m.b=J;m.fixedB=true;}else{m.a=J;m.fixedA=true;}m.len=Math.hypot(m.b[0]-m.a[0],m.b[1]-m.a[1]);}
   corner.push(cb);}
  const beams=[...mains,...corner].filter(b=>b.len>=1.5);
+ if(flush){if(!corner.length)return null;for(const cb of corner)cb.overhangFt=0;}
  for(const bm of beams){if(!bm.fixedA&&!bm.fixedB)continue;const pos=c7Posts(bm.len,bm.eq,bm.fixedA,bm.fixedB,FS);if(!pos)return null;bm.postPositions=pos;}
  for(const bm of beams){delete bm.fixedA;delete bm.fixedB;}
- const checks=[],bad=[];for(const j of runs){const r=c7RunReasons(j,bear(j,beams),style,lim);
+ const checks=[],bad=[];for(const j of runs){const r=c7RunReasons(j,bear(j,beams),style,lim,half(j,beams));
   const c={t:j.t,a:j.a,b:j.b,role:j.role||'joist',ledgerStart:j.ledger,ledgerEnd:j.ledgerEnd,spans:r.spans,back:r.back,front:r.front,ok:!r.reason.length,reason:r.reason};checks.push(c);if(!c.ok)bad.push(c);}
  return {joistNominal:size,beams,groups:[],requests:[],badRuns:bad,checks,invalidRuns:[],diagnosticCount:bad.length,
   score:beams.length*12+bad.length*300,clusterCount:beams.length,duplicates:0,planner:corner.length?'angled-rim-beams-review-required':'fitted-shared-beams-review-required'};}
 const C7_SIZE_PREF={10:0,8:1,12:2};
+
 // C7 (owner testing, 11 Nov): inset support ring for irregular outlines (concave corners, narrow sections,
 // mixed 45/22.5 degree edges). Every edge the joists END on gets one beam, set in from that edge by the joist
 // cantilever; consecutive beams meet at ONE post on the crossing of their centerlines (under both beams).
@@ -3349,6 +3435,10 @@ class Renderer3D{
  // Keep the real notched stair stringers visible beneath the treads in the
  // finished 3D deck view, as well as in the framing-only view.
  setModel(model){this.model=model; if(!model)return;this.clampTargetToWorkArea();this.visibleParts=model.parts.filter(p=>!this.showStructure || (!['finish','stair','rail','site'].includes(p.group)&&p.kind!=='earth'));
+  // C7 release fixes B4: concept-only finished view for customer images of a design whose framing is not valid.
+  // The support structure (deck framing, footings, stair framing) and every member marked NOT BUILDABLE are left
+  // out; nothing is recolored. Set only while a customer image is captured.
+  if(this.conceptOnly&&!this.showStructure)this.visibleParts=this.visibleParts.filter(p=>!p.structuralFault&&!['framing','foundation','stair-framing'].includes(p.group));
   this.finishSeams=this.showStructure?[]:buildFinishSeams(this.visibleParts);
   if(!this.gl){this.draw();return;}
   const gl=this.gl,bucket={lawn:[],main:[],ground:[],siding:[]};
@@ -3856,6 +3946,7 @@ const $=id=>document.getElementById(id),core=window.DeckCore;
 // V5.3 C2: nine steps. Internal step IDs never change (saved state, tests and panels use them); the
 // display order is STEP_FLOW. Patio & Walkway is the new ID 8, shown just before Review & Present.
 const STEP_FLOW=[0,1,6,2,3,4,5,8,7],LAST_STEP=STEP_FLOW[STEP_FLOW.length-1];
+const STAIR_REFIT_FT=1.5; // C7 release fixes S3: run growth (ft) that refits the 3D view once
 const flowPosition=id=>STEP_FLOW.indexOf(id);
 const nextStep=id=>STEP_FLOW[Math.min(STEP_FLOW.length-1,flowPosition(id)+1)];
 const previousStep=id=>STEP_FLOW[Math.max(0,flowPosition(id)-1)];
@@ -3899,7 +3990,7 @@ function stairPlacementProblem(q,index,edgeId,offset,width){
 }
 // R1 final (owner decision 11 Nov 2026): a new staircase starts 3′ 0″ wide; width stays adjustable. Saved and
 // imported stairs keep their own width (the engine's fallback for a missing width is unchanged).
-const NEW_STAIR_WIDTH=3;
+const NEW_STAIR_WIDTH=4; // owner (13 Nov 2026): new stairs default to 4′0″; saved stairs keep their widths
 function addIndependentStair(){
  if(!state.intent)return;const q=structuredClone(state.intent),position=firstAvailableStairEdge(q,NEW_STAIR_WIDTH);
  if(!position){toast(`No free edge section for another ${fmt(NEW_STAIR_WIDTH)} staircase.`);return;}
@@ -3946,6 +4037,7 @@ function setProject(raw,commit=true,keepPanel=false){
  if(live){state.rev=(state.rev||0)+1;state.model=previewModel(state.intent,state.lastFull||state.model);setFramingStatus('pending');}
  else state.model=state.intent?buildFull(state.intent):core.make(null);
  if(commit)saveHistory();
+ if(state.fixTarget&&!state.model.preview)checkFixTarget(); // C7 UX corrections: clears the fix highlight once resolved
  {const a=state.model?.geometry?.dividerAdjust,key=a&&(a.moved||a.setAside)?`${a.moved}/${a.setAside}`:'';if(key&&key!==state.dividerAdjustKey&&!state.plan.drag)setTimeout(()=>toast(`Dividers adjusted for this size/direction: ${[a.moved?`${a.moved} moved in from an end`:'',a.setAside?`${a.setAside} set aside (kept, restored when there is room)`:''].filter(Boolean).join(', ')}.`),2300);state.dividerAdjustKey=key;}
  // Rebuilding WebGL on every pointer-move makes local edge dragging lag badly.
  // Draw the updated 2D model immediately; upload 3D geometry on release.
@@ -3953,6 +4045,15 @@ function setProject(raw,commit=true,keepPanel=false){
  // C7 Gate C (owner testing): a stair that gains stringer support members (added, lengthened or given a landing)
  // reaches out of the original 3D frame; refit once when that set changes so the supports are in view.
  if(!state.model.preview){const k=state.model.parts.filter(p=>p.kind==='stair-stringer-support').length;if(state._stairSupportKey!==undefined&&k>0&&k!==state._stairSupportKey)state._fitted=false;state._stairSupportKey=k;}
+ // C7 release fixes S3: also refit ONCE when a staircase is added, gains a landing or a turn, or its run grows by
+ // STAIR_REFIT_FT or more since the last fit, so a long stair is not left outside the 3D view. Only completed
+ // models count (never during a drag), and the camera is not touched while the user orbits or moves the view.
+ if(!state.model.preview&&state.intent){const prev=state._stairFit,cur={};let grow=false;
+  for(const g of state.model.geometry.stairs||[]){const was=prev&&prev[g.id],now={run:Number(g.run)||0,landing:Boolean(g.landing),turn:g.landing?(g.turn||'straight'):''};
+   if(prev&&(!was||(now.landing&&!was.landing)||(now.landing&&now.turn!==was.turn)||now.run>=was.run+STAIR_REFIT_FT))grow=true;
+   cur[g.id]={...now,run:was&&now.run>was.run?was.run:now.run};}
+  if(grow){state._fitted=false;for(const g of state.model.geometry.stairs||[])cur[g.id].run=Number(g.run)||0;state._stairRefits=(state._stairRefits||0)+1;}
+  state._stairFit=cur;}
  if(state.intent&&!state._fitted){renderer3d.fit();state._fitted=true;}if(!state.intent)state._fitted=false;
  if(!state.model.preview)$('modelBadge').textContent=state.model.stats.partCount?`${state.model.stats.partCount} COMPONENTS`:'READY TO DESIGN';
  if(!state.intent)setFramingStatus('none');
@@ -4069,8 +4170,8 @@ function undo(re=false){
    if(re){const p=state.freeRedo.pop();if(p)state.freePts.push(p);}else{const p=state.freePts.pop();if(p)state.freeRedo.push(p);}
    renderPanel();planDraw();updateHeader();return;}
  const i=state.historyAt+(re?1:-1);if(i<0||i>=state.history.length)return;state.historyAt=i;setProject(state.history[i],false);fit2d();toast(re?'Restored':'Undone');scheduleAutosave();}
-function railSummary(q){const keys=Object.keys(q.railOverrides||{}).map(Number).sort((a,b)=>a-b),base=`${q.railStyle} · ${q.railColor}`;
- return keys.length?`${base} (other edges); `+keys.map(k=>{const f=core.railFinish(q,k);return `Edge ${k+1}: ${f.railStyle} · ${f.railColor}`;}).join('; '):base;}
+function railSummary(q){const keys=Object.keys(q.railOverrides||{}).map(Number).sort((a,b)=>a-b),base=`${railSty(q.railStyle)} · ${railCol(q.railColor)}`;
+ return keys.length?`${base} (other edges); `+keys.map(k=>{const f=core.railFinish(q,k);return `Edge ${k+1}: ${railSty(f.railStyle)} · ${railCol(f.railColor)}`;}).join('; '):base;}
 function toggleEdge(kind,i){const q=structuredClone(state.intent),set=new Set(kind==='house'?q.houseEdges:q.railEdges);
  if(kind==='house'){
    if(set.has(i)){set.delete(i);q.ledgerEdges=q.ledgerEdges.filter(e=>e!==i);}
@@ -4148,7 +4249,7 @@ function stepAttention(){const out=new Set(),m=state.model;if(!state.intent||!m)
    if(/outline|footprint|triangulat/i.test(t))out.add(0);else if(/Patio & walkway/i.test(t))out.add(8);else if(/House & Height/.test(t))out.add(1);else if(/stair/i.test(t))out.add(2);else if(/divider|border|picture/i.test(t))out.add(3);
    else if(/rail|guard/i.test(t))out.add(5);else out.add(6);}
  return out;}
-function stepTo(i){state.cornerPreview=null;if(!state.intent&&i>0){toast('Choose a shape first.');return;}
+function stepTo(i){closeDimEdit();state.cornerPreview=null;state.cutMode=false;if(!state.intent&&i>0){toast('Choose a shape first.');return;}
  if(i>0&&state.freeDraw){toast('Finish or cancel the drawing first.');return;}
  if(i>0&&state.model?.stats?.invalidGeometry){toast('Fix the deck outline first: it has crossed or overlapping edges.');return;}const fromStep=state.step;state.step=STEP_FLOW.includes(i)?i:0;state.framingDetails=false;state.posError=null;
  if(state.step===7){if(fromStep!==7)state.reviewMode='customer';state.reviewReturn=false;} // V5.3 C3: Review opens in Customer mode
@@ -4158,7 +4259,7 @@ function updateHeader(){
  $('undoBtn').disabled=state.historyAt===0;$('redoBtn').disabled=state.historyAt>=state.history.length-1;
  if(state.freeDraw){$('undoBtn').disabled=!state.freePts.length;$('redoBtn').disabled=!(state.freeRedo||[]).length;}
  $('backBtn').disabled=flowPosition(state.step)===0;$('nextBtn').disabled=state.step===0&&(!state.intent||state.freeDraw);
- $('nextBtn').innerHTML=state.step===LAST_STEP?'Finish <span class="arrow">✓</span>':`Next <span class="next-name">${titles[nextStep(state.step)]}</span><span class="arrow">→</span>`;
+ $('nextBtn').innerHTML=state.step===LAST_STEP?'Finish Beta Test <span class="arrow">✓</span>':`Next <span class="next-name">${titles[nextStep(state.step)]}</span><span class="arrow">→</span>`;
  for(const v of ['2d','3d']){$('mode'+v).classList.toggle('active',state.view===v);$('mode'+v).setAttribute('aria-pressed',String(state.view===v));}
  $('structureToggle').hidden=state.view!=='3d';$('structureToggle').classList.toggle('active',renderer3d.showStructure);$('structureToggle').textContent=renderer3d.showStructure?'✓ Framing only':'⌗ See framing';
  const showCamera=state.view==='3d';$('cameraTools').hidden=!showCamera;$('measureBtn').hidden=state.view!=='2d'; // R1 final: measurements exist only in 2D (the setting is kept)
@@ -4173,10 +4274,25 @@ function updateHeader(){
 }
 const seg=(path,opts,cur)=>`<div class="seg">${opts.map(([v,t])=>`<button type="button" data-path="${path}" data-value="${v}" class="${String(v)===String(cur)?'selected':''}">${t}</button>`).join('')}</div>`;
 const input=(path,label,val,min,max,step=.5)=>`<div class="field-card"><label>${label}</label><div class="field-input"><input type="text" class="len-input" data-field="${path}" aria-label="${label} (feet and inches)" inputmode="text" autocomplete="off" spellcheck="false" data-min="${min}" data-max="${max}" value="${fmt(val)}"></div></div>`;
-const swatches=(path,palette,selected,rail=false,mark=false)=>`<div class="swatches${mark?' marked':''}">${Object.entries(palette).map(([name,hex])=>`<button type="button" data-path="${path}" data-value="${name}" class="swatch ${rail?'rail':''} ${name===selected?'selected':''}" aria-label="${name}" title="${name}"${mark?` aria-pressed="${name===selected}"`:''}><span class="swatch-paint" style="background-color:${hex}">${mark&&name===selected?'<i class="swatch-check" aria-hidden="true">✓</i>':''}</span><span>${name}</span></button>`).join('')}</div>`;
+const swatches=(path,palette,selected,rail=false,mark=false,label=n=>n)=>`<div class="swatches${mark?' marked':''}">${Object.entries(palette).map(([name,hex])=>`<button type="button" data-path="${path}" data-value="${name}" class="swatch ${rail?'rail':''} ${name===selected?'selected':''}" aria-label="${esc(label(name))}" title="${esc(label(name))}"${mark?` aria-pressed="${name===selected}"`:''}><span class="swatch-paint" style="background-color:${hex}">${mark&&name===selected?'<i class="swatch-check" aria-hidden="true">✓</i>':''}</span><span>${esc(label(name))}</span></button>`).join('')}</div>`;
 // V5.3 C6: one-line "what is chosen now" card for the finish steps (presentation only).
 const finishCard=(rows)=>`<div class="finish-current" role="status">${rows.map(([label,hex,main,sub])=>`<div class="finish-row"><span class="finish-chip" style="background-color:${hex}"></span><span class="finish-text"><small>${label}</small><b>${main}</b>${sub?`<em>${sub}</em>`:''}</span></div>`).join('')}</div>`;
 const COLLECTION_INFO={'TimberTech Terrain':{brand:'TimberTech',short:'Terrain',kind:'capped composite'},'TimberTech Advanced PVC':{brand:'TimberTech',short:'Advanced PVC',kind:'PVC'}};
+// V5.3 C7 release fixes (owner authorization, B1/B2): DISPLAY NAMES ONLY. The stored values in designs and
+// saved files (collection, decking, border, railStyle, railColor) are unchanged, so saved projects, geometry,
+// board spacing and quantities are untouched. B1: the decking collections and colors are not verified as
+// purchasable manufacturer products, so they are shown as clearly labelled concept materials and colors with no
+// manufacturer name. B2: Westbury labels follow the owner's spec (W01/W02): Tuscany C10; Fine Texture finishes.
+const DECK_MATERIAL_LABEL={'TimberTech Terrain':'Concept composite decking','TimberTech Advanced PVC':'Concept PVC decking'};
+const DECK_MATERIAL_SHORT={'TimberTech Terrain':'Composite (concept)','TimberTech Advanced PVC':'PVC (concept)'};
+const DECK_COLOR_LABEL={'Brown Oak':'Warm Brown','Rustic Elm':'Dark Brown','Sandy Birch':'Sand','Silver Maple':'Silver Gray','Stone Ash':'Ash Gray'};
+const RAIL_STYLE_LABEL={'Westbury Tuscany':'Westbury Tuscany C10','No rail product selected':'No rail product selected'};
+const RAIL_COLOR_LABEL={'Textured Black':'Black Fine Texture','Bronze':'Bronze Fine Texture','White':'White Fine Texture'};
+// Finishes whose availability for this exact model has not been verified from manufacturer documents (owner
+// stock finishes; supplier/manufacturer confirmation pending). Shown internally only, never to the customer.
+const RAIL_FINISH_TO_CONFIRM={'Bronze':true,'White':true};
+const deckMat=v=>DECK_MATERIAL_LABEL[v]||'Concept decking',deckCol=v=>DECK_COLOR_LABEL[v]||String(v||''),railSty=v=>RAIL_STYLE_LABEL[v]||String(v||''),railCol=v=>RAIL_COLOR_LABEL[v]||String(v||'');
+const CONCEPT_NOTE='<div class="approx-note" data-note="concept-decking">Concept decking colors shown for design discussion. AOS confirms the final decking product and color before ordering.</div>';
 // Simple picket railing drawn in the chosen color (approximate; not the manufacturer's artwork).
 const railPreview=(hex,style)=>`<svg class="rail-preview" viewBox="0 0 64 34" width="64" height="34" aria-hidden="true">${style==='No rail product selected'?`<rect x="1" y="1" width="62" height="32" rx="4" fill="none" stroke="#b9c3cb" stroke-dasharray="3 3"/>`:`<rect x="3" y="3" width="5" height="29" fill="${hex}"/><rect x="56" y="3" width="5" height="29" fill="${hex}"/><rect x="2" y="2" width="60" height="3.5" fill="${hex}"/><rect x="8" y="26" width="48" height="2.5" fill="${hex}"/>${[13,19,25,31,37,43,49].map(x=>`<rect x="${x}" y="5.5" width="1.8" height="20.5" fill="${hex}"/>`).join('')}`}<rect x="0" y="32" width="64" height="2" fill="#c9cfd3"/></svg>`;
 // Small plan icon: house wall on top (red), field boards in the chosen direction (presentation only).
@@ -4283,6 +4399,46 @@ function updateEdgeDimension(value){
  state.edgeEditOpen=true;renderPanel();planDraw();
  toast(`Edge ${i+1}: ${exactEdgeLabel(actual)} applied.`);
 }
+
+// ---- Owner UX (16 Nov 2026): edit a measurement right on the 2D plan ----
+// Tapping a dimension opens a small input beside it, focused with the current value selected. Enter or ✓ applies
+// through the SAME code as the sidebar (exact lengths, shape constraints, refusals with the reason); Escape, ✕ or a
+// tap elsewhere leaves the deck unchanged. The sidebar editor stays open and in step as the alternative.
+const dimEdit={open:false,kind:null,index:null,field:null};
+function dimEditTarget(){if(dimEdit.kind==='edge')return (state.dimensionLabels||[]).find(x=>x.edgeIndex===dimEdit.index)?.box||null;return (state.overallLabels||[]).find(x=>x.field===dimEdit.field)?.box||null;}
+function placeDimEdit(){const f=$('dimEdit');if(!dimEdit.open||f.hidden)return;const r=planCanvas.getBoundingClientRect(),b=dimEditTarget();
+ const vv=window.visualViewport,vw=vv?vv.width:innerWidth,vh=vv?vv.height:innerHeight,ox=vv?vv.offsetLeft:0,oy=vv?vv.offsetTop:0,w=f.offsetWidth||220,h=f.offsetHeight||70;
+ let x,y;if(b){x=r.left+(b.l+b.r)/2-w/2;y=r.top+b.b+6;if(y+h>oy+vh-8)y=r.top+b.t-h-6;}else{x=r.left+r.width/2-w/2;y=r.top+12;}
+ // keep it on screen, above a phone keyboard (visual viewport)
+ x=Math.max(ox+8,Math.min(x,ox+vw-w-8));y=Math.max(oy+8,Math.min(y,oy+vh-h-8));f.style.left=`${Math.round(x)}px`;f.style.top=`${Math.round(y)}px`;}
+function openDimEdit(kind,key){if(!state.intent||state.step!==0)return;const f=$('dimEdit'),inp=$('dimEditInput');
+ dimEdit.open=true;dimEdit.kind=kind;dimEdit.index=kind==='edge'?key:null;dimEdit.field=kind==='overall'?key:null;
+ let val='';if(kind==='edge'){const e=state.model?.geometry?.edges?.[key];val=e?exactEdgeLabel(e.len):'';$('dimEditLabel').textContent=`Edge ${key+1} length`;}
+ else{val=fmt(state.intent[key]);$('dimEditLabel').textContent=`Overall ${key}`;}
+ inp.value=val;$('dimEditError').textContent='';f.hidden=false;placeDimEdit();
+ const go=()=>{if(!dimEdit.open)return;inp.focus({preventScroll:true});inp.select();placeDimEdit();};go();requestAnimationFrame(go);setTimeout(go,60);}
+function closeDimEdit(){if(!dimEdit.open)return;dimEdit.open=false;$('dimEdit').hidden=true;$('dimEditError').textContent='';}
+function applyDimEdit(){if(!dimEdit.open)return;const v=$('dimEditInput').value;
+ if(dimEdit.kind==='edge'){const sf=$('stepContent').querySelector('input[data-edge-field="length"]');if(sf)sf.value=v;
+  if(state.selectedEdge!==dimEdit.index){state.selectedEdge=dimEdit.index;}
+  const before=JSON.stringify(state.intent);updateEdgeDimension(v);
+  if(state.edgeError){$('dimEditError').textContent=state.edgeError;const i=$('dimEditInput');i.focus({preventScroll:true});i.select();placeDimEdit();return;}
+  if(JSON.stringify(state.intent)!==before||!state.edgeError)closeDimEdit();return;}
+ const sf=$('stepContent').querySelector(`input[data-field="${dimEdit.field}"]`);if(!sf){closeDimEdit();return;}
+ const before=JSON.stringify(state.intent),num=parseFeet(v);
+ if(!Number.isFinite(num)||num<=0){$('dimEditError').textContent='Enter a length like 32′ 6″, 32 6 or 32.5.';$('dimEditInput').select();return;}
+ sf.value=v;sf.dispatchEvent(new Event('change',{bubbles:true}));
+ if(JSON.stringify(state.intent)===before&&Math.abs(num-state.intent[dimEdit.field])>1e-6){$('dimEditError').textContent=`That ${dimEdit.field} doesn't fit this shape; no change made.`;$('dimEditInput').select();return;}
+ closeDimEdit();}
+$('dimEdit').addEventListener('submit',e=>{e.preventDefault();applyDimEdit();});
+$('dimEditCancel').addEventListener('click',()=>{closeDimEdit();});
+$('dimEdit').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeDimEdit();}});
+// The sidebar field shows what is being typed on the plan, and the other way round.
+$('dimEditInput').addEventListener('input',e=>{const sf=dimEdit.kind==='edge'?$('stepContent').querySelector('input[data-edge-field="length"]'):$('stepContent').querySelector(`input[data-field="${dimEdit.field}"]`);if(sf)sf.value=e.target.value;$('dimEditError').textContent='';});
+$('stepContent').addEventListener('input',e=>{if(!dimEdit.open)return;if((dimEdit.kind==='edge'&&e.target.matches('input[data-edge-field="length"]'))||(dimEdit.kind==='overall'&&e.target.matches(`input[data-field="${dimEdit.field}"]`)))$('dimEditInput').value=e.target.value;});
+$('stepContent').addEventListener('focusin',()=>closeDimEdit()); // using the sidebar editor instead closes the plan one
+if(window.visualViewport){visualViewport.addEventListener('resize',placeDimEdit);visualViewport.addEventListener('scroll',placeDimEdit);}
+addEventListener('resize',placeDimEdit);
 function selectDimension(index,focus=true){
  if(!state.intent||state.step!==0)return;
  state.selectedEdge=index;state.selectedCorner=null;state.edgeError=null;state.shapeTool='edge';state.cornerPreview=null;state.previewPoly=null;state.edgeEditOpen=true;
@@ -4290,7 +4446,7 @@ function selectDimension(index,focus=true){
  if(focus){const input=$('stepContent').querySelector('[data-edge-field="length"]');if(input){input.focus({preventScroll:true});input.select();}}
 }
 function hitOverallLabel(pt){return (state.overallLabels||[]).find(x=>pt.x>=x.box.l-4&&pt.x<=x.box.r+4&&pt.y>=x.box.t-4&&pt.y<=x.box.b+4)?.field??null;}
-function openOverallField(field){selectionClear();state.edgeError=null;renderPanel();planDraw();const f=$('stepContent').querySelector(`input[data-field="${field}"]`);if(f){f.focus({preventScroll:false});f.select();}}
+function openOverallField(field,focus=true){selectionClear();state.edgeError=null;renderPanel();planDraw();const f=$('stepContent').querySelector(`input[data-field="${field}"]`);if(f&&focus){f.focus({preventScroll:false});f.select();}}
 function hitDimensionLabel(pt){
  return (state.dimensionLabels||[]).find(x=>pt.x>=x.box.l-6&&pt.x<=x.box.r+6&&pt.y>=x.box.t-7&&pt.y<=x.box.b+7)?.edgeIndex??null;
 }
@@ -4356,7 +4512,7 @@ function syncCornerState(){
  const bevel=selectedBevel(),key=`${i}:${bevel?.id||'new'}`;
  if(state.cornerKey!==key){
    state.cornerKey=key;state.cornerAngle=bevel?.angle||45;
-   state.cornerOrientation=bevel?.orientation||'first';state.cornerSize=bevel?.size||1;
+   state.cornerOrientation=bevel?.orientation||'first';state.cornerSize=bevel?.size||2; // C7 UX: 2 ft default so the preview and its handles are easy to see (clamped to what fits)
  }
  return bevel;
 }
@@ -4392,8 +4548,33 @@ function refreshCornerPreview(){
  const c=bevel?bevel.base:poly[i],a=pts[at],b=pts[at+1];
  const incoming=poly[(i-1+poly.length)%poly.length],outgoing=poly[(i+1)%poly.length];
  const inside=bevel?Boolean(bevel.inside):((c[0]-incoming[0])*(outgoing[1]-c[1])-(c[1]-incoming[1])*(outgoing[0]-c[0]))<0;
- state.cornerPreview={base:c,a,b,inside};
+ // C7 UX corrections: the cut size is the distance back from the original corner along edge A (toward the
+ // previous corner); the other side follows from the angle. Both cutbacks, the diagonal and the handle directions
+ // are kept with the preview so the plan can label them and the handles can resize the cut.
+ const n=poly.length,unit=v=>{const l=Math.hypot(v[0],v[1])||1;return [v[0]/l,v[1]/l];};
+ const prevPt=bevel?poly[(bevel.start-1+n)%n]:poly[(i-1+n)%n],nextPt=bevel?poly[(bevel.start+2)%n]:poly[(i+1)%n];
+ const toA=unit([prevPt[0]-c[0],prevPt[1]-c[1]]),toB=unit([nextPt[0]-c[0],nextPt[1]-c[1]]);
+ const sizeA=Math.hypot(a[0]-c[0],a[1]-c[1]),sizeB=Math.hypot(b[0]-c[0],b[1]-c[1]);
+ const edgeA=(bevel?(bevel.start-1+n)%n:(i-1+n)%n)+1,edgeB=(bevel?(bevel.start+1)%n:i)+1;
+ state.cornerPreview={base:c,a,b,inside,toA,toB,sizeA,sizeB,ratio:sizeA>1e-9?sizeB/sizeA:1,diag:Math.hypot(a[0]-b[0],a[1]-b[1]),edgeA,edgeB,lim:cornerSizeLimit(poly,i,state.cornerAngle,state.cornerOrientation,bevel)};
 }
+// C7 UX corrections: update the corner panel in place (field, slider, cutback readout, hint, Apply) without a
+// re-render, so a drag on the plan or a click on Apply is never lost.
+function syncCornerPanel(){const sc=$('stepContent');if(!sc)return;const cp=state.cornerPreview;
+ const field=$('cornerSizeInput');if(field&&document.activeElement!==field)field.value=formatCornerSize(state.cornerSize);
+ const slider=sc.querySelector('input[data-corner-slider]');if(slider)slider.value=state.cornerSize;
+ const ro=sc.querySelector('[data-corner-readout]');if(ro&&cp)ro.innerHTML=cutReadout(cp);
+ const hint=sc.querySelector('.corner-simple .corner-hint:last-of-type');if(hint){hint.textContent=state.cornerPreviewError||'Dashed line = preview · Nothing changes until you apply.';hint.classList.toggle('invalid',Boolean(state.cornerPreviewError));}
+ const apply=sc.querySelector('[data-action="apply-corner"]');if(apply)apply.disabled=!state.pendingCornerResult;}
+const cutReadout=cp=>`<span class="cut-main" data-cutback="a"><b>Cut size ${formatCornerSize(cp.sizeA)}</b> — measured back from the original corner along edge ${cp.edgeA}</span><span data-cutback="b">Other side: <b>${formatCornerSize(cp.sizeB)}</b> back along edge ${cp.edgeB}</span><span class="cut-diag" data-cutback="diag">Diagonal cut line ${formatCornerSize(cp.diag)} (not the cut size)</span>`;
+// Corners that can take a new cut: not already part of a cut, with room for a 45° or 22.5° cut.
+function cutCandidates(){const q=state.intent;if(!q)return [];const poly=core.polygon(q),bevels=q.bevels||[],out=[];
+ for(let i=0;i<poly.length;i++){if(bevels.some(b=>b.start===i||b.start+1===i))continue;
+  if([45,22.5].some(a=>{const l=cornerSizeLimit(poly,i,a,'first',null);return l.max>=l.min;}))out.push(i);}
+ return out;}
+const cutMarkers=()=>{const q=state.intent;if(!q)return [];const poly=core.polygon(q);return (q.bevels||[]).map((b,k)=>{const a=poly[b.start],c=poly[(b.start+1)%poly.length];return a&&c?{k,bevel:b,mid:[(a[0]+c[0])/2,(a[1]+c[1])/2]}:null;}).filter(Boolean);};
+function cutHandleAt(l){const cp=state.cornerPreview;if(!cp||state.step!==0||state.selectedCorner===null)return null;const r=(window.innerWidth<801?26:18);
+ let best=null;for(const k of ['a','b']){const t=planXY(cp[k]),d=Math.hypot(t[0]-l.x,t[1]-l.y);if(d<=r&&(!best||d<best.d))best={k,d};}return best?.k||null;}
 function formatCornerSize(feet){return fmt(Math.round(feet*12)/12);}
 // V5.2 A2: T and U section dimensions. Fields appear while the outline still has the template's
 // structure (8 corners in the template order); after free reshaping, tap-to-edit is used instead.
@@ -4448,6 +4629,13 @@ function renderShapePanel(q){
  // corner was selected). When the plan has work in it, say up front that a change asks first.
  const worked=[q.staircases.length?'stairs':'',Object.keys(q.railOverrides||{}).length?'custom railing finishes':'',q.openings?.length?'doors and windows':'',q.bevels?.length||q.features?.length?'angled cuts':'',q.surfaces?.length?'patios or walkways':''].filter(Boolean);
  let html=`<div class="shape-inline"><span><b>${q.shape==='free'?'Custom':q.shape==='rectangle'?'Rectangle':q.shape==='square'?'Square':q.shape+'-Shape'}</b> · ${poly.length} corners</span><button data-action="choose-shape" class="change-shape">Change Deck Shape</button></div>${worked.length?`<div class="editor-tip shape-change-tip">This plan has ${worked.join(', ')}. Changing the shape shows what is kept and what is removed before anything changes; Keep Current Shape cancels. To start over instead, use ＋ New Plan.</div>`:''}`;
+ {const oc=designChecks().filter(c=>c.key==='outline');if(oc.length)html+=`<div class="framing-checks" data-section="shape-checks">${designCheckHtml(oc)}</div>`;} // C7 UX: an invalid outline is fixed here
+ // C7 UX corrections: Cut Corner is a visible tool, not something found by tapping a corner by accident.
+ if(!state.cutMode)html+=`<div class="cut-tool-row"><button type="button" class="cut-corner-btn" data-action="cut-corner-mode" aria-label="Cut Corner: choose a deck corner to cut at 45° or 22.5°">✂ Cut Corner</button><span>Trim an outside corner or fill an inside notch at 45° or 22.5°.</span></div>`;
+ if(state.cutMode&&corner===null){const cand=cutCandidates();
+   html+=`<div class="editor-panel cut-mode selected-item" data-panel="cut-corner"><div class="editor-head">CUT CORNER<span>${cand.length} corner${cand.length===1?'':'s'} available</span></div><div class="cut-instruction" role="status">Select the corner you want to cut.</div><div class="editor-tip">Tap a highlighted pin on the plan. Then choose 45° or 22.5°, set the size (type it or drag the round handles on the plan) and press Apply. Nothing changes until you apply.</div>${cand.length?'':'<div class="corner-hint invalid">No corner has room for a cut. Edit an existing cut below, or change the deck size.</div>'}<div class="editor-actions"><button type="button" data-action="cut-mode-cancel">Cancel</button></div></div>`;}
+ if((q.bevels||[]).length&&!(corner!==null&&poly[corner])){
+   html+=`<div class="editor-panel cut-list" data-panel="cut-list"><div class="editor-head">CORNER CUTS<span>${q.bevels.length}</span></div>${q.bevels.map((b,k)=>`<div class="cut-row" data-cut="${esc(b.id)}"><span><b>Cut ${k+1}</b> · ${b.angle}° · ${formatCornerSize(b.size)} back${b.inside?' · fills notch':''}</span><button type="button" data-action="cut-edit" data-cut="${esc(b.id)}">Edit / resize</button><button type="button" class="corner-secondary" data-action="cut-remove" data-cut="${esc(b.id)}">Remove</button></div>`).join('')}</div>`;}
  if(corner===null&&edge===null)html+=`<div class="field-row">${input('width','OVERALL WIDTH',q.width,4,48)}${input('depth','OVERALL DEPTH',q.depth,4,42)}</div><div class="editor-tip overall-tip">Overall = the outside size of the whole deck${poly.length>4?' (dark labels on the plan)':''}. To set one side, tap its measurement ✎ on the plan.</div>`;
  if(corner===null&&edge===null&&(q.startShape||q.shape)==='L'){
    html+=`<div class="editor-actions"><button data-action="flip-l">⇄ Flip L left / right</button></div>`;
@@ -4466,15 +4654,18 @@ function renderShapePanel(q){
    const inside=bevel?Boolean(bevel.inside):cross([p[0]-pr[0],p[1]-pr[1]],[nx[0]-p[0],nx[1]-p[1]])<0;
    const limit=cornerSizeLimit(poly,corner,state.cornerAngle,state.cornerOrientation,bevel);
    const size=state.cornerSize;
-   html+=`<div class="editor-panel corner-simple selected-item"><div class="editor-head">SELECTED · ${bevel?'ANGLED CORNER':'CORNER '+(corner+1)}<span>${inside?'Inside · fills notch':'Outside · trims corner'}</span></div>
-   <div class="corner-hint">${bevel?'Adjust the size below, or restore the original corner.':'Choose an angle and size. The dashed line shows the result before you apply it.'}</div>
+   const cutNo=bevel?(q.bevels||[]).indexOf(bevel)+1:0;
+   html+=`<div class="editor-panel corner-simple selected-item" data-panel="corner-cut"><div class="editor-head">${bevel?`SELECTED · CUT ${cutNo} · EDIT`:`SELECTED · CORNER ${corner+1} · CUT CORNER`}<span>${inside?'Inside · fills notch':'Outside · trims corner'}</span></div>
+   <div class="corner-hint">${bevel?'Resize this cut, or remove it to restore the original corner.':'Choose 45° or 22.5° and a size. The dashed line shows the result before you apply it.'}</div>
    ${bevel?'':`<div class="editor-actions corner-choice"><button data-action="corner-angle" data-value="45" class="${state.cornerAngle===45?'selected':''}">45°</button><button data-action="corner-angle" data-value="22.5" class="${state.cornerAngle===22.5?'selected':''}">22.5°</button></div>`}
    ${!bevel&&state.cornerAngle===22.5?'<button class="corner-flip" data-action="corner-flip">⇄ Flip cut direction</button>':''}
-   <div class="corner-control"><label for="cornerSizeInput">Cut size</label><input id="cornerSizeInput" data-shape-field="corner-size" value="${fmt(size)}" aria-label="Exact corner cut size in feet and inches" inputmode="text"></div>
+   <div class="corner-control"><label for="cornerSizeInput">Cut size</label><input id="cornerSizeInput" data-shape-field="corner-size" value="${fmt(size)}" aria-label="Exact corner cut size in feet and inches, measured back from the original corner" inputmode="text"></div>
+   <div class="cut-readout" data-corner-readout>${state.cornerPreview?cutReadout(state.cornerPreview):''}</div>
+   <div class="corner-hint drag-hint">Or drag a round handle on the plan. The connected edges keep their angles.</div>
    <input aria-label="Adjust corner cut size" type="range" data-corner-slider min="${limit.min}" max="${Math.max(limit.min,limit.max)}" step="any" value="${size}" ${limit.max<limit.min?'disabled':''}>
    <div class="corner-hint ${state.cornerPreviewError?'invalid':''}">${state.cornerPreviewError||'Dashed line = preview · Nothing changes until you apply.'}</div>
-   <div class="editor-actions"><button class="primary corner-apply" data-action="apply-corner" ${!state.pendingCornerResult?'disabled':''}>${bevel?'✓ Update Cut':'✓ Apply Cut'}</button><button data-action="cancel-corner">Done</button></div>
-   ${bevel?'<button class="corner-secondary" data-action="remove-bevel">↶ Restore original corner</button>':'<button class="corner-secondary" data-action="delete-corner">Remove this corner point</button>'}</div>`;
+   <div class="editor-actions"><button class="primary corner-apply" data-action="apply-corner" ${!state.pendingCornerResult?'disabled':''}>${bevel?'✓ Update Cut':'✓ Apply Cut'}</button><button data-action="cancel-corner">Cancel</button></div>
+   ${bevel?'<button class="corner-secondary" data-action="remove-bevel">↶ Remove cut · restore original corner</button>':'<button class="corner-secondary" data-action="delete-corner">Remove this corner point</button>'}</div>`;
  }else if(edge!==null&&es[edge]){
    const e=es[edge];
    html+=`<div class="editor-panel edge-length-panel selected-item"><div class="editor-head">SELECTED · EDGE ${edge+1}<span>now ${exactEdgeLabel(e.len)}</span></div><label class="edge-length-input">Set exact length of this edge (feet / inches)<input data-edge-field="length" value="${exactEdgeLabel(e.len)}" inputmode="text" aria-label="Exact edge length in feet and inches" placeholder="4′ 0″"></label>${state.edgeError?`<div class="field-error" role="alert">${esc(state.edgeError)}</div>`:''}<div class="editor-actions edge-actions-row"><button type="button" class="edge-apply" data-action="apply-edge-length">✓ Apply Length</button><button type="button" class="edge-done" data-action="done-edge">Done</button></div><div class="editor-tip">Tap a measurement on the drawing to edit it. The surrounding edges keep their angles.</div><div class="editor-actions"><button data-action="shape-feature" data-value="bump">+ Bump-out</button><button data-action="shape-feature" data-value="recess">+ Recess</button><button data-action="shape-split">+ Point</button></div></div>`;
@@ -4482,7 +4673,7 @@ function renderShapePanel(q){
      const f=state.featureDraft;
      html+=`<div class="editor-panel"><div class="editor-head">${state.shapeTool==='bump'?'BUMP-OUT':'RECESS'}</div><div class="editor-fields"><label>Width<input data-shape-field="feature-width" value="${fmt(f.width)}"></label><label>Depth<input data-shape-field="feature-depth" value="${fmt(f.depth)}"></label><label>Position from edge start (%)<input type="number" min="5" max="95" data-shape-field="feature-position" value="${Math.round(f.fraction*100)}"></label></div><div class="editor-actions"><button data-action="preview-feature">Preview</button><button class="primary" data-action="apply-feature">Apply to deck</button><button data-action="cancel-preview">Cancel</button></div></div>`;
    }
- }else html+=`<div class="shape-help"><strong>Edit your deck shape</strong><p>Tap a dimension to enter an exact measurement. Drag an edge or corner to reshape your deck. Tap a corner to add an angled cut.</p></div>`;
+ }else if(!state.cutMode)html+=`<div class="shape-help"><strong>Edit your deck shape</strong><p>Tap a dimension to enter an exact measurement. Drag an edge or corner to reshape your deck. Tap a corner to add an angled cut.</p></div>`;
  if(corner===null&&q.features?.length){
    const f=selectedFeature()||q.features.at(-1),editing=state.shapeTool==='feature-edit';
    html+=`<div class="editor-panel"><div class="editor-head">ADDED SECTIONS <span>${q.features.length}</span></div><div class="editor-fields"><label>Choose section<select data-feature-select>${q.features.map((x,i)=>`<option value="${x.id}" ${x.id===f.id?'selected':''}>${i+1}. ${x.kind==='bump'?'Bump-out':'Recess'}</option>`).join('')}</select></label></div><div class="editor-actions"><button data-action="feature-edit">Edit selected</button><button data-action="feature-remove" class="danger">Remove selected</button></div>${editing?`<div class="editor-fields"><label>Width<input data-shape-field="feature-width" value="${fmt(f.width)}"></label><label>Depth<input data-shape-field="feature-depth" value="${fmt(f.depth)}"></label><label>Position (%)<input type="number" data-shape-field="feature-position" min="5" max="95" value="${Math.round(f.fraction*100)}"></label></div><div class="editor-actions"><button data-action="preview-feature-edit">Preview change</button><button class="primary" data-action="apply-feature-edit">Update section</button></div>`:''}</div>`;
@@ -4694,6 +4885,28 @@ function changeOpening(update,done){const q=structuredClone(state.intent),o=(q.o
  if(problem==='overlap'){toast(`That would overlap another opening on the ${wallName(core.edges(core.polygon(q)),o.edge).toLowerCase()}; openings need ${Math.round(core.OPENING_GAP*12)} in. between them.`);renderPanel();return false;}
  if(problem==='not-house-wall'){toast('Openings go on house walls only.');renderPanel();return false;}
  setProject(q);if(done)toast(done);return true;}
+// C7 release fixes S1: concise internal review lines for the selected stair, where James edits stairs. The same
+// items stay in Framing and Review › Internal. Built from the current model; nothing here changes the design.
+const fixHere=(stair,what)=>{const t=state.fixTarget;if(!t||t.stair!==stair.id)return false;return what==='width'?t.kind==='stair-width':t.kind==='stair-side'&&t.side===what;};
+function stairChecks(q,stair){const i=q.staircases.indexOf(stair);return designChecks().filter(c=>c.target?.stair===stair.id||(c.cat==='aos'&&c.where===stairLabel(i)));}
+function stairReviewNotes(q,stair,m=state.model){if(!stair||!m||m.preview)return [];const out=[],al=m.alerts||[];
+ const onEdge=a=>new RegExp(`(^|\\b)[Ss]tair on edge ${stair.edge+1}\\b`).test(String(a.message));
+ const span=(m.stats.stairSpanReview||[]).filter(r=>r.stair===stair.id);
+ if(span.length)out.push({key:'span',level:'warning',text:`Structural Review Required — stringer span (${span.map(r=>fmt(r.run)).join(', ')} unsupported; 6 ft limit)`});
+ if(al.some(a=>a.code==='stair-handrail-required'&&onEdge(a)))out.push({key:'handrail',level:'warning',text:'Required handrail not verified'});
+ if(al.some(a=>a.code==='stair-guard-required'&&onEdge(a)))out.push({key:'guard',level:'warning',text:'Open stair side needs a guard — turn the rail on or confirm in review'});
+ // (C7 UX corrections: the Fix in Design button highlights the side and its rail button.)
+ if(al.some(a=>(a.code==='stair-finished-clearance'||a.code==='stair-rail-clear-width')&&onEdge(a)))out.push({key:'clearance',level:'review',text:'Stair clearance requires review'});
+ if(al.some(a=>(a.code==='stair-stringer-support'||a.code==='stair-intermediate-support')&&onEdge(a)))out.push({key:'supports',level:'review',text:'Generated stair supports are a concept — AOS review'});
+ return out;}
+// C7 UX corrections: the Stairs-step lines are split into Fix in Design (with a working Fix button) and AOS
+// Production Review (no button). The wording of each line is unchanged from the release fixes (S1).
+const FIXABLE_STAIR_NOTES={guard:'stair-guard',clearance:'stair-width'};
+const stairNotesHtml=(notes,q,stair)=>{if(!notes.length)return '';const checks=q&&stair?stairChecks(q,stair):[];
+ const fixId=n=>{const c=checks.find(x=>x.cat==='fix'&&(n.key==='guard'?x.key==='guard':x.key===n.key));return c?.id||null;};
+ const fx=notes.filter(n=>FIXABLE_STAIR_NOTES[n.key]&&fixId(n)),ao=notes.filter(n=>!fx.includes(n));
+ const li=n=>`<li data-item="${n.key}" class="${n.level}">${esc(n.text)}${fx.includes(n)?` <button type="button" class="dc-fix" data-action="fix-design" data-check="${esc(fixId(n))}">Fix in Design</button>`:''}</li>`;
+ return `<div class="stair-review" data-note="stair-review" role="note"><span class="stair-review-tag">AOS internal</span>${fx.length?`<p class="sr-cat" data-category="fix">Fix in Design</p><ul>${fx.map(li).join('')}</ul>`:''}${ao.length?`<p class="sr-cat" data-category="aos">${AOS_REVIEW_LABEL}</p><ul>${ao.map(li).join('')}</ul>`:''}</div>`;};
 function renderStairPanel(q){
  const list=q.staircases||[];state.stairSelected=clamp(state.stairSelected,0,Math.max(0,list.length-1));
  const stair=list[state.stairSelected],g=state.model.geometry.stairs?.[state.stairSelected];
@@ -4702,9 +4915,9 @@ function renderStairPanel(q){
    const e=core.edges(core.polygon(q))[stair.edge];
    // V5.2 A3: full-width stairs and landings.
    const full=Boolean(stair.fullWidth),L=stair.landing,gl=g?.landing,canLand=q.height>=core.LANDING_MIN_HEIGHT-1e-9;
-   html+=`<div class="editor-panel"><div class="editor-head">STAIR ${state.stairSelected+1} · EDGE ${stair.edge+1}<span>${g?.risers||'—'} risers${gl?` · ${gl.upperRisers} + ${gl.lowerRisers}`:''}</span></div>
+   html+=`<div class="editor-panel"><div class="editor-head">STAIR ${state.stairSelected+1} · EDGE ${stair.edge+1}<span>${g?.risers||'—'} risers${gl?` · ${gl.upperRisers} + ${gl.lowerRisers}`:''}</span></div>${stairNotesHtml(stairReviewNotes(q,stair),q,stair)}
    <div class="editor-actions stair-options"><button data-action="stair-full" class="${full?'selected':''}" aria-pressed="${full}">Full edge width ${full?'✓':'+'}</button><button data-action="stair-landing" class="${L?'selected':''}" aria-pressed="${Boolean(L)}" ${!canLand&&!L?'disabled':''}>Landing ${L?'✓':'+'}</button></div>
-   <div class="editor-fields"><label>Stair width (ft / in)<input data-stair-field="width" value="${fmt(stair.width)}" ${full?'disabled':''}></label></div>
+   <div class="editor-fields"><label${fixHere(stair,'width')?' class="fix-focus"':''}>Stair width (ft / in)<input data-stair-field="width" value="${fmt(stair.width)}" ${full?'disabled':''}></label></div>
    ${(()=>{const fr=sideFrame(q,stair.edge,'stair');return fr?posBlock({kind:'stair',ref:state.stairRef,frame:fr,offset:full?0:stair.offset,width:full?fr.len:stair.width,what:'stairs',disabled:full,
      label:`Attached to <b>deck edge ${stair.edge+1}</b> · ${fmt(fr.len)} long (highlighted on the plan).<br>Left / Right as seen <b>standing outside the deck, facing this edge</b>. Measured to the <b>closest side of the stairs</b>, not their center.${full?' A full-width stair fills the whole edge.':''}`}):'';})()}
    ${full?`<div class="editor-tip">Spans the whole ${fmt(e?.len||stair.width)} edge and follows it if the edge changes length.</div>`:''}
@@ -4712,9 +4925,9 @@ function renderStairPanel(q){
    <p class="group-title landing-sub">Lower flight</p><div class="seg turns" data-stair-turns>${[['straight','Straight'],['left','↰ Turn left'],['right','Turn right ↱']].map(([v,t])=>`<button type="button" data-action="stair-turn" data-value="${v}" class="${(L.turn||'straight')===v?'selected':''}" aria-pressed="${(L.turn||'straight')===v}" ${v!=='straight'&&stair.width>core.MAX_TURN_WIDTH?'disabled':''}>${t}</button>`).join('')}</div>
    ${L.turn?`<div class="editor-tip">The lower flight turns 90° to your ${L.turn} as you walk down and leaves from the side of the landing. The landing must be at least as deep as the stair is wide (${fmt(stair.width)}).</div>`:stair.width>core.MAX_TURN_WIDTH?`<div class="editor-tip">Turning stairs can be up to ${fmt(core.MAX_TURN_WIDTH)} wide.</div>`:''}
    <p class="group-title landing-sub">Landing decking direction</p><div class="seg wrap" data-landing-decklines>${[['match','Match main deck'],['horizontal','↔ Horizontal'],['vertical','↕ Vertical'],['diagonal-left','⟍ Diagonal left'],['diagonal-right','⟋ Diagonal right']].map(([v,t])=>`<button type="button" data-action="landing-deckline" data-value="${v}" class="${(L.deckLine||'match')===v?'selected':''}" aria-pressed="${(L.deckLine||'match')===v}">${t}</button>`).join('')}</div>
-   <div class="editor-tip">Uses the main deck's ${esc(q.decking)} boards${q.borderCount?` with a ${q.borderCount===2?'double':'single'} ${esc(q.border)} picture frame`:''}. ${(L.deckLine||'match')==='match'?`Follows the main deck's board direction (now ${({horizontal:'horizontal',vertical:'vertical','diagonal-left':'diagonal left','diagonal-right':'diagonal right'})[state.model.geometry.deckLineResolved]||q.deckLine}).`:'Horizontal runs parallel to the deck edge, like the treads; vertical runs down the stairs; diagonals lean 45° to your left or right as you walk down.'}${gl?.decking?` ${gl.decking.fieldBoards} field + ${gl.decking.frameBoards} frame boards.`:''}</div>
+   <div class="editor-tip">Uses the main deck's ${esc(deckCol(q.decking))} boards${q.borderCount?` with a ${q.borderCount===2?'double':'single'} ${esc(deckCol(q.border))} picture frame`:''}. ${(L.deckLine||'match')==='match'?`Follows the main deck's board direction (now ${({horizontal:'horizontal',vertical:'vertical','diagonal-left':'diagonal left','diagonal-right':'diagonal right'})[state.model.geometry.deckLineResolved]||q.deckLine}).`:'Horizontal runs parallel to the deck edge, like the treads; vertical runs down the stairs; diagonals lean 45° to your left or right as you walk down.'}${gl?.decking?` ${gl.decking.fieldBoards} field + ${gl.decking.frameBoards} frame boards.`:''}</div>
    <div class="editor-tip">${gl?`Upper flight: ${gl.upperRisers} risers down to the landing. Lower flight: ${gl.lowerRisers} risers to grade. Every riser ${inchText(g.rise)}; the landing height is set to a whole number of risers. `:''}Landing posts, footings and framing are drawn as a concept for AOS production review, not an approved structure.</div>`:''}
-   ${!canLand&&!L?`<div class="editor-tip">A landing needs at least four risers: a deck about ${fmt(core.LANDING_MIN_HEIGHT)} high or more.</div>`:''}<div class="editor-actions"><button data-action="stair-rail" data-side="left" class="${stair.rails.left?'selected':''}">Left rail ${stair.rails.left?'✓':'+'}</button><button data-action="stair-rail" data-side="right" class="${stair.rails.right?'selected':''}">Right rail ${stair.rails.right?'✓':'+'}</button><span class="rail-side-note">Rail left/right: as you walk down the stairs.</span><button data-action="stair-remove" class="danger">Remove selected</button></div><div class="editor-tip">Drag this staircase in 2D to slide it along its edge. Tap another exposed edge to relocate it.</div></div>`;
+   ${!canLand&&!L?`<div class="editor-tip">A landing needs at least four risers: a deck about ${fmt(core.LANDING_MIN_HEIGHT)} high or more.</div>`:''}<div class="editor-actions"><button data-action="stair-rail" data-side="left" class="${stair.rails.left?'selected':''}${fixHere(stair,'left')?' fix-focus':''}">Left rail ${stair.rails.left?'✓':'+'}</button><button data-action="stair-rail" data-side="right" class="${stair.rails.right?'selected':''}${fixHere(stair,'right')?' fix-focus':''}">Right rail ${stair.rails.right?'✓':'+'}</button><span class="rail-side-note">Rail left/right: as you walk down the stairs.</span><button data-action="stair-remove" class="danger">Remove selected</button></div><div class="editor-tip">Drag this staircase in 2D to slide it along its edge. Tap another exposed edge to relocate it.</div></div>`;
  }
  return html;
 }
@@ -4743,13 +4956,13 @@ const stockText=x=>Object.entries(x.stockBoards).filter(([,n])=>n).map(([l,n])=>
 function reviewRailing(q){const stairRails=q.staircases.some(s=>s.rails?.left||s.rails?.right);
  if(!q.railEdges.length&&!stairRails)return 'None';
  const where=[q.railEdges.length?plural(q.railEdges.length,'deck edge'):'',stairRails?'stairs':''].filter(Boolean).join(' + ');
- const own=Object.keys(q.railOverrides||{}).map(Number).filter(k=>q.railEdges.includes(k)).sort((a,b)=>a-b).map(k=>{const f=core.railFinish(q,k);return `Edge ${k+1}: ${f.railStyle===q.railStyle?'':esc(f.railStyle)+' · '}${esc(f.railColor)}`;});
- return `${esc(q.railStyle)} · ${esc(q.railColor)}${own.map(t=>`<small>${t}</small>`).join('')}<small>On ${where}</small>`;}
+ const own=Object.keys(q.railOverrides||{}).map(Number).filter(k=>q.railEdges.includes(k)).sort((a,b)=>a-b).map(k=>{const f=core.railFinish(q,k);return `Edge ${k+1}: ${f.railStyle===q.railStyle?'':esc(railSty(f.railStyle))+' · '}${esc(railCol(f.railColor))}`;});
+ return `${esc(railSty(q.railStyle))} · ${esc(railCol(q.railColor))}${own.map(t=>`<small>${t}</small>`).join('')}<small>On ${where}</small>`;}
 function reviewSelections(q,m){const st=m.stats,c=m.counts,rows=[];
  rows.push(rvRow('deck','Deck',`${esc(SHAPE_NAMES[q.shape]||q.shape)} · ${fmt(q.width)} × ${fmt(q.depth)}<small>${fmt(q.height)} above grade</small>`));
- rows.push(rvRow('decking','Decking',`${esc(q.collection)} · ${esc(q.decking)}<small>${esc(BOARD_DIRECTIONS[m.geometry.deckLineResolved]||q.deckLine)} boards</small>`));
- rows.push(rvRow('frame','Picture frame',q.borderCount?`${q.borderCount===2?'Double':'Single'} · ${esc(q.border)}${q.frameHouseWalls?'<small>including house walls</small>':''}`:'None'));
- if(st.dividerRowCount)rows.push(rvRow('dividers','Divider boards',`${plural(st.dividerRowCount,'row')} · ${esc(q.border)}`));
+ rows.push(rvRow('decking','Decking',`${esc(deckMat(q.collection))} · ${esc(deckCol(q.decking))}<small>Concept color · product confirmed by AOS</small><small>${esc(BOARD_DIRECTIONS[m.geometry.deckLineResolved]||q.deckLine)} boards</small>`));
+ rows.push(rvRow('frame','Picture frame',q.borderCount?`${q.borderCount===2?'Double':'Single'} · ${esc(deckCol(q.border))}${q.frameHouseWalls?'<small>including house walls</small>':''}`:'None'));
+ if(st.dividerRowCount)rows.push(rvRow('dividers','Divider boards',`${plural(st.dividerRowCount,'row')} · ${esc(deckCol(q.border))}`));
  rows.push(rvRow('railing','Railing',reviewRailing(q)));
  if(q.staircases.length){const L=st.landings||[];
    rows.push(rvRow('stairs','Stairs',`${plural(q.staircases.length,'staircase')} · ${q.staircases.map(s=>fmt(s.width)).join(', ')} wide${L.length?`<small>${L.map(l=>`Landing ${fmt(l.widthFt)} × ${fmt(l.depthFt)}${l.turn&&l.turn!=='straight'?`, turns ${esc(l.turn)}`:''}`).join('; ')}</small>`:''}`));}
@@ -4758,7 +4971,37 @@ function reviewSelections(q,m){const st=m.stats,c=m.counts,rows=[];
  const shown=(q.surfaces||[]).filter(sf=>(m.geometry.surfaces||[]).find(g=>g.id===sf.id)?.status==='ok');
  if(shown.length)rows.push(rvRow('surfaces','Patio & walkway',shown.map(sf=>`${esc(core.SURFACE_TYPES[sf.type].label)} ${fmt(sf.width)} × ${fmt(sf.length)}`).join('<br>')));
  return rows.join('');}
-function reviewDownloads(){return `<section class="rv-section" data-section="downloads"><h3>Downloads</h3><button type="button" class="rv-pdf" data-action="pdf-preview">Preview customer PDF</button><div class="review-buttons"><button type="button" class="primary-small" data-action="export-concept">Download customer concept (.html)</button><button type="button" data-action="download-json">Download design file (.json)</button></div></section>`;}
+
+// ---- Internal beta (owner, 16 Nov 2026): Finish Beta Test ----
+// One JSON file holds the complete design (the same record as "Download design file") plus the tester's feedback.
+// It opens in Deck Studio like any design file, and the feedback is shown again in Review › Internal. Nothing is
+// sent anywhere: the tester downloads the file and sends it to AOS. Feedback never enters a customer output.
+const BETA_KEY='aosDeckStudio.betaTester.v1';
+function designRecord(){return {application:'AOS Deck Studio V5.2',version:APP_VERSION,projectId:state.projectId,schemaVersion:core.SCHEMA_VERSION,date:new Date().toISOString(),design:state.intent,componentModel:state.model.parts,counts:state.model.counts,alerts:state.model.alerts,structuralStatus:'PRELIMINARY CONCEPT – AOS production review required',plannerVersion:PLANNER_VERSION,framingSignature:framingSignature(state.model.parts)};}
+const betaState={open:false,opener:null,lastFile:null,lastRecord:null};
+function openBeta(){if(!state.intent){toast('Choose a shape first.');return;}const d=$('betaDialog');betaState.open=true;betaState.opener=document.activeElement;
+ $('betaFields').hidden=false;$('betaDone').hidden=true;$('betaError').textContent='';$('betaProject').value=state.intent.project||'Untitled deck';
+ let name='';try{name=localStorage.getItem(BETA_KEY)||'';}catch(e){}if(!$('betaTester').value)$('betaTester').value=name;
+ d.hidden=false;($('betaTester').value?$('betaText'):$('betaTester')).focus();}
+function closeBeta(){const d=$('betaDialog');if(d.hidden)return;d.hidden=true;betaState.open=false;const o=betaState.opener;betaState.opener=null;if(o&&document.contains(o))o.focus();}
+async function saveBeta(){const tester=$('betaTester').value.trim(),text=$('betaText').value.trim(),r=document.querySelector('input[name="betaRating"]:checked');
+ if(!tester){$('betaError').textContent='Enter the tester name.';$('betaTester').focus();return;}
+ if(!r){$('betaError').textContent='Choose an ease-of-use rating from 1 to 5.';document.querySelector('input[name="betaRating"]').focus();return;}
+ if(!text){$('betaError').textContent='Add a few words of feedback: what worked, what was confusing, missing or broken.';$('betaText').focus();return;}
+ const now=new Date(),rec={...designRecord(),betaFeedback:{tester,project:state.intent.project||'',feedback:text,easeOfUse:Number(r.value),submittedAt:now.toISOString(),submittedLocal:now.toLocaleString(),appVersion:APP_VERSION,plannerVersion:PLANNER_VERSION,application:'AOS Deck Studio V5.3 C7 internal beta',device:`${innerWidth}×${innerHeight}${matchMedia('(pointer:coarse)').matches?' touch':''}`,userAgent:navigator.userAgent}};
+ const stamp=now.toISOString().slice(0,16).replace(/[-:T]/g,''),name=`${filename()}_AOS_Beta_Feedback_${stamp}.json`;
+ try{localStorage.setItem(BETA_KEY,tester);}catch(e){}
+ const ok=await offerFile(name,JSON.stringify(rec,null,2),'application/json');if(!ok){$('betaError').textContent='The file was not saved. Try again.';return;}
+ betaState.lastFile=name;betaState.lastRecord=rec;
+ $('betaFields').hidden=true;$('betaDone').hidden=false;$('betaDone').querySelector('.beta-done').textContent=`Beta file downloaded: ${name}`;$('betaClose').focus();
+ $('betaText').value='';document.querySelectorAll('input[name="betaRating"]').forEach(x=>x.checked=false);
+ toast('Beta file downloaded — send it to AOS.');}
+$('betaForm').addEventListener('submit',e=>{e.preventDefault();saveBeta();});
+$('betaCancel').onclick=closeBeta;$('betaClose').onclick=closeBeta;
+$('betaDialog').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();closeBeta();}});
+const reviewBeta=()=>`<section class="rv-section rv-beta" data-section="beta"><h3>Internal beta</h3><button type="button" class="beta-btn" data-action="beta-finish">Finish Beta Test</button><p class="rv-small">Saves this design and your feedback in one file to send to AOS.</p></section>`;
+const reviewBetaFeedback=()=>{const f=state.betaFeedback;if(!f)return '';return `<section class="rv-section rv-beta-feedback" data-section="beta-feedback"><h3>Beta feedback in this file</h3><dl><dt>Tester</dt><dd>${esc(f.tester||'')}</dd><dt>Ease of use</dt><dd>${esc(String(f.easeOfUse??''))} / 5</dd><dt>Date</dt><dd>${esc(f.submittedLocal||f.submittedAt||'')}</dd><dt>App</dt><dd>${esc(f.appVersion||'')} · ${esc(f.plannerVersion||'')}</dd><dt>Feedback</dt><dd>${esc(f.feedback||'')}</dd></dl></section>`;};
+function reviewDownloads(){return `<section class="rv-section" data-section="downloads"><h3>Downloads</h3><button type="button" class="rv-pdf" data-action="pdf-preview">Preview customer PDF</button><div class="review-buttons"><button type="button" class="primary-small" data-action="export-concept">Download customer concept (.html)</button><button type="button" data-action="download-json">Download design file (.json)</button></div></section>${reviewBeta()}`;}
 // Flat 2×6 support and blocking: framing that also has to be ordered, so both Internal tabs list it.
 function reviewBlocking(m){const c=m.counts,st=m.stats,B=m.materials?.supplementalBlocking;
  return rvSection('blocking','Support blocking (flat 2×6)',[
@@ -4805,6 +5048,21 @@ function reviewFraming(q,m){const c=m.counts,st=m.stats,alerts=m.alerts||[],warn
  const other=alerts.filter(a=>!['warning','review','info'].includes(a.level));
  html+=rvSection('review-items','Review items',alerts.length?group('warning','Needs attention')+group('review','Production review required')+group('info','Notes')+(other.length?`<div class="rv-issues" data-level="other"><ul>${other.map(a=>`<li>${esc(alertText(a.message))}</li>`).join('')}</ul></div>`:''):'<p class="rv-small">No review items were reported for this design. Production review is still required.</p>');
  return html;}
+// C7 release fixes B1/B2: internal record of the stored (legacy) product selections and what still needs AOS
+// product confirmation. Internal mode only; never in the customer Review, PDF or concept file.
+function productConfirmation(q){const items=[],accent=q.borderCount||(state.model?.stats?.dividerRowCount)||q.staircases.length;
+ items.push({key:'decking',text:`Decking: shown as “${deckMat(q.collection)} · ${deckCol(q.decking)}”. Saved selection “${q.collection} · ${q.decking}” is a legacy name, not a verified product/color; requires product confirmation.`});
+ if(accent)items.push({key:'accent',text:`Accent (frame, dividers, fascia, stairs): shown as “${deckCol(q.border)}”. Saved selection “${q.border}” is a legacy name; requires product confirmation.`});
+ const railed=q.railEdges.length||q.staircases.some(s=>s.rails?.left||s.rails?.right);
+ if(railed){const used=new Map();const add=(f,where)=>{const k=`${f.railStyle}|${f.railColor}`;if(!used.has(k))used.set(k,{f,where:[]});used.get(k).where.push(where);};
+  if(!q.railEdges.length||q.railEdges.some(i=>!q.railOverrides?.[i]))add({railStyle:q.railStyle,railColor:q.railColor},'default');
+  for(const i of q.railEdges)if(q.railOverrides?.[i])add(core.railFinish(q,i),`edge ${i+1}`);
+  for(const {f,where} of used.values()){const wh=where.includes('default')?'':` (${where.join(', ')})`;
+   if(f.railStyle==='No rail product selected')items.push({key:'rail-none',text:`Railing${wh}: no product selected; AOS to choose before quoting.`});
+   else if(RAIL_FINISH_TO_CONFIRM[f.railColor])items.push({key:'rail-finish',text:`Railing${wh}: ${railSty(f.railStyle)} · ${railCol(f.railColor)} is an AOS stock finish; availability for this model and section type is not yet verified from manufacturer documents. Requires product confirmation.`});}}
+ return items;}
+function reviewProductConfirm(q){const items=productConfirmation(q);
+ return `<section class="rv-section rv-product-confirm" data-section="product-confirmation"><h3>Product confirmation (internal)</h3><ul class="rv-confirm-list">${items.map(i=>`<li data-item="${i.key}">${esc(i.text)}</li>`).join('')}</ul><p class="rv-small">Customer views show concept decking names only. Saved selections are kept unchanged.</p></section>`;}
 function renderReviewPanel(q){const m=state.model,st=m.stats,mode=state.reviewMode==='internal'?'internal':'customer',tab=state.reviewTab==='framing'?'framing':'materials';
  let html=`<div class="rv-switch"><span class="rv-switch-label" id="rvModeLabel">Showing</span><div class="rv-switch-seg" role="group" aria-labelledby="rvModeLabel">${seg('reviewMode',[['customer','Customer'],['internal','Internal']],mode)}</div></div>`;
  if(mode==='customer'){
@@ -4815,7 +5073,11 @@ function renderReviewPanel(q){const m=state.model,st=m.stats,mode=state.reviewMo
   html+=reviewDownloads()+`<p class="rv-small">Design concept for discussion. On-screen colors are approximate; AOS confirms final measurements and construction details before building.</p>`;
  }else{
   html+=`<p class="rv-small rv-internal-note">Internal view for AOS staff. This switch only changes what is shown on screen; it is not a password or permission.</p>`;
+  // C7 release: the Materials / Framing tabs come first so they stay in reach on small phones.
   html+=`<div class="rv-tabs">${seg('reviewTab',[['materials','Materials'],['framing','Framing']],tab)}</div>`;
+  html+=reviewBetaFeedback();
+  html+=`<section class="rv-section rv-design-check" data-section="design-check"><h3>Design check (internal)</h3>${designCheckHtml(designChecks(),{collapse:true,empty:'<p class="rv-small">Nothing to fix in the design. Production review is still required.</p>'})}</section>`;
+  html+=reviewProductConfirm(q);
   html+=tab==='framing'?reviewFraming(q,m):reviewMaterials(q,m);
   html+=reviewDownloads();}
  return html;}
@@ -4871,13 +5133,13 @@ function pdfTitle(pg,project,sub){const lines=pdfWrap(project,'B',18,PDF_PAGE.w-
 // Customer selections (the same facts as Review's Customer panel).
 function pdfSelections(q,m){const st=m.stats,c=m.counts,rows=[];
  rows.push(['Deck',[`${SHAPE_NAMES[q.shape]||q.shape} · ${pdfFt(q.width)} × ${pdfFt(q.depth)}`],[`${pdfFt(q.height)} above grade`]]);
- rows.push(['Decking',[`${q.collection} · ${q.decking}`],[`${BOARD_DIRECTIONS[m.geometry.deckLineResolved]||q.deckLine} boards`]]);
- rows.push(['Picture frame',[q.borderCount?`${q.borderCount===2?'Double':'Single'} · ${q.border}`:'None'],q.borderCount&&q.frameHouseWalls?['Including house walls']:[]]);
- if(st.dividerRowCount)rows.push(['Divider boards',[`${plural(st.dividerRowCount,'row')} · ${q.border}`],[]]);
+ rows.push(['Decking',[`${deckMat(q.collection)} · ${deckCol(q.decking)}`],['Concept color · product confirmed by AOS',`${BOARD_DIRECTIONS[m.geometry.deckLineResolved]||q.deckLine} boards`]]);
+ rows.push(['Picture frame',[q.borderCount?`${q.borderCount===2?'Double':'Single'} · ${deckCol(q.border)}`:'None'],q.borderCount&&q.frameHouseWalls?['Including house walls']:[]]);
+ if(st.dividerRowCount)rows.push(['Divider boards',[`${plural(st.dividerRowCount,'row')} · ${deckCol(q.border)}`],[]]);
  const stairRails=q.staircases.some(s=>s.rails?.left||s.rails?.right);
  if(!q.railEdges.length&&!stairRails)rows.push(['Railing',['None'],[]]);
- else{const own=Object.keys(q.railOverrides||{}).map(Number).filter(k=>q.railEdges.includes(k)).sort((a,b)=>a-b).map(k=>{const f=core.railFinish(q,k);return `Edge ${k+1}: ${f.railStyle===q.railStyle?'':f.railStyle+' · '}${f.railColor}`;});
-   rows.push(['Railing',[`${q.railStyle} · ${q.railColor}`],[...own,`On ${[q.railEdges.length?plural(q.railEdges.length,'deck edge'):'',stairRails?'stairs':''].filter(Boolean).join(' + ')}`]]);}
+ else{const own=Object.keys(q.railOverrides||{}).map(Number).filter(k=>q.railEdges.includes(k)).sort((a,b)=>a-b).map(k=>{const f=core.railFinish(q,k);return `Edge ${k+1}: ${f.railStyle===q.railStyle?'':railSty(f.railStyle)+' · '}${railCol(f.railColor)}`;});
+   rows.push(['Railing',[`${railSty(q.railStyle)} · ${railCol(q.railColor)}`],[...own,`On ${[q.railEdges.length?plural(q.railEdges.length,'deck edge'):'',stairRails?'stairs':''].filter(Boolean).join(' + ')}`]]);}
  if(q.staircases.length){const L=st.landings||[];rows.push(['Stairs',[`${plural(q.staircases.length,'staircase')} · ${q.staircases.map(s=>pdfFt(s.width)).join(', ')} wide`],L.map(l=>`Landing ${pdfFt(l.widthFt)} × ${pdfFt(l.depthFt)}${l.turn&&l.turn!=='straight'?`, turns ${l.turn}`:''}`)]);}
  if(q.houseEdges.length){const hl=m.geometry.house||{},look=core.SIDING_STYLES[hl.siding||q.siding]?.label;const op=[c.doors?plural(c.doors,'door'):'',c.patioDoors?plural(c.patioDoors,'patio door'):'',c.windows?plural(c.windows,'window'):''].filter(Boolean).join(', ');
    rows.push(['House',[`${look?look+' · ':''}${hl.colorName||q.houseColor||''}`],op?[op]:[]]);}
@@ -4971,7 +5233,8 @@ function pdfBuildDoc({q,m,view3d,logo,date}){const doc={pages:[],images:{},proje
  // Page 1: design overview.
  const p1=pdfPageNew(doc);pdfHeader(doc,p1,'Deck Design Concept');const top=pdfTitle(p1,doc.project,`Design overview · prepared by AOS Home Solutions on ${date}`);
  const imgY=Math.max(112,top+8),IW=464,IH=290;pdfAdd(p1,{t:'image',id:'view3d',x:PDF_M,y:imgY,w:IW,h:IH});pdfAdd(p1,{t:'rect',x:PDF_M,y:imgY,w:IW,h:IH,stroke:'#d3dadf',lw:.75});
- pdfText(p1,PDF_M,imgY+IH+13,'Finished 3D view of the proposed deck. Screen and print colors are approximate.',{size:8,color:'#5f6e7a'});
+ pdfText(p1,PDF_M,imgY+IH+13,view3d?.audit?.concept?'Finished concept view; support structure not shown. AOS designs and verifies it before construction.':'Finished 3D view of the proposed deck. Screen and print colors are approximate.',{size:8,color:'#5f6e7a'});
+ doc.conceptView=Boolean(view3d?.audit?.concept);
  const RX=PDF_M+IW+20,RW=PDF_PAGE.w-PDF_M-RX,tw=(RW-10)/2;
  [['deckArea','Deck sq ft'],['stairArea','Stair sq ft'],['totalArea','Total sq ft'],['totalRailLF','Railing linear ft']].forEach(([k,label],i)=>{const x=RX+(i%2)*(tw+10),y=imgY+Math.floor(i/2)*60;
    pdfAdd(p1,{t:'rect',x,y,w:tw,h:52,fill:'#f4f6f7',stroke:'#dde3e7',lw:.6});pdfText(p1,x+10,y+24,st[k].toFixed(1),{size:17,font:'B'});pdfText(p1,x+10,y+40,label,{size:8,color:'#5f6e7a'});});
@@ -5059,13 +5322,15 @@ function pdfRenderPage(canvas,pg,imgs,k){canvas.width=Math.round(PDF_PAGE.w*k);c
 
 // -- independent captures (the editor's camera, view, dimensions setting and selection are restored) --
 function pdfCapture3d(W=1600,H=1000){const r=renderer3d;if(!state.model||!r)return null;
- const keep={az:r.az,el:r.el,radius:r.radius,target:[...r.target],structure:r.showStructure};let url=null;
- try{if(r.model!==state.model)r.setModel(state.model);if(keep.structure)r.setStructureVisible(false);r._forceSize=[W,H];r.presentationCamera();r.draw();
+ const keep={az:r.az,el:r.el,radius:r.radius,target:[...r.target],structure:r.showStructure};let url=null;const concept=conceptViewNeeded(state.model);let audit=null;
+ try{if(r.model!==state.model)r.setModel(state.model);if(keep.structure)r.setStructureVisible(false);if(concept){r.conceptOnly=true;r.setModel(state.model);}
+  audit={concept,faultedShown:(r.visibleParts||[]).filter(p=>p.structuralFault).length,structureShown:(r.visibleParts||[]).filter(p=>['framing','foundation','stair-framing'].includes(p.group)).length};
+  r._forceSize=[W,H];r.presentationCamera();r.draw();
   const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d'),gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,'#e8eff5');gr.addColorStop(.62,'#f4f6f7');gr.addColorStop(1,'#f7f8f7');g.fillStyle=gr;g.fillRect(0,0,W,H);
   if(r.canvas.width===W&&r.canvas.height===H){g.drawImage(r.canvas,0,0,W,H);url=c.toDataURL('image/jpeg',.9);}}
  catch(e){url=null;}
- finally{r._forceSize=null;if(keep.structure)r.setStructureVisible(true);r.az=keep.az;r.el=keep.el;r.radius=keep.radius;r.target=keep.target;r.draw();}
- return url?{url,w:W,h:H,camera:{az:r.presentationAz(),el:.48}}:null;}
+ finally{r._forceSize=null;if(r.conceptOnly){r.conceptOnly=false;r.setModel(state.model);}if(keep.structure)r.setStructureVisible(true);r.az=keep.az;r.el=keep.el;r.radius=keep.radius;r.target=keep.target;r.draw();}
+ return url?{url,w:W,h:H,camera:{az:r.presentationAz(),el:.48},audit}:null;}
 let pdfLogoCache=null;
 async function pdfLogo(){if(pdfLogoCache)return pdfLogoCache;const img=document.querySelector('.aos-brand-wide');if(!img)return null;try{if(!img.complete)await img.decode();}catch(e){return null;}
  const w=img.naturalWidth,h=img.naturalHeight;if(!w||!h)return null;const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.fillStyle='#151c26';g.fillRect(0,0,w,h);g.drawImage(img,0,0,w,h);
@@ -5076,6 +5341,109 @@ function pdfProblems(){const p=[];if(!state.intent)return ['Choose a deck shape 
  if(state.freeDraw)p.push('Finish or cancel the deck drawing first.');if(state.model?.stats?.invalidGeometry)p.push('The deck outline has crossed or overlapping edges. Fix the outline in Shape & Size.');
  if(!state.model||state.model.preview||state.framingStatus!=='current')p.push('The design is still updating. Try again in a moment.');return p;}
 const pdfState={doc:null,bytes:null,opener:null};
+// ---- C7 release fixes B4: internal check before any customer output ----
+// Unresolved warnings = every current alert at level "warning" (structural, guard, handrail and other code
+// screening). Standing production-review notes (level "review"/"info") are on every design and do not stop the
+// streamlined flow. Nothing is dismissed: the check runs again on every request.
+
+// ---- C7 UX corrections: design checks in two categories ----
+// A "Fix in Design": only where an editor in this designer can actually resolve the item; each one names the
+//   location, opens the right step, highlights the place in 2D and clears itself when the model no longer reports it.
+// B "AOS Production Review — Not Editable in Sales Designer": everything the designer cannot resolve (stringer
+//   spans under the owner's 8 ft rule, required graspable handrails, structural connections, framing without a
+//   verified support solution, sizing/bearing/mounting). Nothing is hidden or reworded: the full engine message
+//   stays with every item, and the Review list below still shows every alert word for word.
+const AOS_REVIEW_LABEL='AOS Production Review — Not Editable in Sales Designer';
+const stairLabel=i=>`Stair ${i+1}`;
+const AOS_TITLES=[[/^Framing layout is an explicit bearing concept/,'Framing concept: species, grade and spans to verify'],[/^Preliminary ledgers on house edges/,'Ledger attachment to verify'],[/^Some joists may run parallel to a house ledger/,'Ledger without joist ends'],
+ [/^Interior\/shared beams/,'Shared beam and post reactions'],[/pairs of footings closer than/,'Footing spacing'],[/posts? carry two beam ends/,'Shared post connection'],[/angled corner beams? proposed/,'Angled corner beams'],
+ [/conceptual footing pads extend beyond/,'Footings beyond the deck projection'],[/supplemental blocks/,'Picture-frame end blocking'],[/^Angled picture-frame edges|^Double picture-frame corners/,'Picture-frame support and blocking'],
+ [/^Diagonal boards use a provisional/,'Diagonal decking joist spacing'],[/^Flush beam/,'Flush beam hangers'],[/corner trimmer/,'Corner trimmer omitted (duplicate)'],[/^Alternative uniform joist sizes/,'Trimmer and header loads'],
+ [/^Some irregular areas need local headers/,'Local headers and shared beams'],[/tributary load|exceed the one-sided prescriptive/,'Beam load range'],[/^Stair landing on edge \d+ is .* above grade/,'Landing guards'],
+ [/^Stair landing on edge/,'Stair landing framing'],[/turns (left|right) at its landing/,'Turning stair connection'],[/^Stair lower landing/,'Lower landing and stringer bearing'],[/staircases require field verification/,'Stair field verification'],
+ [/footprints project beyond the deck outline/,'Beam/post footprint beyond the outline'],[/no feasible support-post spacing/,'Beam post spacing'],[/preliminary layout ONLY/,'Single primary beam layout'],[/preliminary shared beams only/,'Irregular deck shared beams'],[/Divider crosses main joists/,'Divider support framing']];
+function designChecks(m=state.model,q=state.intent){if(!m||!q||m.preview)return [];const out=[],seen={},al=m.alerts||[],es=m.geometry?.edges||[];
+ // Map "stair on edge N" alerts to the staircase they describe (alerts are emitted in staircase order).
+ const stairFor=(a,pred=()=>true)=>{const n=Number((/[Ss]tair on edge (\d+)/.exec(alertText(a.message))||[])[1]);if(!n)return -1;const k=`${a.code||a.message.slice(0,30)}|${n}`;seen[k]=(seen[k]||0);
+   const list=q.staircases.map((st,i)=>({st,i})).filter(x=>x.st.edge===n-1&&pred(x.st));const hit=list[seen[k]++];return hit?hit.i:-1;};
+ const push=(it)=>{const ex=out.find(x=>x.id===it.id);if(ex){ex.alerts.push(...it.alerts);if(it.level==='warning')ex.level='warning';return;}out.push(it);};
+ al.forEach((a,idx)=>{if(a.level==='info')return;const msg=alertText(a.message),c=a.code||'',base={level:a.level,alerts:[idx],text:msg};
+  if(c==='guard-required'){const edges=((/edges? ([\d, ]+) ha/.exec(msg)||[])[1]||'').split(/[ ,]+/).filter(Boolean).map(x=>Number(x)-1);
+    push({...base,id:'guard-required',key:'guard',cat:'fix',title:`Missing guard${edges.length>1?'s':''} on the deck edge${edges.length>1?'s':''}`,where:`Edge${edges.length>1?'s':''} ${edges.map(i=>i+1).join(', ')}`,target:{step:5,kind:'edges',edges},how:`Tap the highlighted edge${edges.length>1?'s':''} on the plan to add railing (or confirm a wall or bench in AOS review).`});return;}
+  if(c==='stair-guard-required'){const side=/its (left|right) side/.exec(msg)?.[1]||'left',i=stairFor(a,st=>!st.rails[side]);if(i<0)return;const st=q.staircases[i];
+    push({...base,id:`stair-guard-${st.id}-${side}`,key:'guard',cat:'fix',title:'Open stair side needs a guard',where:`${stairLabel(i)} · ${side} side`,target:{step:2,kind:'stair-side',stair:st.id,index:i,side},how:`Turn on the ${side} rail for ${stairLabel(i)} (highlighted).`});return;}
+  if(c==='stair-rail-clear-width'||c==='stair-finished-clearance'){const i=stairFor(a);if(i<0)return;const st=q.staircases[i],sides=(st.rails.left?1:0)+(st.rails.right?1:0),minIn=Math.ceil(36+sides*(1.5+.21*12)-1e-9); // 36 in. clear between the posts (1½ in. inset + post on each railed side)
+    push({...base,id:`stair-width-${st.id}`,key:'clearance',cat:'fix',title:'Stair clear width below 36 in.',where:stairLabel(i),target:{step:2,kind:'stair-width',stair:st.id,index:i,minFt:minIn/12},how:`Widen ${stairLabel(i)} to at least ${fmt(minIn/12)} (highlighted field), or keep it and confirm the handrail layout in AOS review.`});return;}
+  if(/^Stair on edge \d+: its landing or lower flight runs back under the deck/.test(msg)){const i=stairFor({...a,code:'stair-under'});if(i<0)return;const st=q.staircases[i];
+    push({...base,id:`stair-under-${st.id}`,key:'stair-under',cat:'fix',title:'Stair runs back under the deck',where:stairLabel(i),target:{step:2,kind:'stair',stair:st.id,index:i},how:`Move ${stairLabel(i)}, shorten its landing or turn it the other way.`});return;}
+  {const mo=/^(.+?) (\d+) \(.* wide, edge (\d+)\) is hidden because/.exec(msg);if(mo){const o=(q.openings||[])[Number(mo[2])-1];if(o){push({...base,id:`opening-${o.id}`,key:'opening',cat:'fix',title:`${mo[1]} does not fit`,where:`${mo[1]} ${mo[2]} · edge ${mo[3]}`,target:{step:1,kind:'opening',id:o.id,edge:Number(mo[3])-1},how:'Move, resize or delete the highlighted door/window.'});return;}}}
+  if(/is hidden because it runs into the house/.test(msg)){const hid=(q.surfaces||[]).filter(sf=>core.surfaceProblem(q,es,sf));const k=(seen.surface=(seen.surface||0))+0;seen.surface++;const sf=hid[k];
+    if(sf){const T=core.SURFACE_TYPES[sf.type];push({...base,id:`surface-${sf.id}`,key:'surface',cat:'fix',title:`${T.label} runs into the house`,where:`${T.label} ${fmt(sf.width)} × ${fmt(sf.length)}`,target:{step:8,kind:'surface',id:sf.id},how:`Move or resize the highlighted ${T.label.toLowerCase()} away from the house.`});return;}}
+  if(/^No ledger edges selected/.test(msg)&&q.supportMode==='ledger'&&q.houseEdges.length){push({...base,id:'no-ledger',key:'ledger',cat:'fix',title:'No ledger on a house wall',where:`House edge${q.houseEdges.length>1?'s':''} ${q.houseEdges.map(i=>i+1).join(', ')}`,target:{step:6,kind:'edges',edges:[...q.houseEdges],ledger:true},how:'Add a ledger on a highlighted house wall (Add ledger), or choose Freestanding.'});return;}
+  if(/^Invalid deck outline|^Deck footprint cannot be triangulated/.test(msg)){push({...base,id:'outline',key:'outline',cat:'fix',title:'Deck outline needs correcting',where:'Deck outline',target:{step:0,kind:'outline'},how:'Fix the highlighted outline in Shape & Size.'});return;}
+  // Category B: everything else.
+  let title='Structural / production detail',where='Whole deck',key='aos';
+  if(c==='stair-stringer-span'){const i=stairFor(a);title='Structural Review Required — stringer span';where=i>=0?stairLabel(i):where;key='span';}
+  else if(c==='stair-handrail-required'){const i=stairFor(a);title='Required graspable handrail (not modeled)';where=i>=0?stairLabel(i):where;key='handrail';}
+  else if(c==='stair-stringer-support'||c==='stair-intermediate-support'){const i=stairFor(a);title='Generated stair supports — sizing and connections';where=i>=0?stairLabel(i):where;key='supports';}
+  else if(c==='framing-structural-review')title='Framing without a verified support solution';
+  else if(c==='framing-faults-marked')title='Framing members marked NOT BUILDABLE';
+  else if(c==='rim-support')title='Load-carrying rim without verified support';
+  else if(c==='rail-post-mounting')title='Railing post mounting and blocking';
+  else if(/joist runs do not yet have confirmed beam\/ledger bearing/.test(msg))title='Joist bearing not verified';
+  else if((()=>{for(const [re,t] of AOS_TITLES)if(re.test(msg)){title=t;return true;}return false;})()){const e=/[Ss]tair (?:landing )?on edge (\d+)/.exec(msg);if(e)where=`Stair on edge ${e[1]}`;}
+  else if(/joists exceed the selected/.test(msg))title='Joist span beyond the selected layout';
+  else if(/beam|post|footing|header|trimmer|tributary|reaction/i.test(msg))title='Beam, post or footing detail';
+  else if(/ledger/i.test(msg))title='Ledger / independent bearing';
+  push({...base,id:`aos-${idx}`,key,cat:'aos',title,where});});
+ return out;}
+// Is the item the user set out to fix still reported? (Partial fixes narrow the highlight.)
+function fixStillOpen(t){const now=designChecks();if(t.kind==='edges'&&t.id==='guard-required'){const g=now.find(x=>x.id==='guard-required');if(!g)return false;const left=t.edges.filter(e=>g.target.edges.includes(e));if(!left.length)return false;t.edges=left;return true;}
+ return now.some(x=>x.id===t.id);}
+function checkFixTarget(){const t=state.fixTarget;if(!t||!state.model||state.model.preview)return;if(fixStillOpen(t))return;
+ state.fixTarget=null;state.fixResolved=t.title;setTimeout(()=>toast(`✓ Fixed: ${t.title} — the warning has cleared.`),0);}
+function fixInDesign(id){const it=designChecks().find(x=>x.id===id);if(!it||it.cat!=='fix')return false;const t={...it.target,id:it.id,title:it.title,how:it.how,where:it.where};
+ if(state.step===LAST_STEP)state.reviewReturn=true;state.fixTarget=t;state.fixResolved=null;
+ if(t.kind==='edges'&&!t.ledger)state.railTab='locations';
+ if(t.kind==='opening'){state.houseTab='walls';state.openingSelected=t.id;}
+ if(t.kind==='surface')state.surfaceSelected=t.id;
+ if(t.index!==undefined)state.stairSelected=t.index;
+ if(state.step!==t.step)stepTo(t.step);else{renderPanel();planDraw();}
+ state.fixTarget=t;if(t.index!==undefined)state.stairSelected=t.index;renderPanel();planDraw();
+ const sc=$('stepContent');const f=sc&&sc.querySelector('.fix-focus');if(f&&f.scrollIntoView)f.scrollIntoView({block:'nearest'});return true;}
+const fixBannerHtml=()=>{const t=state.fixTarget;if(!t||state.step!==t.step)return '';return `<div class="fix-banner" role="status" data-note="fix-target"><span><b>Fix in Design · ${esc(t.where)}</b>${esc(t.how)}</span><button type="button" data-action="fix-stop">Stop</button></div>`;};
+function designCheckHtml(items,opts={}){const fix=items.filter(i=>i.cat==='fix'),aos=items.filter(i=>i.cat==='aos');if(!items.length)return opts.empty||'';
+ const li=i=>`<li data-check="${esc(i.id)}" data-key="${i.key}" class="${i.level}"><span class="dc-title">${esc(i.title)}</span><span class="dc-where">${esc(i.where)}</span>${i.cat==='fix'?`<button type="button" class="dc-fix" data-action="fix-design" data-check="${esc(i.id)}">Fix in Design</button>`:''}${opts.details?`<details><summary>Details</summary><p>${esc(i.text)}</p></details>`:''}</li>`;
+ return `${fix.length?`<div class="dc-group dc-fix-group" data-category="fix"><h4>Fix in Design <span>${fix.length}</span></h4><p class="dc-sub">You can correct ${fix.length===1?'this':'these'} now with the existing controls.</p><ul>${fix.map(li).join('')}</ul></div>`:''}${aos.length?(opts.collapse?`<details class="dc-group dc-aos-group" data-category="aos"><summary><h4>${AOS_REVIEW_LABEL} <span>${aos.length}</span></h4><p class="dc-sub">Not editable here; AOS resolves ${aos.length===1?'it':'these'} before construction. Tap to list.</p></summary><ul>${aos.map(li).join('')}</ul></details>`:`<div class="dc-group dc-aos-group" data-category="aos"><h4>${AOS_REVIEW_LABEL} <span>${aos.length}</span></h4><p class="dc-sub">Shown for accuracy; the sales designer cannot resolve ${aos.length===1?'it':'these'}. AOS resolves ${aos.length===1?'it':'them'} before construction.</p><ul>${aos.map(li).join('')}</ul></div>`):''}`;}
+const PDF_ISSUE_TYPES=[['framing','Framing structural review'],['stair','Stair structural review — stringer span'],['guard','Required guard missing'],['handrail','Required handrail not verified'],['other','Other design warnings']];
+function issueType(a){const c=a.code||'',t=alertText(a.message);
+ if(c==='stair-stringer-span'||c==='stair-stringer-support'||c==='stair-intermediate-support')return 'stair';
+ if(c==='guard-required'||c==='stair-guard-required')return 'guard';if(c==='stair-handrail-required')return 'handrail';
+ if(/^framing-/.test(c)||(!c&&/beam|joist|header|framing|bearing|post|footing|ledger|support|span/i.test(t)))return 'framing';return 'other';}
+function openDesignIssues(m=state.model){const list=(m?.alerts||[]).filter(a=>a.level==='warning'),by={};for(const a of list){const k=issueType(a);by[k]=(by[k]||0)+1;}
+ const items=designChecks(m).filter(i=>i.level==='warning');
+ return {total:list.length,types:PDF_ISSUE_TYPES.filter(([k])=>by[k]).map(([k,label])=>({key:k,label,count:by[k]})),
+  fix:items.filter(i=>i.cat==='fix').map(i=>({id:i.id,title:i.title,where:i.where})),aos:items.filter(i=>i.cat==='aos').map(i=>({id:i.id,title:i.title,where:i.where}))};}
+// A customer image uses the concept-only view when the generated framing is not valid (fallback layout with
+// members marked NOT BUILDABLE); otherwise the normal finished view.
+const conceptViewNeeded=m=>Boolean(m&&(m.parts.some(p=>p.structuralFault)||m.alerts.some(a=>a.code==='framing-structural-review')));
+const pdfConfirmState={open:false,kind:null,issues:null,opener:null,shown:0};
+function requestCustomerOutput(kind){const issues=openDesignIssues();
+ if(!state.intent||!issues.total||pdfProblems().length)return kind==='concept'?exportConcept():openPdfPreview();
+ const box=$('pdfConfirm');pdfConfirmState.open=true;pdfConfirmState.kind=kind;pdfConfirmState.issues=issues;pdfConfirmState.opener=document.activeElement;pdfConfirmState.shown++;
+ $('pdfConfirmTitle').textContent=`${plural(issues.total,'unresolved design warning')}`;
+ // C7 UX corrections: the two categories, not one list of "errors".
+ $('pdfConfirmSummary').textContent=`${issues.fix.length?`${plural(issues.fix.length,'item')} you can fix in the design now`:'Nothing to fix in the design'}; ${issues.aos.length?`${plural(issues.aos.length,'item')} for AOS production review`:'nothing for AOS production review'}. The customer ${kind==='concept'?'concept file':'PDF'} does not show them.`;
+ const grp=(cat,title,list)=>list.length?`<li class="pc-group" data-category="${cat}"><b>${title} (${list.length})</b><ul>${list.map(i=>`<li data-check="${esc(i.id)}">${esc(i.title)} — ${esc(i.where)}</li>`).join('')}</ul></li>`:'';
+ $('pdfConfirmList').innerHTML=grp('fix','Fix in Design',issues.fix)+grp('aos',AOS_REVIEW_LABEL,issues.aos);
+ $('pdfConfirmGo').textContent=kind==='concept'?'Continue with preliminary concept file':'Continue with preliminary concept PDF';
+ box.hidden=false;$('pdfConfirmBack').focus();}
+function closePdfConfirm(){const box=$('pdfConfirm');if(box.hidden)return;box.hidden=true;pdfConfirmState.open=false;const o=pdfConfirmState.opener;pdfConfirmState.opener=null;return o;}
+function pdfConfirmBack(){const o=closePdfConfirm();pdfConfirmState.kind=null;
+ // Back to the design: Review › Internal › Framing, where every open warning is listed.
+ state.reviewMode='internal';state.reviewTab='framing';if(state.step!==LAST_STEP)stepTo(LAST_STEP);else{renderPanel();planDraw();}
+ const t=document.querySelector('#stepContent [data-section="design-check"]')||document.querySelector('#stepContent [data-section="review-items"]');if(t&&t.scrollIntoView)t.scrollIntoView({block:'nearest'});else if(o&&document.contains(o))o.focus();}
+function pdfConfirmGo(){const kind=pdfConfirmState.kind,o=closePdfConfirm();pdfConfirmState.kind=null;if(o&&document.contains(o)&&typeof o.focus==='function')o.focus();/* the preview then returns focus to the original button */if(kind==='concept')exportConcept();else openPdfPreview();}
 async function pdfPrepare(){const problems=pdfProblems();if(problems.length)return {problems};
  const logo=await pdfLogo(),view3d=pdfCapture3d();if(!view3d)return {problems:['The finished 3D view could not be drawn in this browser, so the PDF cannot include it.']};
  const date=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
@@ -5093,7 +5461,7 @@ function closePdfPreview(){const box=$('pdfPreview');if(box.hidden)return;box.hi
  const o=pdfState.opener;pdfState.opener=null;if(o&&document.contains(o)&&typeof o.focus==='function')o.focus();}
 function downloadPdf(){if(!pdfState.doc)return;pdfState.bytes=pdfWrite(pdfState.doc);offerFile(`${filename()}_AOS_Deck_Concept.pdf`,pdfState.bytes,'application/pdf');}
 // Finish opens the preview; when the PDF cannot be made, the same window explains why.
-function finishReview(){openPdfPreview();}
+function finishReview(){requestCustomerOutput('pdf');}
 // V5.3 C1: the settings area (#stepContent) is the one scroll container for every step (CSS
 // .inspector-content). A re-render of the same panel keeps the reader where they were; a different
 // step, tab or editing mode starts at the top.
@@ -5128,16 +5496,17 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
      const selected=state.dividerSelected,position=count?dm.positions[selected]:.5;
      const bounds=count?dividerBounds(dm.positions,selected,dm.span):{min:.02,max:.98};
      const same=q.border===q.decking,frameTxt=['None','Single','Double'][q.borderCount]||String(q.borderCount);
-     html+=`<div class="finish-current layout-current" role="status" data-frame="${q.borderCount}" data-dividers="${count}"><div class="finish-row"><span class="finish-chip" style="background-color:${core.PALETTES[q.border]}"></span><span class="finish-text"><small>Picture frame</small><b>${q.borderCount?`${frameTxt} · ${esc(q.border)}`:'Off'}</b></span></div><div class="finish-row"><span class="finish-chip" style="background-color:${core.PALETTES[q.border]}"></span><span class="finish-text"><small>Divider boards</small><b>${count?`${count} · ${esc(q.border)}`:'None'}</b></span></div><div class="finish-row"><span class="finish-chip" style="background-color:${core.PALETTES[q.decking]}"></span><span class="finish-text"><small>Field decking</small><b>${esc(q.decking)}</b></span></div></div><div class="approx-note layout-highlight-note"><span class="hl-key"></span>${q.borderCount||count?`Frame and divider boards are highlighted on the plan while this tab is open.${same?' They share the field color, so their edges are outlined.':''} Highlight is for viewing only; board sizes are unchanged.`:'No frame or divider boards to highlight.'} Colors are chosen in Decking Selection.</div>`;
+     html+=`<div class="finish-current layout-current" role="status" data-frame="${q.borderCount}" data-dividers="${count}"><div class="finish-row"><span class="finish-chip" style="background-color:${core.PALETTES[q.border]}"></span><span class="finish-text"><small>Picture frame</small><b>${q.borderCount?`${frameTxt} · ${esc(deckCol(q.border))}`:'Off'}</b></span></div><div class="finish-row"><span class="finish-chip" style="background-color:${core.PALETTES[q.border]}"></span><span class="finish-text"><small>Divider boards</small><b>${count?`${count} · ${esc(deckCol(q.border))}`:'None'}</b></span></div><div class="finish-row"><span class="finish-chip" style="background-color:${core.PALETTES[q.decking]}"></span><span class="finish-text"><small>Field decking</small><b>${esc(deckCol(q.decking))}</b></span></div></div><div class="approx-note layout-highlight-note"><span class="hl-key"></span>${q.borderCount||count?`Frame and divider boards are highlighted on the plan while this tab is open.${same?' They share the field color, so their edges are outlined.':''} Highlight is for viewing only; board sizes are unchanged.`:'No frame or divider boards to highlight.'} Colors are chosen in Decking Selection.</div>`;
      html+=`<p class="group-title">Picture-frame boards</p>${seg('borderCount',[[0,'None'],[1,'Single'],[2,'Double']],q.borderCount)}${q.borderCount&&q.houseEdges.length?`<p class="group-title">Along house walls</p>${seg('frameHouseWalls',[['false','No frame (usual)'],['true','Frame house walls too']],String(Boolean(q.frameHouseWalls)))}`:''}<p class="group-title">Breaker / divider boards</p>${seg('dividerMode',[['auto','Automatic'],['single','Single'],['double','Double']],q.dividerMode)}<div class="divider-manager"><button data-action="divider-prev" ${selected<=0?'disabled':''} title="Previous divider">‹</button><strong>${count?`Divider ${selected+1} of ${count}`:'No dividers'}</strong><button data-action="divider-next" ${selected>=count-1?'disabled':''} title="Next divider">›</button><button data-action="divider-remove" ${!count?'disabled':''}>− Remove</button><button class="add" data-action="divider-add" ${count>=core.MAX_DIVIDER_ROWS?'disabled':''}>+ Add</button></div><div class="position-row divider-position"><span>Position</span><input aria-label="Selected divider position" type="range" data-divider-slider min="${bounds.min}" max="${bounds.max}" step="0.005" value="${position}" ${!count?'disabled':''}><output data-divider-readout>${count?fmt(position*dm.span):'—'}</output></div><div class="divider-utilities"><button data-action="divider-remove-all" ${!count?'disabled':''}>Remove All</button><button data-action="divider-reset">↶ Reset to Default</button></div><div class="divider-help ${!count||longDividerSection(dm.positions,dm.span)>core.MAX_FIELD_SECTION_FT+.01?'seams-warning':''}">${!count?'⚠ No divider boards: field decking may need butt seams/joints.':longDividerSection(dm.positions,dm.span)>core.MAX_FIELD_SECTION_FT+.01?'⚠ A section exceeds 20 ft: plan for field seams/joints.':'Drag numbered handles in 2D · 20-ft planning sections'} · ${q.dividerMode==='auto'&&!Array.isArray(q.dividerPositions)?'Default spacing':'Custom layout'}</div><div class="divider-help">Longest field-board run without a divider: ${fmt(longestRun())}. Boards are 20 ft at most, so any longer run needs a divider (or butt joints).${state.model.geometry.dividerAdjust&&(state.model.geometry.dividerAdjust.moved||state.model.geometry.dividerAdjust.setAside)?` <b>Adjusted for this size/direction: ${[state.model.geometry.dividerAdjust.moved?`${state.model.geometry.dividerAdjust.moved} moved in from an end`:'',state.model.geometry.dividerAdjust.setAside?`${state.model.geometry.dividerAdjust.setAside} set aside (kept in the project)`:''].filter(Boolean).join(', ')}.</b>`:''}</div>`;
    }
  }
- if(s===4&&q){const ci=COLLECTION_INFO[q.collection]||{brand:'',short:q.collection,kind:''},nColors=Object.keys(core.PALETTES).length;
+ if(s===4&&q){const nColors=Object.keys(core.PALETTES).length,mat=deckMat(q.collection);
    html=`${seg('finishTab',[['field','Main decking'],['accent','Border / stair accent']],state.finishTab)}`;
    // V5.3 C6: the current choice is always named first; picking a product changes only the decking choice.
-   html+=finishCard(state.finishTab==='field'?[['Main decking',core.PALETTES[q.decking],`${esc(ci.brand)} ${esc(ci.short)} · ${esc(q.decking)}`,`${esc(ci.kind)}`],['Accent',core.PALETTES[q.border],esc(q.border),'border · dividers · fascia · stairs']]:[['Accent',core.PALETTES[q.border],esc(q.border),'border · dividers · fascia · stairs'],['Main decking',core.PALETTES[q.decking],`${esc(ci.brand)} ${esc(ci.short)} · ${esc(q.decking)}`,'']]);
-   if(state.finishTab==='field')html+=`<div class="control-group"><p class="group-title">Manufacturer · ${esc(ci.brand)} — collection (visual concept)</p>${seg('collection',[['TimberTech Terrain','Terrain'],['TimberTech Advanced PVC','Advanced PVC']],q.collection)}</div><p class="group-title">${nColors} colors in ${esc(ci.short)} · field color</p>${swatches('decking',core.PALETTES,q.decking,false,true)}${APPROX_NOTE}`;
-   else html+=`<p class="group-title">Picture frame · dividers · fascia · all stair finishes</p>${swatches('border',core.PALETTES,q.border,false,true)}<div class="compact-status">Accent color is shared by all these components.</div>${APPROX_NOTE}`;
+   // C7 release fixes B1: concept material and color names; no manufacturer is named (stored values unchanged).
+   html+=finishCard(state.finishTab==='field'?[['Main decking',core.PALETTES[q.decking],`${esc(mat)} · ${esc(deckCol(q.decking))}`,'concept color · product to be confirmed'],['Accent',core.PALETTES[q.border],esc(deckCol(q.border)),'border · dividers · fascia · stairs']]:[['Accent',core.PALETTES[q.border],esc(deckCol(q.border)),'border · dividers · fascia · stairs'],['Main decking',core.PALETTES[q.decking],`${esc(mat)} · ${esc(deckCol(q.decking))}`,'']]);
+   if(state.finishTab==='field')html+=`<div class="control-group"><p class="group-title">Decking material (concept)</p>${seg('collection',[['TimberTech Terrain',DECK_MATERIAL_SHORT['TimberTech Terrain']],['TimberTech Advanced PVC',DECK_MATERIAL_SHORT['TimberTech Advanced PVC']]],q.collection)}</div><p class="group-title">${nColors} concept colors · field color</p>${swatches('decking',core.PALETTES,q.decking,false,true,deckCol)}${CONCEPT_NOTE}${APPROX_NOTE}`;
+   else html+=`<p class="group-title">Picture frame · dividers · fascia · all stair finishes</p>${swatches('border',core.PALETTES,q.border,false,true,deckCol)}<div class="compact-status">Accent color is shared by all these components.</div>${CONCEPT_NOTE}${APPROX_NOTE}`;
  }
  if(s===5&&q){html=`${seg('railTab',[['locations','Railing locations'],['finish','Railing finish']],state.railTab)}`;
    if(state.railTab==='locations')html+=`<div class="compact-intro">Tap deck edges to add or remove railings. Tap either stair side to toggle its railing.</div><div class="rail-summary">${q.railEdges.length} deck edges selected</div><div class="action-row"><button data-action="rails-all">Rail exposed edges</button><button data-action="rails-none">Remove deck rails</button></div>${q.staircases.length?`<div class="stair-picker"><button data-action="stair-prev" ${state.stairSelected<1?'disabled':''}>‹</button><strong>Stair ${state.stairSelected+1} of ${q.staircases.length}</strong><button data-action="stair-next" ${state.stairSelected>=q.staircases.length-1?'disabled':''}>›</button></div><div class="stair-rails"><button data-action="stair-rail" data-side="left" class="${currentStair()?.rails.left?'selected':''}">Left stair rail ${currentStair()?.rails.left?'✓':'+'}</button><button data-action="stair-rail" data-side="right" class="${currentStair()?.rails.right?'selected':''}">Right stair rail ${currentStair()?.rails.right?'✓':'+'}</button></div><div class="rail-side-note">Left/right as you walk down the stairs. Tap ✓ / + beside the stair on the plan to toggle a side.</div>`:''}`;
@@ -5150,8 +5519,8 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
      html+=railed.length?`<p class="group-title">Apply to</p><div class="rail-targets" role="group" aria-label="Railing edges">${chip('all','All railed edges',q.railColor,false)}${railed.map(e=>chip(e.i,`Edge ${e.i+1} · ${fmt(e.len)}`,core.railFinish(q,e.i).railColor,Boolean(ro[e.i]))).join('')}</div><div class="compact-status">${t==='all'?(nCustom?`Your choice applies to every railed edge, including ${nCustom===1?'1 edge':nCustom+' edges'} with a custom finish.`:'Tap an edge here or on the plan to give it its own finish.'):`Only Edge ${t+1} changes${q.staircases.some(s=>s.edge===t)?', including stair railings on this edge':''}.`}</div>`:`<div class="compact-intro">No deck edges have railings yet. Add them under Railing locations.</div>`;
      // V5.3 C6: name the finish being edited and show an approximate picture of it (presentation only).
      const stairsHere=t==='all'?q.staircases.length:q.staircases.filter(s=>s.edge===t).length;
-     html+=`<div class="finish-current rail-current" role="status"><div class="finish-row">${railPreview(core.RAILS[f.railColor],f.railStyle)}<span class="finish-text"><small>${t==='all'?'All railed edges':`Edge ${t+1} only`}${t!=='all'&&ro[t]?' · custom':''}</small><b>${esc(f.railStyle==='No rail product selected'?'Product not selected':f.railStyle)} · ${esc(f.railColor)}</b><em>${stairsHere?`Stair railings ${t==='all'?'follow their deck edge':'on this edge match'}`:'Deck railing'}</em></span></div></div>`;
-     html+=`<p class="group-title">Railing product</p>${seg('railStyle',[['Westbury Tuscany','Westbury Tuscany'],['No rail product selected','Unspecified']],f.railStyle)}<p class="group-title">Railing color</p>${swatches('railColor',core.RAILS,f.railColor,true,true)}<div class="approx-note">Approximate color preview, not a photo of the product. Confirm with a physical sample.</div>`;
+     html+=`<div class="finish-current rail-current" role="status"><div class="finish-row">${railPreview(core.RAILS[f.railColor],f.railStyle)}<span class="finish-text"><small>${t==='all'?'All railed edges':`Edge ${t+1} only`}${t!=='all'&&ro[t]?' · custom':''}</small><b>${esc(f.railStyle==='No rail product selected'?'Product not selected':railSty(f.railStyle))} · ${esc(railCol(f.railColor))}</b><em>${stairsHere?`Stair railings ${t==='all'?'follow their deck edge':'on this edge match'}`:'Deck railing'}</em></span></div></div>`;
+     html+=`<p class="group-title">Railing product</p>${seg('railStyle',[['Westbury Tuscany',RAIL_STYLE_LABEL['Westbury Tuscany']],['No rail product selected','Unspecified']],f.railStyle)}<p class="group-title">Railing finish</p>${swatches('railColor',core.RAILS,f.railColor,true,true,railCol)}<div class="approx-note">Approximate color preview, not a photo of the product. Confirm with a physical sample.</div>`;
      if(t!=='all'&&ro[t])html+=`<div class="action-row"><button type="button" data-action="rail-match">Match other edges</button><button type="button" data-action="rail-everywhere">Use on all edges</button></div>`;
    }
  }
@@ -5168,13 +5537,14 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
       +`${state.framingStatus&&state.framingStatus!=='current'?`<div class="framing-pending ${state.framingStatus}">${state.framingStatus==='invalid'?'Framing can’t be generated until the outline is fixed.':state.framingStatus==='calculating'?'Updating framing…':'The framing below is from before your last change.'}${state.framingStatus==='pending'?' <button type="button" data-action="framing-update">Update framing</button>':''}</div>`:''}`
       +`<div class="framing-summary">Joists ${m.stats.joistNominal} at ${m.stats.joistSpacingIn} in. on center, running ${Math.abs(ja[0])>=Math.abs(ja[1])?'left–right':'top–bottom'} on the plan · ${m.counts.ledger} ledger${m.counts.ledger===1?'':'s'} · ${m.counts.beams} beam${m.counts.beams===1?'':'s'} · ${m.counts.posts} posts${m.counts.stairSupportBeams?` · stairs: ${m.counts.stairSupportBeams} support beam${m.counts.stairSupportBeams===1?'':'s'} on ${m.counts.stairSupportPosts} posts (AOS review)`:''}${(m.stats.stairSpanReview||[]).length?` · <b style="color:#c62828">stairs: Structural Review Required — stringer span</b>`:''}</div>`
       +`<div class="framing-status" data-note="framing-status"><b>${unresolved?`⚠ ${unresolved} joist bearing${unresolved===1?'':'s'} not yet verified`:'Preliminary framing concept'}</b>Not engineered or code-approved. AOS production review is required before construction.</div>`
+      +(()=>{const items=designChecks().filter(i=>i.level==='warning');return items.length?`<div class="framing-checks" data-section="framing-checks">${designCheckHtml(items)}</div>`:'';})()
       +`<div class="action-row"><button data-action="framing-details">View framing measurements →</button></div>`;
    }
  }
  if(s===7&&q)html=renderReviewPanel(q);
  // V5.3 C3: after a quick adjustment from Review, every editor shows a way back.
  if(state.reviewReturn&&s!==7&&q)html=`<button type="button" class="return-review" data-action="return-review">↩ Return to Review</button>`+html;
- {const sc=$('stepContent'),key=panelKeyNow(),keep=key===panelScrollKey?sc.scrollTop:0;sc.innerHTML=html;sc.scrollTop=keep;panelScrollKey=key;}updateHeader();
+ {const sc=$('stepContent'),key=panelKeyNow(),keep=key===panelScrollKey?sc.scrollTop:0;sc.innerHTML=framingNoticeHtml()+fixBannerHtml()+html;sc.scrollTop=keep;panelScrollKey=key;}updateHeader();
 }
 // ---- V5.1 projects: storage, autosave, recent projects, honest downloads ----
 // Where projects live: inside the Claude preview, in each signed-in person's own private
@@ -5182,6 +5552,33 @@ function renderPanelNow(){const s=state.step,q=state.intent;const inspector=docu
 // nobody else, the owner included, can read it). Anywhere else (the HTML file opened in a
 // browser), in this browser's local storage on this device. The UI always says which.
 const APP_VERSION='5.3-c5',LOCAL_PROJECTS='aosDeckStudio.projects.v1';
+// C7 release fixes S2: the framing rules a saved file was made with. Written to every new save (JSON file and
+// browser project record) with a signature of the generated framing; older files without it still open.
+const PLANNER_VERSION='aos-framing-5.3-c7',FRAMING_NOTICE_ACK='aosDeckStudio.framingNotice.v1';
+const FRAMING_GROUPS=['framing','foundation','stair-framing'];
+const hashText=t=>{let h=0x811c9dc5;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}return h.toString(16).padStart(8,'0');};
+// Order-independent signature of the generated framing members (kind and box to 0.01 ft; ids ignored).
+function framingSignature(parts){const r=v=>Number.isFinite(Number(v))?(Math.round(Number(v)*100)/100).toFixed(2):'-';
+ const rows=(parts||[]).filter(p=>p&&FRAMING_GROUPS.includes(p.group)).map(p=>[p.kind,r(p.x),r(p.y),r(p.z),r(p.w),r(p.h),r(p.d),r(p.yaw||0)].join('|')).sort();
+ return `${rows.length}:${hashText(rows.join(';'))}`;}
+function savedFraming(src){if(!src||typeof src!=='object')return null;
+ if(typeof src.framingSignature==='string')return {sig:src.framingSignature,version:src.plannerVersion||null};
+ if(Array.isArray(src.componentModel)&&src.componentModel.some(p=>p&&FRAMING_GROUPS.includes(p.group)))return {sig:framingSignature(src.componentModel),version:src.plannerVersion||null};
+ return null;}
+const framingAck={read(){try{const v=JSON.parse(localStorage.getItem(FRAMING_NOTICE_ACK)||'[]');return Array.isArray(v)?v:[];}catch(e){return [];}},
+ has(k){return this.read().includes(k);},add(k){try{const v=this.read().filter(x=>x!==k);v.push(k);localStorage.setItem(FRAMING_NOTICE_ACK,JSON.stringify(v.slice(-200)));}catch(e){}}};
+// After a saved project or file is reopened: if the framing generated now differs from the framing it was saved
+// with (or the save predates framing records), show ONE internal notice. The saved design is never changed; the
+// notice is remembered per saved design + current framing, so it does not repeat when nothing has changed.
+function checkFramingRecalc(src,design){state.framingNotice=null;if(!state.intent||!state.model||state.model.preview)return;
+ const now=framingSignature(state.model.parts),saved=savedFraming(src);
+ if(saved&&saved.sig===now)return;
+ // No framing record: only a save made by the app before planner versions were recorded (it names the app or a
+ // version) is treated as recalculated; a bare design with nothing to compare shows no notice.
+ if(!saved&&!(src&&typeof src==='object'&&(src.appVersion||src.application||src.version)))return;
+ const key=`${hashText(JSON.stringify(design??null))}|${now}`;if(framingAck.has(key))return;framingAck.add(key);
+ state.framingNotice={unrecorded:!saved,savedVersion:saved?.version||null};}
+const framingNoticeHtml=()=>state.framingNotice&&!(state.step===LAST_STEP&&state.reviewMode!=='internal')?`<div class="framing-recalc" role="status" data-note="framing-recalc"><span><b>Framing recalculated using current AOS rules.</b> Review the updated framing before construction planning.${state.framingNotice.unrecorded?' <small>Saved before framing versions were recorded.</small>':''}</span><button type="button" data-action="framing-notice-ok">OK</button></div>`:'';
 const localProjects={kind:'browser',
  read(){try{const v=JSON.parse(localStorage.getItem(LOCAL_PROJECTS)||'{}');return v&&typeof v==='object'?v:{};}catch(e){return null;}},
  write(m){localStorage.setItem(LOCAL_PROJECTS,JSON.stringify(m));},
@@ -5213,7 +5610,7 @@ function markSave(status,where,at){state.saveState={status,where:where||state.sa
 function scheduleAutosave(){if(!state.intent||state.freeDraw)return;markSave('pending');clearTimeout(autosaveTimer);autosaveTimer=setTimeout(()=>{autosaveTimer=null;if(state.leaveGuard)return;saveProject(false);},1000);}
 function projectRecord(){const q=structuredClone(state.intent),now=new Date().toISOString();
  if(!state.projectId){state.projectId=newProjectId();state.projectCreated=now;}
- return {id:state.projectId,name:String(q.project||'Untitled deck'),created:state.projectCreated||now,updated:now,app:'AOS Deck Studio',appVersion:APP_VERSION,schemaVersion:core.SCHEMA_VERSION,areaSqFt:Math.round(state.model?.stats?.deckArea||0),design:q};}
+ return {id:state.projectId,name:String(q.project||'Untitled deck'),created:state.projectCreated||now,updated:now,app:'AOS Deck Studio',appVersion:APP_VERSION,schemaVersion:core.SCHEMA_VERSION,areaSqFt:Math.round(state.model?.stats?.deckArea||0),design:q,plannerVersion:PLANNER_VERSION,framingSignature:framingSignature(state.model?.parts)};}
 function saveProject(explicit=true){clearTimeout(autosaveTimer);autosaveTimer=null;
  if(!state.intent){if(explicit)toast('Choose a shape first.');return Promise.resolve(false);}
  const rec=projectRecord();
@@ -5231,14 +5628,14 @@ async function listProjects(){const store=await projectStore.ready();let rows=[]
  return {store,rows:rows.filter(r=>r&&r.id&&r.design).sort((a,b)=>String(b.updated).localeCompare(String(a.updated)))};}
 const whenText=iso=>{const d=new Date(iso);if(isNaN(d))return '';const diff=(Date.now()-d)/60000;
  return diff<1?'just now':diff<60?`${Math.round(diff)} min ago`:diff<1440&&d.getDate()===new Date().getDate()?d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):d.toLocaleDateString([],{month:'short',day:'numeric',year:d.getFullYear()===new Date().getFullYear()?undefined:'numeric'});};
-function resetForProject(){state.reviewReturn=false;state.posError=null;state.edgeError=null;state.freeDraw=false;state.freePts=[];state.shapePicker=false;state.selectedEdge=null;state.selectedCorner=null;state.railTarget='all';state.stairSelected=0;state.dividerSelected=0;state.featureSelected=null;state._fitted=false;}
+function resetForProject(){closeDimEdit();closeBeta();state.betaFeedback=null;state.fixTarget=null;state.cutMode=false;state.framingNotice=null;state._stairFit=null;state.reviewReturn=false;state.posError=null;state.edgeError=null;state.freeDraw=false;state.freePts=[];state.shapePicker=false;state.selectedEdge=null;state.selectedCorner=null;state.railTarget='all';state.stairSelected=0;state.dividerSelected=0;state.featureSelected=null;state._fitted=false;}
 function loadDesign(design,{id=null,created=null,name}={}){resetForProject();state.pendingPlanName='';state.savedRecord=null;
  const q=core.migrate({design}).intent;if(name)q.project=name;
  state.projectId=id;state.projectCreated=created;setProject(q,false);
  state.history=[structuredClone(state.intent)];state.historyAt=0;fit2d();state.visited=new Set(titles.keys());stepTo(0);}
 async function openProject(id){await flushSave();const store=await projectStore.ready();let rec=null;try{rec=await store.get(id);}catch(e){}
  if(!rec?.design){toast('That project could not be opened.');renderProjects();return;}
- loadDesign(rec.design,{id:rec.id,created:rec.created});state.savedSnapshot=JSON.stringify(state.intent);state.savedRecord=structuredClone(rec);markSave('saved',store.kind,rec.updated);closeProjects();toast(`Opened “${rec.name}”.`);}
+ loadDesign(rec.design,{id:rec.id,created:rec.created});checkFramingRecalc(rec,rec.design);renderPanel();state.savedSnapshot=JSON.stringify(state.intent);state.savedRecord=structuredClone(rec);markSave('saved',store.kind,rec.updated);closeProjects();toast(`Opened “${rec.name}”.`);}
 async function duplicateProject(id){await flushSave();const store=await projectStore.ready();const rec=await store.get(id).catch(()=>null);if(!rec)return;
  const now=new Date().toISOString(),name=`${rec.name} (copy)`.slice(0,90);
  try{await store.put({...rec,id:newProjectId(),name,created:now,updated:now,design:{...rec.design,project:name}});toast(`Duplicated as “${name}”.`);}catch(e){toast('Could not duplicate: storage is unavailable.');}
@@ -5289,22 +5686,24 @@ async function offerFile(filename,content,mime){let dl=null;try{dl=window.claude
  download(filename,content,mime);toast(`Download started: ${filename}`);return true;}
 function download(name,content,mime){const blob=new Blob([content],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);}
 const filename=()=>String(state.intent?.project||'AOS_Deck_Studio').replace(/[^a-z0-9_-]+/gi,'_').slice(0,55);
-function saveDesign(){if(!state.intent){toast('Choose a shape first.');return;}offerFile(`${filename()}_AOS_Deck.json`,JSON.stringify({application:'AOS Deck Studio V5.2',version:APP_VERSION,projectId:state.projectId,schemaVersion:core.SCHEMA_VERSION,date:new Date().toISOString(),design:state.intent,componentModel:state.model.parts,counts:state.model.counts,alerts:state.model.alerts,structuralStatus:'PRELIMINARY CONCEPT – AOS production review required'},null,2),'application/json');}
+function saveDesign(){if(!state.intent){toast('Choose a shape first.');return;}offerFile(`${filename()}_AOS_Deck.json`,JSON.stringify(designRecord(),null,2),'application/json');}
 function exportConcept(){if(!state.intent){toast('Choose a shape first.');return;}
- const wasFrame=renderer3d.showStructure;if(wasFrame)renderer3d.setStructureVisible(false);renderer3d.draw();planDraw();
+ const wasFrame=renderer3d.showStructure,concept=conceptViewNeeded(state.model);if(wasFrame)renderer3d.setStructureVisible(false);if(concept){renderer3d.conceptOnly=true;renderer3d.setModel(state.model);}renderer3d.draw();planDraw();
  const pic3d=renderer3d.gl?renderer3d.screenshot():null,pic2d=planCanvas.toDataURL('image/png'),q=state.intent,ec=state.model.geometry.edges;
+ state.lastConceptExport={concept,faultedShown:(renderer3d.visibleParts||[]).filter(p=>p.structuralFault).length};
+ if(concept){renderer3d.conceptOnly=false;renderer3d.setModel(state.model);}
  if(wasFrame)renderer3d.setStructureVisible(true);
- const html=`<!doctype html><html><head><meta charset="utf-8"><title>AOS Deck Concept</title><style>body{font:14px Arial,sans-serif;color:#24313b;margin:0;padding:35px;background:#f4f4f4}.wrap{max-width:960px;margin:auto;background:white;padding:30px;border-top:8px solid #c32e3c}h1{margin:0}.sub{color:#728090;margin:7px 0 23px}.images{display:grid;grid-template-columns:1fr 1fr;gap:12px}.images img{width:100%;border:1px solid #ddd;border-radius:8px}table{width:100%;margin:18px 0;border-collapse:collapse}td{padding:9px;border-bottom:1px solid #e7e7e7}.note{font-size:12px;color:#71808d;line-height:1.6;border-top:1px solid #ddd;padding-top:14px}@media(max-width:650px){.images{grid-template-columns:1fr}}@media print{body{padding:0;background:white}.wrap{padding:16px}}</style></head><body><div class="wrap"><h1><span style="color:#c32e3c">AOS</span> HOME SOLUTIONS</h1><div class="sub">Deck concept · ${esc(q.project)} · V5.3</div><div class="images">${pic3d?`<img alt="Finished 3D deck" src="${pic3d}">`:''}<img alt="Dimensioned 2D deck" src="${pic2d}"></div><table><tr><td>Shape / overall dimensions</td><td>${esc(q.shape.toUpperCase())} · ${fmt(q.width)} × ${fmt(q.depth)}</td></tr><tr><td>Deck / stairs / total SQ FT</td><td>${state.model.stats.deckArea.toFixed(1)} / ${state.model.stats.stairArea.toFixed(1)} / ${state.model.stats.totalArea.toFixed(1)}</td></tr><tr><td>Deck / stair / total railing LF</td><td>${state.model.stats.deckRailLF.toFixed(1)} / ${state.model.stats.stairRailLF.toFixed(1)} / ${state.model.stats.totalRailLF.toFixed(1)}</td></tr><tr><td>House connections</td><td>${q.houseEdges.length} wall side(s); ${state.model.stats.ledgerCount} preliminary ledgers (edges ${state.model.stats.ledgerEdges.map(i=>i+1).join(', ')||'none'})</td></tr><tr><td>Decking</td><td>${esc(q.collection)} · ${esc(q.decking)}</td></tr><tr><td>Board direction</td><td>${esc(({horizontal:'Horizontal',vertical:'Vertical','diagonal-left':'Diagonal left','diagonal-right':'Diagonal right'})[state.model.geometry.deckLineResolved]||q.deckLine)}</td></tr><tr><td>Picture frame</td><td>${q.borderCount===2?'Double':q.borderCount===1?'Single':'None'} · ${esc(q.border)}${q.borderCount&&q.frameHouseWalls?' · including house walls':''}</td></tr><tr><td>Stairs</td><td>${q.staircases.length?q.staircases.length+' independent staircases ('+q.staircases.map(s=>fmt(s.width)).join(', ')+')':'None'}</td></tr><tr><td>Railing</td><td>${esc(railSummary(q))}</td></tr></table><p class="note">PRELIMINARY SALES CONCEPT. Visual materials are approximate. Framing, footing layouts, span calculations, hardware, railing anchorage, stair requirements, quantities, code compliance and pricing have not been approved for construction. Structural review and site verification required. No customer pricing is included.</p></div></body></html>`;
+ const html=`<!doctype html><html><head><meta charset="utf-8"><title>AOS Deck Concept</title><style>body{font:14px Arial,sans-serif;color:#24313b;margin:0;padding:35px;background:#f4f4f4}.wrap{max-width:960px;margin:auto;background:white;padding:30px;border-top:8px solid #c32e3c}h1{margin:0}.sub{color:#728090;margin:7px 0 23px}.images{display:grid;grid-template-columns:1fr 1fr;gap:12px}.images img{width:100%;border:1px solid #ddd;border-radius:8px}table{width:100%;margin:18px 0;border-collapse:collapse}td{padding:9px;border-bottom:1px solid #e7e7e7}.note{font-size:12px;color:#71808d;line-height:1.6;border-top:1px solid #ddd;padding-top:14px}@media(max-width:650px){.images{grid-template-columns:1fr}}@media print{body{padding:0;background:white}.wrap{padding:16px}}</style></head><body><div class="wrap"><h1><span style="color:#c32e3c">AOS</span> HOME SOLUTIONS</h1><div class="sub">Deck concept · ${esc(q.project)} · V5.3</div><div class="images">${pic3d?`<img alt="Finished 3D deck" src="${pic3d}">`:''}<img alt="Dimensioned 2D deck" src="${pic2d}"></div><table><tr><td>Shape / overall dimensions</td><td>${esc(q.shape.toUpperCase())} · ${fmt(q.width)} × ${fmt(q.depth)}</td></tr><tr><td>Deck / stairs / total SQ FT</td><td>${state.model.stats.deckArea.toFixed(1)} / ${state.model.stats.stairArea.toFixed(1)} / ${state.model.stats.totalArea.toFixed(1)}</td></tr><tr><td>Deck / stair / total railing LF</td><td>${state.model.stats.deckRailLF.toFixed(1)} / ${state.model.stats.stairRailLF.toFixed(1)} / ${state.model.stats.totalRailLF.toFixed(1)}</td></tr><tr><td>House connections</td><td>${q.houseEdges.length} wall side(s); ${state.model.stats.ledgerCount} preliminary ledgers (edges ${state.model.stats.ledgerEdges.map(i=>i+1).join(', ')||'none'})</td></tr><tr><td>Decking</td><td>${esc(deckMat(q.collection))} · ${esc(deckCol(q.decking))} (concept color; product confirmed by AOS)</td></tr><tr><td>Board direction</td><td>${esc(({horizontal:'Horizontal',vertical:'Vertical','diagonal-left':'Diagonal left','diagonal-right':'Diagonal right'})[state.model.geometry.deckLineResolved]||q.deckLine)}</td></tr><tr><td>Picture frame</td><td>${q.borderCount===2?'Double':q.borderCount===1?'Single':'None'} · ${esc(deckCol(q.border))}${q.borderCount&&q.frameHouseWalls?' · including house walls':''}</td></tr><tr><td>Stairs</td><td>${q.staircases.length?q.staircases.length+' independent staircases ('+q.staircases.map(s=>fmt(s.width)).join(', ')+')':'None'}</td></tr><tr><td>Railing</td><td>${esc(railSummary(q))}</td></tr></table><p class="note">PRELIMINARY SALES CONCEPT. Visual materials are approximate. Framing, footing layouts, span calculations, hardware, railing anchorage, stair requirements, quantities, code compliance and pricing have not been approved for construction. Structural review and site verification required. No customer pricing is included.</p></div></body></html>`;
  offerFile(`${filename()}_AOS_Concept.html`,html,'text/html');
 }
-$('fileInput').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let dat=JSON.parse(await f.text()),q=dat.design||dat.intent||dat;if(!Number.isFinite(Number(q.width))||!Number.isFinite(Number(q.depth)))throw Error('Invalid deck file');await flushSave();loadDesign(q,{});closeProjects();saveProject(false);toast('File opened as a new project.');}catch(err){toast('Unable to open design: '+err.message);}e.target.value='';});
+$('fileInput').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let dat=JSON.parse(await f.text()),q=dat.design||dat.intent||dat;if(!Number.isFinite(Number(q.width))||!Number.isFinite(Number(q.depth)))throw Error('Invalid deck file');await flushSave();loadDesign(q,{});checkFramingRecalc(dat,q);state.betaFeedback=dat&&typeof dat.betaFeedback==='object'?dat.betaFeedback:null;renderPanel();closeProjects();saveProject(false);toast(state.betaFeedback?`Beta file opened: feedback from ${String(state.betaFeedback.tester||'tester').slice(0,40)} is in Review › Internal.`:'File opened as a new project.');}catch(err){toast('Unable to open design: '+err.message);}e.target.value='';});
 $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;
  if(b.dataset.shape){selectShape(b.dataset.shape);return;}
- const act=b.dataset.action;if(act==='apply-edge-length'){const field=$('stepContent').querySelector('input[data-edge-field="length"]');if(field)updateEdgeDimension(field.value);return;}if(act==='done-edge'){selectionClear();renderPanel();planDraw();return;}if(act==='choose-shape'){state.shapePicker=true;showOverlay();return;}
+ const act=b.dataset.action;if(act==='beta-finish'){openBeta();return;}if(act==='fix-design'){if(!fixInDesign(b.dataset.check))toast('This item is no longer reported.');return;}if(act==='fix-stop'){state.fixTarget=null;renderPanel();planDraw();return;}if(act==='framing-notice-ok'){state.framingNotice=null;renderPanel();return;}if(act==='apply-edge-length'){const field=$('stepContent').querySelector('input[data-edge-field="length"]');if(field)updateEdgeDimension(field.value);return;}if(act==='done-edge'){selectionClear();renderPanel();planDraw();return;}if(act==='choose-shape'){state.shapePicker=true;showOverlay();return;}
  // V5.3 C3: quick adjustments open the existing editor; Return to Review comes back to Step 9 (Customer).
  if(act==='adjust'){const i=Number(b.dataset.adjust);if(STEP_FLOW.includes(i)&&i!==7){state.reviewReturn=true;if(i===0)selectionClear();stepTo(i);}return;} // C3 cleanup: the Shape & Size shortcut closes a left-open edge/corner editor (as Done/Cancel do); geometry is untouched
  if(act==='return-review'){stepTo(7);return;}
- if(act==='pdf-preview'){openPdfPreview();return;} // V5.3 C4
+ if(act==='pdf-preview'){requestCustomerOutput('pdf');return;} // V5.3 C4; C7 release fixes B4: internal check first
  if(act==='pos-side'){state[b.dataset.target==='stair'?'stairRef':'openingRef']=b.dataset.value==='right'?'right':'left';state.posError=null;renderPanel();planDraw();return;} // V5.3 C5
  if(act==='ledger-toggle'){toggleLedger(Number(b.dataset.edge));return;} // V5.3 C5
  if(act==='pos-apply'){const f=$('stepContent').querySelector(`input[data-${b.dataset.target}-field="edge"]`);if(f)f.dispatchEvent(new Event('change',{bubbles:true}));return;}
@@ -5401,7 +5800,14 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
    else state.cornerOrientation=state.cornerOrientation==='first'?'second':'first';
    renderPanel();planDraw();return;
  }
- if(act==='cancel-corner'){selectionClear();renderPanel();planDraw();return;}
+ if(act==='cancel-corner'){state.cutMode=false;selectionClear();renderPanel();planDraw();return;} // the preview never changed the deck
+ if(act==='cut-corner-mode'){selectionClear();state.cutMode=true;renderPanel();planDraw();return;}
+ if(act==='cut-mode-cancel'){state.cutMode=false;selectionClear();renderPanel();planDraw();return;}
+ if(act==='cut-edit'||act==='cut-remove'){const bv=(state.intent.bevels||[]).find(x=>x.id===b.dataset.cut);if(!bv)return;
+   selectionClear();state.cutMode=act==='cut-edit';state.selectedCorner=bv.start;state.selectedEdge=null;state.shapeTool='corner';
+   if(act==='cut-edit'){renderPanel();planDraw();return;}
+   const q=state.intent,p=core.polygon(q),next=[...p.slice(0,bv.start),bv.base,...p.slice(bv.start+2)];
+   if(applyOutline({points:next},{removeBevel:bv})){selectionClear();renderPanel();planDraw();toast('Cut removed. The original corner is restored.');}return;}
  if(act==='apply-corner'){
    if(state.selectedCorner===null)return;
    refreshCornerPreview();const op=state.pendingCornerResult;
@@ -5414,7 +5820,7 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
      state.cornerPreview=null;state.cornerKey=null;setProject(q);toast('Corner size updated.');
    }else if(applyOutline(op)){
      state.cornerPreview=null;state.cornerKey=null;
-     state.selectedCorner=op.bevel.start;renderPanel();toast(op.bevel.inside?'Inside notch filled.':'Outside corner trimmed.');
+     state.cutMode=false;state.selectedCorner=op.bevel.start;renderPanel();toast(op.bevel.inside?'Inside notch filled.':'Outside corner trimmed.');
    }
    planDraw();return;
  }
@@ -5427,7 +5833,7 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
  if(act==='remove-bevel'){
    const q=state.intent,b=(q.bevels||[]).find(x=>x.start===state.selectedCorner||x.start+1===state.selectedCorner);if(!b)return;
    const p=core.polygon(q),next=[...p.slice(0,b.start),b.base,...p.slice(b.start+2)];
-   if(applyOutline({points:next},{removeBevel:b})){state.selectedCorner=b.start;state.cornerKey=null;renderPanel();planDraw();}return;
+   if(applyOutline({points:next},{removeBevel:b})){state.cutMode=false;state.selectedCorner=b.start;state.cornerKey=null;renderPanel();planDraw();toast('Cut removed. The original corner is restored.');}return;
  }
  if(act==='preview-feature'||act==='apply-feature'||act==='preview-feature-edit'||act==='apply-feature-edit'){
    const edit=act.endsWith('-edit'),p=core.polygon(state.intent),f=selectedFeature();
@@ -5461,7 +5867,7 @@ $('stepContent').addEventListener('click',e=>{const b=e.target.closest('button')
  if(act==='rail-target'){const v=b.dataset.edge;state.railTarget=v==='all'?'all':Number(v);renderPanel();planDraw();return;}
  if(act==='rail-match'){const t=state.railTarget;if(typeof t!=='number')return;const q=structuredClone(state.intent);if(q.railOverrides)delete q.railOverrides[t];setProject(q);toast(`Edge ${t+1} now matches the other edges.`);return;}
  if(act==='rail-everywhere'){const t=state.railTarget;if(typeof t!=='number')return;const q=structuredClone(state.intent),f=core.railFinish(q,t);q.railStyle=f.railStyle;q.railColor=f.railColor;q.railOverrides={};state.railTarget='all';setProject(q);toast(`${f.railColor} railing applied to all edges.`);return;}
- if(act==='download-json'){saveDesign();return;}if(act==='export-concept'){exportConcept();return;}
+ if(act==='download-json'){saveDesign();return;}if(act==='export-concept'){requestCustomerOutput('concept');return;}
  const path=b.dataset.path;if(!path)return;
  if((path==='railColor'||path==='railStyle')&&state.intent){
    const q=structuredClone(state.intent),v=b.dataset.value,t=state.railTarget;q.railOverrides=q.railOverrides||{};
@@ -5626,8 +6032,11 @@ $('unsavedDiscard').onclick=async()=>{const then=pendingUnsaved,target=discardTa
 $('unsavedSave').onclick=async()=>{const then=pendingUnsaved;const ok=await saveProject(true);if(!ok){$('unsavedMessage').textContent='Could not save here: this browser is blocking storage. Use Projects › Download current to keep a copy, or choose Discard or Cancel.';return;}closeUnsaved();then?.();};
 $('unsavedDialog').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();$('unsavedCancel').click();}});
 $('backBtn').onclick=()=>stepTo(previousStep(state.step));
+$('pdfConfirmBack').onclick=pdfConfirmBack;$('pdfConfirmGo').onclick=pdfConfirmGo;$('pdfConfirm').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();pdfConfirmBack();}});
 $('pdfCloseBtn').onclick=closePdfPreview;$('pdfZoomBtn').onclick=()=>{const z=$('pdfPages').classList.toggle('zoomed');$('pdfZoomBtn').setAttribute('aria-pressed',String(z));$('pdfZoomBtn').textContent=z?'Fit to screen':'Zoom in';};$('pdfDownloadBtn').onclick=downloadPdf;$('pdfPreview').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();closePdfPreview();}}); // V5.3 C4
-$('stepdots').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b||b.disabled)return;const i=Number(b.dataset.step);if(i!==state.step)stepTo(i);});$('nextBtn').onclick=()=>state.step===LAST_STEP?finishReview():stepTo(nextStep(state.step));
+$('stepdots').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b||b.disabled)return;const i=Number(b.dataset.step);if(i!==state.step)stepTo(i);});// Internal beta: the always-visible final-step footer opens feedback, never a PDF-only finish.
+// Customer PDF preview remains available in Review > Downloads.
+$('nextBtn').onclick=()=>state.step===LAST_STEP?openBeta():stepTo(nextStep(state.step));
 $('mode2d').onclick=()=>changeView('2d');$('mode3d').onclick=()=>changeView('3d');
 $('planEditBtn').onclick=()=>{state.plan.moveView=false;updateHeader();};$('planMoveBtn').onclick=()=>{state.plan.moveView=true;updateHeader();};
 $('undoBtn').onclick=()=>undo();$('redoBtn').onclick=()=>undo(true);$('saveBtn').onclick=()=>saveProject(true);$('openBtn').onclick=openProjects;
@@ -5647,6 +6056,9 @@ window.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA/.test(document.activeEl
 // 2D plan is an exact projection of the SAME component records as WebGL.
 function canvasSize(){const dpr=Math.min(window.devicePixelRatio||1,2),w=Math.max(1,planCanvas.clientWidth),h=Math.max(1,planCanvas.clientHeight);if(planCanvas.width!==Math.round(w*dpr)||planCanvas.height!==Math.round(h*dpr)){planCanvas.width=Math.round(w*dpr);planCanvas.height=Math.round(h*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);return {w,h};}
 const xy=(x,z)=>{const p=state.plan;return[planCanvas.clientWidth/2+p.panX+x*p.scale,planCanvas.clientHeight/2+p.panY+(z-p.targetZ)*p.scale];};
+const planXY=pt=>xy(pt[0],pt[1]);
+// C7 UX corrections: a small rounded label on the plan (centered on x,y).
+function pill(text,x,y,bg,fg,size=11.5){ctx.save();ctx.font=`800 ${size}px system-ui`;const tw=ctx.measureText(text).width+14,th=size+10;ctx.fillStyle=bg;ctx.strokeStyle='rgba(31,43,54,.35)';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(x-tw/2,y-th/2,tw,th,7);ctx.fill();ctx.stroke();ctx.fillStyle=fg;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x,y+.5);ctx.restore();}
 function inv(x,y){const p=state.plan;return [(x-planCanvas.clientWidth/2-p.panX)/p.scale,(y-planCanvas.clientHeight/2-p.panY)/p.scale+p.targetZ];}
 function fit2d(){
  if(!state.intent){state.plan.scale=clamp(Math.min((planCanvas.clientWidth-65)/22,(planCanvas.clientHeight-65)/17),5,27);state.plan.targetZ=6;state.plan.panX=state.plan.panY=0;planDraw();return;}
@@ -5995,10 +6407,31 @@ function planDraw(){state.planLabelBoxes=[];const {w,h}=canvasSize(),sc=state.pl
  const bounds={xmin:Math.min(...p.map(z=>z[0])),xmax:Math.max(...p.map(z=>z[0])),zmin:Math.min(...p.map(z=>z[1])),zmax:Math.max(...p.map(z=>z[1]))};
  if(state.step===0&&state.selectedEdge!==null&&es[state.selectedEdge]){const e=es[state.selectedEdge],a=xy(...e.a),b=xy(...e.b);ctx.strokeStyle='#c32e3c';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();}
  drawMeasurements(q,model,es,bounds,w,h,sc);
+ // C7 UX corrections: highlight the location being fixed (any step).
+ if(state.fixTarget&&state.fixTarget.step===state.step&&state.model&&!state.model.preview){const t=state.fixTarget,g=state.model.geometry;ctx.save();ctx.lineCap='round';
+   const glow=(pts,closed)=>{ctx.beginPath();pts.forEach((v,k)=>{const s2=planXY(v);k?ctx.lineTo(...s2):ctx.moveTo(...s2);});if(closed)ctx.closePath();ctx.strokeStyle='rgba(245,158,11,.45)';ctx.lineWidth=16;ctx.stroke();ctx.strokeStyle='#d97706';ctx.lineWidth=4;ctx.setLineDash([9,6]);ctx.stroke();ctx.setLineDash([]);};
+   const tag=(pt,txt)=>{const s2=planXY(pt);pill(txt,s2[0],s2[1],'#d97706','#fff');};
+   if(t.kind==='edges')for(const i of t.edges){const e=g.edges[i];if(!e)continue;glow([e.a,e.b]);tag([e.mid[0]+(e.n?.[0]||0)*1.2,e.mid[1]+(e.n?.[1]||0)*1.2],t.ledger?`Edge ${i+1}: add ledger`:`Edge ${i+1}: add railing`);}
+   if(t.kind==='opening'){const e=g.edges[t.edge];if(e){glow([e.a,e.b]);tag(e.mid,'Door / window to fix');}}
+   if(t.kind==='surface'){const sf=(state.intent.surfaces||[]).find(x=>x.id===t.id);if(sf){const cs=core.surfaceCorners(sf);glow(cs,true);tag(cs[0],'Move or resize');}}
+   if(t.kind==='outline')glow(g.poly,true);
+   if(['stair','stair-side','stair-width'].includes(t.kind)){const k=(state.intent.staircases||[]).findIndex(x=>x.id===t.stair),sg=g.stairs?.[k];if(sg){for(const fp of sg.footprints||[])glow(fp,true);const fp=(sg.footprints||[])[0];if(fp)tag(fp[0],t.kind==='stair-side'?`${t.side[0].toUpperCase()+t.side.slice(1)} side: add rail`:t.kind==='stair-width'?`Widen to ${fmt(t.minFt)}`:'Move / reshape stair');}}
+   ctx.restore();}
  if(state.step===0){
    if(state.previewPoly?.length>=3){ctx.save();polygonPath(state.previewPoly);ctx.fillStyle='rgba(195,46,60,.22)';ctx.fill();ctx.setLineDash([7,5]);ctx.lineWidth=3;ctx.strokeStyle='#b21c30';ctx.stroke();ctx.restore();}
    if(state.cornerPreview){const c=state.cornerPreview,a=xy(...c.a),b=xy(...c.b),p=xy(...c.base);ctx.save();ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...p);ctx.lineTo(...b);ctx.closePath();ctx.fillStyle=c.inside?'rgba(40,146,111,.25)':'rgba(195,46,60,.22)';ctx.fill();ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.setLineDash([7,4]);ctx.lineWidth=4;ctx.strokeStyle=c.inside?'#08795d':'#b21c30';ctx.stroke();ctx.setLineDash([]);for(const v of [a,b]){ctx.beginPath();ctx.arc(v[0],v[1],4,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=2;ctx.stroke();}ctx.restore();}
    p.forEach((z,i)=>{const t=xy(...z),selected=state.selectedCorner===i;ctx.beginPath();ctx.arc(...t,selected?10:7,0,Math.PI*2);ctx.fillStyle=selected?'#c32e3c':'#fff';ctx.fill();ctx.strokeStyle=selected?'#fff':'#c32e3c';ctx.lineWidth=selected?3:2.7;ctx.stroke();});
+   // C7 UX corrections: Cut Corner mode highlights the corners that can be cut and marks existing cuts.
+   if(state.cutMode&&state.selectedCorner===null){ctx.save();
+     for(const i of cutCandidates()){const t=xy(...p[i]);ctx.beginPath();ctx.arc(...t,15,0,Math.PI*2);ctx.fillStyle='rgba(8,121,93,.18)';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#08795d';ctx.stroke();ctx.beginPath();ctx.arc(...t,6,0,Math.PI*2);ctx.fillStyle='#08795d';ctx.fill();}
+     for(const m of cutMarkers()){const t=xy(...m.mid);pill(`✂ Cut ${m.k+1}`,t[0],t[1],'#1f3a4d','#fff');}
+     pill('Select the corner you want to cut.',w/2,22,'#08795d','#fff',13);ctx.restore();}
+   if(state.cornerPreview&&state.selectedCorner!==null){const c=state.cornerPreview,P=xy(...c.base),A=xy(...c.a),B=xy(...c.b),g=[(P[0]+A[0]+B[0])/3,(P[1]+A[1]+B[1])/3];
+     const lab=(Q,txt)=>{const m=[(P[0]+Q[0])/2,(P[1]+Q[1])/2],v=[m[0]-g[0],m[1]-g[1]],L=Math.hypot(...v)||1;pill(txt,m[0]+v[0]/L*26,m[1]+v[1]/L*26,'#fff','#1f2b36');};
+     ctx.save();ctx.setLineDash([3,3]);ctx.lineWidth=1.5;ctx.strokeStyle='#1f2b36';for(const Q of [A,B]){ctx.beginPath();ctx.moveTo(...P);ctx.lineTo(...Q);ctx.stroke();}ctx.setLineDash([]);
+     lab(A,`cut ${formatCornerSize(c.sizeA)}`);lab(B,formatCornerSize(c.sizeB));
+     for(const Q of [A,B]){ctx.beginPath();ctx.arc(...Q,11,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle=c.inside?'#08795d':'#b21c30';ctx.stroke();ctx.beginPath();ctx.arc(...Q,4,0,Math.PI*2);ctx.fillStyle=ctx.strokeStyle;ctx.fill();}
+     ctx.restore();}
  }
 
  if([1,2,5,6].includes(state.step)){
@@ -6047,6 +6480,10 @@ planCanvas.addEventListener('pointerdown',e=>{
  if(state.freeDraw||!state.intent)return;state.lastShapeError='';const p=inv(l.x,l.y);
  // V5.3 R1: Move view — every one-finger/mouse drag moves the plan; nothing is selected or edited.
  if(state.plan.moveView){state.plan.drag={type:'pan',px:l.x,py:l.y};state.plan.moveTap=true;return;}
+ // C7 UX corrections: while a cut is being edited, its size handles win over every other drag on the plan.
+ if(dimEdit.open)closeDimEdit(); // a press anywhere on the plan leaves the measurement unchanged
+ if(state.step===0){const hk=cutHandleAt(l);if(hk){state.plan.drag={type:'cut-handle',handle:hk};state.plan.tap=null;return;}
+   if(state.cutMode&&state.selectedCorner===null){state.plan.drag={type:'pan',px:l.x,py:l.y};return;}}
  if(state.step===0){const ov=hitOverallLabel(l);if(ov){state.plan.overallTap=ov;state.plan.drag=null;return;}const dimension=hitDimensionLabel(l);if(dimension!==null){state.plan.dimensionTap=dimension;state.plan.drag=null;return;}const vertex=detectVertex(p);if(vertex>=0)state.plan.drag={type:'vertex',index:vertex,basePoly:core.polygon(state.intent),original:JSON.stringify(state.intent)};else{
    const nearest=nearestEdge(p);if(nearest)state.plan.drag={type:'resize-edge',edge:nearest,basePoly:core.polygon(state.intent),grab:p.slice(),original:JSON.stringify(state.intent)};
  }}
@@ -6077,6 +6514,10 @@ planCanvas.addEventListener('pointermove',e=>{if(state.freeDraw&&!state.plan.poi
  if(state.plan.pointers.size===2){const after=[...state.plan.pointers.values()],a=Math.hypot(before[0].x-before[1].x,before[0].y-before[1].y),b=Math.hypot(after[0].x-after[1].x,after[0].y-after[1].y);if(a>6&&b>6)state.plan.scale=clamp(state.plan.scale*b/a,3,150);state.plan.panX+=(after[0].x+after[1].x-before[0].x-before[1].x)/2;state.plan.panY+=(after[0].y+after[1].y-before[0].y-before[1].y)/2;state.plan.tap=null;planDraw();return;}
  const drag=state.plan.drag;if(!drag||state.freeDraw||!state.intent)return;
  if(drag.type==='pan'){state.plan.panX+=l.x-prev.x;state.plan.panY+=l.y-prev.y;planDraw();return;}
+ if(drag.type==='cut-handle'){const cp=state.cornerPreview;if(!cp)return;const ip=inv(l.x,l.y),d=[ip[0]-cp.base[0],ip[1]-cp.base[1]];
+   let size=drag.handle==='a'?d[0]*cp.toA[0]+d[1]*cp.toA[1]:(d[0]*cp.toB[0]+d[1]*cp.toB[1])/(cp.ratio||1);
+   const lim=cp.lim||{min:.75,max:10};size=Math.round(clamp(size,lim.min,Math.max(lim.min,lim.max))*12)/12;
+   if(Math.abs(size-state.cornerSize)>1e-9){state.cornerSize=size;refreshCornerPreview();syncCornerPanel();drag.moved=true;}planDraw();return;}
  if(drag.type==='surface'||drag.type==='surface-resize'){const ip=inv(l.x,l.y),sf=(state.intent.surfaces||[]).find(x=>x.id===drag.id);if(!sf)return;const snap=v=>Math.round(v*4)/4;let next;
    if(drag.type==='surface')next={x:snap(ip[0]-drag.grab[0]),z:snap(ip[1]-drag.grab[1])};
    else{const T=core.SURFACE_TYPES[sf.type],a=sf.angle*Math.PI/180,u=[Math.cos(a),Math.sin(a)],v=[-Math.sin(a),Math.cos(a)],d=[ip[0]-drag.anchor[0],ip[1]-drag.anchor[1]];
@@ -6119,6 +6560,11 @@ function tapPlan(pt){if(state.freeDraw){if(nearFreeStart(pt)){finishFreeDraw();r
  {const hit=shapeOps.pathCrossing(state.freePts,snapped);if(hit>=0){toast(`That edge would cross edge ${hit+1}. Tap somewhere else, or undo a corner.`);planDraw();return;}}
  state.freePts.push(snapped);state.freeRedo=[];renderPanel();planDraw();updateHeader();return;}
  if(!state.intent)return;const edge=nearestEdge(pt);
+ if(state.step===0&&state.cutMode&&state.selectedCorner===null){
+   const vertex=detectVertex(pt),mk=cutMarkers().find(m=>{const a=planXY(m.mid),b=planXY(pt);return Math.hypot(a[0]-b[0],a[1]-b[1])<(window.innerWidth<801?26:18);});
+   if(vertex>=0||mk){state.selectedCorner=vertex>=0?vertex:mk.bevel.start;state.selectedEdge=null;state.shapeTool='corner';state.previewPoly=null;state.cornerPreview=null;renderPanel();planDraw();return;}
+   toast('Select the corner you want to cut: tap one of the highlighted pins.');return;
+ }
  if(state.step===0){
    const vertex=detectVertex(pt);
    if(vertex>=0){state.selectedCorner=vertex;state.selectedEdge=null;state.shapeTool='corner';state.previewPoly=null;state.cornerPreview=null;renderPanel();planDraw();return;}
@@ -6163,9 +6609,10 @@ function tapPlan(pt){if(state.freeDraw){if(nearFreeStart(pt)){finishFreeDraw();r
 function planEnd(e){if(!state.plan.pointers.has(e.pointerId))return;const l=local(e),tap=state.plan.tap,drag=state.plan.drag,dimensionTap=state.plan.dimensionTap,overallTap=state.plan.overallTap;state.plan.overallTap=null;
  state.plan.pointers.delete(e.pointerId);if(state.plan.pointers.size) return;
  state.plan.drag=null;state.plan.tap=null;state.plan.dimensionTap=null;
+ if(drag?.type==='cut-handle'){planDraw();return;} // the handle only changes the proposed size; Apply commits it
  if(state.model?.preview&&drag&&JSON.stringify(state.intent)===drag.original){state.model=state.lastFull;setFramingStatus(state.model.stats?.invalidGeometry?'invalid':'current');planDraw();}
- if(overallTap){if(tap&&!tap.moved)openOverallField(overallTap);return;}
- if(dimensionTap!==null&&dimensionTap!==undefined){if(tap&&!tap.moved)selectDimension(dimensionTap);return;}
+ if(overallTap){if(tap&&!tap.moved){openOverallField(overallTap,false);openDimEdit('overall',overallTap);}return;}
+ if(dimensionTap!==null&&dimensionTap!==undefined){if(tap&&!tap.moved){selectDimension(dimensionTap,false);openDimEdit('edge',dimensionTap);}return;}
  if(drag?.type==='surface'||drag?.type==='surface-resize'){state.surfaceSelected=drag.id;if(drag.next){const sf=(state.intent.surfaces||[]).find(x=>x.id===drag.id),T=sf&&core.SURFACE_TYPES[sf.type];const q=structuredClone(state.intent);Object.assign(q.surfaces.find(x=>x.id===drag.id),drag.next);setProject(q);toast(drag.type==='surface'?`${T.label} moved`:`${T.label} resized to ${fmt(drag.next.width)} × ${fmt(drag.next.length)}`);}else{if(drag.blocked)toast('Concrete surfaces cannot run into the house.');renderPanel();planDraw();}return;}
  if(drag?.type==='opening'){if(Math.abs(drag.offset-drag.start)>1e-9){state.openingSelected=drag.id;changeOpening({offset:drag.offset},'Opening moved');}else planDraw();return;}
  if(drag&&drag.type!=='pan'&&JSON.stringify(state.intent)!==drag.original){if(state.model.preview)scheduleFull();else renderer3d.setModel(state.model);saveHistory();renderPanel();toast(drag.type==='stairs'?'Stair position updated':drag.type==='divider'?'Divider position updated':'Outline updated');return;}
@@ -6176,7 +6623,7 @@ function planEnd(e){if(!state.plan.pointers.has(e.pointerId))return;const l=loca
  if(tap&&!tap.moved){tapPlan(inv(l.x,l.y));}
 }
 ['pointerup','pointercancel','lostpointercapture'].forEach(t=>planCanvas.addEventListener(t,planEnd));
-planCanvas.addEventListener('wheel',e=>{e.preventDefault();state.plan.scale=clamp(state.plan.scale*(e.deltaY>0?.9:1.1),3,150);planDraw();},{passive:false});
+planCanvas.addEventListener('wheel',e=>{e.preventDefault();state.plan.scale=clamp(state.plan.scale*(e.deltaY>0?.9:1.1),3,150);planDraw();placeDimEdit();},{passive:false});
 const obs=new ResizeObserver(()=>{planDraw();renderer3d.draw();});obs.observe($('viewport'));
 $('projectsDialog').addEventListener('click',e=>{if(e.target.id==='projectsDialog'){closeProjects();return;}
  const b=e.target.closest('button');if(!b||b.disabled)return;const id=b.closest('[data-id]')?.dataset.id,act=b.dataset.action;
@@ -6194,7 +6641,15 @@ addEventListener('beforeunload',e=>{const st=state.saveState?.status;if(st==='pe
 // V5.3 C6 (read-only): the current design, and the colors each finish/railing part kind is drawn with in 2D and 3D.
 const C6_COLOR_KINDS=['concrete-surface','field-board','picture-frame','divider-board','fascia','landing-board','landing-frame','stair-tread','stair-riser','railing-post','post-cap','top-rail','bottom-rail','baluster','stair-rail-post','stair-top-rail','stair-bottom-rail','stair-baluster'];
 function c6Colors(m){const out={};for(const p of m?.parts||[]){if(!C6_COLOR_KINDS.includes(p.kind))continue;const o=out[p.kind]||(out[p.kind]={count:0,colors:[]});o.count++;if(!o.colors.includes(p.color))o.colors.push(p.color);}for(const o of Object.values(out))o.colors.sort();return out;}
-window.AOSDeckStudioTest=Object.freeze({framingStatus:()=>state.framingStatus,intent:()=>JSON.parse(JSON.stringify(state.intent)),planHighlight:()=>({...(state.planHighlight||{frame:0,divider:0})}),houseWalls:()=>JSON.parse(JSON.stringify((state.intent?.houseEdges||[]).map(i=>{const e=state.model.geometry.edges[i];return {edge:i,band:houseBand(e)};}))),framingGeometry:()=>{const box=pts=>{const xs=pts.map(v=>v[0]),zs=pts.map(v=>v[1]);return [Math.min(...xs),Math.min(...zs),Math.max(...xs),Math.max(...zs)].map(v=>Math.round(v*1000)/1000);};
+window.AOSDeckStudioTest=Object.freeze({framingStatus:()=>state.framingStatus,
+ // C7 release fixes test hooks (read-only): B4 internal check, S1 stair notes, S2 framing notice, S3 refits.
+ // C7 UX corrections hooks (read-only): design checks, fix target, cut mode and the cut preview.
+ beta:()=>JSON.parse(JSON.stringify({open:betaState.open,lastFile:betaState.lastFile,lastRecord:betaState.lastRecord,loaded:state.betaFeedback||null})),
+ ux:()=>JSON.parse(JSON.stringify({dimLabels:state.dimensionLabels||[],overallLabels:state.overallLabels||[],dimEdit:{...dimEdit,hidden:$('dimEdit').hidden},step:state.step,checks:designChecks(),fixTarget:state.fixTarget||null,cutMode:Boolean(state.cutMode),cutCandidates:state.intent?cutCandidates():[],cornerSize:state.cornerSize,cornerPreview:state.cornerPreview||null,selectedCorner:state.selectedCorner,
+   handles:state.cornerPreview?{a:(()=>{const r=planCanvas.getBoundingClientRect(),p=planXY(state.cornerPreview.a);return [r.left+p[0],r.top+p[1]];})(),b:(()=>{const r=planCanvas.getBoundingClientRect(),p=planXY(state.cornerPreview.b);return [r.left+p[0],r.top+p[1]];})()}:null})),
+ releaseFixes:()=>JSON.parse(JSON.stringify({pdfConfirm:{open:pdfConfirmState.open,kind:pdfConfirmState.kind,shown:pdfConfirmState.shown,issues:pdfConfirmState.issues},issues:openDesignIssues(),conceptView:conceptViewNeeded(state.model),
+   lastConceptExport:state.lastConceptExport||null,framingNotice:state.framingNotice||null,framingSignature:state.model?framingSignature(state.model.parts):null,plannerVersion:PLANNER_VERSION,
+   stairNotes:(state.intent?.staircases||[]).map(st=>stairReviewNotes(state.intent,st)),stairRefits:state._stairRefits||0,stairsOnScreen:(renderer3d.model?.geometry?.stairs||[]).map(g=>(g.footprints||[]).flat().every(p=>{const v=renderer3d.project([p[0],0,p[1]]);return Boolean(v&&v[0]>=0&&v[0]<=1&&v[1]>=0&&v[1]<=1);})),productConfirmation:state.intent?productConfirmation(state.intent):[]})),intent:()=>JSON.parse(JSON.stringify(state.intent)),planHighlight:()=>({...(state.planHighlight||{frame:0,divider:0})}),houseWalls:()=>JSON.parse(JSON.stringify((state.intent?.houseEdges||[]).map(i=>{const e=state.model.geometry.edges[i];return {edge:i,band:houseBand(e)};}))),framingGeometry:()=>{const box=pts=>{const xs=pts.map(v=>v[0]),zs=pts.map(v=>v[1]);return [Math.min(...xs),Math.min(...zs),Math.max(...xs),Math.max(...zs)].map(v=>Math.round(v*1000)/1000);};
    const plan=state.step===6?(state.planFramingGeom||[]).map(g=>({id:g.id,kind:g.kind,red:g.red,color:g.color,box:box(g.pts)})):[];
    // 3D: the xz extent of the vertices the WebGL renderer actually builds for each visible framing member.
    const v3=renderer3d.showStructure?(renderer3d.visibleParts||[]).filter(p=>PLAN_FRAMING_KINDS.includes(p.kind)).map(p=>{const d=window.Deck3D.buildGeometry([p]),pts=[];for(let i=0;i<d.length;i+=12)pts.push([d[i],d[i+2]]);return {id:p.id,kind:p.kind,red:Boolean(p.structuralFault),color:p.color,box:box(pts)};}):[];
@@ -6213,7 +6668,7 @@ window.AOSDeckStudioTest=Object.freeze({framingStatus:()=>state.framingStatus,in
    geometry:{surfaces:state.model?.geometry?.surfaces||[],house:state.model?.geometry?.house||null},
    parts3d:(renderer3d.visibleParts||[]).filter(p=>/^(earth|house-|concrete-surface)/.test(p.kind)).map(({kind,group,connect,x,y,z,w,h,d,yaw,color,mat,siding,surface})=>({kind,group,connect,x,y,z,w,h,d,yaw,color,mat,siding,surface}))})),
  // V5.3 C4 (read-only): the customer PDF document shown in the preview (texts per page, images, plan checks).
- pdf:()=>{const d=pdfState.doc;if(!d)return {open:!$('pdfPreview').hidden,doc:null};return JSON.parse(JSON.stringify({open:!$('pdfPreview').hidden,doc:{project:d.project,date:d.date,checks:d.checks,pages:d.pages.map(pg=>({texts:pg.items.filter(i=>i.t==='text').map(i=>i.text),images:pg.items.filter(i=>i.t==='image').map(i=>({id:i.id,x:i.x,y:i.y,w:i.w,h:i.h})),items:pg.items.length})),images:Object.fromEntries(Object.entries(d.images).map(([k,v])=>[k,{w:v.w,h:v.h,url:v.url,camera:v.camera||null}]))}}));},
+ pdf:()=>{const d=pdfState.doc;if(!d)return {open:!$('pdfPreview').hidden,doc:null};return JSON.parse(JSON.stringify({open:!$('pdfPreview').hidden,doc:{project:d.project,date:d.date,checks:d.checks,pages:d.pages.map(pg=>({texts:pg.items.filter(i=>i.t==='text').map(i=>i.text),images:pg.items.filter(i=>i.t==='image').map(i=>({id:i.id,x:i.x,y:i.y,w:i.w,h:i.h})),items:pg.items.length})),images:Object.fromEntries(Object.entries(d.images).map(([k,v])=>[k,{w:v.w,h:v.h,url:v.url,camera:v.camera||null,...(v.audit?{audit:v.audit}:{})}])),...(d.conceptView?{conceptView:true}:{})}}));},
  // V5.2 B3 corrections (read-only): where a 3D point lands on the 3D canvas (0..1 across/down), for pixel checks.
  project3d:(x,y,z)=>renderer3d.project([x,y,z]),
  // V5.2 B3 (read-only): the 3D camera, and where the deck corners land on screen.
