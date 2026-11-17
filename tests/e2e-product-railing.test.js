@@ -8,7 +8,8 @@ const RAIL_STEP = 5;
 const geomOf = (m) => m.parts.map((p) => without(p, ['color']));
 const pick = async (page, sel) => { const l = page.locator(sel); assert.equal(await l.count(), 1, sel); await l.click(); await settle(page); };
 const panelText = (page) => page.locator('#stepContent').innerText();
-const finishTab = async (page) => { await step(page, RAIL_STEP); await pick(page, '[data-path="railTab"][data-value="finish"]'); };
+const finishTab = async (page) => { await step(page, RAIL_STEP); await pick(page, '[data-path="railTab"][data-value="finish"]');
+  const more = page.locator('details.rail-more > summary'); if (await more.count()) { await more.click(); await page.waitForTimeout(100); } };
 
 test('Stage D: existing designs show the mapped default (Westbury Tuscany C10 · Black Fine Texture) without rewriting the file', async () => {
   const { page, errors } = await h.newPage();
